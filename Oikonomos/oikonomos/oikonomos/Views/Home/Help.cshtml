@@ -1,0 +1,76 @@
+﻿           
+<script src="@Url.Content("~/Scripts/Site/Index.js")" type="text/javascript"></script>
+
+
+@{
+    ViewBag.Title = "Help";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="ui-widget" style="text-align:left">
+    <div class="ui-widget-content">
+        <div id="accordion">
+	        <h3><a href="#">What is @(((oikonomos.common.Models.ChurchViewModel)Session[oikonomos.common.SessionVariable.Church]).SiteHeader)</a></h3>
+	        <div>
+		        In the past, most churches kept a list of people in the church with some contact information.  @(((oikonomos.common.Models.ChurchViewModel)Session[oikonomos.common.SessionVariable.Church]).SiteHeader) goes so much further than that.  
+                <ol>
+                    <li>It allows you to update you own information, so you are no longer reliant on someone else keeping your contact details updated. </li>
+                    <li>It allows you to instantly lookup the contact details of anyone else in your homegroup/church - and those are the latest, correct details.  Much better than an outdated address booklet</li>
+                    <li>You can view peoples addresses on a map, so no need to ask for directions anymore (men love this)</li>
+                    <li>You can get reminders of important upcoming events (birthdays, anniversaries, homegroup announcements) right here on the website, or if you choose, emailed to you</li>
+                </ol>	       
+            </div>
+            @if (ViewBag.Role == (int)oikonomos.common.SecurityRoles.Member)
+            {
+	        <h3><a href="#">How do I update my details?</a></h3>
+	        <div>
+		        Simple click on "My Details", do the necessary changes and click "Save".  That's it, you're done
+	        </div>
+            <h3><a href="#">Do I need to fill all the fields in?</a></h3>
+	        <div>
+		        The more the merrier, but the only essential ones are your firstname and your surname.
+	        </div>
+            }
+            else if (ViewBag.Role == (int)oikonomos.common.SecurityRoles.GroupAdministrator)
+            {
+            <h3><a href="#">How do I update the details of someone in my group?</a></h3>
+	        <div>
+		        Simple click on My Homegroup, click on the person whose details you want to update, do the necessary changes and click "Save".  That's it, you're done
+	        </div>
+            }
+            else
+            {
+            <h3><a href="#">How do I update someone's details?</a></h3>
+	        <div>
+		        Simple click on "People", search for the person whose details you want to update, do the necessary changes and click "Save".  That's it, you're done
+	        </div>
+            }
+            <h3><a href="#">How do I look up a telephone number of someone in the church?</a></h3>
+	        <div>
+		        Click on reports, select "Church list" and search for the person you're looking for.  Alternatively you can generate a pdf document of the whole list so you can print it and keep it in your bag (ladies love this)
+	        </div>
+            <h3><a href="#">Why should I capture my birthday?  I don't want people to know how old I am</a></h3>
+	        <div>
+		        Firstly, unless you are under 12, no-one (except your homegroup leader who is also able to update your details if you don't get to it) will get to see your actual age.  We only keep the birthday information for 2 reasons:
+                <ul>
+                    <li>So we can tell everyone in your group that your birthday is coming up so they can celebrate with you</li>
+                    <li>So we can get the general age profile in the church.  This is important to help us pastor the church well.  So if you cheat on your birthdate and say you are 10 years younger than you actually are, then you might just find the music a little loud on a Sunday <img src="/Content/Images/wink.png" alt=";)" /></li>
+                    <li>If you are under 12, we really need the ages to work out which children should be in which group</li>
+                    <li>If you're still not convinced, then leave your birthday blank.  The only fields that are essential are your firstname and your surname</li>
+                </ul>
+	        </div>
+            <h3><a href="#">I have an iPhone or an iPad.  Is @(((oikonomos.common.Models.ChurchViewModel)Session[oikonomos.common.SessionVariable.Church]).SiteHeader) available in the App Store?</a></h3>
+	        <div>
+		        Our iPad/iPhone/iPod app is in development.  We'll post an update right here when it is available
+	        </div>
+            <h3><a href="#">I have an Android tablet/phone. Is @(((oikonomos.common.Models.ChurchViewModel)Session[oikonomos.common.SessionVariable.Church]).SiteHeader) available in the Android Market?</a></h3>
+	        <div>
+		        Our android app is in development.  We'll post an update right here when it is available
+	        </div>
+        </div>
+
+    </div>
+</div>
+
+

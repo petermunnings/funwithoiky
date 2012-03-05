@@ -1,0 +1,70 @@
+﻿@{
+    ViewBag.Title = "ValidateFacebookLogin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Ajax.BeginForm("ValidateFacebookLogin", "Account", null))
+{
+    <p>&nbsp;</p>
+    <table class="ui-widget-header">
+        <tr style="width:320px">
+            <td>Validate Facebook Login</td>
+        </tr>
+    </table>
+    <table class="ui-widget-content">
+        <tr style="height:30px">
+            <td colspan="4">&nbsp;</td>
+        </tr>
+    
+        <tr>
+            <td style="width: 20px"></td>
+            <td colspan="2" style="width:320px; text-align:left"><b>There is one final step</b> - this will only happen once.  <br />We just need to link up your facebook login.  <br />Please enter the email address and password that was sent to you <br /> it would have looked something like this:
+            </td>
+            <td style="width:20px"></td>
+        </tr>
+        <tr style="height:30px">
+            <td colspan="4">&nbsp;</td>
+        </tr>
+        <tr>
+            <td style="width: 20px"></td>
+            <td colspan="2">
+            <div style="background-color: #FFF7CC; text-align:left"> 
+            If not, you can login with the following credentials<br />
+                    Email: <span style="color:Gray; font-style:italic">xxx@xxx.xxx</span><br />
+                    Password: <span style="color:Gray; font-style:italic">xxxxxxxxx</span><br />
+                        
+            </div>
+            <br /><br />
+            Once you've done this, we'll link your facebook profile to your current profile - and its done
+            </td>
+            <td style="width: 20px"></td>
+        </tr>
+        <tr style="height:30px">
+            <td colspan="4">&nbsp;</td>
+        </tr>
+        <tr style="height:30px">
+            <td style="width: 20px"></td>
+            <td style="width:120px; text-align:right">Email:&nbsp;</td>
+            <td style="width:200px; text-align:left">@Html.TextBox("email", "", new { style = "width:150px", @class = "ui-corner-all" })</td>
+            <td style="width: 20px"></td>
+        </tr>
+        <tr style="height:30px">
+            <td style="width: 20px"></td>
+            <td style="width:120px; text-align:right">Password:&nbsp;</td>
+            <td style="width:200px; text-align:left">@Html.Password("password", "", new { style = "width:150px", @class = "ui-corner-all" })</td>
+            <td style="width: 20px"></td>
+        </tr>
+        <tr style="height:30px">
+            <td style="width: 20px"></td>
+            <td style="width:120px; text-align:center">&nbsp;</td>
+            <td style="width:200px; text-align:left">
+            <input type="submit" value="Submit"/>
+            </td>
+            <td style="width: 20px"></td>
+        </tr>
+        <tr style="height:30px">
+            <td colspan="4">&nbsp;</td>
+        </tr>
+    </table>
+
+}
