@@ -15,6 +15,7 @@ using System.Net.Mail;
 using System.Text;
 using Facebook.Web;
 using oikonomos.web.Helpers;
+using oikonomos.web.Models.Groups;
 
 
 namespace oikonomos.web.Controllers
@@ -45,11 +46,20 @@ namespace oikonomos.web.Controllers
 
         public ActionResult HomeGroups(int? groupId)
         {
+            GroupViewModel viewModel = new GroupViewModel();
+            
             Person currentPerson = SecurityHelper.CheckCurrentUser(Session, Response, ViewBag);
             if (currentPerson == null)
             {
                 return View("Login");
             }
+
+            viewModel.GroupClassifications = SettingsDataAccessor.FetchGroupClassifications(currentPerson);
+            viewModel.GroupClassifications.Insert(0, new GroupClassificationViewModel() { GroupClassificationId = 0, GroupClassification = "Select...." });
+            viewModel.SelectedGroupClassificationId = 0;
+
+            viewModel.Suburbs = SettingsDataAccessor.FetchSuburbs(currentPerson);
+            viewModel.EventTypes = SettingsDataAccessor.FetchEventTypes(currentPerson, "group");
 
             List<OptionalFieldViewModel> optionalFields = SettingsDataAccessor.FetchChurchOptionalFields(currentPerson.ChurchId);
             foreach (OptionalFieldViewModel ct in optionalFields)
@@ -58,17 +68,17 @@ namespace oikonomos.web.Controllers
                 {
                     case OptionalFields.HomeGroupClassification:
                         {
-                            ViewBag.DisplayGroupClassification = ct.Display ? "tableRow" : "displayNone";
+                            viewModel.DisplayGroupClassification = ct.Display ? "tableRow" : "displayNone";
                             break;
                         }
                     case OptionalFields.SuburbLookup:
                         {
-                            ViewBag.DisplaySuburbLookup = ct.Display ? "tableRow" : "displayNone";
+                            viewModel.DisplaySuburbLookup = ct.Display ? "tableRow" : "displayNone";
                             break;
                         }
                     case OptionalFields.GroupAdministratorsCanAddMembers:
                         {
-                            ViewBag.ShowRoles = ct.Display;
+                            viewModel.ShowRoles = ct.Display;
                             break;
                         }
                 }
@@ -76,19 +86,19 @@ namespace oikonomos.web.Controllers
 
             if (groupId.HasValue)
             {
-                ViewBag.GroupId = groupId.Value;
+                viewModel.GroupId = groupId.Value;
             }
             else
             {
-                ViewBag.GroupId = 0;
+                viewModel.GroupId = 0;
             }
 
             if (currentPerson.HasPermission(Permissions.EditAllGroups))
             {
-                ViewBag.GroupName = "Loading...";
-                ViewBag.ShowList = true;
-                ViewBag.ShowRoles = true;
-                return View();
+                viewModel.GroupName = "Loading...";
+                viewModel.ShowList = true;
+                viewModel.ShowRoles = true;
+                return View(viewModel);
             }
 
             if (currentPerson.HasPermission(Permissions.EditOwnGroups))
@@ -96,8 +106,8 @@ namespace oikonomos.web.Controllers
                 //If this person administrates more then one homegroup
                 //then a list of all of those will be shown
                 bool displayList = false;
-                ViewBag.GroupName = HomeGroupDataAccessor.FetchHomeGroupName(currentPerson.PersonId, ref displayList);
-                if (ViewBag.GroupName == string.Empty)
+                viewModel.GroupName = GroupDataAccessor.FetchHomeGroupName(currentPerson.PersonId, ref displayList);
+                if (viewModel.GroupName == string.Empty)
                 {
                     ViewBag.Message = "You are not currently administrating any groups";
                     return View("Login");
@@ -105,14 +115,14 @@ namespace oikonomos.web.Controllers
 
                 if (displayList)
                 {
-                    ViewBag.ShowList = true;
+                    viewModel.ShowList = true;
                 }
                 else
                 {
-                    ViewBag.ShowList = false;
+                    viewModel.ShowList = false;
                 }
 
-                return View();
+                return View(viewModel);
             }
 
             return View("Index");
@@ -214,7 +224,7 @@ namespace oikonomos.web.Controllers
 
             ViewBag.ChurchAdminDisplayRoles = false;
             ViewBag.GroupAdminDisplayRoles = false;
-            if (currentPerson.IsInRole(SecurityRoles.ChurchAdministrator))
+            if (currentPerson.HasPermission(Permissions.EditChurchPersonalDetails))
             {
                 ViewBag.ChurchAdminDisplayRoles = true;
             }
@@ -238,7 +248,7 @@ namespace oikonomos.web.Controllers
             }
 
             //Fetch Groups
-            ViewBag.Groups = HomeGroupDataAccessor.FetchHomeGroups(currentPerson.ChurchId, currentPerson);
+            ViewBag.Groups = GroupDataAccessor.FetchHomeGroups(currentPerson.ChurchId, currentPerson);
             List<OptionalFieldViewModel> optionalFields = SettingsDataAccessor.FetchChurchOptionalFields(currentPerson.ChurchId);
             foreach (OptionalFieldViewModel ct in optionalFields)
             {
@@ -282,23 +292,6 @@ namespace oikonomos.web.Controllers
                     case OptionalFields.HeardAbout:
                         {
                             ViewBag.DisplayHeardAbout = ct.Display ? "tableRow" : "displayNone";
-                            break;
-                        }
-                    case OptionalFields.GroupAdministratorsCanAddMembers:
-                        {
-                            if (ct.Display)
-                            {
-                                if (!currentPerson.IsInRole(SecurityRoles.ChurchAdministrator))
-                                {
-                                    if (p.PersonId != currentPerson.PersonId)
-                                    {
-                                        if (p.RoleName == "Visitor")
-                                        {
-                                            ViewBag.GroupAdminDisplayRoles = true;
-                                        }
-                                    }
-                                }
-                            }
                             break;
                         }
                 }
@@ -552,7 +545,7 @@ namespace oikonomos.web.Controllers
                         }
                     case OptionalFields.ShowWholeChurch:
                         {
-                            if (!currentPerson.IsInRole(SecurityRoles.ChurchAdministrator))
+                            if (!currentPerson.HasPermission(Permissions.ViewChurchContactDetails))
                             {
                                 ViewBag.DislayWholeChurch = ct.Display;
                             }

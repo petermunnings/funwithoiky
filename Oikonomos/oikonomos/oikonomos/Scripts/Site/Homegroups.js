@@ -20,151 +20,19 @@ function SaveHomeGroup() {
         AddressType: $("#hidden_addressType").val(),
         Lat: $("#hidden_lat").val(),
         Lng: $("#hidden_lng").val(),
-        GroupClassification: $("#select_hgClassification").val(),
-        Suburb: $("#select_hgSuburb").val()
+        GroupClassification: $("#SelectedGroupClassificationId").val(),
+        Suburb: $("#SelectedSuburbId").val()
     };
 
     $.post("/Ajax/SaveHomeGroup", $.postify(postData), function (data) {
-        FetchHomeGroupList($("#div_groupId")[0].innerText);
+        FetchGroupList($("#div_groupId")[0].innerText);
     }).error(function (jqXHR, textStatus, errorThrown) {
         $("#ajax_loader").hide();
         alert(jqXHR.responseText);
     });
 }
 
-function FetchHomeGroupList(groupId) {
-    $("#message").html("");
-    //Fetch the list
-    var jqxhr = $.post("/Ajax/FetchHomeGroups", function (data) {
-        homeGroups = data.HomeGroups;
-        $("#homeGroupList").empty();
-        $("#homeGroupTemplate")
-                .tmpl(homeGroups)
-                .appendTo("#homeGroupList");
-        if (homeGroups.length == 0) {
-            $("#homeGroupName").html("No Homegroups to Display");
-        }
-        else {
-            $("#homeGroupName").html(homeGroups[0].HomeGroupName);
-            selectedGroupId = homeGroups[0].GroupId;
-            if (groupId != 0) {
-                $.each(homeGroups, function () {
-                    if (this.GroupId == groupId) {
-                        selectedGroupId = groupId;
-                        $("#homeGroupName").html(this.HomeGroupName);
-                        return false;
-                    }
-                });
-            }
-
-            PopulatePeople(selectedGroupId, true);
-        }
-        $("#ajax_loader").hide();
-    }).error(function (jqXHR, textStatus, errorThrown) {
-        $("#ajax_loader").hide();
-        alert(jqXHR.responseText);
-    });
-}
-
-function FetchGroupClassifications() {
-    var optionList = [{ GroupClassificationId: 0, GroupClassification: "Select..."}];
-    $.post("/Ajax/FetchGroupClassifications", function (data) {
-        $("#select_hgClassification").empty();
-        $("#groupClassificationTemplate")
-                .tmpl($.merge(optionList, data.GroupClassifications))
-                .appendTo("#select_hgClassification");
-    }).error(function (jqXHR, textStatus, errorThrown) {
-        alert(jqXHR.responseText);
-    });
-}
-
-function FetchSuburbs() {
-    var optionList = [{ SuburbId: 0, SuburbName: "Select..."}];
-    $.post("/Ajax/FetchSuburbs", function (data) {
-        $("#select_hgSuburb").empty();
-        $("#suburbTemplate")
-                .tmpl($.merge(optionList, data.Suburbs))
-                .appendTo("#select_hgSuburb");
-    }).error(function (jqXHR, textStatus, errorThrown) {
-        alert(jqXHR.responseText);
-    });
-}
-
-function FetchEventTypes() {
-    var postData = { eventFor: 'Group' };
-    $.post("/Ajax/FetchEventTypes", $.postify(postData), function (data) {
-        $("#eventsList").empty();
-        $("#eventTypeTemplate")
-                .tmpl(data.EventTypes)
-                .appendTo("#eventsList");
-    })
-    .error(function (jqXHR, textStatus, errorThrown) {
-        alert(jqXHR.responseText);
-    });
-}
-
-function PopulatePeopleLists(data) {
-    members = data.Members;
-    visitors = data.Visitors;
-    $("#membersList").empty();
-    $("#visitorsList").empty();
-    $("#membersListAttendance").empty();
-    $("#visitorsListAttendance").empty();
-    $("#memberTemplate")
-                .tmpl(members)
-                .appendTo("#membersList");
-    if (visitors.length > 0) {
-        $("#visitorsHeader").show();
-        $("#visitorsHeaderAttendance").show();
-        $("#visitorTemplate")
-                .tmpl(visitors)
-                .appendTo("#visitorsList");
-        $("#attendanceTemplate")
-                .tmpl(visitors)
-                .appendTo("#visitorsListAttendance");
-    }
-    else {
-        $("#visitorsHeader").hide();
-        $("#visitorsHeaderAttendance").hide();
-    }
-    $("#attendanceTemplate")
-                .tmpl(members)
-                .appendTo("#membersListAttendance");
-
-    FetchAttendance();
-    $("#ajax_loader").hide();
-}
-
-function FetchPeople(homeGroupId, onLoad) {
-    $("#message").html("");
-    var postData = { groupId: homeGroupId };
-
-    var jqxhr = $.post("/Ajax/FetchPeopleInHomeGroup", $.postify(postData), function (data) {
-        PopulatePeopleLists(data);
-        if (!onLoad) {
-            if ($("#tabs").tabs("length") > 2) {
-                $("#tabs").tabs("select", 1);
-            }
-            else {
-                $("#tabs").tabs("select", 0);
-            }
-        }
-    }).error(function (jqXHR, textStatus, errorThrown) {
-        $("#ajax_loader").hide();
-        alert(jqXHR.responseText);
-    });
-}
-
-function PopulatePeople(homeGroupId, onLoad) {
-    $("#message").html("");
-    $("#ajax_loader").show();
-    //Get the people
-    FetchPeople(homeGroupId, onLoad);
-    $("#table_people").show();
-    $("#button_addPerson").show();
-}
-
-function AddPersonToHomeGroup(personId, homeGroupId) {
+function AddPersonToGroup(personId, homeGroupId) {
     $("#message").html("");
     $("#message_hg").html("Adding person");
     $("#ajax_loader_hg").show();
@@ -228,7 +96,7 @@ function AddPersonToHomeGroup(personId, homeGroupId) {
         };
 
         $.post("/Ajax/SavePerson", $.postify(personData), function (data) {
-            AddPersonToHomeGroup(data.PersonId, homeGroupId);
+            AddPersonToGroup(data.PersonId, homeGroupId);
         })
         .error(function (jqXHR, textStatus, errorThrown) {
             alert(jqXHR.responseText);
@@ -240,8 +108,8 @@ function AddPersonToHomeGroup(personId, homeGroupId) {
 
         var postData = { groupId: homeGroupId, personId: personId };
 
-        $.post("/Ajax/AddPersonToHomeGroup", $.postify(postData), function (data) {
-            PopulatePeopleLists(data);
+        $.post("/Ajax/AddPersonToGroup", $.postify(postData), function () {
+            ReloadPeopleGrid(selectedGroupId);
             $("#message_hg").html("");
             $("#ajax_loader_hg").hide();
         }).error(function (jqXHR, textStatus, errorThrown) {
@@ -253,13 +121,13 @@ function AddPersonToHomeGroup(personId, homeGroupId) {
     }
 }
 
-function RemovePersonFromHomeGroup(personId, homeGroupId) {
+function RemovePersonFromGroup(personId, groupId) {
     $("#message").html("");
     $("#ajax_loader_hg").show();
-    var postData = { groupId: homeGroupId, personId: personId };
+    var postData = { groupId: groupId, personId: personId };
 
-    var jqxhr = $.post("/Ajax/RemovePersonFromHomeGroup", $.postify(postData), function (data) {
-        PopulatePeopleLists(data);
+    var jqxhr = $.post("/Ajax/RemovePersonFromGroup", $.postify(postData), function () {
+        ReloadPeopleGrid(groupId);
         $("#ajax_loader_hg").hide();
     }).error(function (jqXHR, textStatus, errorThrown) {
         $("#ajax_loader_hg").hide();
@@ -279,24 +147,14 @@ function SetAdministrator(personId, homeGroupId) {
     $.post("/Ajax/SetHomeGroupAdministrator", $.postify(postData));
 }
 
-function DeleteHomeGroup(homeGroupId) {
+function DeleteGroup() {
     $("#message").html("");    
-    var postData = { groupId: homeGroupId};
+    var postData = { groupId: selectedGroupId};
 
     var jqxhr = $.post("/Ajax/DeleteHomeGroup", $.postify(postData), function (data) {
         $("#message").html(data.Message);
         if (data.Success) {
-            members = null;
-            visitors = null;
-            $("#peopleList").empty();
-            selectedGroupId = 0;
-            $("#table_people").hide();
-            $("#button_addPerson").hide();
-            homeGroups = data.HomeGroups;
-            $("#homeGroupList").empty();
-            $("#homeGroupTemplate")
-                    .tmpl(homeGroups)
-                    .appendTo("#homeGroupList");
+            $("#jqgGroups").trigger("reloadGrid");
             $("#ajax_loader").hide();
         }
     }).error(function (jqXHR, textStatus, errorThrown) {
@@ -495,9 +353,9 @@ function FetchAttendance() {
     });
 }
 
-function FetchEmailList(includeVisitors) {
-    var postData = { groupId: selectedGroupId,
-                     includeVisitors: includeVisitors };
+function FetchEmailList() {
+    var selArr = $("#jqgPeople").getGridParam("selarrrow");
+    var postData = { groupId: selectedGroupId, selectedIds: selArr };
 
     OpenEmailDialog();
     var jqxhr = $.post("/Ajax/FetchGroupEmails", $.postify(postData), function (data) {
@@ -535,7 +393,7 @@ function ShowLeaveEvents(personId) {
             "Remove Person from Group": function () {
                 $("#ajax_loader").show();
                 SaveLeaveEvents(personId);
-                RemovePersonFromHomeGroup(personId, selectedGroupId);
+                RemovePersonFromGroup(personId, selectedGroupId);
                 $(this).dialog("close");
             },
             Cancel: function () {
@@ -545,15 +403,253 @@ function ShowLeaveEvents(personId) {
     });
 }
 
+function EditPerson() {
+    var selArr = $("#jqgPeople").getGridParam("selarrrow");
+    if (selArr.length > 0)
+        window.location.replace("/Home/Person?PersonId=" + selArr[0]);
+}
+
+function DeletePerson(personId) {
+    var selArr = $("#jqgPeople").getGridParam("selarrrow");
+    if (selArr.length > 0)
+        ShowLeaveEvents(selArr[0]);
+}
+
+function AddPerson() {
+    //Populate fields
+    $("#hidden_personId").val("0");
+    $("#text_personName").val("");
+    $("#addPerson_securityRole").prop('disabled', false);
+    $("#addPerson_securityRole").val("Visitor");
+    $("#add_Person").dialog(
+        {
+            modal: true,
+            height: 180,
+            width: 440,
+            resizable: false,
+            buttons: {
+                "Add Person": function () {
+                    $("#ajax_loader").show();
+                    rowId = 0;
+                    AddPersonToGroup($("#hidden_personId").val(), selectedGroupId);
+                    $(this).dialog("close");
+                },
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+}
+
+function SetupPeopleGrid() {
+    $('#jqgPeople').jqGrid({
+        url: '/Ajax/FetchPeopleInGroup',
+        datatype: 'json',
+        mtype: 'POST',
+        postData: { groupId: function () { return selectedGroupId; } },
+        colNames: ['PersonId', 'Firstname', 'Surname', 'HomePhone', 'CellPhone', 'Email'],
+        colModel: [
+                    { name: 'PersonId', index: 'PersonId', hidden: true, search: false },
+                    { name: 'Firstname', index: 'Firstname', align: 'left', width: 150, search: true },
+                    { name: 'Surname', index: 'Surname', align: 'left', width: 150, search: true },
+                    { name: 'HomePhone', index: 'HomePhone', align: 'left', width: 110, search: false },
+                    { name: 'CellPhone', index: 'CellPhone', align: 'left', width: 110, search: false },
+                    { name: 'Email', index: 'Email', align: 'left', width: 200, search: false }
+                  ],
+        multiselect: true,
+        multiboxonly: true,
+        pager: $('#jqgpPeople'),
+        rowNum: 25,
+        sortname: 'Surname',
+        sortorder: 'asc',
+        viewrecords: true,
+        width: 'auto',
+        height: 'auto'
+    }).navGrid('#jqgpPeople', { edit: false, add: false, del: false, search: false })
+    .navButtonAdd('#jqgpPeople', {
+        caption: "Delete",
+        buttonicon: "ui-icon-trash",
+        onClickButton: function () {
+            DeletePerson();
+        },
+        position: "first"
+    })
+    .navButtonAdd('#jqgpPeople', {
+        caption: "Edit",
+        buttonicon: "ui-icon-pencil",
+        onClickButton: function () {
+            EditPerson();
+        },
+        position: "first"
+    })
+    .navButtonAdd('#jqgpPeople', {
+        caption: "Add",
+        buttonicon: "ui-icon-plus",
+        onClickButton: function () {
+            AddPerson();
+        },
+        position: "first"
+    });
+
+    $('#jqgPeople').jqGrid('filterToolbar', { stringResult: true, searchOnEnter: false });
+}
+
+function ReloadPeopleGrid(id) {
+    selectedGroupId = id;
+    $('#jqgGroups').jqGrid('setSelection', selectedGroupId);
+    var ret = $("#jqgGroups").getRowData(selectedGroupId);
+    $("#groupName").html(ret.GroupName);
+    $("#jqgPeople").trigger("reloadGrid");
+}
+
+function AddGroup() {
+    //Populate fields
+    $("#hidden_homeGroupId").val("0");
+    $("#text_homeGroupName").val("");
+    $("#text_homeGroupLeader").val("");
+    $("#hidden_homeGroupLeaderId").val("0");
+    $("#text_homeGroupAdministrator").val("");
+    $("#hidden_homeGroupAdministratorId").val("0");
+    $("#text_homeGroupAddress").val("");
+
+    $("#edit_homeGroup").dialog(
+        {
+            modal: true,
+            height: 350,
+            width: 440,
+            resizable: false,
+            buttons: {
+                "Save": function () {
+                    $("#ajax_loader").show();
+                    rowId = 0;
+                    SaveHomeGroup();
+                    $(this).dialog("close");
+                },
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            }
+
+        });
+}
+
+function EditGroup() {
+    var postData = { groupId: selectedGroupId };
+    $("#hidden_homeGroupId").val(selectedGroupId);
+    var jqxhr = $.post("/Ajax/FetchGroupInfo", $.postify(postData), function (data) {
+
+        $("#text_homeGroupName").val(data.GroupInfo.HomeGroupName);
+        $("#text_homeGroupLeader").val(data.GroupInfo.LeaderName);
+        $("#hidden_homeGroupLeaderId").val(data.GroupInfo.LeaderId);
+        $("#text_homeGroupAdministrator").val(data.GroupInfo.AdministratorName);
+        $("#hidden_homeGroupAdministratorId").val(data.GroupInfo.AdministratorId);
+        $("#text_address1").val(data.GroupInfo.Address1);
+        $("#text_address2").val(data.GroupInfo.Address2);
+        $("#text_address3").val(data.GroupInfo.Address3);
+        $("#text_address4").val(data.GroupInfo.Address4);
+        $("#hidden_addressType").val(data.GroupInfo.AddressType);
+        $("#hidden_addressId").val(data.GroupInfo.AddressId);
+        $("#hidden_lat").val(data.GroupInfo.Lat);
+        $("#hidden_lng").val(data.GroupInfo.Lng);
+        var groupClassification = data.GroupInfo.GroupClassification;
+        if (groupClassification == "") {
+            groupClassification = "Select...";
+        }
+        $("#SelectedGroupClassificationId").val(groupClassification);
+        var suburb = data.GroupInfo.Suburb;
+        if (suburb == "") {
+            suburb = "Select...";
+        }
+        $("#SelectedSuburbId").val(suburb);
+
+    });
+
+    $("#edit_homeGroup").dialog(
+        {
+            modal: true,
+            height: 400,
+            width: 440,
+            resizable: false,
+            buttons: {
+                "Save": function () {
+                    $("#ajax_loader").show();
+                    rowId = 0;
+                    SaveHomeGroup();
+                    $(this).dialog("close");
+                },
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            }
+
+        });
+}
+
 $(document).ready(function () {
-    FetchHomeGroupList($("#div_groupId")[0].innerText);
-    FetchSuburbs();
-    FetchEventTypes();
-    FetchGroupClassifications();
+    SetupPeopleGrid();
+
+    $('#jqgGroups').jqGrid({
+        url: '/Ajax/FetchGroupList',
+        datatype: 'json',
+        mtype: 'POST',
+        colNames: ['GroupId', 'Group Name', 'Leader', 'Administrator', 'Suburb', 'Classification'],
+        colModel: [
+                    { name: 'GroupId', index: 'GroupId', hidden: true, search: false },
+                    { name: 'GroupName', index: 'GroupName', align: 'left', width: 150, search: true },
+                    { name: 'LeaderName', index: 'LeaderName', align: 'left', width: 130, search: true },
+                    { name: 'Administrator', index: 'Administrator', align: 'left', width: 130, search: true },
+                    { name: 'Suburb', index: 'Suburb', align: 'left', width: 130, search: true },
+                    { name: 'GroupClassification', index: 'GroupClassification', align: 'left', width: 150, search: true }
+                  ],
+        pager: $('#jqgpGroups'),
+        rowNum: 25,
+        sortname: 'GroupName',
+        sortorder: 'asc',
+        viewrecords: true,
+        width: 'auto',
+        height: 'auto',
+        gridComplete: function () {
+            if ($('#jqgGroups').getDataIDs().length > 0) {
+                ReloadPeopleGrid($('#jqgGroups').getDataIDs()[0]);
+            }
+        },
+        onSelectRow: function (id) {
+            if (selectedGroupId != id) {
+                ReloadPeopleGrid(id);
+            }
+        }
+    })
+    .navGrid('#jqgpGroups', { edit: false, add: false, del: false, search: false })
+    .navButtonAdd('#jqgpGroups', {
+        caption: "Delete",
+        buttonicon: "ui-icon-trash",
+        onClickButton: function () {
+            DeleteGroup();
+        },
+        position: "first"
+    })
+    .navButtonAdd('#jqgpGroups', {
+        caption: "Edit",
+        buttonicon: "ui-icon-pencil",
+        onClickButton: function () {
+            EditGroup();
+        },
+        position: "first"
+    })
+    .navButtonAdd('#jqgpGroups', {
+        caption: "Add",
+        buttonicon: "ui-icon-plus",
+        onClickButton: function () {
+            AddGroup();
+        },
+        position: "first"
+    });
+
+    $('#jqgGroups').jqGrid('filterToolbar', { stringResult: true, searchOnEnter: false });
+
 
     $("#ajax_loader").hide();
     $("#ajax_loader_hg").hide();
-    $("#button_addHomeGroup").show();
     $("#ajax_loader_attendance").hide();
     $("#button_saveAttendance").show();
     $("#button_printAttendance").show();
@@ -579,12 +675,6 @@ $(document).ready(function () {
         }
     });
 
-    $("#homeGroupList").delegate(".selectHomeGroup", "click", function () {
-        selectedGroupId = $.tmplItem(this).data.GroupId;
-        $("#homeGroupName").html($.tmplItem(this).data.HomeGroupName);
-        PopulatePeople(selectedGroupId, false);
-    });
-
     $("#table_people").delegate(".selectPerson", "mouseover mouseout", function (event) {
         if (event.type == 'mouseover') {
             $(this).css("cursor", "pointer");
@@ -593,74 +683,6 @@ $(document).ready(function () {
             $(this).css("cursor", "default");
             $(this).parent().removeClass("ui-state-hover");
         }
-    });
-
-    $("#table_people").delegate(".selectPerson", "click", function () {
-        selectedPersonId = $.tmplItem(this).data.PersonId;
-        window.location.replace("/Home/Person?PersonId=" + selectedPersonId + "&GroupId=" + selectedGroupId);
-    });
-
-    $("#table_peopleAttendance").delegate(".selectPerson", "mouseover mouseout", function (event) {
-        if (event.type == 'mouseover') {
-            $(this).css("cursor", "pointer");
-            $(this).parent().addClass("ui-state-hover");
-        } else {
-            $(this).css("cursor", "default");
-            $(this).parent().removeClass("ui-state-hover");
-        }
-    });
-
-    $("#table_peopleAttendance").delegate(".selectPerson", "click", function () {
-        selectedPersonId = $.tmplItem(this).data.PersonId;
-        window.location.replace("/Home/Person?PersonId=" + selectedPersonId);
-    });
-
-    $("#homeGroupList").delegate(".editHomeGroup", "click", function () {
-        //Populate fields
-        $("#hidden_homeGroupId").val($.tmplItem(this).data.GroupId);
-        $("#text_homeGroupName").val($.tmplItem(this).data.HomeGroupName);
-        $("#text_homeGroupLeader").val($.tmplItem(this).data.LeaderName);
-        $("#hidden_homeGroupLeaderId").val($.tmplItem(this).data.LeaderId);
-        $("#text_homeGroupAdministrator").val($.tmplItem(this).data.AdministratorName);
-        $("#hidden_homeGroupAdministratorId").val($.tmplItem(this).data.AdministratorId);
-        $("#text_address1").val($.tmplItem(this).data.Address1);
-        $("#text_address2").val($.tmplItem(this).data.Address2);
-        $("#text_address3").val($.tmplItem(this).data.Address3);
-        $("#text_address4").val($.tmplItem(this).data.Address4);
-        $("#hidden_addressType").val($.tmplItem(this).data.AddressType);
-        $("#hidden_addressId").val($.tmplItem(this).data.AddressId);
-        $("#hidden_lat").val($.tmplItem(this).data.Lat);
-        $("#hidden_lng").val($.tmplItem(this).data.Lng);
-        var groupClassification = $.tmplItem(this).data.GroupClassification;
-        if (groupClassification == "") {
-            groupClassification = "Select...";
-        }
-        $("#select_hgClassification").val(groupClassification);
-        var suburb = $.tmplItem(this).data.Suburb;
-        if (suburb == "") {
-            suburb = "Select...";
-        }
-        $("#select_hgSuburb").val(suburb);
-
-        $("#edit_homeGroup").dialog(
-        {
-            modal: true,
-            height: 400,
-            width: 440,
-            resizable: false,
-            buttons: {
-                "Save": function () {
-                    $("#ajax_loader").show();
-                    rowId = 0;
-                    SaveHomeGroup();
-                    $(this).dialog("close");
-                },
-                Cancel: function () {
-                    $(this).dialog("close");
-                }
-            }
-
-        })
     });
 
     $("#text_homeGroupLeader").autocomplete({
@@ -702,37 +724,6 @@ $(document).ready(function () {
             $("#addPerson_securityRole").val("Member");
             $("#addPerson_securityRole").prop('disabled', true);
         }
-    });
-
-    $("#button_addHomeGroup").click(function () {
-        //Populate fields
-        $("#hidden_homeGroupId").val("0");
-        $("#text_homeGroupName").val("");
-        $("#text_homeGroupLeader").val("");
-        $("#hidden_homeGroupLeaderId").val("0");
-        $("#text_homeGroupAdministrator").val("");
-        $("#hidden_homeGroupAdministratorId").val("0");
-        $("#text_homeGroupAddress").val("");
-
-        $("#edit_homeGroup").dialog(
-        {
-            modal: true,
-            height: 350,
-            width: 440,
-            resizable: false,
-            buttons: {
-                "Save": function () {
-                    $("#ajax_loader").show();
-                    rowId = 0;
-                    SaveHomeGroup();
-                    $(this).dialog("close");
-                },
-                Cancel: function () {
-                    $(this).dialog("close");
-                }
-            }
-
-        })
     });
 
     $("#table_peopleAttendance").delegate(".addEvent", "click", function () {
@@ -803,32 +794,6 @@ $(document).ready(function () {
         SaveAttendance();
     });
 
-    $("#button_addPerson").click(function () {
-        //Populate fields
-        $("#hidden_personId").val("0");
-        $("#text_personName").val("");
-        $("#addPerson_securityRole").prop('disabled', false);
-        $("#addPerson_securityRole").val("Visitor");
-        $("#add_Person").dialog(
-        {
-            modal: true,
-            height: 180,
-            width: 440,
-            resizable: false,
-            buttons: {
-                "Add Person": function () {
-                    $("#ajax_loader").show();
-                    rowId = 0;
-                    AddPersonToHomeGroup($("#hidden_personId").val(), selectedGroupId);
-                    $(this).dialog("close");
-                },
-                Cancel: function () {
-                    $(this).dialog("close");
-                }
-            }
-        })
-    });
-
     $("#button_addPersonAttendance").click(function () {
         //Populate fields
         $("#hidden_personId").val("0");
@@ -844,7 +809,7 @@ $(document).ready(function () {
                 "Add Person": function () {
                     $("#ajax_loader").show();
                     rowId = 0;
-                    AddPersonToHomeGroup($("#hidden_personId").val(), selectedGroupId);
+                    AddPersonToGroup($("#hidden_personId").val(), selectedGroupId);
                     $(this).dialog("close");
                 },
                 Cancel: function () {
@@ -863,14 +828,6 @@ $(document).ready(function () {
         window.location.replace("/Report/HomeGroupAttendance/" + selectedGroupId);
     });
 
-    $("#table_people").delegate(".removePerson", "click", function () {
-        ShowLeaveEvents($.tmplItem(this).data.PersonId);
-    });
-
-    $("#table_peopleAttendance").delegate(".removePerson", "click", function () {
-        ShowLeaveEvents($.tmplItem(this).data.PersonId);
-    });
-
     $("#membersList").delegate(".radio_leader", "click", function () {
         personId = $.tmplItem(this).data.PersonId;
         SetLeader(personId, selectedGroupId);
@@ -879,11 +836,6 @@ $(document).ready(function () {
     $("#membersList").delegate(".radio_administrator", "click", function () {
         personId = $.tmplItem(this).data.PersonId;
         SetAdministrator(personId, selectedGroupId);
-    });
-
-    $("#homeGroupList").delegate(".deleteHomeGroup", "click", function () {
-        selectedGroupId = $.tmplItem(this).data.GroupId;
-        DeleteHomeGroup(selectedGroupId);
     });
 
     $("#text_address1").keypress(function () {
@@ -959,24 +911,7 @@ $(document).ready(function () {
     });
 
     $("#button_sendEmail").click(function () {
-        //Fetch the email addresses to send the email to
-        $("#include_Visitors").dialog(
-                {
-                    modal: true,
-                    height: 200,
-                    width: 300,
-                    resizable: false,
-                    buttons: {
-                        "Yes": function () {
-                            FetchEmailList(true);
-                            $(this).dialog("close");
-                        },
-                        "No": function () {
-                            FetchEmailList(false);
-                            $(this).dialog("close");
-                        }
-                    }
-                });
+        FetchEmailList();
     });
 
 

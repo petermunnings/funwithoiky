@@ -21,29 +21,29 @@
                     <li>You can get reminders of important upcoming events (birthdays, anniversaries, homegroup announcements) right here on the website, or if you choose, emailed to you</li>
                 </ol>	       
             </div>
-            @if (ViewBag.Role == (int)oikonomos.common.SecurityRoles.Member)
+            @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditChurchPersonalDetails))
             {
-	        <h3><a href="#">How do I update my details?</a></h3>
+                <h3><a href="#">How do I update someone's details?</a></h3>
 	        <div>
-		        Simple click on "My Details", do the necessary changes and click "Save".  That's it, you're done
-	        </div>
-            <h3><a href="#">Do I need to fill all the fields in?</a></h3>
-	        <div>
-		        The more the merrier, but the only essential ones are your firstname and your surname.
+		        Simple click on "People", search for the person whose details you want to update, do the necessary changes and click "Save".  That's it, you're done
 	        </div>
             }
-            else if (ViewBag.Role == (int)oikonomos.common.SecurityRoles.GroupAdministrator)
+            else if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditGroupPersonalDetails))
             {
             <h3><a href="#">How do I update the details of someone in my group?</a></h3>
 	        <div>
 		        Simple click on My Homegroup, click on the person whose details you want to update, do the necessary changes and click "Save".  That's it, you're done
 	        </div>
             }
-            else
+            else if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditOwnDetails))
             {
-            <h3><a href="#">How do I update someone's details?</a></h3>
+            <h3><a href="#">How do I update my details?</a></h3>
 	        <div>
-		        Simple click on "People", search for the person whose details you want to update, do the necessary changes and click "Save".  That's it, you're done
+		        Simple click on "My Details", do the necessary changes and click "Save".  That's it, you're done
+	        </div>
+            <h3><a href="#">Do I need to fill all the fields in?</a></h3>
+	        <div>
+		        The more the merrier, but the only essential ones are your firstname and your surname.
 	        </div>
             }
             <h3><a href="#">How do I look up a telephone number of someone in the church?</a></h3>

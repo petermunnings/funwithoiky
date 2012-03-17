@@ -218,7 +218,19 @@ namespace oikonomos.web.Controllers
 
             return Json(jqGridData);
         }
-        
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public JsonResult FetchPeopleInGroup(JqGridRequest request, int groupId)
+        {
+            JqGridData jqGridData = new JqGridData();
+            if (Session[SessionVariable.LoggedOnPerson] != null)
+            {
+                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                jqGridData = PersonDataAccessor.FetchPeopleInGroupJQGrid(currentPerson, request, groupId);
+            }
+
+            return Json(jqGridData);
+        }
 
         [AcceptVerbs(HttpVerbs.Post)]
         public JsonResult FetchSites(JqGridRequest request)
@@ -234,7 +246,7 @@ namespace oikonomos.web.Controllers
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
-        public JsonResult FetchHomeGroupList(JqGridRequest request)
+        public JsonResult FetchGroupList(JqGridRequest request)
         {
             JqGridData jqGridData = new JqGridData();
             if (Session[SessionVariable.LoggedOnPerson] != null)
@@ -242,7 +254,7 @@ namespace oikonomos.web.Controllers
                 Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 if (currentPerson.HasPermission(common.Permissions.EditAllGroups))
                 {
-                    jqGridData = HomeGroupDataAccessor.FetchHomeGroupsJQGrid(currentPerson, request);
+                    jqGridData = GroupDataAccessor.FetchHomeGroupsJQGrid(currentPerson, request);
                 }
             }
 
@@ -258,7 +270,7 @@ namespace oikonomos.web.Controllers
                 Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 if (currentPerson.HasPermission(common.Permissions.ViewPeopleNotInAnyGroup))
                 {
-                    jqGridData = HomeGroupDataAccessor.FetchPeopleNotInAHomeGroupJQGrid(currentPerson, request);
+                    jqGridData = GroupDataAccessor.FetchPeopleNotInAHomeGroupJQGrid(currentPerson, request);
                 }
             }
 
@@ -574,10 +586,9 @@ namespace oikonomos.web.Controllers
         }
 
 
-        public JsonResult AddPersonToHomeGroup(int groupId, int personId)
+        public JsonResult AddPersonToGroup(int groupId, int personId)
         {
-            List<PersonViewModel> members = new List<PersonViewModel>();
-            List<PersonViewModel> visitors = new List<PersonViewModel>();
+            List<PersonViewModel> people = new List<PersonViewModel>();
 
             bool sessionTimedOut = false;
             if (Session[SessionVariable.LoggedOnPerson] == null)
@@ -590,25 +601,20 @@ namespace oikonomos.web.Controllers
                 //TODO Check for User Roles
                 if(personId>0 && groupId>0)
                 {
-                    HomeGroupDataAccessor.AddPersonToHomeGroup(groupId, personId);
-                    members = HomeGroupDataAccessor.FetchPeopleInGroup(groupId, false);
-                    visitors = HomeGroupDataAccessor.FetchPeopleInGroup(groupId, true);
+                    GroupDataAccessor.AddPersonToGroup(groupId, personId);
                 }
             }
 
             var response = new
             {
-                SessionTimeOut = sessionTimedOut,
-                Members = members,
-                Visitors = visitors
+                SessionTimeOut = sessionTimedOut
             };
             return Json(response, JsonRequestBehavior.DenyGet);
         }
 
-        public JsonResult RemovePersonFromHomeGroup(int groupId, int personId)
+        public JsonResult RemovePersonFromGroup(int groupId, int personId)
         {
-            List<PersonViewModel> members = new List<PersonViewModel>();
-            List<PersonViewModel> visitors = new List<PersonViewModel>();
+            List<PersonViewModel> people = new List<PersonViewModel>();
 
             bool sessionTimedOut = false;
             if (Session[SessionVariable.LoggedOnPerson] == null)
@@ -621,17 +627,13 @@ namespace oikonomos.web.Controllers
                 //TODO Check for User Roles
                 if (personId > 0 && groupId > 0)
                 {
-                    HomeGroupDataAccessor.RemovePersonFromHomeGroup(currentPerson, groupId, personId);
-                    members = HomeGroupDataAccessor.FetchPeopleInGroup(groupId, false);
-                    visitors = HomeGroupDataAccessor.FetchPeopleInGroup(groupId, true);
+                    GroupDataAccessor.RemovePersonFromGroup(currentPerson, groupId, personId);
                 }
             }
 
             var response = new
             {
-                SessionTimeOut = sessionTimedOut,
-                Members = members,
-                Visitors = visitors
+                SessionTimeOut = sessionTimedOut
             };
             return Json(response, JsonRequestBehavior.DenyGet);
         }
@@ -644,7 +646,7 @@ namespace oikonomos.web.Controllers
                 //TODO Check for User Roles
                 if (leaderId > 0 && groupId > 0)
                 {
-                    HomeGroupDataAccessor.SetHomeGroupLeader(currentPerson, groupId, leaderId);
+                    GroupDataAccessor.SetHomeGroupLeader(currentPerson, groupId, leaderId);
                 }
             }
         }
@@ -657,7 +659,7 @@ namespace oikonomos.web.Controllers
                 //TODO Check for User Roles
                 if (administratorId > 0 && groupId > 0)
                 {
-                    HomeGroupDataAccessor.SetHomeGroupAdministrator(currentPerson, groupId, administratorId);
+                    GroupDataAccessor.SetHomeGroupAdministrator(currentPerson, groupId, administratorId);
                 }
             }
         }
@@ -675,23 +677,21 @@ namespace oikonomos.web.Controllers
             else
             {
                 Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                if (currentPerson.HasPermission(common.Permissions.DeleteGroup))
+                if (currentPerson.HasPermission(common.Permissions.DeleteGroups))
                 {
-                    success = HomeGroupDataAccessor.DeleteHomeGroup(groupId, ref message);
+                    success = GroupDataAccessor.DeleteHomeGroup(groupId, ref message);
                 }
                 else
                 {
                     message = "You do not have permission to delete a homegroup";
                 }
                 
-                homeGroups = HomeGroupDataAccessor.FetchHomeGroups(currentPerson.ChurchId, currentPerson);
             }
 
             var response = new
             {
                 SessionTimeOut = sessionTimedOut,
                 Message = message,
-                HomeGroups = homeGroups,
                 Success = success
             };
             return Json(response, JsonRequestBehavior.DenyGet);
@@ -710,7 +710,7 @@ namespace oikonomos.web.Controllers
             {
                 Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 //TODO Check for User Roles
-                mapData = HomeGroupDataAccessor.FetchPeopleInChurch(currentPerson.ChurchId);
+                mapData = GroupDataAccessor.FetchPeopleInChurch(currentPerson.ChurchId);
             }
 
             var response = new
@@ -721,53 +721,6 @@ namespace oikonomos.web.Controllers
             return Json(response, JsonRequestBehavior.DenyGet);
         }
 
-        public JsonResult FetchPeopleInHomeGroup(int groupId)
-        {
-            List<PersonViewModel> members = new List<PersonViewModel>();
-            List<PersonViewModel> visitors = new List<PersonViewModel>();
-
-            bool sessionTimedOut = false;
-            if (Session[SessionVariable.LoggedOnPerson] == null)
-            {
-                sessionTimedOut = true;
-            }
-            else
-            {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                //TODO Check for User Roles
-                members = HomeGroupDataAccessor.FetchPeopleInGroup(groupId, false);
-                visitors = HomeGroupDataAccessor.FetchPeopleInGroup(groupId, true);
-            }
-
-            var response = new
-            {
-                SessionTimeOut = sessionTimedOut,
-                Members = members,
-                Visitors = visitors
-            };
-            return Json(response, JsonRequestBehavior.DenyGet); 
-        }
-
-        public JsonResult FetchHomeGroups()
-        {
-            List<HomeGroupsViewModel> homeGroups = new List<HomeGroupsViewModel>();
-            bool sessionTimedOut = false;
-            if (Session[SessionVariable.LoggedOnPerson] == null)
-            {
-                sessionTimedOut = true;
-            }
-            else
-            {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                
-                homeGroups = HomeGroupDataAccessor.FetchHomeGroups(currentPerson.ChurchId, currentPerson);
-            }
-
-            var response = new { SessionTimeOut = sessionTimedOut,
-                                 HomeGroups = homeGroups};
-            return Json(response, JsonRequestBehavior.DenyGet); 
-        }
-
         public JsonResult FetchGroupAttendanceGridSetup()
         {
             GridSetupViewModel gridSetup = new GridSetupViewModel();
@@ -776,7 +729,7 @@ namespace oikonomos.web.Controllers
                 Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 if (currentPerson.HasPermission(Permissions.ViewGroupAttendance))
                 {
-                    gridSetup = HomeGroupDataAccessor.FetchGroupAttendanceGridSetup();
+                    gridSetup = GroupDataAccessor.FetchGroupAttendanceGridSetup();
                 }
             }
 
@@ -792,7 +745,7 @@ namespace oikonomos.web.Controllers
                 Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 if (currentPerson.HasPermission(common.Permissions.ViewGroupAttendance))
                 {
-                    jqGridData = HomeGroupDataAccessor.FetchGroupAttendanceJQGrid(currentPerson, request);
+                    jqGridData = GroupDataAccessor.FetchGroupAttendanceJQGrid(currentPerson, request);
                 }
             }
 
@@ -888,6 +841,28 @@ namespace oikonomos.web.Controllers
             return Json(response, JsonRequestBehavior.DenyGet);
         }
 
+        public JsonResult FetchGroupInfo(int groupId)
+        {
+            bool sessionTimedOut = false;
+            var groupInfo = new HomeGroupsViewModel();
+            if (Session[SessionVariable.LoggedOnPerson] == null)
+            {
+                sessionTimedOut = true;
+            }
+            else
+            {
+                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                groupInfo = GroupDataAccessor.FetchGroupInfo(currentPerson, groupId);
+            }
+
+            var response = new
+            {
+                GroupInfo = groupInfo,
+                SessionTimeOut = sessionTimedOut
+            };
+            return Json(response, JsonRequestBehavior.DenyGet);
+        }
+
         public JsonResult SaveHomeGroup(HomeGroupsViewModel hgvm)
         {
             bool sessionTimedOut = false;
@@ -899,7 +874,7 @@ namespace oikonomos.web.Controllers
             {
                 Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 //TODO Check for User Roles
-                HomeGroupDataAccessor.SaveHomeGroup(currentPerson, hgvm);
+                GroupDataAccessor.SaveHomeGroup(currentPerson, hgvm);
             }
 
             var response = new
@@ -942,7 +917,7 @@ namespace oikonomos.web.Controllers
             {
                 Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 //TODO Check for User Roles
-                HomeGroupDataAccessor.SaveGroupSettings(currentPerson, groupSettings);
+                GroupDataAccessor.SaveGroupSettings(currentPerson, groupSettings);
             }
 
             var response = new
@@ -1062,7 +1037,7 @@ namespace oikonomos.web.Controllers
                 Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 if (currentPerson.HasPermission(Permissions.EmailGroupLeaders))
                 {
-                    Session[SessionVariable.EmailAddresses] = HomeGroupDataAccessor.FetchGroupLeaderAddresses(currentPerson, search, filters, includeMembers);
+                    Session[SessionVariable.EmailAddresses] = GroupDataAccessor.FetchGroupLeaderAddresses(currentPerson, search, filters, includeMembers);
                 }
                 else
                 {
@@ -1093,7 +1068,7 @@ namespace oikonomos.web.Controllers
                 Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 if (currentPerson.HasPermission(Permissions.SmsGroupLeaders))
                 {
-                    Session[SessionVariable.CellPhoneNos] = HomeGroupDataAccessor.FetchGroupLeaderCellPhoneNos(currentPerson, search, filters, includeMembers);
+                    Session[SessionVariable.CellPhoneNos] = GroupDataAccessor.FetchGroupLeaderCellPhoneNos(currentPerson, search, filters, includeMembers);
                 }
                 else
                 {
@@ -1110,7 +1085,7 @@ namespace oikonomos.web.Controllers
         }
         
 
-        public JsonResult FetchGroupEmails(int groupId, bool includeVisitors)
+        public JsonResult FetchGroupEmails(int groupId, List<int> selectedIds)
         {
             bool sessionTimedOut = false;
             string message = string.Empty;
@@ -1125,7 +1100,7 @@ namespace oikonomos.web.Controllers
                 Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 if (currentPerson.HasPermission(Permissions.EmailGroupMembers))
                 {
-                    Session[SessionVariable.EmailAddresses] = HomeGroupDataAccessor.FetchGroupAddresses(groupId, includeVisitors);
+                    Session[SessionVariable.EmailAddresses] = GroupDataAccessor.FetchGroupAddresses(groupId, selectedIds);
                 }
                 else
                 {

@@ -38,7 +38,7 @@ namespace oikonomos.web.Controllers
             return new FileStreamResult(stream, "application/pdf");
         }
 
-        public FileStreamResult VisitorList()
+        public FileStreamResult ContactList(int roleId)
         {
             Person currentUser = SecurityHelper.CheckCurrentUser(Session, Response, ViewBag);
             if (currentUser == null)
@@ -46,29 +46,29 @@ namespace oikonomos.web.Controllers
                 Redirect("/Home/Index");
             }
 
-            List<PersonListViewModel> visitorList = PersonDataAccessor.FetchPeople(currentUser, (int)SecurityRoles.Visitor);
+            List<PersonListViewModel> contactList = PersonDataAccessor.FetchPeople(currentUser, roleId);
             MemoryStream stream = new MemoryStream();
-            CreatePeopleListDocument(currentUser, visitorList, "Visitor").Save(stream, false);
+            CreatePeopleListDocument(currentUser, contactList, "Contact").Save(stream, false);
 
-            HttpContext.Response.AddHeader("content-disposition", "attachment; filename=visitorlist.pdf");
+            HttpContext.Response.AddHeader("content-disposition", "attachment; filename=contactlist.pdf");
             return new FileStreamResult(stream, "application/pdf");
         }
 
-        public FileStreamResult PastMemberList()
-        {
-            Person currentUser = SecurityHelper.CheckCurrentUser(Session, Response, ViewBag);
-            if (currentUser == null)
-            {
-                Redirect("/Home/Index");
-            }
+        //public FileStreamResult PastMemberList()
+        //{
+        //    Person currentUser = SecurityHelper.CheckCurrentUser(Session, Response, ViewBag);
+        //    if (currentUser == null)
+        //    {
+        //        Redirect("/Home/Index");
+        //    }
 
-            List<PersonListViewModel> visitorList = PersonDataAccessor.FetchPeople(currentUser, (int)SecurityRoles.PastMember);
-            MemoryStream stream = new MemoryStream();
-            CreatePeopleListDocument(currentUser, visitorList, "Past Member").Save(stream, false);
+        //    List<PersonListViewModel> visitorList = PersonDataAccessor.FetchPeople(currentUser, (int)SecurityRoles.PastMember);
+        //    MemoryStream stream = new MemoryStream();
+        //    CreatePeopleListDocument(currentUser, visitorList, "Past Member").Save(stream, false);
 
-            HttpContext.Response.AddHeader("content-disposition", "attachment; filename=pastmemberlist.pdf");
-            return new FileStreamResult(stream, "application/pdf");
-        }
+        //    HttpContext.Response.AddHeader("content-disposition", "attachment; filename=pastmemberlist.pdf");
+        //    return new FileStreamResult(stream, "application/pdf");
+        //}
 
         public FileStreamResult HomeGroupList(string id)
         {
@@ -79,12 +79,11 @@ namespace oikonomos.web.Controllers
             }
 
             int groupId = int.Parse(id);
-            List<PersonViewModel> membersList = HomeGroupDataAccessor.FetchPeopleInGroup(groupId,false);
-            List<PersonViewModel> visitorsList = HomeGroupDataAccessor.FetchPeopleInGroup(groupId, true);
+            List<PersonViewModel> peopleList = GroupDataAccessor.FetchPeopleInGroup(groupId);
             
-            string hgName = HomeGroupDataAccessor.FetchHomeGroupName(groupId);
+            string hgName = GroupDataAccessor.FetchHomeGroupName(groupId);
             MemoryStream stream = new MemoryStream();
-            CreateHomeGroupListDocument(hgName, membersList, visitorsList).Save(stream, false);
+            CreateHomeGroupListDocument(hgName, peopleList).Save(stream, false);
 
             HttpContext.Response.AddHeader("content-disposition", "attachment; filename=homegrouplist.pdf");
             return new FileStreamResult(stream, "application/pdf");
@@ -101,13 +100,12 @@ namespace oikonomos.web.Controllers
             int groupId = int.Parse(id);
             DateTime startDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-1);
             DateTime endDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(1).AddDays(-1);
-            List<AttendanceEventViewModel> membersList = EventDataAccessor.FetchGroupAttendance(currentUser, groupId, startDate, endDate, true, false);
-            List<AttendanceEventViewModel> visitorsList = EventDataAccessor.FetchGroupAttendance(currentUser, groupId, startDate, endDate, false, true);
+            List<AttendanceEventViewModel> attendees = EventDataAccessor.FetchGroupAttendance(currentUser, groupId, startDate, endDate);
             Dictionary<int, string> comments = EventDataAccessor.FetchGroupComments(currentUser, groupId);
 
-            string hgName = HomeGroupDataAccessor.FetchHomeGroupName(groupId);
+            string hgName = GroupDataAccessor.FetchHomeGroupName(groupId);
             MemoryStream stream = new MemoryStream();
-            CreateHomeGroupAttendanceDocument(hgName, membersList, visitorsList, comments).Save(stream, false);
+            CreateHomeGroupAttendanceDocument(hgName, attendees, comments).Save(stream, false);
 
             HttpContext.Response.AddHeader("content-disposition", "attachment; filename=homegroupattendance.pdf");
             return new FileStreamResult(stream, "application/pdf");
@@ -156,7 +154,7 @@ namespace oikonomos.web.Controllers
         }
 
         #region Private Helper Methods
-        private static MigraDoc.Rendering.PdfDocumentRenderer CreateHomeGroupListDocument(string groupName, List<PersonViewModel> membersList, List<PersonViewModel> visitorsList)
+        private static MigraDoc.Rendering.PdfDocumentRenderer CreateHomeGroupListDocument(string groupName, List<PersonViewModel> membersList)
         {
             // Create new MigraDoc document
             Document document = new Document();
@@ -185,18 +183,8 @@ namespace oikonomos.web.Controllers
             AddHomegroupData(document, membersList, membersTable);
 
             MigraDoc.DocumentObjectModel.Tables.Table visitorsTable = new MigraDoc.DocumentObjectModel.Tables.Table();
-            if (visitorsList.Count > 0)
-            {
-                AddHeaders(visitorsTable, "Visitors");
-                AddHomegroupData(document, visitorsList, visitorsTable);
-            }
 
             sec.Add(membersTable);
-            if (visitorsList.Count > 0)
-            {
-                sec.Add(new Paragraph());
-                sec.Add(visitorsTable);
-            }
 
             document.LastSection.PageSetup.TopMargin = Unit.FromMillimeter(20);
 
@@ -238,7 +226,7 @@ namespace oikonomos.web.Controllers
             }
         }
         
-        private static MigraDoc.Rendering.PdfDocumentRenderer CreateHomeGroupAttendanceDocument(string groupName, List<AttendanceEventViewModel> membersList, List<AttendanceEventViewModel> visitorsList, Dictionary<int, string> comments)
+        private static MigraDoc.Rendering.PdfDocumentRenderer CreateHomeGroupAttendanceDocument(string groupName, List<AttendanceEventViewModel> attendees, Dictionary<int, string> comments)
         {
             // Create new MigraDoc document
             Document document = new Document();
@@ -267,8 +255,7 @@ namespace oikonomos.web.Controllers
             List<int> month2Events = new List<int>();
             int month1 = DateTime.Now.AddMonths(-1).Month;
             int month2 = DateTime.Now.Month;
-            GetAttendanceDays(membersList, month1Events, month2Events, month1, month2);
-            GetAttendanceDays(visitorsList, month1Events, month2Events, month1, month2);
+            GetAttendanceDays(attendees, month1Events, month2Events, month1, month2);
 
             if (month1Events.Count == 0)
             {
@@ -279,23 +266,10 @@ namespace oikonomos.web.Controllers
                 month2Events.Add(1);
             }
 
-            MigraDoc.DocumentObjectModel.Tables.Table membersTable = new MigraDoc.DocumentObjectModel.Tables.Table();
-            int totalColumns = AddAttendanceHeaders(month1, month2, month1Events, month2Events, membersTable, "Members");
-            AddAttendanceData(membersList, document, month1Events, month2Events, month1, month2, membersTable, totalColumns, comments);
-
-            MigraDoc.DocumentObjectModel.Tables.Table visitorsTable = new MigraDoc.DocumentObjectModel.Tables.Table();
-            if (visitorsList.Count > 0)
-            {
-                totalColumns = AddAttendanceHeaders(month1, month2, month1Events, month2Events, visitorsTable, "Visitors");
-                AddAttendanceData(visitorsList, document, month1Events, month2Events, month1, month2, visitorsTable, totalColumns, comments);
-            }
-
-            sec.Add(membersTable);
-            if (visitorsList.Count > 0)
-            {
-                sec.Add(new Paragraph());
-                sec.Add(visitorsTable);
-            }
+            MigraDoc.DocumentObjectModel.Tables.Table attendeesTable = new MigraDoc.DocumentObjectModel.Tables.Table();
+            int totalColumns = AddAttendanceHeaders(month1, month2, month1Events, month2Events, attendeesTable, "Members");
+            AddAttendanceData(attendees, document, month1Events, month2Events, month1, month2, attendeesTable, totalColumns, comments);
+            sec.Add(attendeesTable);
 
             document.LastSection.PageSetup.TopMargin = Unit.FromMillimeter(20);
 
@@ -513,6 +487,7 @@ namespace oikonomos.web.Controllers
             {
                 table.AddColumn(Unit.FromMillimeter(56/totalDays)); //Weeks in month 2
             }
+            table.AddColumn(Unit.FromCentimeter(2)); //Member/Visitor
             table.AddColumn(Unit.FromCentimeter(5)); //Comments
 
             MigraDoc.DocumentObjectModel.Tables.Row row = table.AddRow();
@@ -563,6 +538,8 @@ namespace oikonomos.web.Controllers
                 cell.Format.Alignment = ParagraphAlignment.Center;
                 colCount++;
             }
+            cell = row.Cells[colCount++];
+            cell.AddParagraph("Role");
             cell = row.Cells[colCount];
             cell.AddParagraph("Comments");
 

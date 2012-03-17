@@ -55,6 +55,7 @@
     <Compile Include="Models\GroupSettingsViewModel.cs" />
     <Compile Include="Models\HomeGroupsViewModel.cs" />
     <Compile Include="Models\MapDataViewModel.cs" />
+    <Compile Include="Models\RoleViewModel.cs" />
     <Compile Include="Models\PersonEventViewModel.cs" />
     <Compile Include="Models\PersonGroupModel.cs" />
     <Compile Include="Models\PersonListViewModel.cs" />

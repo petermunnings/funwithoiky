@@ -41,7 +41,6 @@ function ClearForm() {
     $("#row_image").hide();
     $("#img_person").prop("src", " ");
     $("#GroupId").val("0");
-    $("#row_allocateToGroup").hide();
     }
 
 function PopulatePerson(person) {
@@ -83,13 +82,6 @@ function PopulatePerson(person) {
     $("#hidden_lat").val(person.Lat);
     $("#hidden_lng").val(person.Lng);
     $("#RoleName").val(person.RoleName);
-    if (person.RoleName == "Visitor") {
-        $("#row_allocateToGroup").show();
-        $("#GroupId").val(person.GroupId);
-    }
-    else {
-        $("#row_allocateToGroup").hide();
-    }
     $("#Site").val(person.Site);
     $("#text_heardAbout").val(person.HeardAbout);
     $("#family_members").empty();
@@ -280,19 +272,6 @@ function AddFamilyMember() {
     var lat = $("#hidden_lat").val();
     var lng = $("#hidden_lng").val();
     var groupId = $("#hidden_groupId").val();
-    var roleName = $("#hidden_roleName").val();
-    if ($("#RoleName").length > 0) { //Church Admin on the page
-        if ($("#RoleName") == "Member" || $("#RoleName")=="Contact" || $("#RoleName")=="Past Member" || $("#RoleName")=="Elder") {
-            roleName = $("#RoleName").val();
-        }
-        if (roleName == "Visitor") {
-            var groupId = $("#GroupId").val();
-        }
-    }
-
-    if ($("#groupAdmin_securityRole").length > 0) { //group admin on the page
-        roleName = $("#groupAdmin_securityRole").val();
-    }
 
     ClearForm();
     $("#hidden_familyId").val(familyId);
@@ -308,10 +287,6 @@ function AddFamilyMember() {
     $("#groupAdmin_securityRole").val(roleName);
     $("#hidden_roleName").val(roleName);
     $("#RoleName").val(roleName);
-    if (roleName == "Visitor") {
-        $("#GroupId").val(groupId);
-        $("#row_allocateToGroup").show();
-    }
 }
 
 function SendWelcomeMail() {
@@ -369,12 +344,6 @@ PageAlert = {
 
 var pageIsDirty = false;
 $(document).ready(function () {
-    if ($("#RoleName").val() == "Visitor") {
-        $("#row_allocateToGroup").show();
-    }
-    else {
-        $("#row_allocateToGroup").hide();
-    }
 
     FetchFamilyMembers();
 
@@ -592,16 +561,6 @@ $(document).ready(function () {
 
     $("#button_sendWelcomeMail").click(function () {
         SendWelcomeMail();
-    });
-
-    $("#RoleName").change(function () {
-        if ($("#RoleName").val() == "Visitor") {
-            $("#row_allocateToGroup").show();
-            $("#GroupId").val($("#GroupId option:first").val());
-        }
-        else {
-            $("#row_allocateToGroup").hide();
-        }
     });
 
     $('#jqgEventList').jqGrid({

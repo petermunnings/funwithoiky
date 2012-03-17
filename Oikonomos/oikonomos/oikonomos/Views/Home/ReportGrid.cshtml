@@ -15,7 +15,7 @@
                                            }
                                            </button>
             <button id="button_churchMap">Map</button>
-            @if (ViewBag.Role == (int)oikonomos.common.SecurityRoles.ChurchAdministrator)
+            @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewAdminReports))
             {
             <button id="button_adminReports">Admin Reports</button>
             }
@@ -33,9 +33,12 @@
     <button id="onlyMyHomeGroup">My Homegroup</button><text>&nbsp;</text>
     }
     <button id="button_viewChurchList">View as PDF</button>&nbsp;
-    @if (ViewBag.Role == (int)oikonomos.common.SecurityRoles.ChurchAdministrator)
+    @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EmailChurch))
     {
     <button id="button_sendEmail">Send Email</button><text>&nbsp;</text>
+    }
+    @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.SmsChurch))
+    {  
     <button id="button_sendSms">Send Sms</button>
     }
     <br />&nbsp;

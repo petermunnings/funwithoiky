@@ -10,7 +10,7 @@
         <div id="buttons_reports" style="text-align: left; height:40px" >
             <button id="button_churchList">Church List</button>
             <button id="button_churchMap">Map</button>
-            @if (ViewBag.Role == (int)oikonomos.common.SecurityRoles.ChurchAdministrator)
+            @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewAdminReports))
             {
             <button id="button_adminReports">Admin Reports</button>
             }

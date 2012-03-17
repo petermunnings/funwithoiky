@@ -63,9 +63,10 @@ namespace oikonomos.common.Models
         public string HeardAbout { get; set; }
         public string FacebookId { get; set; }
         public string Gender { get; set; }
+        public int RoleId { get; set; }
         public string RoleName { get; set; }
 
-        public List<string> SecurityRoles { get; set; }
+        public List<RoleViewModel> SecurityRoles { get; set; }
 
         public List<FamilyMemberViewModel> FamilyMembers { get; set; }
     }

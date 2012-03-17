@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Caching;
 using oikonomos.common;
+using oikonomos.common.Models;
 
 namespace oikonomos.data.Services
 {
@@ -39,22 +40,35 @@ namespace oikonomos.data.Services
             cache[name] = value;
         }
 
-        public static List<string> SecurityRoles(oikonomosEntities context)
+        public static List<RoleViewModel> SecurityRoles(oikonomosEntities context, Person currentPerson)
         {
-            List<string> securityRoles = Cache.FetchCacheValue<List<string>>(CacheNames.SecurityRoles);
+            List<RoleViewModel> securityRoles = Cache.FetchCacheValue<List<RoleViewModel>>(CacheNames.SecurityRoles);
             if (securityRoles == null)
             {
-                //Fetch Security Roles from Database
-                securityRoles = (from r in context.Roles
-                                 join pr in context.PermissionRoles
-                                 on r.RoleId equals pr.RoleId
-                                 where pr.PermissionId != (int)common.Permissions.SystemAdministrator
-                                 select r.Name).ToList();
+                securityRoles = new List<RoleViewModel>();
+                var currentPersonRole = GetCurrentPersonRole(context, currentPerson);
+                if (currentPersonRole != null)
+                    securityRoles = (from r in context.Roles
+                                     from parentRole in r.Roles
+                                     where r.ChurchId == currentPerson.ChurchId
+                                     && parentRole.RoleId == currentPersonRole.RoleId
+                                     select new RoleViewModel()
+                                     {
+                                         RoleId = r.RoleId,
+                                         Name = r.Name
+                                     }).ToList();
+                    
 
                 Cache.SetCacheValue(CacheNames.SecurityRoles, securityRoles);
             }
 
             return securityRoles;
+        }
+
+        private static PersonRole GetCurrentPersonRole(oikonomosEntities context, Person currentPerson)
+        {
+            var currentPersonRole = context.PersonRoles.FirstOrDefault(p => p.PersonId == currentPerson.PersonId);
+            return currentPersonRole;
         }
 
         public static List<string> Permissions(oikonomosEntities context)

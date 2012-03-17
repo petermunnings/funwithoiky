@@ -60,6 +60,7 @@ using System.Runtime.Serialization;
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_PermissionRole_Role", "Role", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Role), "PermissionRole", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.PermissionRole), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_PermissionRole_Permission", "Permission", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Permission), "PermissionRole", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.PermissionRole), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_PersonRole_Role", "Role", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Role), "PersonRole", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.PersonRole), true)]
+[assembly: EdmRelationshipAttribute("oikonomosModel", "CanSetRole", "Role", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.Role), "Role1", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.Role))]
 
 #endregion
 
@@ -5471,6 +5472,30 @@ namespace oikonomos.data
         private global::System.Boolean _IsVisible;
         partial void OnIsVisibleChanging(global::System.Boolean value);
         partial void OnIsVisibleChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.Int32> DependentOn
+        {
+            get
+            {
+                return _DependentOn;
+            }
+            set
+            {
+                OnDependentOnChanging(value);
+                ReportPropertyChanging("DependentOn");
+                _DependentOn = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DependentOn");
+                OnDependentOnChanged();
+            }
+        }
+        private Nullable<global::System.Int32> _DependentOn;
+        partial void OnDependentOnChanging(Nullable<global::System.Int32> value);
+        partial void OnDependentOnChanged();
 
         #endregion
     
@@ -7922,6 +7947,50 @@ namespace oikonomos.data
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<PersonRole>("oikonomosModel.FK_PersonRole_Role", "PersonRole", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "CanSetRole", "Role1")]
+        public EntityCollection<Role> Role1
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Role>("oikonomosModel.CanSetRole", "Role1");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Role>("oikonomosModel.CanSetRole", "Role1", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "CanSetRole", "Role")]
+        public EntityCollection<Role> Roles
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Role>("oikonomosModel.CanSetRole", "Role");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Role>("oikonomosModel.CanSetRole", "Role", value);
                 }
             }
         }

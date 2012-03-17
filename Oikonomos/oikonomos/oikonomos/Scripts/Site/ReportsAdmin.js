@@ -95,17 +95,17 @@ $(document).ready(function () {
 
     $('#jqgHomegroups').jqGrid({
         //url from wich data should be requested
-        url: '/Ajax/FetchHomeGroupList',
+        url: '/Ajax/FetchGroupList',
         //type of data
         datatype: 'json',
         //url access method type
         mtype: 'POST',
         //columns names
-        colNames: ['GroupId', 'HomeGroupName', 'Leader', 'Administrator', 'Suburb', 'GroupClassification'],
+        colNames: ['GroupId', 'GroupName', 'Leader', 'Administrator', 'Suburb', 'GroupClassification'],
         //columns model
         colModel: [
                     { name: 'GroupId', index: 'GroupId', hidden: true, search: false },
-                    { name: 'HomeGroupName', index: 'HomeGroupName', align: 'left', width: 150, search: true },
+                    { name: 'GroupName', index: 'GroupName', align: 'left', width: 150, search: true },
                     { name: 'LeaderName', index: 'LeaderName', align: 'left', width: 130, search: true },
                     { name: 'Administrator', index: 'Administrator', align: 'left', width: 130, search: true },
                     { name: 'Suburb', index: 'Suburb', align: 'left', width: 130, search: true },
@@ -116,7 +116,7 @@ $(document).ready(function () {
         //number of rows per page
         rowNum: 15,
         //initial sorting column
-        sortname: 'HomeGroupName',
+        sortname: 'GroupName',
         //initial sorting direction
         sortorder: 'asc',
         //we want to display total records count
@@ -225,22 +225,25 @@ $(document).ready(function () {
         }, 600);
     });
 
-    $('#jqgVisitors').jqGrid({
+    $('#jqgContactList').jqGrid({
         url: '/Ajax/FetchPeople',
-        postData: { roleId: 7 }, //Visitors
+        postData: { roleId: $("#SelectedRole").val() }, 
         datatype: 'json',
         mtype: 'POST',
-        colNames: ['PersonId', 'Firstname', 'Surname', 'Date First Visit', 'Group', 'Site'],
+        colNames: ['PersonId', 'Firstname', 'Surname', 'HomePhone', 'CellPhone', 'Email', 'Date First Visit', 'Group', 'Site'],
         //columns model
         colModel: [
                     { name: 'PersonId', index: 'PersonId', hidden: true, search: false },
                     { name: 'Firstname', index: 'Firstname', align: 'left', width: 180, search: true },
                     { name: 'Surname', index: 'Surname', align: 'left', width: 180, search: true },
+                    { name: 'HomePhone', index: 'HomePhone', align: 'left', width: 120 },
+                    { name: 'CellPhone', index: 'CellPhone', align: 'left', width: 120 },
+                    { name: 'Email', index: 'Email', align: 'left', width: 160 },
                     { name: 'Date', index: 'Date', align: 'left', width: 100 },
                     { name: 'Group', index: 'Group', align: 'left', width: 140 },
                     { name: 'Site', index: 'Site', align: 'left', width: 120 }
                   ],
-        pager: $('#jqgpVisitors'),
+        pager: $('#jqgpContactList'),
         rowNum: 20,
         sortname: 'Date',
         sortorder: 'desc',
@@ -250,38 +253,9 @@ $(document).ready(function () {
         ondblClickRow: function (rowid, iRow, iCol, e) {
             window.location.replace("/Home/Person?PersonId=" + rowid);
         }
-    }).navGrid('#jqgpVisitors', { edit: false, add: false, del: false, search: false });
+    }).navGrid('#jqgpContactList', { edit: false, add: false, del: false, search: false });
 
-    $('#jqgVisitors').jqGrid('filterToolbar', { stringResult: true, searchOnEnter: false });
-
-    $('#jqgPastMembers').jqGrid({
-        url: '/Ajax/FetchPeople',
-        postData: { roleId: 6 }, //Past Members
-        datatype: 'json',
-        mtype: 'POST',
-        colNames: ['PersonId', 'Firstname', 'Surname', 'HomePhone', 'CellPhone', 'Email'],
-        //columns model
-        colModel: [
-                    { name: 'PersonId', index: 'PersonId', hidden: true, search: false },
-                    { name: 'Firstname', index: 'Firstname', align: 'left', width: 160, search: true },
-                    { name: 'Surname', index: 'Surname', align: 'left', width: 160, search: true },
-                    { name: 'HomePhone', index: 'HomePhone', align: 'left', width: 120 },
-                    { name: 'CellPhone', index: 'CellPhone', align: 'left', width: 120 },
-                    { name: 'Email', index: 'Email', align: 'left', width: 160 }
-                  ],
-        pager: $('#jqgpPastMembers'),
-        rowNum: 20,
-        sortname: 'Date',
-        sortorder: 'desc',
-        viewrecords: true,
-        width: 'auto',
-        height: 'auto',
-        ondblClickRow: function (rowid, iRow, iCol, e) {
-            window.location.replace("/Home/Person?PersonId=" + rowid);
-        }
-    }).navGrid('#jqgpPastMembers', { edit: false, add: false, del: false, search: false });
-
-    $('#jqgPastMembers').jqGrid('filterToolbar', { stringResult: true, searchOnEnter: false });
+    $('#jqgContactList').jqGrid('filterToolbar', { stringResult: true, searchOnEnter: false });
 
     //Need to do an asynch post to fetch the columns for this next one
     $.post("/Ajax/FetchGroupAttendanceGridSetup", function (data) {
@@ -308,12 +282,8 @@ $(document).ready(function () {
         alert(jqXHR.responseText);
     });
 
-    $("#button_viewVisitorList").click(function () {
-        window.location.replace("/Report/VisitorList");
-    });
-
-    $("#button_viewPastMemberList").click(function () {
-        window.location.replace("/Report/PastMemberList");
+    $("#button_viewContactList").click(function () {
+        window.location.replace("/Report/ContactList?RoleId=" + $("#SelectedRole").val());
     });
 
     $("#button_exportChurchData").click(function () {

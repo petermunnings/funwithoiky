@@ -39,13 +39,13 @@
 <div id="tabs" style="text-align:left">
     <ul>
         <li><a href="#tabs-personal">Personal</a></li>
-        @if (ViewBag.Role == (int)oikonomos.common.SecurityRoles.ChurchAdministrator || ViewBag.Role == (int)oikonomos.common.SecurityRoles.GroupAdministrator)
+        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditOwnGroups))
         {
             if (ViewBag.GroupId > 0)
             {
         <li><a href="#tabs-group">Group</a></li>
             }
-            if (ViewBag.Role == (int)oikonomos.common.SecurityRoles.ChurchAdministrator)
+            if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditSettings))
             {
         <li><a href="#tabs-church">Church Contact Details</a></li>
         <li><a href="#tabs-sites">Sites</a></li>
@@ -81,7 +81,7 @@
             </tr>
         </table>
     </div>
-@if (ViewBag.Role == (int)oikonomos.common.SecurityRoles.ChurchAdministrator || ViewBag.Role == (int)oikonomos.common.SecurityRoles.GroupAdministrator)
+@if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditOwnGroups))
 {
     if (ViewBag.GroupId > 0)
     {
@@ -134,7 +134,7 @@
     </div>
     
     }
-    if (ViewBag.Role == (int)oikonomos.common.SecurityRoles.ChurchAdministrator)
+    if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditSettings))
     {
 
     <div id="tabs-church">

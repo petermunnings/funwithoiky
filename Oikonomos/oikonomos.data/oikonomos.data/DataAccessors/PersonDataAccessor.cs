@@ -267,28 +267,14 @@ namespace oikonomos.data.DataAccessors
         {
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                bool showWholeChurchList = (currentPerson.HasPermission(Permissions.ViewChurchContactDetails));
-                if (!showWholeChurchList)
-                {
-                    showWholeChurchList = (from c in context.ChurchOptionalFields
-                                           where c.ChurchId == currentPerson.ChurchId
-                                           && c.OptionalFieldId == (int)OptionalFields.ShowWholeChurch
-                                           select c.Visible).FirstOrDefault();
-                }
-               
                 var people = (from p in context.People.Include("Family").Include("PersonOptionalFields")
-                              join pr in context.PersonRoles
-                              on p.PersonId equals pr.PersonId
-                              join r in context.Roles
-                              on pr.RoleId equals r.RoleId
-                              join permissions in context.PermissionRoles
-                              on r.RoleId equals permissions.RoleId
                               where p.ChurchId == currentPerson.ChurchId
-                                && (permissions.PermissionId == (int)Permissions.ShowOnContactList)
                               select p);
 
-                if (!showWholeChurchList)
+                if (!(currentPerson.HasPermission(Permissions.ViewChurchContactDetails)))
                 {
+                    if(!currentPerson.HasPermission(Permissions.ViewGroupContactDetails))
+                        throw new Exception("You do not have permission to view contact details");
                     //Get the groups
                     var groups = (from pg in context.PersonGroups
                                   where pg.PersonId == currentPerson.PersonId
@@ -416,6 +402,97 @@ namespace oikonomos.data.DataAccessors
                         }).ToList();
             }
         }
+
+        public static JqGridData FetchPeopleInGroupJQGrid(Person currentPerson, JqGridRequest request, int groupId)
+        {
+            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            {
+                var people = (from p in context.People.Include("Family").Include("PersonGroups")
+                              from pg in p.PersonGroups
+                              where p.ChurchId == currentPerson.ChurchId
+                                && (pg.GroupId == groupId)
+                              select p);
+
+                if (request._search)
+                {
+                    foreach (JqGridFilterRule rule in request.filters.rules)
+                    {
+                        string ruleData = rule.data;
+                        //If we use rule.data throughout we get some strange errors in the SQL that Linq generates
+                        switch (rule.field)
+                        {
+                            case "Firstname":
+                                {
+                                    people = (from p in people
+                                              where p.Firstname.Contains(ruleData)
+                                              select p);
+                                    break;
+                                }
+                            case "Surname":
+                                {
+                                    people = (from p in people
+                                              where p.Family.FamilyName.Contains(ruleData)
+                                              select p);
+                                    break;
+                                }
+                        }
+                    }
+                }
+
+                int totalRecords = people.Count();
+
+                switch (request.sidx)
+                {
+                    case "Firstname":
+                        {
+                            if (request.sord.ToLower() == "asc")
+                            {
+                                people = people.OrderBy(p => p.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows);
+                            }
+                            else
+                            {
+                                people = people.OrderByDescending(p => p.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows);
+                            }
+                            break;
+                        }
+                    case "Surname":
+                        {
+                            if (request.sord.ToLower() == "asc")
+                            {
+                                people = people.OrderBy(p => p.Family.FamilyName).Skip((request.page - 1) * request.rows).Take(request.rows);
+                            }
+                            else
+                            {
+                                people = people.OrderByDescending(p => p.Family.FamilyName).Skip((request.page - 1) * request.rows).Take(request.rows);
+                            }
+                            break;
+                        }
+                }
+
+                JqGridData peopleGridData = new JqGridData()
+                {
+                    total = (int)Math.Ceiling((float)totalRecords / (float)request.rows),
+                    page = request.page,
+                    records = totalRecords,
+                    rows = (from p in people.AsEnumerable()
+                            select new JqGridRow()
+                            {
+                                id = p.PersonId.ToString(),
+                                cell = new string[] {
+                                                        p.PersonId.ToString(),
+                                                        p.Firstname,
+                                                        p.Family.FamilyName,
+                                                        p.Family.HomePhone,
+                                                        p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).FirstOrDefault()==null?"":p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).FirstOrDefault().Value,
+                                                        p.Email
+                                    }
+                            }).ToArray()
+                };
+
+                return peopleGridData;
+            }
+        }
+
 
         public static JqGridData FetchPeopleJQGrid(Person currentPerson, JqGridRequest request, int roleId)
         {
@@ -1060,7 +1137,7 @@ namespace oikonomos.data.DataAccessors
                     person.GroupId = (from pg in context.PersonGroups where pg.PersonId == personId select pg.GroupId).FirstOrDefault();
                 }
                 person.FamilyMembers = FetchFamilyMembers(personId, familyId, context);
-                person.SecurityRoles = Cache.SecurityRoles(context);
+                person.SecurityRoles = Cache.SecurityRoles(context, currentPerson);
 
                 return person;
             }
@@ -1195,13 +1272,13 @@ namespace oikonomos.data.DataAccessors
 
                 GetPersonToSaveEntity(person, currentPerson, context, out sendWelcomeEmail, out church, out personToSave);
                 bool anniversaryHasChanged = SavePersonalDetails(person, currentPerson, context, personToSave);
-                int roleId = GetRoleId(person, currentPerson, context, personToSave);
+                SaveRole(person, currentPerson, context, personToSave);
                 SaveContactInformation(person, personToSave);
                 SaveAddressInformation(person, personToSave);
                 UpdateRelationships(person, context, personToSave, anniversaryHasChanged);
-                SendEmails(person, sendWelcomeEmail, church, personToSave, roleId);
+                SendEmails(person, sendWelcomeEmail, church, personToSave);
                 SavePerson(person, context, personToSave);
-                EmailGroupLeader(person, currentPerson, context, church, personToSave, roleId);
+                EmailGroupLeader(person, currentPerson, context, church, personToSave);
 
                 return personToSave.PersonId;
             }
@@ -1348,9 +1425,9 @@ namespace oikonomos.data.DataAccessors
             context.SaveChanges();
         }
 
-        private static void EmailGroupLeader(PersonViewModel person, Person currentPerson, oikonomosEntities context, Church church, Person personToSave, int roleId)
+        private static void EmailGroupLeader(PersonViewModel person, Person currentPerson, oikonomosEntities context, Church church, Person personToSave)
         {
-            if (roleId == (int)SecurityRoles.Visitor && person.GroupId > 0)
+            if (personToSave.HasPermission(Permissions.NotifyGroupLeaderOfVisit) && person.GroupId > 0)
             {
                 bool sendEmailToGroupLeader = person.PersonId == 0;
                 var personGroup = (from pg in context.PersonGroups
@@ -1395,9 +1472,9 @@ namespace oikonomos.data.DataAccessors
             }
         }
 
-        private static void SendEmails(PersonViewModel person, bool sendWelcomeEmail, Church church, Person personToSave, int roleId)
+        private static void SendEmails(PersonViewModel person, bool sendWelcomeEmail, Church church, Person personToSave)
         {
-            if (sendWelcomeEmail && person.PersonId == 0 && roleId == (int)SecurityRoles.Visitor && personToSave.HasValidEmail())
+            if (sendWelcomeEmail && person.PersonId == 0 && personToSave.HasPermission(Permissions.SendWelcomeLetter) && personToSave.HasValidEmail())
             {
                 SendVisitorWelcome(sendWelcomeEmail,
                     person.Firstname,
@@ -1452,7 +1529,7 @@ namespace oikonomos.data.DataAccessors
             return anniversaryHasChanged;
         }
 
-        private static int GetRoleId(PersonViewModel person, Person currentPerson, oikonomosEntities context, Person personToSave)
+        private static void SaveRole(PersonViewModel person, Person currentPerson, oikonomosEntities context, Person personToSave)
         {
             int roleId = context
                 .Roles
@@ -1471,7 +1548,6 @@ namespace oikonomos.data.DataAccessors
             {
                 SavePersonRole(personToSave, roleId);
             }
-            return roleId;
         }
 
         private static void SavePersonRole(Person personToSave, int roleId)

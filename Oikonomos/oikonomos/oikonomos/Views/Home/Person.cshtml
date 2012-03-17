@@ -56,25 +56,28 @@
 <div id="tabs">
     <ul>
       <li><a href="#tabs-1">
-                @if (ViewBag.Role == (int)oikonomos.common.SecurityRoles.ChurchAdministrator ||
-                     ViewBag.Role == (int)oikonomos.common.SecurityRoles.GroupAdministrator)
+                @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditChurchPersonalDetails))
                 {
-                    <text>Edit People</text>           
+                    <text>Edit Church Personal Details</text>           
+                } 
+                else if(ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditGroupPersonalDetails))
+                {
+                    <text>Edit Group Personal Details</text> 
                 }
                 else
                 {
                     <text>Edit my Family's Details</text>
-                }</a></li>
+                }
+                </a></li>
 
-        @if (ViewBag.Role == (int)oikonomos.common.SecurityRoles.ChurchAdministrator ||
-            ViewBag.Role == (int)oikonomos.common.SecurityRoles.GroupAdministrator)
+        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewPersonalComments) || ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewGeneralComments))
         {
         <li><a href="#tabs-2">Events and Comments</a></li>
         <li><a href="#tabs-3">Groups</a></li>
         }       
     </ul>
     <div id="tabs-1">
-        @if (ViewBag.Role == (int)oikonomos.common.SecurityRoles.ChurchAdministrator)
+        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditChurchPersonalDetails) || ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditGroupPersonalDetails))
         {
         <div style="text-align:left; display: table; height:50px; vertical-align:top" class="ui-widget">
             <div class="tableRow">
@@ -233,37 +236,14 @@
                             </div>
                             </div>
 
-                            @if (ViewBag.ChurchAdminDisplayRoles)
-                            {
+                             @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.AllocateSecurityRole))
+                             {
                             <div class="tableRow">
                             <div style="text-align:right; display:table-cell">Security Roles</div>
                             <div style="text-align:right; display:table-cell">&nbsp;</div>
-                            <div style="text-align:left; display:table-cell">@Html.DropDownListFor(model => model.RoleName, new SelectList(Model.SecurityRoles), new { @class = "ui-corner-all" })</div>
+                            <div style="text-align:left; display:table-cell">@Html.DropDownListFor(model => model.RoleId, new SelectList(Model.SecurityRoles, "RoleId", "Name"), new { @class = "ui-corner-all" })</div>
                             </div>
-
-                            <div class="tableRow" id="row_allocateToGroup">
-                            <div style="text-align:right; display:table-cell">Allocate to Group</div>
-                            <div style="text-align:right; display:table-cell">&nbsp;</div>
-                            <div style="text-align:left; display:table-cell">@Html.DropDownListFor(model => model.GroupId, new SelectList(ViewBag.Groups, "GroupId", "HomeGroupName"), new { @class = "ui-corner-all" })</div>
-                            </div>
-                            }
-                            
-                            @if (ViewBag.GroupAdminDisplayRoles)
-                            {
-                            <div class="tableRow">
-                            <div style="text-align:right; display:table-cell">Security Roles</div>
-                            <div style="text-align:right; display:table-cell">&nbsp;</div>
-                            <div style="text-align:left; display:table-cell">
-                                <select id="groupAdmin_securityRole" class="ui-corner-all">
-                                    <option @if (Model.RoleName == "Visitor")
-                                            {<text>selected</text>}>Visitor</option>
-                                    <option @if (Model.RoleName == "Member")
-                                            {<text>selected</text>}>Member</option>
-                                </select>
-                                <img id="warning_group" alt="warning" src="/Content/images/warning.png" style="display:none" />
-                            </div>
-                            </div>
-                            }
+                             }
                             
                             <div class="@ViewBag.DisplaySites">
                             <div style="text-align:right; display:table-cell">Site normally attend</div>
@@ -318,14 +298,17 @@
                     <div style="text-align:right; display:table-cell; width:160px">
                     </div>
                     <div style="text-align:left; display:table-cell">
-                        @if (ViewBag.Role != (int)oikonomos.common.SecurityRoles.ChurchAdministrator)
+                        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditOwnDetails))
                         {
                         <img class="button" id="button_addFamilyMember2" src="/Content/images/add_family_24.png" title="Add a new family member" alt="Add a new family member" /> 
                         }
                         <img class="button" id="button_savePerson" alt="save" src="/Content/images/save_24.png"  title="Save person"/>
-                        @if (ViewBag.Role == (int)oikonomos.common.SecurityRoles.ChurchAdministrator)
+                        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.DeletePerson))
                         {                    
                             <img class="button" id="button_deletePerson" alt="delete" src="/Content/images/delete_24.png" title="Delete person" />
+                        }
+                        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.SendWelcomeLetter))
+                        {     
                             <img class="button" style="display:none" id="button_sendWelcomeMail" alt="Send Welcome email and password" src="/Content/images/email_24.png" title="Send Username and password" />
                         }
                         <img id="ajax_personSearch" alt="loading" src="/Content/images/ajax-loader.gif" style="display:none" />
@@ -335,8 +318,7 @@
             </div>
         </div>
     </div>
-        @if (ViewBag.Role == (int)oikonomos.common.SecurityRoles.ChurchAdministrator ||
-            ViewBag.Role == (int)oikonomos.common.SecurityRoles.GroupAdministrator)
+        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewGeneralComments) || ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewPersonalComments))
         {
     <div id="tabs-2">
         <table id="jqgEventList" cellpadding="0" cellspacing="0" style="width:330px"></table>
@@ -369,6 +351,5 @@
 <input id="hidden_personId" value="@(Model.PersonId == null ? 0 : Model.PersonId)" type="hidden" />
 <input id="hidden_familyId" value="@(Model.FamilyId == null ? 0 : Model.FamilyId)" type="hidden" />
 <input id="hidden_groupId" value="@(Model.GroupId == null ? 0 : Model.GroupId)" type="hidden" />
-<input id="hidden_roleName" value="@(Model.RoleName==null ? "Visitor" : Model.RoleName)" type="hidden" />
 
 

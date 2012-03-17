@@ -12,7 +12,7 @@ using System.Data.Objects;
 
 namespace oikonomos.data.DataAccessors
 {
-    public static class HomeGroupDataAccessor
+    public static class GroupDataAccessor
     {
         public static GridSetupViewModel FetchGroupAttendanceGridSetup()
         {
@@ -254,7 +254,7 @@ namespace oikonomos.data.DataAccessors
 
                 switch (request.sidx)
                 {
-                    case "HomeGroupName":
+                    case "GroupName":
                         {
                             if (request.sord.ToLower() == "asc")
                             {
@@ -519,7 +519,7 @@ namespace oikonomos.data.DataAccessors
             }
         }
 
-        public static void RemovePersonFromHomeGroup(Person currentPerson, int groupId, int personId)
+        public static void RemovePersonFromGroup(Person currentPerson, int groupId, int personId)
         {
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
@@ -540,7 +540,7 @@ namespace oikonomos.data.DataAccessors
             }
         }
 
-        public static void AddPersonToHomeGroup(int groupId, int personId)
+        public static void AddPersonToGroup(int groupId, int personId)
         {
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
@@ -562,14 +562,6 @@ namespace oikonomos.data.DataAccessors
 
                     context.SaveChanges();
                 }
-            }
-        }
-
-        public static List<PersonViewModel> FetchPeopleInGroup(int groupId, bool fetchVisitors)
-        {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
-            {
-                return FetchPeopleInGroup(groupId, fetchVisitors, context);
             }
         }
 
@@ -704,20 +696,13 @@ namespace oikonomos.data.DataAccessors
             return cellPhoneNos;
         }
 
-        public static List<string> FetchGroupAddresses(int groupId, bool fetchVisitors)
+        public static List<string> FetchGroupAddresses(int groupId, List<int> selectedIds)
         {
             List<string> addresses = new List<string>();
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                List<PersonViewModel> people = new List<PersonViewModel>();
-                if (fetchVisitors)
-                {
-                    people = FetchPeopleInGroup(groupId, context);
-                }
-                else
-                {
-                    people = FetchPeopleInGroup(groupId, false, context);
-                }
+                List<PersonViewModel> people = FetchPeopleInGroup(groupId, context, selectedIds);
+                
 
                 foreach (PersonViewModel person in people)
                 {
@@ -842,6 +827,39 @@ namespace oikonomos.data.DataAccessors
             }
         }
 
+        public static HomeGroupsViewModel FetchGroupInfo(Person currentPerson, int groupId)
+        {
+            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            {
+                Group hg = (from g in context.Groups
+                            where g.GroupId == groupId
+                            select g).FirstOrDefault();
+
+                return new HomeGroupsViewModel()
+                {
+                    Address1 = hg.AddressId == null ? string.Empty : hg.Address.Line1,
+                    Address2 = hg.AddressId == null ? string.Empty : hg.Address.Line2,
+                    Address3 = hg.AddressId == null ? string.Empty : hg.Address.Line3,
+                    Address4 = hg.AddressId == null ? string.Empty : hg.Address.Line4,
+                    AddressId = hg.AddressId == null ? 0 : hg.AddressId.Value,
+                    AddressType = hg.AddressId == null ? string.Empty : hg.Address.AddressType,
+                    AdministratorId = hg.AdministratorId==null ? 0 : hg.AdministratorId.Value,
+                    AdministratorName = hg.AdministratorId==null ? string.Empty : hg.Administrator.Firstname + " " + hg.Administrator.Family.FamilyName,
+                    ChurchName = hg.Church.Name,
+                    GroupClassification = hg.GroupClassificationId == null ? string.Empty : hg.GroupClassification.Name,
+                    GroupId = hg.GroupId,
+                    HomeGroupName = hg.Name,
+                    Lat = hg.AddressId == null ? 0 : hg.Address.Lat,
+                    LeaderId = hg.LeaderId == null ? 0 : hg.LeaderId.Value,
+                    LeaderName = hg.LeaderId == null ? string.Empty : hg.Leader.Firstname + " " + hg.Leader.Family.FamilyName,
+                    Lng = hg.AddressId == null ? 0 : hg.Address.Long,
+                    Suburb = hg.AddressId == null ? string.Empty : (hg.Address.ChurchSuburbId==null ? string.Empty : hg.Address.ChurchSuburb.Suburb)
+                };
+
+            }
+        }
+
+
         public static void SaveHomeGroup(Person currentPerson, HomeGroupsViewModel hgvm)
         {
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
@@ -937,16 +955,13 @@ namespace oikonomos.data.DataAccessors
                 }
                 if (hgvm.GroupClassification != null && hgvm.GroupClassification != "")
                 {
-                    if (hgvm.GroupClassification == "Select...")
+                    if (hgvm.GroupClassification == "0")
                     {
                         hg.GroupClassificationId = null;
                     }
                     else
                     {
-                        hg.GroupClassificationId = (from g in context.GroupClassifications
-                                                    where g.ChurchId == currentPerson.ChurchId
-                                                    && g.Name == hgvm.GroupClassification
-                                                    select g.GroupClassificationId).FirstOrDefault();
+                        hg.GroupClassificationId = int.Parse(hgvm.GroupClassification);
                     }
                 }
 
@@ -1016,61 +1031,47 @@ namespace oikonomos.data.DataAccessors
                 cellPhoneNos.Add(internationalCellPhoneNo);
         }
 
-        private static List<PersonViewModel> FetchPeopleInGroup(int groupId, bool fetchVisitors, oikonomosEntities context)
-        {
-            return (from p in context.People.Include("PersonOptionalField")
-                    join pg in context.PersonGroups
-                        on p.PersonId equals pg.PersonId
-                    join g in context.Groups
-                        on pg.GroupId equals g.GroupId
-                    join pr in context.PersonRoles
-                        on p.PersonId equals pr.PersonId
-                    orderby p.Family.FamilyName, p.Firstname
-                    where pg.GroupId == groupId
-                    select new PersonViewModel
-                    {
-                        PersonId = p.PersonId,
-                        FamilyId = p.FamilyId,
-                        Firstname = p.Firstname,
-                        Surname = p.Family.FamilyName,
-                        Email = p.Email,
-                        DateOfBirth_Value = p.DateOfBirth,
-                        AdministratorChecked = (p.PersonId == g.AdministratorId ? "CHECKED" : ""),
-                        LeaderChecked = (p.PersonId == g.LeaderId ? "CHECKED" : ""),
-                        HomePhone = p.Family.HomePhone,
-                        CellPhone = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).FirstOrDefault().Value,
-                        FacebookId = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.Facebook).FirstOrDefault().Value,
-                        RoleName = pr.Role.Name
-                    }).ToList();
-        }
-
         private static List<PersonViewModel> FetchPeopleInGroup(int groupId, oikonomosEntities context)
         {
-            return (from p in context.People.Include("PersonOptionalField")
-                    join pg in context.PersonGroups
-                        on p.PersonId equals pg.PersonId
-                    join g in context.Groups
-                        on pg.GroupId equals g.GroupId
-                    join pr in context.PersonRoles
-                        on p.PersonId equals pr.PersonId
-                    join permissions in context.PermissionRoles
-                        on pr.RoleId equals permissions.RoleId
-                    orderby p.Family.FamilyName, p.PersonId
-                    where pg.GroupId == groupId
-                        && (permissions.PermissionId == (int)Permissions.Login)
-                    select new PersonViewModel
-                    {
-                        PersonId = p.PersonId,
-                        FamilyId = p.Family.FamilyId,
-                        Firstname = p.Firstname,
-                        Surname = p.Family.FamilyName,
-                        Email = p.Email,
-                        DateOfBirth_Value = p.DateOfBirth,
-                        AdministratorChecked = (p.PersonId == g.AdministratorId ? "CHECKED" : ""),
-                        LeaderChecked = (p.PersonId == g.LeaderId ? "CHECKED" : ""),
-                        HomePhone = p.Family.HomePhone,
-                        CellPhone = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).FirstOrDefault().Value
-                    }).ToList();
+            return FetchPeopleInGroup(groupId, context, null);
+        }
+
+        private static List<PersonViewModel> FetchPeopleInGroup(int groupId, oikonomosEntities context, List<int> selectedIds)
+        {
+            var people = (from p in context.People.Include("PersonOptionalField")
+                          join pg in context.PersonGroups
+                              on p.PersonId equals pg.PersonId
+                          join g in context.Groups
+                              on pg.GroupId equals g.GroupId
+                          join pr in context.PersonRoles
+                              on p.PersonId equals pr.PersonId
+                          join permissions in context.PermissionRoles
+                              on pr.RoleId equals permissions.RoleId
+                          orderby p.Family.FamilyName, p.PersonId
+                          where pg.GroupId == groupId
+                              && (permissions.PermissionId == (int)Permissions.Login)
+                          select new PersonViewModel
+                          {
+                              PersonId = p.PersonId,
+                              FamilyId = p.Family.FamilyId,
+                              Firstname = p.Firstname,
+                              Surname = p.Family.FamilyName,
+                              Email = p.Email,
+                              DateOfBirth_Value = p.DateOfBirth,
+                              AdministratorChecked = (p.PersonId == g.AdministratorId ? "CHECKED" : ""),
+                              LeaderChecked = (p.PersonId == g.LeaderId ? "CHECKED" : ""),
+                              HomePhone = p.Family.HomePhone,
+                              CellPhone = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).FirstOrDefault().Value
+                          });
+
+            if(selectedIds !=null)
+            {
+                people = (from p in people
+                          where selectedIds.Contains(p.PersonId)
+                          select p);
+            }
+
+            return people.ToList();
         }
 
         private static IQueryable<Group> FetchGroupList(Person currentPerson, bool search, List<JqGridFilterRule> rules, oikonomosEntities context)
@@ -1086,7 +1087,7 @@ namespace oikonomos.data.DataAccessors
                     //If we use rule.data throughout we get some strange errors in the SQL that Linq generates
                     switch (rule.field)
                     {
-                        case "HomeGroupName":
+                        case "GroupName":
                             {
                                 string groupName = rule.data;
                                 groups = (from g in groups
