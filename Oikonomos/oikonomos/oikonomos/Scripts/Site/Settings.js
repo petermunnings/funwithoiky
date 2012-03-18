@@ -770,4 +770,82 @@ $(document).ready(function () {
             $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
         }
     });
+
+    $('#jqgPermissionsLinked').jqGrid({
+        url: '/Ajax/FetchPermissionsLinked',
+        datatype: 'json',
+        mtype: 'POST',
+        postData: { roleId: function () { return $("#RoleId").val(); } },
+        colNames: ['PermissionId', 'Permission'],
+        colModel: [
+                    { name: 'PermissionId', index: 'PermissionId', hidden: true, search: false },
+                    { name: 'Permission', index: 'Permission', align: 'left', width: 200, search: true }
+                  ],
+        multiselect: true,
+        multiboxonly: true,
+        pager: $('#jqgpPermissionsLinked'),
+        rowNum: 25,
+        sortname: 'Permission',
+        sortorder: 'asc',
+        viewrecords: true,
+        width: 'auto',
+        height: 'auto'
+    })
+    .navGrid('#jqgpPermissionsLinked', { edit: false, add: false, del: false, search: false });
+
+    $('#jqgPermissionsUnLinked').jqGrid({
+        url: '/Ajax/FetchPermissionsUnLinked',
+        datatype: 'json',
+        mtype: 'POST',
+        postData: { roleId: function () { return $("#RoleId").val(); } },
+        colNames: ['PermissionId', 'Permission'],
+        colModel: [
+                    { name: 'PermissionId', index: 'PermissionId', hidden: true, search: false },
+                    { name: 'Permission', index: 'Permission', align: 'left', width: 200, search: true }
+                  ],
+        multiselect: true,
+        multiboxonly: true,
+        pager: $('#jqgpPermissionsUnLinked'),
+        rowNum: 25,
+        sortname: 'Permission',
+        sortorder: 'asc',
+        viewrecords: true,
+        width: 'auto',
+        height: 'auto'
+    })
+    .navGrid('#jqgpPermissionsUnLinked', { edit: false, add: false, del: false, search: false });
+
+    $("#RoleId").change(function () {
+        $("#jqgPermissionsLinked").trigger("reloadGrid");
+        $("#jqgPermissionsUnLinked").trigger("reloadGrid");
+    });
+
+    $("#addPermission").click(function () {
+        var postData = {
+            roleId: $("#RoleId").val(),
+            permissionIds: $("#jqgPermissionsUnLinked").getGridParam("selarrrow")
+        };
+
+        $.post("/Ajax/AddPermissionsToRole", $.postify(postData))
+        .complete(function () {
+            $("#jqgPermissionsLinked").trigger("reloadGrid");
+            $("#jqgPermissionsUnLinked").trigger("reloadGrid");
+        });
+
+    });
+
+    $("#removePermission").click(function () {
+        var postData = {
+            roleId: $("#RoleId").val(),
+            permissionIds: $("#jqgPermissionsLinked").getGridParam("selarrrow")
+        };
+
+        $.post("/Ajax/RemovePermissionsFromRole", $.postify(postData))
+        .complete(function () {
+            $("#jqgPermissionsLinked").trigger("reloadGrid");
+            $("#jqgPermissionsUnLinked").trigger("reloadGrid");
+        });
+
+    });
+
 })

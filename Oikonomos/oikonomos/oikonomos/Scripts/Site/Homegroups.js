@@ -1,8 +1,65 @@
 ﻿var homeGroups;
-var members;
-var visitors;
 var rowId = 0;
 var selectedGroupId = 0;
+
+function UpdateAttendance(tableSelector, data) {
+    //Go through the data and populate the attendance
+    $(tableSelector).each(function (index) {
+        personId = $.tmplItem(this).data.PersonId;
+        var row = this;
+        var found = false;
+        $.each(data.Attendance, function (index) {
+            if (this.PersonId == personId) {
+                found = true;
+                if (this.Attended) {
+                    var attended = row.children[2].children[0];
+                    attended.checked = true;
+                }
+                else {
+                    var didNotAttend = row.children[3].children[0];
+                    didNotAttend.checked = true;
+                }
+            }
+        });
+        if (!found) {
+            var didNotAttend = row.children[3].children[0];
+            didNotAttend.checked = true;
+        }
+    });
+}
+
+function FetchAttendance() {
+    //Fetch the attendance on that day
+    var postData = { 
+        groupId: selectedGroupId,
+        date: $("#text_eventDate").val()
+    };
+
+    var jqxhr = $.post("/Ajax/FetchAttendance", $.postify(postData), function (data) {
+        UpdateAttendance("#attendanceList .tableRow", data);
+    });
+}
+
+function PopulateAttendance() {
+    var postData = { groupId: selectedGroupId };
+    var jqxhr = $.post("/Ajax/FetchPeopleInGroupForAttendance", $.postify(postData), function (data) {
+        $("#attendanceList").empty();
+        //$("#attendanceTemplate").empty();
+        $("#attendanceTemplate")
+                .tmpl(data.People)
+                .appendTo("#attendanceList");
+
+        $(".addEvent").button();
+        $(".addComment").button();
+        FetchAttendance();
+        $("#ajax_loader").hide();
+    }).error(function (jqXHR, textStatus, errorThrown) {
+        $("#ajax_loader").hide();
+        alert(jqXHR.responseText);
+    });
+
+
+}
 
 function SaveHomeGroup() {
     $("#message").html("");
@@ -24,8 +81,10 @@ function SaveHomeGroup() {
         Suburb: $("#SelectedSuburbId").val()
     };
 
-    $.post("/Ajax/SaveHomeGroup", $.postify(postData), function (data) {
-        FetchGroupList($("#div_groupId")[0].innerText);
+    $.post("/Ajax/SaveHomeGroup", postData, function (data) {
+        $("#jqgGroups").trigger("reloadGrid");
+        //Set newly create group as the selected group
+        //Trigger the rest
     }).error(function (jqXHR, textStatus, errorThrown) {
         $("#ajax_loader").hide();
         alert(jqXHR.responseText);
@@ -170,7 +229,7 @@ function SaveLeaveEvents(personId) {
     };
 
     var currentDate = new Date();
-    var currentDateFormat = currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + (currentDate.getDay());
+    var currentDateFormat = currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + (currentDate.getDate());
     $.each($("#add_LeaveEvent input:checked"), function (index, value) {
         if (value.id == "checkbox_leaveOther" && $("#text_leaveOther").val() != "") {
             postData.Events.push({ 
@@ -290,32 +349,6 @@ function SaveAttendance() {
     });
 }
 
-function UpdateAttendance(tableSelector, data) {
-    //Go through the data and populate the attendance
-    $(tableSelector).each(function (index) {
-        personId = $.tmplItem(this).data.PersonId;
-        var row = this;
-        var found = false;
-        $.each(data.Attendance, function (index) {
-            if (this.PersonId == personId) {
-                found = true;
-                if (this.Attended) {
-                    var attended = row.children[2].children[0];
-                    attended.checked = true;
-                }
-                else {
-                    var didNotAttend = row.children[3].children[0];
-                    didNotAttend.checked = true;
-                }
-            }
-        });
-        if (!found) {
-            var didNotAttend = row.children[3].children[0];
-            didNotAttend.checked = true;
-        }
-    });
-}
-
 function SaveComment() {
         var postData = { personId: $("#hidden_commentPersonId").val(),
                          comment: $("#comment_detail").val() };
@@ -339,18 +372,6 @@ function SaveComment() {
             $("#ajax_loader").hide();
             alert(jqXHR.responseText);
         });
-}
-
-function FetchAttendance() {
-    //Fetch the attendance on that day
-    var postData = { groupId: selectedGroupId,
-        date: $("#text_eventDate").val()
-    };
-
-    var jqxhr = $.post("/Ajax/FetchAttendance", $.postify(postData), function (data) {
-        UpdateAttendance("#membersListAttendance .tableRow", data);
-        UpdateAttendance("#visitorsListAttendance .tableRow", data);
-    });
 }
 
 function FetchEmailList() {
@@ -500,6 +521,8 @@ function ReloadPeopleGrid(id) {
     var ret = $("#jqgGroups").getRowData(selectedGroupId);
     $("#groupName").html(ret.GroupName);
     $("#jqgPeople").trigger("reloadGrid");
+
+    PopulateAttendance();
 }
 
 function AddGroup() {
@@ -794,30 +817,30 @@ $(document).ready(function () {
         SaveAttendance();
     });
 
-    $("#button_addPersonAttendance").click(function () {
-        //Populate fields
-        $("#hidden_personId").val("0");
-        $("#text_personName").val("");
+//    $("#button_addPersonAttendance").click(function () {
+//        //Populate fields
+//        $("#hidden_personId").val("0");
+//        $("#text_personName").val("");
 
-        $("#add_Person").dialog(
-        {
-            modal: true,
-            height: 150,
-            width: 440,
-            resizable: false,
-            buttons: {
-                "Add Person": function () {
-                    $("#ajax_loader").show();
-                    rowId = 0;
-                    AddPersonToGroup($("#hidden_personId").val(), selectedGroupId);
-                    $(this).dialog("close");
-                },
-                Cancel: function () {
-                    $(this).dialog("close");
-                }
-            }
-        });
-    });
+//        $("#add_Person").dialog(
+//        {
+//            modal: true,
+//            height: 150,
+//            width: 440,
+//            resizable: false,
+//            buttons: {
+//                "Add Person": function () {
+//                    $("#ajax_loader").show();
+//                    rowId = 0;
+//                    AddPersonToGroup($("#hidden_personId").val(), selectedGroupId);
+//                    $(this).dialog("close");
+//                },
+//                Cancel: function () {
+//                    $(this).dialog("close");
+//                }
+//            }
+//        });
+//    });
 
 
     $("#button_printList").click(function () {

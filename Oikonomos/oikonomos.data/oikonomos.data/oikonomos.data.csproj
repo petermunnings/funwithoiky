@@ -52,6 +52,7 @@
     <Compile Include="DataAccessors\ChurchDataAccessor.cs" />
     <Compile Include="DataAccessors\EventDataAccessor.cs" />
     <Compile Include="DataAccessors\HomeGroupDataAccessor.cs" />
+    <Compile Include="DataAccessors\PermissionDataAccessor.cs" />
     <Compile Include="DataAccessors\PersonDataAccessor.cs" />
     <Compile Include="DataAccessors\SettingsDataAccessor.cs" />
     <Compile Include="Models\IMembersRepository.cs" />

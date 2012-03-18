@@ -45,14 +45,19 @@
             {
         <li><a href="#tabs-group">Group</a></li>
             }
-            if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditSettings))
-            {
+        }
+        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditSettings))
+        {
         <li><a href="#tabs-church">Church Contact Details</a></li>
         <li><a href="#tabs-sites">Sites</a></li>
         <li><a href="#tabs-generalSettings">General Settings</a></li>
         <li><a href="#tabs-smsSettings">Sms Settings</a></li>
-            }
         }
+        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditSettings))
+        {
+        <li><a href="#tabs-permissionSettings">Permissions</a></li>
+        }
+        
     </ul>
     <div id="tabs-personal">
         <table class="ui-widget">
@@ -134,9 +139,10 @@
     </div>
     
     }
-    if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditSettings))
-    {
+}
 
+@if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditSettings))
+{
     <div id="tabs-church">
             <div>
                 <div id="churchContactDetails" style="display:table">
@@ -355,7 +361,30 @@
         <button id="button_saveBulkSmsDetails">Save</button>&nbsp;<img id="ajaxLoader_BulkSmsDetails" src="/Content/images/ajax-loader.gif" style="display:none" />
         <span id="saveMessage_BulkSmsDetails"></span>
     </div>
-    }
+}
+    
+@if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditSettings))
+{
+    <div id="tabs-permissionSettings">
+        <div>Role:&nbsp;@Html.DropDownListFor(m => m.RoleId, new SelectList(Model.Roles, "RoleId", "Name"))</div>
+        <table>
+            <tr>
+                <td>
+                    <table id="jqgPermissionsLinked" cellpadding="0" cellspacing="0" style="width:400px"></table>
+                    <div id="jqgpPermissionsLinked" style="text-align:center;"></div>
+                </td>
+                <td>
+                    <button id="addPermission" style="width:120px"><< Add</button><br />
+                    <button id="removePermission" style="width:120px">Remove >></button>
+                </td>
+                <td>
+                    <table id="jqgPermissionsUnLinked" cellpadding="0" cellspacing="0" style="width:400px"></table>
+                    <div id="jqgpPermissionsUnLinked" style="text-align:center;"></div>
+                </td>
+            </tr>
+        </table>
+        
+    </div>
 }
 </div>
 

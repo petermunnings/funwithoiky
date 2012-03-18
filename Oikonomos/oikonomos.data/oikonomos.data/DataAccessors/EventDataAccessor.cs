@@ -221,7 +221,7 @@ namespace oikonomos.data.DataAccessors
        
         public static List<AttendanceEventViewModel> FetchGroupAttendance(Person currentPerson, int groupId, DateTime eventDate)
         {
-            return FetchGroupAttendance(currentPerson, groupId, eventDate);
+            return FetchGroupAttendance(currentPerson, groupId, eventDate, null);
         }
 
         public static void SavePersonComment(int personId, string comment, Person currentPerson)

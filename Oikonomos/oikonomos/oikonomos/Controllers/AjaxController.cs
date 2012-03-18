@@ -220,13 +220,26 @@ namespace oikonomos.web.Controllers
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
+        public JsonResult FetchPeopleInGroupForAttendance(int groupId)
+        {
+            List<PersonViewModel> people = new List<PersonViewModel>();
+            if (Session[SessionVariable.LoggedOnPerson] != null)
+            {
+                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                people = GroupDataAccessor.FetchPeopleInGroup(groupId);
+            }
+
+            return Json(new { People = people });
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
         public JsonResult FetchPeopleInGroup(JqGridRequest request, int groupId)
         {
             JqGridData jqGridData = new JqGridData();
             if (Session[SessionVariable.LoggedOnPerson] != null)
             {
                 Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                jqGridData = PersonDataAccessor.FetchPeopleInGroupJQGrid(currentPerson, request, groupId);
+                jqGridData = GroupDataAccessor.FetchPeopleInGroupJQGrid(currentPerson, request, groupId);
             }
 
             return Json(jqGridData);
@@ -240,6 +253,32 @@ namespace oikonomos.web.Controllers
             {
                 Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 jqGridData = ChurchDataAccessor.FetchSitesJQGrid(currentPerson, request);
+            }
+
+            return Json(jqGridData);
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public JsonResult FetchPermissionsLinked(JqGridRequest request, int roleId)
+        {
+            JqGridData jqGridData = new JqGridData();
+            if (Session[SessionVariable.LoggedOnPerson] != null)
+            {
+                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                jqGridData = PermissionDataAccessor.FetchPermissionsForRoleJQGrid(currentPerson, request, roleId);
+            }
+
+            return Json(jqGridData);
+        }
+        
+        [AcceptVerbs(HttpVerbs.Post)]
+        public JsonResult FetchPermissionsUnLinked(JqGridRequest request, int roleId)
+        {
+            JqGridData jqGridData = new JqGridData();
+            if (Session[SessionVariable.LoggedOnPerson] != null)
+            {
+                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                jqGridData = PermissionDataAccessor.FetchPermissionsNotInRoleJQGrid(currentPerson, request, roleId);
             }
 
             return Json(jqGridData);
@@ -277,6 +316,29 @@ namespace oikonomos.web.Controllers
             return Json(jqGridData);
         }
 
+        [AcceptVerbs(HttpVerbs.Post)]
+        public JsonResult AddPermissionsToRole(int roleId, List<int> permissionIds)
+        {
+            if (Session[SessionVariable.LoggedOnPerson] != null)
+            {
+                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                PermissionDataAccessor.AddPermissionsToRole(currentPerson, roleId, permissionIds);
+            }
+
+            return Json(new { Message = "success" });
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public JsonResult RemovePermissionsFromRole(int roleId, List<int> permissionIds)
+        {
+            if (Session[SessionVariable.LoggedOnPerson] != null)
+            {
+                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                PermissionDataAccessor.RemovePermissionsFromRole(currentPerson, roleId, permissionIds);
+            }
+
+            return Json(new { Message = "success" });
+        }
 
         public JsonResult FetchSite(int siteId)
         {

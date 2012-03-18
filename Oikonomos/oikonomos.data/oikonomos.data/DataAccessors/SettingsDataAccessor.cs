@@ -489,6 +489,16 @@ namespace oikonomos.data.DataAccessors
                                       SiteName = s.Name
                                   }).ToList();
 
+                settings.Roles = (from r in context.Roles
+                                  where r.ChurchId == currentPerson.ChurchId
+                                  select new RoleViewModel
+                                  {
+                                      RoleId = r.RoleId,
+                                      Name = r.Name
+                                  }).ToList();
+
+                settings.RoleId = settings.Roles[0].RoleId;
+
                 return settings;
             }
         }
