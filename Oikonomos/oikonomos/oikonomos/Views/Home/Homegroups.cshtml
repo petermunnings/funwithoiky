@@ -7,12 +7,41 @@
 @{
     ViewBag.Title = "Groups";
     Layout = "~/Views/Shared/_Layout.cshtml";
-}<script id="attendanceTemplate" type="text/x-jquery-tmpl">     <div class="tableRow">        <div style="display:table-cell;width:20px">&nbsp;</div>        <div style="display:table-cell; text-align:left;width:240px"" class="selectPerson">            ${FullName}        </div>
-        <div style="display:table-cell; text-align:center;width:75px"">            <input class="checkbox_attended" type="radio" name="radio${PersonId}">         </div>
-        <div style="display:table-cell; text-align:center;width:120px"">            <input class="checkbox_didNotAttended" type="radio" checked name="radio${PersonId}">         </div>
-        <div style="display:table-cell; text-align:center;width:120px">            <button id="addEvent" class="addEvent">Add Event</button>        </div>
-        <div style="display:table-cell; text-align:center;width:140px">            <button id="addComment" class="addComment">Add Comment</button>        </div>
-        <div style="display:table-cell;width:20px">&nbsp;</div>    </div></script>
+}
+
+<script id="attendanceTemplate" type="text/x-jquery-tmpl">
+     <div class="tableRow">
+        <div style="display:table-cell;width:20px">&nbsp;</div>
+        <div style="display:table-cell; text-align:left;width:240px"" class="selectPerson">
+            ${FullName}
+        </div>
+
+        <div style="display:table-cell; text-align:center;width:75px"">
+            <input class="checkbox_attended" type="radio" name="radio${PersonId}"> 
+        </div>
+
+        <div style="display:table-cell; text-align:center;width:120px"">
+            <input class="checkbox_didNotAttended" type="radio" checked name="radio${PersonId}"> 
+        </div>
+
+        <div style="display:table-cell; text-align:center;width:120px">
+            <button id="addEvent" class="addEvent">Add Event</button>
+        </div>
+
+        <div style="display:table-cell; text-align:center;width:140px">
+            <button id="addComment" class="addComment">Add Comment</button>
+        </div>
+
+        <div style="display:table-cell;width:20px">&nbsp;</div>
+    </div>
+</script>
+
+<script id="eventTypeTemplate" type="text/x-jquery-tmpl">
+    <div class="tableRow">
+        <div style="display:table-cell"><input type="checkbox" id="checkbox_${EventTypeId}" class="checkbox_eventType" value="${EventType}" /><label for="checkbox_${EventTypeId}">${EventType}</label></div>
+    </div>
+</script>
+
 
 <div id="tabs" style="text-align:left">
     <ul>
@@ -78,7 +107,8 @@
             </div>
             </div>
             <br />
-            <br />
+            <br />
+
             <div class="ui-widget">
                 <div>
                     <div id="table_peopleAttendance" style="display:table" class="ui-widget-content ui-corner-all">
@@ -91,7 +121,8 @@
                             <div style="display:table-cell; vertical-align:middle; text-align:center;width:140px">Add Comment</div>
                             <div style="display:table-cell;width:20px" class="ui-corner-right">&nbsp;</div>
                         </div>
-                        <div style="display:table-row-group" id="attendanceList">                        </div>
+                        <div style="display:table-row-group" id="attendanceList">
+                        </div>
                     </div>
                 </div>  
             </div>
@@ -196,19 +227,12 @@
                 <input type="hidden" id="hidden_personId" />          
             </div>
         </div>
-        @if (Model.ShowRoles)
-        {
-        <div id="row_addPerson_securityRole" class="tableRow">
+
+        <div class="tableRow">
             <div style="display:table-cell">Role</div>
-            <div style="display:table-cell">
-                <select id="addPerson_securityRole" class="ui-corner-all">
-                    <option>Visitor</option>
-                    <option>Member</option>
-                </select>
-            </div>
-            
+            <div style="text-align:left; display:table-cell">@Html.DropDownListFor(model => model.RoleId, new SelectList(Model.SecurityRoles, "RoleId", "Name"), new { @class = "ui-corner-all" })</div>
         </div>
-        }
+
     </div>
 </div>
 
@@ -217,9 +241,14 @@
         <div class="tableRow" style="height:10px">
             <div style="display:table-cell">&nbsp;<input type="hidden" id="hidden_eventPersonId" /></div>
         </div>
-        <div class="tableRow" style="height:10px">
-            <div style="display:table-cell">&nbsp;@Html.DropDownListFor(m => m.SelectedEventTypeId, new SelectList(Model.EventTypes, "EventTypeId", "EventType"))</div>
-        </div>
+        @Html.CheckBoxList("eventsList",          
+                   x => x.EventTypes,           
+                   x => x.EventType,        
+                   x => x.EventType,
+                   null,
+                   null,
+                   new HtmlListInfo(HtmlTag.vertical_columns, 1),
+                   null)
         <div style="display:table-row">
             <div style="display:table-cell"><input type="checkbox" id="checkbox_other" class="checkbox_eventType" /><input type="text" id="text_other" class="ui-corner-all" /></div>
         </div>
@@ -263,3 +292,7 @@
 </div>
 
 <div id="div_groupId" style="display:none">@Model.GroupId</div>
+<div id="div_showList" style="display:none">@Model.ShowList</div>
+<div id="div_addGroup" style="display:none">@ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.AddGroups)</div>
+<div id="div_editGroup" style="display:none">@ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditGroups)</div>
+<div id="div_deleteGroup" style="display:none">@ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.DeleteGroups)</div>

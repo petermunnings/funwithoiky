@@ -1,34 +1,22 @@
-﻿<script src="@Url.Content("~/Scripts/Site/Reports.js")" type="text/javascript"></script>
+﻿@model oikonomos.common.Models.AdminReportsViewModel
+
+<script src="@Url.Content("~/Scripts/Site/Reports.js")" type="text/javascript"></script>
 <script src="@Url.Content("~/Scripts/Site/ReportsAdmin.js")" type="text/javascript"></script>
 @{
     ViewBag.Title = "Admin Reports";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div style="width: 100%" >
-    <div id="menu_reports" class="ui-widget" style="margin: 0 auto; text-align:center; width:800px">
-        <div id="buttons_reports" style="text-align: left; height:40px" >
-            <button id="button_churchList">Church List</button>
-            <button id="button_churchMap">Map</button>
-            @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewAdminReports))
-            {
-            <button id="button_adminReports">Admin Reports</button>
-            }
-        </div>
-    </div>
-</div>
-
 <div id="tabs" style="text-align:left">
     <ul>
-        <li><a href="#tabs-homegroupList">Homegroup List</a></li>
-        <li><a href="#tabs-homegroupAttendance">Homegroup Attendance</a></li>
-        <li><a href="#tabs-notInHomegroup">Not in a homegroup</a></li>
+        <li><a href="#tabs-groupList">Group List</a></li>
+        <li><a href="#tabs-groupAttendance">Group Attendance</a></li>
+        <li><a href="#tabs-notInGroup">Not in any group</a></li>
         <li><a href="#tabs-events">Events</a></li>
-        <li><a href="#tabs-visitors">Visitors</a></li>
-        <li><a href="#tabs-pastMembers">Past Members</a></li>
+        <li><a href="#tabs-peopleInARole">People in a role</a></li>
         <li><a href="#tabs-exportData">Export Church Data</a></li>
     </ul>
-    <div id="tabs-homegroupList">
+    <div id="tabs-groupList">
         <button id="button_sendHomeGroupLeaderEmail" title="Send an Email to the group leaders/admins">Send Email</button>&nbsp;
         <button id="button_sendHomeGroupLeaderSms" title="Send an Sms to the group leaders/admins">Send Sms</button>&nbsp;
         <input id="checkBox_IncludeMembers" type="checkbox" />&nbsp;Include Group Members<br />&nbsp;
@@ -36,12 +24,12 @@
         
         <div id="jqgpHomegroups" style="text-align:center;"></div>
     </div>
-    <div id="tabs-homegroupAttendance">
+    <div id="tabs-groupAttendance">
         <table id="jqgGroupAttendance" cellpadding="0" cellspacing="0" style="width:800px"></table>
         <div id="jqgpGroupAttendance" style="text-align:center;"></div>
         <div>nc = Nothing Captured</div>
     </div>
-    <div id="tabs-notInHomegroup">
+    <div id="tabs-notInGroup">
         <table id="jqgNotInGroup" cellpadding="0" cellspacing="0" style="width:800px"></table>
         <div id="jqgpNotInGroup" style="text-align:center;"></div>
     </div>
@@ -88,15 +76,11 @@
         <table id="jqgEventList" cellpadding="0" cellspacing="0" style="width:800px"></table>
         <div id="jqgpEventList" style="text-align:center;"></div>
     </div>
-    <div id="tabs-visitors">
-        <button id="button_viewVisitorList">Print/View Pdf</button><br />&nbsp;<br />
-        <table id="jqgVisitors" cellpadding="0" cellspacing="0" style="width:800px"></table>
-        <div id="jqgpVisitors" style="text-align:center;"></div>
-    </div>
-    <div id="tabs-pastMembers">
-        <button id="button_viewPastMemberList">Print/View Pdf</button><br />&nbsp;<br />
-        <table id="jqgPastMembers" cellpadding="0" cellspacing="0" style="width:800px"></table>
-        <div id="jqgpPastMembers" style="text-align:center;"></div>
+    <div id="tabs-peopleInARole">
+        @Html.DropDownListFor(model => model.RoleId, new SelectList(Model.SecurityRoles, "RoleId", "Name"), new { @class = "ui-corner-all" })
+        <button id="button_viewPeopleInARole">Print/View Pdf</button><br />&nbsp;<br />
+        <table id="jqgPeopleInARole" cellpadding="0" cellspacing="0" style="width:800px"></table>
+        <div id="jqgpPeopleInARole" style="text-align:center;"></div>
     </div>
     <div id="tabs-exportData">
         <p>Clicking Export Church Data will generate a comma delimited file which can be imported into various other systems (including Microsoft Excel).  This file contains all of the membership data in the church</p>

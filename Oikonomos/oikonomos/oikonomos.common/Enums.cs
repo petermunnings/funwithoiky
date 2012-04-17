@@ -85,7 +85,9 @@ namespace oikonomos.common
         EditGroups = 44,
         EditGroupLeader = 45,
         EditGroupAdministrator = 46,
-        DeletePerson = 47
+        DeletePerson = 47,
+        IncludeInGroupAttendanceStats = 48,
+        EditPermissions = 49
     }
 
     public enum Relationships

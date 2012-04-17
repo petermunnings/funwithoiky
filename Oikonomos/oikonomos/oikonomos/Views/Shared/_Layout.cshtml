@@ -16,8 +16,7 @@
 <body style='background-image: url(/Content/images/backgrounds/@(Session[oikonomos.common.SessionVariable.Church] == null ? "default.png" : ((ChurchViewModel)Session[oikonomos.common.SessionVariable.Church]).BackgroundImage)); 
  background-repeat:no-repeat;
  background-attachment:fixed;
- background-position:center; 
-'>
+ background-position:center; '>
 
 
 @if (Session[oikonomos.common.SessionVariable.LoggedOnPerson] != null)
@@ -56,7 +55,16 @@
             <button id="button_settings">Settings</button>
             @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewLists))
             {
-            <button id="button_lists">Lists</button>
+                <button id="button_lists">
+                @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewChurchContactDetails))
+                {
+                <text>Church List</text>
+                }
+                else if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewGroupContactDetails))
+                {
+                <text>Group List</text>
+                }
+                </button>
             }
             @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewAdminReports))
             {
@@ -64,6 +72,10 @@
             }
             <button id="button_help">Help</button>
             <button id="button_logout">Logout</button>
+            @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.SystemAdministrator))
+            {
+            <button id="button_sysAdmin">Sys Admin</button>
+            }
 	    </div>
     </div>
 </div>

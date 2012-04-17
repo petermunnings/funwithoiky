@@ -4,13 +4,34 @@ using System.Linq;
 using System.Text;
 using Lib.Web.Mvc.JQuery.JqGrid;
 using System.Configuration;
+using oikonomos.data.Services;
+using oikonomos.common.Models;
+using oikonomos.common;
 
 namespace oikonomos.data.DataAccessors
 {
     public class PermissionDataAccessor
     {
+        public static int FetchDefaultRoleId(Person currentPerson)
+        {
+            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            {
+                return context.Roles.Where(r => r.ChurchId == currentPerson.ChurchId).First().RoleId;
+            }
+        }
+
+        public static List<RoleViewModel> FetchRoles(Person currentPerson)
+        {
+            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            {
+                return Cache.SecurityRoles(context, currentPerson);
+            }
+        }
+        
         public static void AddPermissionsToRole(Person currentPerson, int roleId, List<int> permissionIds)
         {
+            if (!currentPerson.HasPermission(Permissions.EditPermissions))
+                return;
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 foreach (var permissionId in permissionIds)
@@ -33,6 +54,8 @@ namespace oikonomos.data.DataAccessors
 
         public static void RemovePermissionsFromRole(Person currentPerson, int roleId, List<int> permissionIds)
         {
+            if (!currentPerson.HasPermission(Permissions.EditPermissions))
+                return;
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 var permissionRoles = (from p in context.PermissionRoles
@@ -64,6 +87,11 @@ namespace oikonomos.data.DataAccessors
                               where r.ChurchId == currentPerson.ChurchId
                                 && (pr.RoleId == roleId)
                               select p);
+
+                if (!currentPerson.HasPermission(Permissions.SystemAdministrator))
+                {
+                    permissions = permissions.Where(p => p.IsVisible == true);
+                }
 
                 int totalRecords = permissions.Count();
 
@@ -118,6 +146,10 @@ namespace oikonomos.data.DataAccessors
                                          select p);
 
                 var permissionsNotInRole = context.Permissions.Except(permissionsInRole);
+                if (!currentPerson.HasPermission(Permissions.SystemAdministrator))
+                {
+                    permissionsNotInRole = permissionsNotInRole.Where(p => p.IsVisible == true);
+                }
 
                 int totalRecords = permissionsNotInRole.Count();
 

@@ -53,7 +53,7 @@
         <li><a href="#tabs-generalSettings">General Settings</a></li>
         <li><a href="#tabs-smsSettings">Sms Settings</a></li>
         }
-        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditSettings))
+        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditPermissions))
         {
         <li><a href="#tabs-permissionSettings">Permissions</a></li>
         }
@@ -363,7 +363,7 @@
     </div>
 }
     
-@if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditSettings))
+@if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditPermissions))
 {
     <div id="tabs-permissionSettings">
         <div>Role:&nbsp;@Html.DropDownListFor(m => m.RoleId, new SelectList(Model.Roles, "RoleId", "Name"))</div>

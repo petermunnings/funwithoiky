@@ -44,6 +44,27 @@ namespace oikonomos.web.Controllers
             return View(settings);
         }
 
+        public ActionResult SysAdmin()
+        {
+            Person currentPerson = SecurityHelper.CheckCurrentUser(Session, Response, ViewBag);
+            if (currentPerson == null)
+            {
+                return View("Login");
+            }
+
+            if (currentPerson.HasPermission(Permissions.SystemAdministrator))
+            {
+                SysAdminViewModel viewModel = new SysAdminViewModel();
+                viewModel.ChurchId = currentPerson.ChurchId;
+                viewModel.Churches = ChurchDataAccessor.FetchChurches(currentPerson);
+                return View(viewModel); 
+            }
+            else
+            {
+                return View("Index", GetEventDisplayModel(currentPerson));
+            }
+        }
+
         public ActionResult HomeGroups(int? groupId)
         {
             GroupViewModel viewModel = new GroupViewModel();
@@ -84,14 +105,8 @@ namespace oikonomos.web.Controllers
                 }
             }
 
-            if (groupId.HasValue)
-            {
-                viewModel.GroupId = groupId.Value;
-            }
-            else
-            {
-                viewModel.GroupId = 0;
-            }
+            viewModel.SecurityRoles = PermissionDataAccessor.FetchRoles(currentPerson);
+            viewModel.RoleId = viewModel.SecurityRoles.First().RoleId;
 
             if (currentPerson.HasPermission(Permissions.EditAllGroups))
             {
@@ -105,8 +120,8 @@ namespace oikonomos.web.Controllers
             {
                 //If this person administrates more then one homegroup
                 //then a list of all of those will be shown
-                bool displayList = false;
-                viewModel.GroupName = GroupDataAccessor.FetchHomeGroupName(currentPerson.PersonId, ref displayList);
+                bool displayList;
+                viewModel.GroupName = GroupDataAccessor.FetchHomeGroupName(currentPerson, out displayList, ref groupId);
                 if (viewModel.GroupName == string.Empty)
                 {
                     ViewBag.Message = "You are not currently administrating any groups";
@@ -122,8 +137,12 @@ namespace oikonomos.web.Controllers
                     viewModel.ShowList = false;
                 }
 
+                viewModel.GroupId = groupId.HasValue ? groupId.Value : 0;
+
                 return View(viewModel);
             }
+
+            
 
             return View("Index");
         }
@@ -207,11 +226,17 @@ namespace oikonomos.web.Controllers
             {
                 return View("Login");
             }
+            EventDisplayModel eventDisplayModel = GetEventDisplayModel(currentPerson);
+            return View("Index", eventDisplayModel);
+        }
+
+        private EventDisplayModel GetEventDisplayModel(Person currentPerson)
+        {
             ChurchViewModel churchViewModel = (ChurchViewModel)Session[SessionVariable.Church];
             ViewBag.Message = "Welcome " + currentPerson.Firstname + " " + currentPerson.Family.FamilyName + " from " + churchViewModel.ChurchName;
 
             EventDisplayModel eventDisplayModel = EventDataAccessor.FetchEventsToDisplay(currentPerson);
-            return View("Index", eventDisplayModel);
+            return eventDisplayModel;
         }
 
         public ActionResult Person(int? personId, int? GroupId)
@@ -369,7 +394,12 @@ namespace oikonomos.web.Controllers
                 return View("ReportGrid");
             }
 
-            return View();
+            AdminReportsViewModel viewModel = new AdminReportsViewModel();
+            viewModel.RoleId = PermissionDataAccessor.FetchDefaultRoleId(currentPerson);
+            viewModel.SecurityRoles = PermissionDataAccessor.FetchRoles(currentPerson);
+
+
+            return View(viewModel);
         }
 
         public ActionResult ReportGrid()
@@ -508,6 +538,11 @@ namespace oikonomos.web.Controllers
         #region Private Methods
         private void GetReportViewBagValues(Person currentPerson)
         {
+            if (currentPerson.HasPermission(Permissions.ViewChurchContactDetails))
+                ViewBag.Title = "Church List";
+            else
+                ViewBag.Title = "Group List";
+            
             List<OptionalFieldViewModel> optionalFields = SettingsDataAccessor.FetchChurchOptionalFields(currentPerson.ChurchId);
             foreach (OptionalFieldViewModel ct in optionalFields)
             {

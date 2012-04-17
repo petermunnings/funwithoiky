@@ -15,7 +15,7 @@ namespace oikonomos.data
             {
                 foreach (PermissionRole permissionRole in personRole.Role.PermissionRoles)
                 {
-                    if (permissionRole.PermissionId == (int)permission || permissionRole.PermissionId == (int)Permissions.SystemAdministrator)
+                    if (permissionRole.PermissionId == (int)permission)
                     {
                         return true;
                     }

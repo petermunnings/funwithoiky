@@ -10,6 +10,20 @@ namespace oikonomos.data.DataAccessors
 {
     public class ChurchDataAccessor
     {
+        public static List<ChurchViewModel> FetchChurches(Person currentPerson)
+        {
+            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            {
+                return (from c in context.Churches
+                        select new ChurchViewModel()
+                        {
+                            ChurchId = c.ChurchId,
+                            ChurchName = c.Name
+                        })
+                        .ToList();
+            }
+        }
+        
         public static void FetchBulkSmsUsernameAndPassword(Person currentPerson, out string username, out string password)
         {
             if (currentPerson.HasPermission(common.Permissions.SendSms))
@@ -303,6 +317,27 @@ namespace oikonomos.data.DataAccessors
             {
                 return (from c in context.Churches
                         where c.Name == churchName
+                        select new ChurchViewModel
+                        {
+                            ChurchId = c.ChurchId,
+                            ChurchName = c.Name,
+                            SiteHeader = c.SiteHeader,
+                            SiteDescription = c.SiteDescription,
+                            BackgroundImage = c.BackgroundImage,
+                            UITheme = c.UITheme,
+                            GoogleSearchRegion = c.Province,
+                            ShowFacebookLogin = c.ChurchOptionalFields.Where<ChurchOptionalField>(co => co.OptionalFieldId == (int)OptionalFields.Facebook).FirstOrDefault().Visible
+                        }).FirstOrDefault();
+
+            }
+        }
+
+        public static ChurchViewModel FetchChurch(int churchId)
+        {
+            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            {
+                return (from c in context.Churches
+                        where c.ChurchId == churchId
                         select new ChurchViewModel
                         {
                             ChurchId = c.ChurchId,

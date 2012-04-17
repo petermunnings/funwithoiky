@@ -470,39 +470,30 @@ namespace oikonomos.data.DataAccessors
         {
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                int memberDidAttend = 0;
-                int memberDidNotAttend = 0;
-                int visitorDidAttend = 0;
-                int visitorDidNotAttend = 0;
+                int didAttend = 0;
+                int didNotAttend = 0;
                 foreach (PersonEventViewModel personEvents in hgEvent.Events)
                 {
+                    Person person = PersonDataAccessor.FetchPerson(personEvents.PersonId);
                     foreach (EventViewModel personEvent in personEvents.Events)
                     {
+                        
                         Event pe = SavePersonEvent(context, personEvents, currentPerson, personEvent);
                         CheckToSeeIfEventAlreadyExists(personEvents, context, personEvent, pe);
 
-                        if (personEvent.Name == EventNames.DidNotAttendGroup)
+                        if (person.HasPermission(Permissions.IncludeInGroupAttendanceStats))
                         {
-                            if (personEvents.IsVisitor)
-                                visitorDidNotAttend++;
-                            else
-                                memberDidNotAttend++;
-                        }
-                        else if (personEvent.Name == EventNames.AttendedGroup)
-                        {
-                            if (personEvents.IsVisitor)
-                                visitorDidAttend++;
-                            else
-                                memberDidAttend++;
+                            if(personEvent.Name == EventNames.DidNotAttendGroup)
+                                didNotAttend++;
+                            if(personEvent.Name == EventNames.AttendedGroup)
+                                didAttend++;
                         }
                     }
                 }
 
                 //Add the attended and did not attend group events
-                AddAttendanceEvents(hgEvent, context, memberDidAttend, "Members attended", currentPerson);
-                AddAttendanceEvents(hgEvent, context, memberDidNotAttend, "Members did not attend", currentPerson);
-                AddAttendanceEvents(hgEvent, context, visitorDidAttend, "Visitors attended", currentPerson);
-                AddAttendanceEvents(hgEvent, context, visitorDidNotAttend, "Visitors did not attend", currentPerson);
+                AddAttendanceEvents(hgEvent, context, didAttend, "Members attended", currentPerson);
+                AddAttendanceEvents(hgEvent, context, didNotAttend, "Members did not attend", currentPerson);
 
                 context.SaveChanges();
             }

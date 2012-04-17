@@ -245,6 +245,11 @@ namespace oikonomos.data.DataAccessors
 
         public static JqGridData FetchHomeGroupsJQGrid(Person currentPerson, JqGridRequest request)
         {
+            if (!(currentPerson.HasPermission(Permissions.EditOwnGroups) || currentPerson.HasPermission(Permissions.EditAllGroups)))
+            {
+                throw new Exception("Invalid security Role");
+            }
+
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 List<JqGridFilterRule> rules = request.filters == null ? null : request.filters.rules;
@@ -416,12 +421,14 @@ namespace oikonomos.data.DataAccessors
             }
         }
 
-        public static string FetchHomeGroupName(int personId, ref bool displayList)
+        public static string FetchHomeGroupName(Person currentPerson, out bool displayList, ref int? groupId)
         {
+            displayList = false;
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 var homeGroups = (from g in context.Groups
-                                  where (g.LeaderId == personId || g.AdministratorId == personId)
+                                  where (g.LeaderId == currentPerson.PersonId || g.AdministratorId == currentPerson.PersonId)
+                                  && g.ChurchId==currentPerson.ChurchId
                                   orderby g.Name
                                   select g);
                 if (homeGroups.Count() == 0)
@@ -439,7 +446,9 @@ namespace oikonomos.data.DataAccessors
                     displayList = true;
                 }
 
-                return homeGroups.FirstOrDefault().Name;
+                if(!groupId.HasValue)
+                    groupId = homeGroups.First().GroupId;
+                return homeGroups.First().Name;
             }
         }
 
@@ -664,17 +673,17 @@ namespace oikonomos.data.DataAccessors
                 if (includeMembers)
                 {
                     people = (from g in groups
-                                          join pg in context.PersonGroups
-                                           on g.GroupId equals pg.PersonId
-                                          join p in context.People
-                                           on pg.PersonId equals p.PersonId
-                                          join po in context.PersonOptionalFields
-                                           on p.PersonId equals po.PersonId
-                                          where po.OptionalFieldId == (int)OptionalFields.CellPhone
-                                          && po.Value != string.Empty
-                                          && g.ChurchId == currentPerson.ChurchId
-                                          && p.ChurchId == currentPerson.ChurchId
-                                          select po).ToList();
+                              join pg in context.PersonGroups
+                               on g.GroupId equals pg.PersonId
+                              join p in context.People
+                               on pg.PersonId equals p.PersonId
+                              join po in context.PersonOptionalFields
+                               on p.PersonId equals po.PersonId
+                              where po.OptionalFieldId == (int)OptionalFields.CellPhone
+                              && po.Value != string.Empty
+                              && g.ChurchId == currentPerson.ChurchId
+                              && p.ChurchId == currentPerson.ChurchId
+                              select po).ToList();
                 }
 
                 foreach (PersonOptionalField po in leaders)
@@ -702,7 +711,7 @@ namespace oikonomos.data.DataAccessors
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 List<PersonViewModel> people = FetchPeopleInGroup(groupId, context, selectedIds);
-                
+
 
                 foreach (PersonViewModel person in people)
                 {
@@ -843,8 +852,8 @@ namespace oikonomos.data.DataAccessors
                     Address4 = hg.AddressId == null ? string.Empty : hg.Address.Line4,
                     AddressId = hg.AddressId == null ? 0 : hg.AddressId.Value,
                     AddressType = hg.AddressId == null ? string.Empty : hg.Address.AddressType,
-                    AdministratorId = hg.AdministratorId==null ? 0 : hg.AdministratorId.Value,
-                    AdministratorName = hg.AdministratorId==null ? string.Empty : hg.Administrator.Firstname + " " + hg.Administrator.Family.FamilyName,
+                    AdministratorId = hg.AdministratorId == null ? 0 : hg.AdministratorId.Value,
+                    AdministratorName = hg.AdministratorId == null ? string.Empty : hg.Administrator.Firstname + " " + hg.Administrator.Family.FamilyName,
                     ChurchName = hg.Church.Name,
                     GroupClassification = hg.GroupClassificationId == null ? string.Empty : hg.GroupClassification.Name,
                     GroupId = hg.GroupId,
@@ -853,7 +862,7 @@ namespace oikonomos.data.DataAccessors
                     LeaderId = hg.LeaderId == null ? 0 : hg.LeaderId.Value,
                     LeaderName = hg.LeaderId == null ? string.Empty : hg.Leader.Firstname + " " + hg.Leader.Family.FamilyName,
                     Lng = hg.AddressId == null ? 0 : hg.Address.Long,
-                    Suburb = hg.AddressId == null ? string.Empty : (hg.Address.ChurchSuburbId==null ? string.Empty : hg.Address.ChurchSuburb.Suburb)
+                    Suburb = hg.AddressId == null ? string.Empty : (hg.Address.ChurchSuburbId == null ? string.Empty : hg.Address.ChurchSuburb.Suburb)
                 };
 
             }
@@ -862,110 +871,117 @@ namespace oikonomos.data.DataAccessors
 
         public static void SaveHomeGroup(Person currentPerson, HomeGroupsViewModel hgvm)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            if (currentPerson.HasPermission(Permissions.EditGroups) || currentPerson.HasPermission(Permissions.AddGroups))
             {
-                Group hg = new Group();
-                if (hgvm.GroupId != 0)
+                using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
                 {
-                    hg = (from g in context.Groups
-                          where g.GroupId == hgvm.GroupId
-                          select g).FirstOrDefault();
-                }
-                else
-                {
-                    hg.ChurchId = currentPerson.ChurchId;
-                    hg.Created = DateTime.Now;
-                    if (currentPerson.ChurchId == 3) //Ebenezer
+                    Group hg = new Group();
+                    if (hgvm.GroupId != 0)
                     {
-                        hg.GroupTypeId = (int)GroupTypes.LifeGroup;
+                        hg = (from g in context.Groups
+                              where g.GroupId == hgvm.GroupId
+                              select g).FirstOrDefault();
                     }
                     else
                     {
-                        hg.GroupTypeId = (int)GroupTypes.HomeGroup;
-                    }
-                    context.Groups.AddObject(hg);
-                }
-
-                hg.Name = hgvm.HomeGroupName;
-                if (hgvm.LeaderId == 0 || hgvm.LeaderName == null || hgvm.LeaderName == string.Empty)
-                    hg.LeaderId = null;
-                else
-                    hg.LeaderId = hgvm.LeaderId;
-                if (hgvm.AdministratorId == 0 || hgvm.AdministratorName == null || hgvm.AdministratorName == string.Empty)
-                    hg.AdministratorId = null;
-                else
-                    hg.AdministratorId = hgvm.AdministratorId;
-                hg.Changed = DateTime.Now;
-
-
-                //Check to see if the address already exists
-                if (hgvm.Address1 != null || hgvm.Address2 != null || hgvm.Address3 != null || hgvm.Address4 != null)
-                {
-                    var address = new Address();
-
-                    if (hgvm.AddressId > 0)
-                    {
-                        address = (from a in context.Addresses
-                                   where a.AddressId == hgvm.AddressId
-                                   select a).FirstOrDefault();
-
-                        if (address == null) //Should never happen, but just to be sure
+                        hg.ChurchId = currentPerson.ChurchId;
+                        hg.Created = DateTime.Now;
+                        if (currentPerson.ChurchId == 3) //Ebenezer
                         {
-                            address = new Address();
-                            address.Created = DateTime.Now;
-                            hgvm.AddressId = 0;
-                        }
-                    }
-                    else
-                    {
-                        address.Created = DateTime.Now;
-                    }
-
-                    address.Line1 = hgvm.Address1 == null ? "" : hgvm.Address1;
-                    address.Line2 = hgvm.Address2 == null ? "" : hgvm.Address2;
-                    address.Line3 = hgvm.Address3 == null ? "" : hgvm.Address3;
-                    address.Line4 = hgvm.Address4 == null ? "" : hgvm.Address4;
-                    address.AddressType = hgvm.AddressType == null ? "" : hgvm.AddressType;
-                    address.Lat = hgvm.Lat == null ? 0 : hgvm.Lat;
-                    address.Long = hgvm.Lng == null ? 0 : hgvm.Lng;
-
-                    if (hgvm.Suburb != null && hgvm.Suburb != string.Empty && hgvm.Suburb != "null")
-                    {
-                        if (hgvm.Suburb == "Select...")
-                        {
-                            address.ChurchSuburbId = null;
+                            hg.GroupTypeId = (int)GroupTypes.LifeGroup;
                         }
                         else
                         {
-                            address.ChurchSuburbId = (from c in context.ChurchSuburbs
-                                                      where c.ChurchId == currentPerson.ChurchId
-                                                      && c.Suburb == hgvm.Suburb
-                                                      select c.ChurchSuburbId).FirstOrDefault();
+                            hg.GroupTypeId = (int)GroupTypes.HomeGroup;
+                        }
+                        context.Groups.AddObject(hg);
+                    }
+
+                    hg.Name = hgvm.HomeGroupName;
+                    if (hgvm.LeaderId == 0 || hgvm.LeaderName == null || hgvm.LeaderName == string.Empty)
+                        hg.LeaderId = null;
+                    else
+                        hg.LeaderId = hgvm.LeaderId;
+                    if (hgvm.AdministratorId == 0 || hgvm.AdministratorName == null || hgvm.AdministratorName == string.Empty)
+                        hg.AdministratorId = null;
+                    else
+                        hg.AdministratorId = hgvm.AdministratorId;
+                    hg.Changed = DateTime.Now;
+
+
+                    //Check to see if the address already exists
+                    if (hgvm.Address1 != null || hgvm.Address2 != null || hgvm.Address3 != null || hgvm.Address4 != null)
+                    {
+                        var address = new Address();
+
+                        if (hgvm.AddressId > 0)
+                        {
+                            address = (from a in context.Addresses
+                                       where a.AddressId == hgvm.AddressId
+                                       select a).FirstOrDefault();
+
+                            if (address == null) //Should never happen, but just to be sure
+                            {
+                                address = new Address();
+                                address.Created = DateTime.Now;
+                                hgvm.AddressId = 0;
+                            }
+                        }
+                        else
+                        {
+                            address.Created = DateTime.Now;
+                        }
+
+                        address.Line1 = hgvm.Address1 == null ? "" : hgvm.Address1;
+                        address.Line2 = hgvm.Address2 == null ? "" : hgvm.Address2;
+                        address.Line3 = hgvm.Address3 == null ? "" : hgvm.Address3;
+                        address.Line4 = hgvm.Address4 == null ? "" : hgvm.Address4;
+                        address.AddressType = hgvm.AddressType == null ? "" : hgvm.AddressType;
+                        address.Lat = hgvm.Lat == null ? 0 : hgvm.Lat;
+                        address.Long = hgvm.Lng == null ? 0 : hgvm.Lng;
+
+                        if (hgvm.Suburb != null && hgvm.Suburb != string.Empty && hgvm.Suburb != "null")
+                        {
+                            if (hgvm.Suburb == "Select...")
+                            {
+                                address.ChurchSuburbId = null;
+                            }
+                            else
+                            {
+                                address.ChurchSuburbId = (from c in context.ChurchSuburbs
+                                                          where c.ChurchId == currentPerson.ChurchId
+                                                          && c.Suburb == hgvm.Suburb
+                                                          select c.ChurchSuburbId).FirstOrDefault();
+                            }
+                        }
+
+                        address.Changed = DateTime.Now;
+
+                        if (hgvm.AddressId == 0)
+                        {
+                            context.Addresses.AddObject(address);
+                        }
+
+                        hg.Address = address;
+                    }
+                    if (hgvm.GroupClassification != null && hgvm.GroupClassification != "" && hgvm.GroupClassification != "null")
+                    {
+                        if (hgvm.GroupClassification == "0")
+                        {
+                            hg.GroupClassificationId = null;
+                        }
+                        else
+                        {
+                            hg.GroupClassificationId = int.Parse(hgvm.GroupClassification);
                         }
                     }
 
-                    address.Changed = DateTime.Now;
-
-                    if (hgvm.AddressId == 0)
-                    {
-                        context.Addresses.AddObject(address);
-                    }
-
-                    hg.Address = address;
+                    context.SaveChanges();
                 }
-                if (hgvm.GroupClassification != null && hgvm.GroupClassification != "" && hgvm.GroupClassification != "null")
-                {
-                    if (hgvm.GroupClassification == "0")
-                    {
-                        hg.GroupClassificationId = null;
-                    }
-                    else
-                    {
-                        hg.GroupClassificationId = int.Parse(hgvm.GroupClassification);
-                    }
-                }
-
-                context.SaveChanges();
+            }
+            else
+            {
+                throw new ApplicationException("You do not have the required permission");
             }
         }
 
@@ -1155,7 +1171,7 @@ namespace oikonomos.data.DataAccessors
                               CellPhone = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).FirstOrDefault().Value
                           });
 
-            if(selectedIds !=null)
+            if (selectedIds != null)
             {
                 people = (from p in people
                           where selectedIds.Contains(p.PersonId)
@@ -1167,9 +1183,23 @@ namespace oikonomos.data.DataAccessors
 
         private static IQueryable<Group> FetchGroupList(Person currentPerson, bool search, List<JqGridFilterRule> rules, oikonomosEntities context)
         {
-            var groups = (from g in context.Groups.Include("Address").Include("GroupClassification")
+            IQueryable<Group> groups = null;
+            if (currentPerson.HasPermission(Permissions.EditAllGroups))
+            {
+                groups = (from g in context.Groups.Include("Address").Include("GroupClassification")
                           where g.ChurchId == currentPerson.ChurchId
                           select g);
+            }
+            else if (!(currentPerson.HasPermission(Permissions.EditAllGroups)) && currentPerson.HasPermission(Permissions.EditOwnGroups))
+            {
+                groups = (from g in context.Groups
+                          where (g.LeaderId == currentPerson.PersonId || g.AdministratorId == currentPerson.PersonId)
+                          && g.ChurchId == currentPerson.ChurchId
+                          select g);
+            }
+
+            if (groups == null)
+                throw new Exception("Invalid security Role");
 
             if (search)
             {

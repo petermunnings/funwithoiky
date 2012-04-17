@@ -1,17 +1,5 @@
 ﻿var familyMembers;
 
-function GetRoleName() {
-    var roleName = $("#hidden_roleName").val();
-    if ($("#RoleName").length > 0) { //Church Admin on the page
-        roleName = $("#RoleName").val();
-    }
-    else if ($("#groupAdmin_securityRole").length > 0) { //group admin on the page
-        roleName = $("#groupAdmin_securityRole").val();
-    }
-
-    return roleName;
-}
-
 function ClearForm() {
     var searchText = $("#text_personSearch").val();
     $("input:text").val("");
@@ -81,7 +69,7 @@ function PopulatePerson(person) {
     $("#text_address4").val(person.Address4);
     $("#hidden_lat").val(person.Lat);
     $("#hidden_lng").val(person.Lng);
-    $("#RoleName").val(person.RoleName);
+    $("#RoleId").val(person.RoleId);
     $("#Site").val(person.Site);
     $("#text_heardAbout").val(person.HeardAbout);
     $("#family_members").empty();
@@ -160,8 +148,6 @@ function SavePerson(refreshAfterSave) {
         groupId = $("#GroupId").val();
     }
 
-    var roleName = GetRoleName();
-
     var postData = { PersonId: $("#hidden_personId").val(),
         FamilyId: $("#hidden_familyId").val(),
         Firstname: $("#text_firstname").val(),
@@ -182,7 +168,7 @@ function SavePerson(refreshAfterSave) {
         Address4: $("#text_address4").val(),
         Lat: $("#hidden_lat").val(),
         Lng: $("#hidden_lng").val(),
-        RoleName: roleName,
+        RoleId: $("#RoleId").val(),
         Site: $("#Site").val(),
         FamilyMembers: familyMembers,
         HeardAbout: $("#text_heardAbout").val(),
@@ -272,10 +258,13 @@ function AddFamilyMember() {
     var lat = $("#hidden_lat").val();
     var lng = $("#hidden_lng").val();
     var groupId = $("#hidden_groupId").val();
+    var roleId = $("#RoleId").val();
 
     ClearForm();
+
     $("#hidden_familyId").val(familyId);
     $("#hidden_groupId").val(groupId);
+    $("#hidden_roleId").val(groupId);
     $("#text_surname").val(surname);
     $("#text_homePhone").val(homephone);
     $("#text_address1").val(address1);
@@ -284,9 +273,6 @@ function AddFamilyMember() {
     $("#text_address4").val(address4);
     $("#hidden_lat").val(lat);
     $("#hidden_lng").val(lng);
-    $("#groupAdmin_securityRole").val(roleName);
-    $("#hidden_roleName").val(roleName);
-    $("#RoleName").val(roleName);
 }
 
 function SendWelcomeMail() {

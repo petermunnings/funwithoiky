@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums.cs" />
+    <Compile Include="Models\AdminReportsViewModel.cs" />
     <Compile Include="Models\AttendanceEventViewModel.cs" />
     <Compile Include="Models\ChurchSettingsViewModel.cs" />
     <Compile Include="Models\ChurchViewModel.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="Models\SettingsViewModel.cs" />
     <Compile Include="Models\SiteSettingsViewModel.cs" />
     <Compile Include="Models\SuburbViewModel.cs" />
+    <Compile Include="Models\SysAdminViewModel.cs" />
     <Compile Include="Models\TableGenerationModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils.cs" />

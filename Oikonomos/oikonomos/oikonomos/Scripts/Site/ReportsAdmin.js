@@ -225,9 +225,9 @@ $(document).ready(function () {
         }, 600);
     });
 
-    $('#jqgContactList').jqGrid({
+    $('#jqgPeopleInARole').jqGrid({
         url: '/Ajax/FetchPeople',
-        postData: { roleId: $("#SelectedRole").val() }, 
+        postData: { roleId: function () { return $("#RoleId").val(); }},
         datatype: 'json',
         mtype: 'POST',
         colNames: ['PersonId', 'Firstname', 'Surname', 'HomePhone', 'CellPhone', 'Email', 'Date First Visit', 'Group', 'Site'],
@@ -243,7 +243,7 @@ $(document).ready(function () {
                     { name: 'Group', index: 'Group', align: 'left', width: 140 },
                     { name: 'Site', index: 'Site', align: 'left', width: 120 }
                   ],
-        pager: $('#jqgpContactList'),
+        pager: $('#jqgpPeopleInARole'),
         rowNum: 20,
         sortname: 'Date',
         sortorder: 'desc',
@@ -253,9 +253,13 @@ $(document).ready(function () {
         ondblClickRow: function (rowid, iRow, iCol, e) {
             window.location.replace("/Home/Person?PersonId=" + rowid);
         }
-    }).navGrid('#jqgpContactList', { edit: false, add: false, del: false, search: false });
+    }).navGrid('#jqgpPeopleInARole', { edit: false, add: false, del: false, search: false });
 
-    $('#jqgContactList').jqGrid('filterToolbar', { stringResult: true, searchOnEnter: false });
+    $('#jqgPeopleInARole').jqGrid('filterToolbar', { stringResult: true, searchOnEnter: false });
+
+    $("#RoleId").change(function () {
+        $('#jqgPeopleInARole').trigger("reloadGrid");
+    });
 
     //Need to do an asynch post to fetch the columns for this next one
     $.post("/Ajax/FetchGroupAttendanceGridSetup", function (data) {
@@ -272,7 +276,7 @@ $(document).ready(function () {
             viewrecords: true,
             width: 'auto',
             height: 'auto'
-        }).navGrid('#jqgpVisitors', { edit: false, add: false, del: false, search: false });
+        }).navGrid('#jqgpGroupAttendance', { edit: false, add: false, del: false, search: false });
     })
     .success(function () {
         $("#jqgGroupAttendance").jqGrid('setGridParam', { datatype: 'json' });
@@ -282,8 +286,9 @@ $(document).ready(function () {
         alert(jqXHR.responseText);
     });
 
-    $("#button_viewContactList").click(function () {
-        window.location.replace("/Report/ContactList?RoleId=" + $("#SelectedRole").val());
+    $("#button_viewPeopleInARole").click(function () {
+        var roleName = $("#RoleId option[value='" + $("#RoleId").val() + "']").text();
+        window.location.replace("/Report/PeopleList?roleId=" + $("#RoleId").val() + "&roleName=" + roleName);
     });
 
     $("#button_exportChurchData").click(function () {

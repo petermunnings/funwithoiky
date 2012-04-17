@@ -38,7 +38,7 @@ namespace oikonomos.web.Controllers
             return new FileStreamResult(stream, "application/pdf");
         }
 
-        public FileStreamResult ContactList(int roleId)
+        public FileStreamResult PeopleList(int roleId, string roleName)
         {
             Person currentUser = SecurityHelper.CheckCurrentUser(Session, Response, ViewBag);
             if (currentUser == null)
@@ -46,11 +46,11 @@ namespace oikonomos.web.Controllers
                 Redirect("/Home/Index");
             }
 
-            List<PersonListViewModel> contactList = PersonDataAccessor.FetchPeople(currentUser, roleId);
+            List<PersonListViewModel> peopleList = PersonDataAccessor.FetchPeople(currentUser, roleId);
             MemoryStream stream = new MemoryStream();
-            CreatePeopleListDocument(currentUser, contactList, "Contact").Save(stream, false);
+            CreatePeopleListDocument(currentUser, peopleList, roleName).Save(stream, false);
 
-            HttpContext.Response.AddHeader("content-disposition", "attachment; filename=contactlist.pdf");
+            HttpContext.Response.AddHeader("content-disposition", String.Format("attachment; filename={0}list.pdf", roleName));
             return new FileStreamResult(stream, "application/pdf");
         }
 

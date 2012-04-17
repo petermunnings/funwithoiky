@@ -120,7 +120,7 @@ namespace oikonomos.web.Controllers
                 else
                 {
                     //TODO Check for User Roles
-                    PersonDataAccessor.DeletePerson(personId);
+                    PersonDataAccessor.DeletePerson(personId, currentPerson);
                 }
             }
 
@@ -285,13 +285,31 @@ namespace oikonomos.web.Controllers
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
+        public JsonResult ChangeChurchTo(int churchId)
+        {
+            if (Session[SessionVariable.LoggedOnPerson] != null)
+            {
+                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                if (currentPerson.HasPermission(Permissions.SystemAdministrator))
+                {
+                    currentPerson.ChurchId = churchId;
+                    Session[SessionVariable.LoggedOnPerson] = currentPerson;
+                    Session[SessionVariable.Church] = ChurchDataAccessor.FetchChurch(churchId);
+                }
+            }
+
+            return Json(new { message = "Success" });
+        }
+        
+
+        [AcceptVerbs(HttpVerbs.Post)]
         public JsonResult FetchGroupList(JqGridRequest request)
         {
             JqGridData jqGridData = new JqGridData();
             if (Session[SessionVariable.LoggedOnPerson] != null)
             {
                 Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                if (currentPerson.HasPermission(common.Permissions.EditAllGroups))
+                if (currentPerson.HasPermission(common.Permissions.EditAllGroups) || currentPerson.HasPermission(Permissions.EditOwnGroups))
                 {
                     jqGridData = GroupDataAccessor.FetchHomeGroupsJQGrid(currentPerson, request);
                 }
@@ -883,7 +901,8 @@ namespace oikonomos.web.Controllers
                 if (personId > 0)
                 {
                     personViewModel = PersonDataAccessor.FetchPersonViewModel(personId, currentPerson);
-                    if (personViewModel!=null && personViewModel.FacebookId == null && personId!=currentPerson.PersonId)
+
+                    if (personViewModel != null && personViewModel.FacebookId == null && personId != currentPerson.PersonId)
                     {
                         if (Session["FacebookClient"] != null)
                         {

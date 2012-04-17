@@ -1,0 +1,9 @@
+﻿@model oikonomos.common.Models.SysAdminViewModel
+<script src="@Url.Content("~/Scripts/Site/SysAdmin.js")" type="text/javascript"></script>
+@{
+    ViewBag.Title = "SysAdmin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<p>Select a church to switch to @Html.DropDownListFor(m => m.ChurchId, new SelectList(Model.Churches, "ChurchId", "ChurchName"))</p>

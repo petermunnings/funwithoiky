@@ -55,6 +55,9 @@
     <Reference Include="MigraDoc.RtfRendering">
       <HintPath>..\External\MigraDoc.RtfRendering.dll</HintPath>
     </Reference>
+    <Reference Include="MvcCheckBoxList">
+      <HintPath>..\External\MvcCheckBoxList.dll</HintPath>
+    </Reference>
     <Reference Include="PdfSharp">
       <HintPath>..\External\PdfSharp.dll</HintPath>
     </Reference>
@@ -250,6 +253,7 @@
     <Content Include="Scripts\Site\Layout.js" />
     <Content Include="Scripts\Site\Person.js" />
     <Content Include="Scripts\Site\Settings.js" />
+    <Content Include="Scripts\Site\SysAdmin.js" />
     <Content Include="Scripts\tooltip.min.js" />
     <Content Include="Scripts\ui.mask.js" />
     <Content Include="tick.png" />
@@ -300,7 +304,9 @@
   <ItemGroup>
     <Content Include="Views\Home\Person.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Views\Home\SysAdmin.cshtml" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\Settings.cshtml" />
   </ItemGroup>

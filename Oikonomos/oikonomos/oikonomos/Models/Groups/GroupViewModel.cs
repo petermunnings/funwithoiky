@@ -20,5 +20,7 @@ namespace oikonomos.web.Models.Groups
         public string DisplayGroupClassification { get; set; }
         public int SelectedEventTypeId { get; set; }
         public List<EventTypeViewModel> EventTypes { get; set; }
+        public int RoleId { get; set; }
+        public List<RoleViewModel> SecurityRoles { get; set; }
     }
 }

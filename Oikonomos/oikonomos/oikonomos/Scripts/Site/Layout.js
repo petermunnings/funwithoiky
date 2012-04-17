@@ -188,12 +188,15 @@ $(document).ready(function () {
         window.location.replace("/Home/ReportGrid");
     });
     $("#button_reports").click(function () {
-        window.location.replace("/Home/ReportGrid");
+        window.location.replace("/Home/ReportsAdmin");
     });
     $("#button_help").click(function () {
         window.location.replace("/Home/Help");
     });
     $("#button_logout").click(function () {
         window.location.replace("/Home/Logout");
+    });
+    $("#button_sysAdmin").click(function () {
+        window.location.replace("/Home/SysAdmin");
     });
 })
