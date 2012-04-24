@@ -2,13 +2,13 @@
 $(document).ready(function () {
 
     $("#button_churchList").click(function () {
-        window.location.replace("/Home/ReportGrid");
+        window.location = "/Home/ReportGrid";
     });
     $("#button_churchMap").click(function () {
-        window.location.replace("/Home/ReportsMap");
+        window.location = "/Home/ReportsMap";
     });
     $("#button_adminReports").click(function () {
-        window.location.replace("/Home/ReportsAdmin");
+        window.location = "/Home/ReportsAdmin";
     });
 
 })

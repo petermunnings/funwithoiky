@@ -100,7 +100,7 @@ function FetchPersonData(personId) {
 
     var jqxhr = $.post("/Ajax/FetchPerson", $.postify(postData), function (data) {
         if (data.Person == null) {
-            window.location.replace("/Home/Person");
+            window.location = "/Home/Person";
         }
         else {
             PopulatePerson(data.Person);
@@ -592,7 +592,7 @@ $(document).ready(function () {
         width: 'auto',
         height: 'auto',
         ondblClickRow: function (rowid, iRow, iCol, e) {
-            window.location.replace("/Home/Homegroups?groupId=" + rowid);
+            window.location = "/Home/Homegroups?groupId=" + rowid;
         }
     }).navGrid('#jqgpGroups', { edit: false, add: false, del: false, search: false });
 })

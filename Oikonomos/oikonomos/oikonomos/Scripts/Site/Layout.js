@@ -148,7 +148,7 @@ function stopRKey(evt) {
 
 $(document).ready(function () {
 
-    setTimeout("window.location.replace('/Home/Index')", 1210000);
+    setTimeout("window.location = '/Home/Index'", 1210000);
 
     document.onkeypress = stopRKey;
 
@@ -173,30 +173,30 @@ $(document).ready(function () {
     $("button, input:submit").button();
 
     $("#button_home").click(function () {
-        window.location.replace("/Home/Index");
+        window.location = "/Home/Index";
     });
     $("#button_person").click(function () {
-        window.location.replace("/Home/Person");
+        window.location = "/Home/Person";
     });
     $("#button_homegroup").click(function () {
-        window.location.replace("/Home/Homegroups");
+        window.location = "/Home/Homegroups";
     });
     $("#button_settings").click(function () {
-        window.location.replace("/Home/Settings");
+        window.location = "/Home/Settings";
     });
     $("#button_lists").click(function () {
-        window.location.replace("/Home/ReportGrid");
+        window.location = "/Home/ReportGrid";
     });
     $("#button_reports").click(function () {
-        window.location.replace("/Home/ReportsAdmin");
+        window.location = "/Home/ReportsAdmin";
     });
     $("#button_help").click(function () {
-        window.location.replace("/Home/Help");
+        window.location = "/Home/Help";
     });
     $("#button_logout").click(function () {
-        window.location.replace("/Home/Logout");
+        window.location = "/Home/Logout";
     });
     $("#button_sysAdmin").click(function () {
-        window.location.replace("/Home/SysAdmin");
+        window.location = "/Home/SysAdmin";
     });
 })

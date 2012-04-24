@@ -401,7 +401,7 @@ function ShowLeaveEvents(personId) {
 function EditPerson() {
     var selArr = $("#jqgPeople").getGridParam("selarrrow");
     if (selArr.length > 0)
-        window.location.replace("/Home/Person?PersonId=" + selArr[0]);
+        window.location = "/Home/Person?PersonId=" + selArr[0];
 }
 
 function DeletePerson(personId) {
@@ -827,11 +827,11 @@ $(document).ready(function () {
 
 
     $("#button_printList").click(function () {
-        window.location.replace("/Report/HomeGroupList/" + selectedGroupId);
+        window.location = "/Report/HomeGroupList/" + selectedGroupId;
     });
 
     $("#button_printAttendance").click(function () {
-        window.location.replace("/Report/HomeGroupAttendance/" + selectedGroupId);
+        window.location = "/Report/HomeGroupAttendance/" + selectedGroupId;
     });
 
     $("#membersList").delegate(".radio_leader", "click", function () {

@@ -162,7 +162,7 @@ $(document).ready(function () {
         //grid height
         height: 'auto',
         ondblClickRow: function (rowid, iRow, iCol, e) {
-            window.location.replace("/Home/Person?PersonId=" + rowid);
+            window.location = "/Home/Person?PersonId=" + rowid;
         }
     }).navGrid('#jqgpNotInGroup', { edit: false, add: false, del: false, search: false });
 
@@ -207,7 +207,7 @@ $(document).ready(function () {
         height: 'auto',
         ondblClickRow: function (rowid, iRow, iCol, e) {
             var personId = $('#jqgEventList').jqGrid('getCell', rowid, 'PersonId');
-            window.location.replace("/Home/Person?PersonId=" + personId);
+            window.location = "/Home/Person?PersonId=" + personId;
         }
     }).navGrid('#jqgpEventList', { edit: false, add: false, del: false, search: false });
 
@@ -251,7 +251,7 @@ $(document).ready(function () {
         width: 'auto',
         height: 'auto',
         ondblClickRow: function (rowid, iRow, iCol, e) {
-            window.location.replace("/Home/Person?PersonId=" + rowid);
+            window.location = "/Home/Person?PersonId=" + rowid;
         }
     }).navGrid('#jqgpPeopleInARole', { edit: false, add: false, del: false, search: false });
 
@@ -288,10 +288,10 @@ $(document).ready(function () {
 
     $("#button_viewPeopleInARole").click(function () {
         var roleName = $("#RoleId option[value='" + $("#RoleId").val() + "']").text();
-        window.location.replace("/Report/PeopleList?roleId=" + $("#RoleId").val() + "&roleName=" + roleName);
+        window.location = "/Report/PeopleList?roleId=" + $("#RoleId").val() + "&roleName=" + roleName;
     });
 
     $("#button_exportChurchData").click(function () {
-        window.location.replace("/Report/ExportChurchData");
+        window.location = "/Report/ExportChurchData";
     });
 });

@@ -158,7 +158,7 @@ $(document).ready(function () {
 
     $("#button_viewChurchList").click(function () {
         var postdata = $("#jqgChurchList").jqGrid('getGridParam', 'postData');
-        window.location.replace("/Report/ChurchList?search=" + postdata._search + "&searchField=" + postdata.searchField + "&searchString=" + postdata.searchString);
+        window.location = "/Report/ChurchList?search=" + postdata._search + "&searchField=" + postdata.searchField + "&searchString=" + postdata.searchString;
     });
 
     $("#button_sendEmail").click(function () {
