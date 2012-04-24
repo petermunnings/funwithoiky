@@ -1,3 +1,4 @@
+#ignorefile
 obj/
 bin/
 *.suo
