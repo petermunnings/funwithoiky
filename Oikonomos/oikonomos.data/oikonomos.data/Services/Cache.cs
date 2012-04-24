@@ -39,28 +39,23 @@ namespace oikonomos.data.Services
         {
             cache[name] = value;
         }
-
+        
         public static List<RoleViewModel> SecurityRoles(oikonomosEntities context, Person currentPerson)
         {
-            List<RoleViewModel> securityRoles = Cache.FetchCacheValue<List<RoleViewModel>>(CacheNames.SecurityRoles);
-            if (securityRoles == null)
-            {
-                securityRoles = new List<RoleViewModel>();
-                var currentPersonRole = GetCurrentPersonRole(context, currentPerson);
-                if (currentPersonRole != null)
-                    securityRoles = (from r in context.Roles
-                                     from parentRole in r.Roles
-                                     where r.ChurchId == currentPerson.ChurchId
-                                     && parentRole.RoleId == currentPersonRole.RoleId
-                                     select new RoleViewModel()
-                                     {
-                                         RoleId = r.RoleId,
-                                         Name = r.Name
-                                     }).ToList();
-                    
-
-                Cache.SetCacheValue(CacheNames.SecurityRoles, securityRoles);
-            }
+            //TODO - not a good idea to cache these - gives everyone the same security role.
+            //       rethink this later
+            var securityRoles = new List<RoleViewModel>();
+            var currentPersonRole = GetCurrentPersonRole(context, currentPerson);
+            if (currentPersonRole != null)
+                securityRoles = (from r in context.Roles
+                                 from parentRole in r.Roles
+                                 where r.ChurchId == currentPerson.ChurchId
+                                 && parentRole.RoleId == currentPersonRole.RoleId
+                                 select new RoleViewModel()
+                                 {
+                                     RoleId = r.RoleId,
+                                     Name = r.Name
+                                 }).ToList();
 
             return securityRoles;
         }

@@ -12,6 +12,7 @@ namespace oikonomos.data.DataAccessors
 {
     public class PermissionDataAccessor
     {
+        
         public static int FetchDefaultRoleId(Person currentPerson)
         {
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))

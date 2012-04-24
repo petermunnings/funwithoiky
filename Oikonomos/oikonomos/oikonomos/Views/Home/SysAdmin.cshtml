@@ -7,3 +7,15 @@
 
 
 <p>Select a church to switch to @Html.DropDownListFor(m => m.ChurchId, new SelectList(Model.Churches, "ChurchId", "ChurchName"))</p>
+<p>Refresh Security Roles Cache <button id="refreshCache">Refresh</button></p>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#refreshCache").click(function () {
+            var jqxhr = $.post("/Ajax/RefreshSecurityRoles")
+        }).error(function (jqXHR, textStatus, errorThrown) {
+            alert(jqXHR.responseText);
+        });
+    });
+</script>
