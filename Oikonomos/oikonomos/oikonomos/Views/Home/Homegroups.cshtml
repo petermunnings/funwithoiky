@@ -228,7 +228,7 @@
             </div>
         </div>
 
-        <div class="tableRow">
+        <div id="row_roleId" class="tableRow">
             <div style="display:table-cell">Role</div>
             <div style="text-align:left; display:table-cell">@Html.DropDownListFor(model => model.RoleId, new SelectList(Model.SecurityRoles, "RoleId", "Name"), new { @class = "ui-corner-all" })</div>
         </div>

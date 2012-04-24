@@ -13,14 +13,6 @@ function ClearForm() {
     genderRadio.filter('[value=Female]').prop('checked', false);
     $("#warning_firstname").hide();
     $("#warning_surname").hide();
-    if ($("#RoleName").length > 0) {
-        $("#RoleName").val("Member");
-        $("#hidden_roleName").val("Member");
-    }
-    else {
-        $("#groupAdmin_securityRole").val("Visitor");
-        $("#hidden_roleName").val("Visitor");
-    }
 
     $("#text_personSearch").val(searchText);
     familyMembers = [];
@@ -39,7 +31,7 @@ function PopulatePerson(person) {
     $("#jqgGroups").trigger("reloadGrid");
     $("#hidden_familyId").val(person.FamilyId);
     $("#hidden_groupId").val(person.GroupId);
-    $("#hidden_roleName").val(person.RoleName);
+    $("#hidden_roleId").val(person.RoleId);
     $("#text_firstname").val(person.Firstname);
     $("#warning_firstname").hide();
     $("#text_surname").val(person.Surname);
@@ -70,6 +62,11 @@ function PopulatePerson(person) {
     $("#hidden_lat").val(person.Lat);
     $("#hidden_lng").val(person.Lng);
     $("#RoleId").val(person.RoleId);
+    if ($('#RoleId option[value=' + person.RoleId + ']').length == 0) {
+        $("#row_roleDropDown").hide();
+    } else {
+        $("#row_roleDropDown").show();
+    }
     $("#Site").val(person.Site);
     $("#text_heardAbout").val(person.HeardAbout);
     $("#family_members").empty();
@@ -144,8 +141,12 @@ function SavePerson(refreshAfterSave) {
     }
 
     var groupId = $("#hidden_groupId").val();
-    if ($("#RoleName").val() == "Visitor") {
-        groupId = $("#GroupId").val();
+
+    var roleId = $("#hidden_roleId").val();
+    if ($("#row_roleDropDown").length > 0) {
+        if ($('#RoleId option[value=' + $("#hidden_roleId").val() + ']').length != 0) {
+            roleId = $("#RoleId").val();
+        }
     }
 
     var postData = { PersonId: $("#hidden_personId").val(),
@@ -168,7 +169,7 @@ function SavePerson(refreshAfterSave) {
         Address4: $("#text_address4").val(),
         Lat: $("#hidden_lat").val(),
         Lng: $("#hidden_lng").val(),
-        RoleId: $("#RoleId").val(),
+        RoleId: roleId,
         Site: $("#Site").val(),
         FamilyMembers: familyMembers,
         HeardAbout: $("#text_heardAbout").val(),

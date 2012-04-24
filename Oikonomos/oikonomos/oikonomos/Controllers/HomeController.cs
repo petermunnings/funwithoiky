@@ -272,6 +272,16 @@ namespace oikonomos.web.Controllers
                 p = PersonDataAccessor.FetchPersonViewModel(currentPerson.PersonId, currentPerson);
             }
 
+            ViewBag.CanChangeRole = false;
+            foreach (var role in p.SecurityRoles)
+            {
+                if (role.RoleId == p.RoleId)
+                {
+                    ViewBag.CanChangeRole = true;
+                    break;
+                }
+            }
+
             //Fetch Groups
             ViewBag.Groups = GroupDataAccessor.FetchHomeGroups(currentPerson.ChurchId, currentPerson);
             List<OptionalFieldViewModel> optionalFields = SettingsDataAccessor.FetchChurchOptionalFields(currentPerson.ChurchId);

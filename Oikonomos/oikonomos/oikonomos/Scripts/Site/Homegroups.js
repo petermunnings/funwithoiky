@@ -715,6 +715,7 @@ $(document).ready(function () {
         source: function (request, response) {
             $("#ajax_loader_addPerson").show();
             $("#hidden_personId").val("0");
+            $("#row_roleId").show();
             var postData = { term: request.term };
 
             var jqxhr = $.post("/Ajax/PersonAutoComplete", $.postify(postData), function (data) {
@@ -728,7 +729,13 @@ $(document).ready(function () {
         ,
         minLength: 1,
         select: function (event, ui) {
-            $("#hidden_personId").val(ui.item ? ui.item.id : "0");
+            if (ui.item) {
+                $("#hidden_personId").val(ui.item.id);
+                $("#row_roleId").hide();
+            } else {
+                $("#hidden_personId").val("0");
+                $("#row_roleId").show();
+            }
         }
     });
 
