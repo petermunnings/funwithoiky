@@ -65,7 +65,7 @@ namespace oikonomos.web.Controllers
             }
         }
 
-        public ActionResult HomeGroups(int? groupId)
+        public ActionResult Groups(int? groupId)
         {
             GroupViewModel viewModel = new GroupViewModel();
             

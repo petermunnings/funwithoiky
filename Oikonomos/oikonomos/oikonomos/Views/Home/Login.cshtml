@@ -2,7 +2,7 @@
     ViewBag.Title = "Login";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<script src="@Url.Content("~/Scripts/Site/Login.js")" type="text/javascript"></script>
+<script src="@oikonomos.web.Helpers.JavascriptHelper.Content("~/Scripts/Site/Login.js")" type="text/javascript"></script>
 <p>&nbsp;</p>
 @using (Ajax.BeginForm("Login", "Home", null))
 {

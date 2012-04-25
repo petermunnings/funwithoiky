@@ -10,7 +10,7 @@ function DeleteSite(site) {
         grid.trigger("reloadGrid");
     })
     .error(function (jqXHR, textStatus, errorThrown) {
-        alert(jqXHR.responseText);
+        SendErrorEmail("Error calling DeleteSite", jqXHR.responseText);
     });
 }
 
@@ -34,7 +34,7 @@ function SaveSite(site) {
         grid.trigger("reloadGrid");
     })
     .error(function (jqXHR, textStatus, errorThrown) {
-        alert(jqXHR.responseText);
+        SendErrorEmail("Error calling SaveSite", jqXHR.responseText);
     });
 }
 
@@ -109,7 +109,7 @@ function ChangePassword() {
         })
         .error(function (jqXHR, textStatus, errorThrown) {
             $("#ajax_changePassword").hide();
-            alert(jqXHR.responseText); 
+            SendErrorEmail("Error calling ChangePassword", jqXHR.responseText);
         });
     }
 }
@@ -133,7 +133,7 @@ function SaveAddress() {
         })
         .error(function (jqXHR, textStatus, errorThrown) {
             $("#ajax_loaderAddress").hide();
-            alert(jqXHR.responseText);
+            SendErrorEmail("Error calling SaveGroupAddress", jqXHR.responseText);
         });
 
 }
@@ -166,7 +166,7 @@ function FetchSuburbs(load) {
         PopulateSuburbs(data.Suburbs, load);
     })
     .error(function (jqXHR, textStatus, errorThrown) {
-        alert(jqXHR.responseText);
+        SendErrorEmail("Error calling FetchSuburbs", jqXHR.responseText);
     });
 }
 
@@ -179,7 +179,7 @@ function AddSuburb() {
             PopulateSuburbs(data.Suburbs);
         })
     .error(function (jqXHR, textStatus, errorThrown) {
-        alert(jqXHR.responseText);
+        SendErrorEmail("Error calling AddSuburb", jqXHR.responseText);
     });
     }
 }
@@ -192,7 +192,7 @@ function DeleteSuburb(suburbId) {
         PopulateSuburbs(data.Suburbs);
     })
     .error(function (jqXHR, textStatus, errorThrown) {
-        alert(jqXHR.responseText);
+        SendErrorEmail("Error calling DeleteSuburb", jqXHR.responseText);
     });
 }
 
@@ -223,7 +223,7 @@ function FetchHGClassifications(load) {
         PopulateHGClassifications(data.GroupClassifications, load);
     })
     .error(function (jqXHR, textStatus, errorThrown) {
-        alert(jqXHR.responseText);
+        SendErrorEmail("Error calling FetchGroupClassifications", jqXHR.responseText);
     });
 }
 
@@ -236,7 +236,7 @@ function AddHGClassification() {
             PopulateHGClassifications(data.GroupClassifications);
         })
     .error(function (jqXHR, textStatus, errorThrown) {
-        alert(jqXHR.responseText);
+        SendErrorEmail("Error calling AddGroupClassification", jqXHR.responseText);
     });
     }
 }
@@ -249,7 +249,7 @@ function DeleteHGClassification(hgClassificationId) {
         PopulateHGClassifications(data.GroupClassifications);
     })
     .error(function (jqXHR, textStatus, errorThrown) {
-        alert(jqXHR.responseText);
+        SendErrorEmail("Error calling DeleteGroupClassification", jqXHR.responseText);
     });
 }
 
@@ -281,7 +281,7 @@ function FetchHGEventTypes(load) {
         PopulateHGEventTypes(data.EventTypes, load);
     })
     .error(function (jqXHR, textStatus, errorThrown) {
-        alert(jqXHR.responseText);
+        SendErrorEmail("Error calling FetchEventTypes", jqXHR.responseText);
     });
 }
 
@@ -296,7 +296,7 @@ function AddHGEventType() {
             PopulateHGEventTypes(data.EventTypes);
         })
     .error(function (jqXHR, textStatus, errorThrown) {
-        alert(jqXHR.responseText);
+        SendErrorEmail("Error calling AddEventType", jqXHR.responseText);
     });
     }
 }
@@ -311,7 +311,7 @@ function DeleteHGEventType(hgEventTypeId) {
         PopulateHGEventTypes(data.EventTypes);
     })
     .error(function (jqXHR, textStatus, errorThrown) {
-        alert(jqXHR.responseText);
+        SendErrorEmail("Error calling DeleteEventType", jqXHR.responseText);
     });
 }
 
@@ -382,7 +382,7 @@ $(document).ready(function () {
         });
 
     })
-    .error(function (jqXHR, textStatus, errorThrown) { alert(jqXHR.responseText); });
+    .error(function (jqXHR, textStatus, errorThrown) { SendErrorEmail("Error calling FetchOptionalFields", jqXHR.responseText); });
 
     $("#button_saveGeneralSettings").click(function () {
         $("#saveMessage_generalSettings").html("");
@@ -396,7 +396,7 @@ $(document).ready(function () {
         .error(function (jqXHR, textStatus, errorThrown) {
             $("#saveMessage_generalSettings").html("");
             $("#ajaxLoader_generalSettings").hide();
-            alert(jqXHR.responseText);
+            SendErrorEmail("Error calling SaveOptionalFields", jqXHR.responseText);
         });
     });
 
@@ -429,7 +429,7 @@ $(document).ready(function () {
         .error(function (jqXHR, textStatus, errorThrown) {
             $("#saveMessage_Church").html("");
             $("#ajaxLoader_Church").hide();
-            alert(jqXHR.responseText);
+            SendErrorEmail("Error calling SaveChurchContactDetails", jqXHR.responseText);
         });
     });
 
@@ -447,7 +447,7 @@ $(document).ready(function () {
         .error(function (jqXHR, textStatus, errorThrown) {
             $("#saveMessage_BulkSmsDetails").html("");
             $("#ajaxLoader_BulkSmsDetails").hide();
-            alert(jqXHR.responseText);
+            SendErrorEmail("Error calling SaveBulkSmsDetails", jqXHR.responseText);
         });
     });
 

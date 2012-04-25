@@ -374,11 +374,11 @@ namespace oikonomos.data.DataAccessors
                         address.Created = DateTime.Now;
                     }
 
-                    address.Line1 = churchSettings.Address1;
-                    address.Line2 = churchSettings.Address2;
-                    address.Line3 = churchSettings.Address3;
-                    address.Line4 = churchSettings.Address4;
-                    address.AddressType = churchSettings.AddressType;
+                    address.Line1 = churchSettings.Address1 ?? string.Empty;
+                    address.Line2 = churchSettings.Address2 ?? string.Empty;
+                    address.Line3 = churchSettings.Address3 ?? string.Empty;
+                    address.Line4 = churchSettings.Address4 ?? string.Empty;
+                    address.AddressType = churchSettings.AddressType ?? string.Empty;
                     address.Lat = churchSettings.Lat;
                     address.Long = churchSettings.Lng;
                     address.Changed = DateTime.Now;

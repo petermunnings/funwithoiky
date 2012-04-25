@@ -138,6 +138,9 @@ namespace oikonomos.data.DataAccessors
         }
         public static void SaveSite(Person currentPerson, SiteSettingsViewModel siteSettings)
         {
+            if (string.IsNullOrWhiteSpace(siteSettings.SiteName))
+                return;
+
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 //Check Roles

@@ -58,7 +58,7 @@
 
     }).error(function (jqXHR, textStatus, errorThrown) {
         $("#ajax_loader").hide();
-        alert(jqXHR.responseText);
+        SendErrorEmail("Error calling FetchPeopleInChurch", jqXHR.responseText);
     });
 }
 

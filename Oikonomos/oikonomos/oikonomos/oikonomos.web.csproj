@@ -135,11 +135,13 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AjaxController.cs" />
     <Compile Include="Controllers\ChurchController.cs" />
+    <Compile Include="Controllers\EmailController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\JavascriptHelper.cs" />
     <Compile Include="Helpers\SecurityHelper.cs" />
     <Compile Include="Models\Groups\GroupViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -249,7 +251,7 @@
     <Content Include="Scripts\Site\ReportsMap.js" />
     <Content Include="Scripts\Site\Help.js" />
     <Content Include="Scripts\Site\Index.js" />
-    <Content Include="Scripts\Site\Homegroups.js" />
+    <Content Include="Scripts\Site\Groups.js" />
     <Content Include="Scripts\Site\Layout.js" />
     <Content Include="Scripts\Site\Person.js" />
     <Content Include="Scripts\Site\Settings.js" />
@@ -299,7 +301,7 @@
     <Content Include="Views\Home\Login.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Home\Homegroups.cshtml" />
+    <Content Include="Views\Home\Groups.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\Person.cshtml" />

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Net.Mail;
 using oikonomos.common.Models;
 using oikonomos.data.DataAccessors;
+using System.Web;
 
 namespace oikonomos.data.Services
 {
@@ -15,6 +16,12 @@ namespace oikonomos.data.Services
         {
             Task.Factory.StartNew(() => SendExceptionEmailAsync(ex));
         }
+
+        public static void SendSystemEmail(string subject, string body)
+        {
+            Task.Factory.StartNew(() => SendSystemEmailAsync(subject, body));
+        }
+        
         
         public static void SendNewVisitorEmail(PersonViewModel person, Church church, string firstname, string surname, string email)
         {
@@ -193,10 +200,33 @@ namespace oikonomos.data.Services
                     message.Subject = "Exception from website";
                     message.Body = ex.ToString();
 
-                    message.To.Add("peter@scc.org.za");
+                    message.To.Add("peter@munnings.co.za");
                     message.IsBodyHtml = false;
 
                     SendEmail(message, "support@oikonomos.co.za", "sandton2000", "Oiky Error");
+                }
+            }
+            catch
+            {
+                // handle exception here
+                // Need to look at some kind of logging
+            }
+
+        }
+
+        private static void SendSystemEmailAsync(string subject, string body)
+        {
+            try
+            {
+                using (MailMessage message = new MailMessage())
+                {
+                    message.Subject = subject;
+                    message.Body = HttpUtility.HtmlDecode(body);
+
+                    message.To.Add("peter@munnings.co.za");
+                    message.IsBodyHtml = true;
+
+                    SendEmail(message, "support@oikonomos.co.za", "sandton2000", "Oiky System Message");
                 }
             }
             catch

@@ -305,17 +305,60 @@ namespace oikonomos.web.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public JsonResult FetchGroupList(JqGridRequest request)
         {
-            JqGridData jqGridData = new JqGridData();
-            if (Session[SessionVariable.LoggedOnPerson] != null)
+            try
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                if (currentPerson.HasPermission(common.Permissions.EditAllGroups) || currentPerson.HasPermission(Permissions.EditOwnGroups))
+                JqGridData jqGridData = new JqGridData();
+                if (Session[SessionVariable.LoggedOnPerson] != null)
                 {
-                    jqGridData = GroupDataAccessor.FetchHomeGroupsJQGrid(currentPerson, request);
+                    Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                    if (currentPerson.HasPermission(common.Permissions.EditAllGroups) || currentPerson.HasPermission(Permissions.EditOwnGroups))
+                    {
+                        jqGridData = GroupDataAccessor.FetchHomeGroupsJQGrid(currentPerson, request);
+                    }
                 }
-            }
 
-            return Json(jqGridData);
+                return Json(jqGridData);
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    Email.SendExceptionEmail(ex);
+                }
+                catch { }
+                return Json(null);
+            }
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public JsonResult FetchHomeGroupList(JqGridRequest request)
+        {
+            try
+            {
+                JqGridData jqGridData = new JqGridData();
+                var message = string.Empty;
+                if (Session[SessionVariable.LoggedOnPerson] != null)
+                {
+                    var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                    message = String.Format("Current Person:{0}", currentPerson.Fullname);
+                    
+                }
+
+                message += " is trying to access FetchHomeGroupList";
+
+                Email.SendSystemEmail("Javascript file not updated", message);
+
+                return Json(jqGridData);
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    Email.SendExceptionEmail(ex);
+                }
+                catch { }
+                return Json(null);
+            }
         }
 
         [AcceptVerbs(HttpVerbs.Post)]

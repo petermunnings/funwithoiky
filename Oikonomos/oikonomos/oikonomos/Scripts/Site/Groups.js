@@ -55,7 +55,7 @@ function PopulateAttendance() {
         $("#ajax_loader").hide();
     }).error(function (jqXHR, textStatus, errorThrown) {
         $("#ajax_loader").hide();
-        alert(jqXHR.responseText);
+        SendErrorEmail("Error calling FetchPeopleInGroupForAttendance", jqXHR.responseText);
     });
 
 
@@ -87,7 +87,7 @@ function SaveHomeGroup() {
         //Trigger the rest
     }).error(function (jqXHR, textStatus, errorThrown) {
         $("#ajax_loader").hide();
-        alert(jqXHR.responseText);
+        SendErrorEmail("Error calling SaveHomeGroup", jqXHR.responseText);
     });
 }
 
@@ -153,7 +153,7 @@ function AddPersonToGroup(personId, homeGroupId) {
             AddPersonToGroup(data.PersonId, homeGroupId);
         })
         .error(function (jqXHR, textStatus, errorThrown) {
-            alert(jqXHR.responseText);
+            SendErrorEmail("Error calling SavePerson", jqXHR.responseText);
             $("#message_hg").html("");
             $("#ajax_loader_hg").hide();
         });
@@ -168,7 +168,7 @@ function AddPersonToGroup(personId, homeGroupId) {
             $("#ajax_loader_hg").hide();
         }).error(function (jqXHR, textStatus, errorThrown) {
             $("#ajax_loader").hide();
-            alert(jqXHR.responseText);
+            SendErrorEmail("Error calling AddPersonToGroup", jqXHR.responseText);
             $("#message_hg").html("");
             $("#ajax_loader_hg").hide();
         });
@@ -185,7 +185,7 @@ function RemovePersonFromGroup(personId, groupId) {
         $("#ajax_loader_hg").hide();
     }).error(function (jqXHR, textStatus, errorThrown) {
         $("#ajax_loader_hg").hide();
-        alert(jqXHR.responseText);
+        SendErrorEmail("Error calling RemovePersonFromGroup", jqXHR.responseText);
     });
 }
 
@@ -213,7 +213,7 @@ function DeleteGroup() {
         }
     }).error(function (jqXHR, textStatus, errorThrown) {
         $("#ajax_loader").hide();
-        alert(jqXHR.responseText);
+        SendErrorEmail("Error calling DeleteHomeGroup", jqXHR.responseText);
     });
 }
 
@@ -247,7 +247,7 @@ function SaveLeaveEvents(personId) {
             $("#ajax_loader_hg").hide();
         }).error(function (jqXHR, textStatus, errorThrown) {
             $("#ajax_loader_hg").hide();
-            alert(jqXHR.responseText);
+            SendErrorEmail("Error calling SavePersonEvents", jqXHR.responseText);
         });
     }
     else {
@@ -281,7 +281,7 @@ function SaveEvents() {
             $("#ajax_loader").hide();
         }).error(function (jqXHR, textStatus, errorThrown) {
             $("#ajax_loader").hide();
-            alert(jqXHR.responseText);
+            SendErrorEmail("Error calling SavePersonEvents", jqXHR.responseText);
         });
     }
     else {
@@ -319,7 +319,7 @@ function SaveAttendance() {
         $("#ajax_loader_attendance").hide();
     }).error(function (jqXHR, textStatus, errorThrown) {
         $("#ajax_loader_attendance").hide();
-        alert(jqXHR.responseText);
+        SendErrorEmail("Error calling SaveHomeGroupEvent", jqXHR.responseText);
     });
 }
 
@@ -344,7 +344,7 @@ function SaveComment() {
             });
         }).error(function (jqXHR, textStatus, errorThrown) {
             $("#ajax_loader").hide();
-            alert(jqXHR.responseText);
+            SendErrorEmail("Error calling SavePersonComment", jqXHR.responseText);
         });
 }
 
@@ -723,7 +723,7 @@ $(document).ready(function () {
                 response(data);
             }).error(function (jqXHR, textStatus, errorThrown) {
                 $("#ajax_loader_addPerson").hide();
-                alert(jqXHR.responseText);
+                SendErrorEmail("Error calling PersonAutoComplete", jqXHR.responseText);
             });
         }
         ,

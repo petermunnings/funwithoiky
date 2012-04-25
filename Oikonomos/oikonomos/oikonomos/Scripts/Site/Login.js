@@ -14,7 +14,7 @@ $(document).ready(function () {
             $.post("/Ajax/ResetPassword", $.postify(postData), function (data) {
                 $("#td_message").html(data.Message);
             }).error(function (jqXHR, textStatus, errorThrown) {
-                alert(jqXHR.responseText);
+                SendErrorEmail("Error calling ResetPassword", jqXHR.responseText);
             });
         }
         return false;

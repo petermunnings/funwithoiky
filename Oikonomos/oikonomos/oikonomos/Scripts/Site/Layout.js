@@ -1,5 +1,22 @@
 ﻿var addressList;
 
+function htmlEncode(value) {
+    return $('<div/>').text(value).html();
+}
+
+function htmlDecode(value) {
+    return $('<div/>').html(value).text();
+}
+
+function SendErrorEmail(subject, body) {
+    var postData = { subject: subject, body: htmlEncode(body) };
+    var jqxhr = $.post("/Email/SendSystemEmail", $.postify(postData))
+    .error(function (jqXHR, textStatus, errorThrown) {
+        alert(jqXHR.responseText);
+    });
+    alert("A very unexpected error has happened.  We apologize up front.  We have already sent off an email to our developers and they will start working on this a.s.a.p.");
+}
+
 function SendEmail() {
     var postData = { subject: $("#email_subject").val(),
         body: $("#email_body").val()
@@ -20,7 +37,7 @@ function SendEmail() {
                 }
             });
     }).error(function (jqXHR, textStatus, errorThrown) {
-        alert(jqXHR.responseText);
+        SendErrorEmail("Error calling SendGroupEmail", jqXHR.responseText);
     });
 }
 
@@ -43,7 +60,7 @@ function SendSms() {
                 }
             });
     }).error(function (jqXHR, textStatus, errorThrown) {
-        alert(jqXHR.responseText);
+        SendErrorEmail("Error calling SendGroupSms", jqXHR.responseText);
     });
 }
 
@@ -179,7 +196,7 @@ $(document).ready(function () {
         window.location = "/Home/Person";
     });
     $("#button_homegroup").click(function () {
-        window.location = "/Home/Homegroups";
+        window.location = "/Home/Groups";
     });
     $("#button_settings").click(function () {
         window.location = "/Home/Settings";

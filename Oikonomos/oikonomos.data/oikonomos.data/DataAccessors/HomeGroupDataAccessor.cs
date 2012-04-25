@@ -1011,11 +1011,11 @@ namespace oikonomos.data.DataAccessors
                     address.Created = DateTime.Now;
                 }
 
-                address.Line1 = groupSettings.Address1;
-                address.Line2 = groupSettings.Address2;
-                address.Line3 = groupSettings.Address3;
-                address.Line4 = groupSettings.Address4;
-                address.AddressType = groupSettings.AddressType;
+                address.Line1 = groupSettings.Address1 ?? string.Empty;
+                address.Line2 = groupSettings.Address2 ?? string.Empty;
+                address.Line3 = groupSettings.Address3 ?? string.Empty;
+                address.Line4 = groupSettings.Address4 ?? string.Empty;
+                address.AddressType = groupSettings.AddressType ?? string.Empty;
                 address.Lat = groupSettings.Lat;
                 address.Long = groupSettings.Lng;
                 address.Changed = DateTime.Now;

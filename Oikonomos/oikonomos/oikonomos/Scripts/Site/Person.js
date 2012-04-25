@@ -105,7 +105,7 @@ function FetchPersonData(personId) {
         $("#ajax_personSearch").hide();
     }).error(function (jqXHR, textStatus, errorThrown) {
         $("#ajax_personSearch").hide();
-        alert(jqXHR.responseText);
+        SendErrorEmail("Error calling FetchPerson", jqXHR.responseText);
     });
 }
 
@@ -194,7 +194,7 @@ function SavePerson(refreshAfterSave) {
             pageIsDirty = false;
         }
     })
-        .error(function (jqXHR, textStatus, errorThrown) { $("#ajax_personSearch").hide(); alert(jqXHR.responseText); });
+        .error(function (jqXHR, textStatus, errorThrown) { $("#ajax_personSearch").hide(); SendErrorEmail("Error calling SavePerson", jqXHR.responseText); });
 }
 
 function FetchFamilyMembers() {
@@ -210,7 +210,7 @@ function FetchFamilyMembers() {
                                 .appendTo("#family_members");
                              familyMembers = data.FamilyMembers;
                          })
-        .error(function (jqXHR, textStatus, errorThrown) { alert(jqXHR.responseText); });
+        .error(function (jqXHR, textStatus, errorThrown) { SendErrorEmail("Error calling FetchFamilyMembers", jqXHR.responseText); });
     }
 }
 
@@ -230,7 +230,7 @@ function DeletePerson(){
                 $("#span_message").html(data.Message);
             }
         })
-        .error(function (jqXHR, textStatus, errorThrown) { alert(jqXHR.responseText); });
+        .error(function (jqXHR, textStatus, errorThrown) { SendErrorEmail("Error calling DeletePerson", jqXHR.responseText); });
     }
 }
 
@@ -294,7 +294,7 @@ function SendWelcomeMail() {
         }
         $("#ajax_personSearch").hide();
     })
-    .error(function (jqXHR, textStatus, errorThrown) { alert(jqXHR.responseText); });
+    .error(function (jqXHR, textStatus, errorThrown) { SendErrorEmail("Error calling SendEmailAndPassword", jqXHR.responseText); });
 }
 
 PageAlert = {
@@ -417,7 +417,7 @@ $(document).ready(function () {
                     }
                 }).error(function (jqXHR, textStatus, errorThrown) {
                     $("#ajax_familySearch").hide();
-                    alert(jqXHR.responseText);
+                    SendErrorEmail("Error calling PersonAutoComplete", jqXHR.responseText);
                 });
             });
         }
@@ -438,7 +438,7 @@ $(document).ready(function () {
                 response(data);
             }).error(function (jqXHR, textStatus, errorThrown) {
                 $("#ajax_familySearch").hide();
-                alert(jqXHR.responseText);
+                SendErrorEmail("Error calling PersonAutoComplete", jqXHR.responseText);
             });
         }
         ,

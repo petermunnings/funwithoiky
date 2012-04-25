@@ -283,7 +283,7 @@ $(document).ready(function () {
     })
     .error(function (jqXHR, textStatus, errorThrown) {
         $("#ajax_familySearch").hide();
-        alert(jqXHR.responseText);
+        SendErrorEmail("Error calling FetchGroupAttendanceGridSetup", jqXHR.responseText);
     });
 
     $("#button_viewPeopleInARole").click(function () {
