@@ -12,14 +12,15 @@ namespace oikonomos.test
         [TestMethod]
         public void FetchGroupAttendance()
         {
-            var currentPerson = CreateSysAdmin();
-            const int groupId = 1;
-            var dateTime = new DateTime(2011, 06, 01);
-            var attendanceList= EventDataAccessor.FetchGroupAttendance(currentPerson, groupId, dateTime);
+            var currentPerson  = CreateSysAdmin();
+            const int groupId  = 1;
+            var dateTime       = new DateTime(2011, 06, 01);
+            var attendanceList = EventDataAccessor.FetchGroupAttendance(currentPerson, groupId, dateTime);
+            
             Assert.AreEqual(13, attendanceList.Count);
-            int attended = 0;
-            int didNotAttend = 0;
-            foreach (AttendanceEventViewModel a in attendanceList)
+            var attended       = 0;
+            var didNotAttend   = 0;
+            foreach (var a in attendanceList)
             {
                 if (a.Attended)
                     attended++;
@@ -32,7 +33,7 @@ namespace oikonomos.test
 
         private static Person CreateSysAdmin()
         {
-            Person currentPerson = Person.CreatePerson(256, "Peter", 52, DateTime.Now, DateTime.Now);
+            var currentPerson = Person.CreatePerson(256, "Peter", 52, DateTime.Now, DateTime.Now);
             currentPerson.PersonRoles.Add(PersonRole.CreatePersonRole(4, 256, DateTime.Now, DateTime.Now));
             return currentPerson;
         }

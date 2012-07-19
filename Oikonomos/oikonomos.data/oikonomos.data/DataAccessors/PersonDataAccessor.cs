@@ -1171,7 +1171,7 @@ namespace oikonomos.data.DataAccessors
 
         public static AutoCompleteViewModel[] FetchPersonAutoComplete(string term, Person currentPerson, bool wholeChurch)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 var query = (from p in context.People.Include("PersonOptionalField").Include("Address")
                              from c in p.Churches
@@ -1241,7 +1241,7 @@ namespace oikonomos.data.DataAccessors
 
         public static int SavePerson(PersonViewModel person, Person currentPerson)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 if (!currentPerson.HasPermission(Permissions.EditChurchPersonalDetails))
                 {
@@ -1286,7 +1286,7 @@ namespace oikonomos.data.DataAccessors
         {
             if(!currentPerson.HasPermission(Permissions.DeletePerson))
                 return;
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 if (RemovePersonFromChurchSpecificTables(personId, currentPerson, context))
                 {
@@ -1375,7 +1375,7 @@ namespace oikonomos.data.DataAccessors
 
         private static bool RemovePersonFromChurchSpecificTables(int personId, Person currentPerson, oikonomosEntities context)
         {
-            int tableId = (int)Tables.Person;
+            const int tableId = (int)Tables.Person;
 
             //If this person has created or changed any events - change to the person deleting them
             foreach (var createdEvent in context.Events.Where(e => e.CreatedByPersonId == personId))
@@ -1414,7 +1414,7 @@ namespace oikonomos.data.DataAccessors
                                && r.ChurchId == currentPerson.ChurchId
                                select pr);
 
-            foreach (PersonRole personRole in personRoles)
+            foreach (var personRole in personRoles)
             {
                 context.DeleteObject(personRole);
             }
@@ -1434,9 +1434,9 @@ namespace oikonomos.data.DataAccessors
                     group.AdministratorId = null;
             }
 
-            var person = context.People.Where(p => p.PersonId == personId).FirstOrDefault();
-            bool isTheLastChurch = false;
-            var currentChurch = context.Churches.Where(c => c.ChurchId == currentPerson.ChurchId).FirstOrDefault();
+            var person = context.People.FirstOrDefault(p => p.PersonId == personId);
+            var isTheLastChurch = false;
+            var currentChurch = context.Churches.FirstOrDefault(c => c.ChurchId == currentPerson.ChurchId);
             if (person.Churches.Count == 1 && person.Churches.Contains(currentChurch))
             {
                 CheckToSeeIfTheFamilyChurchLinkCanBeRemoved(context, person, currentChurch);
@@ -1462,10 +1462,10 @@ namespace oikonomos.data.DataAccessors
 
         public static Church SelectNewChurch(Person currentPerson, int churchId)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                var churchIds = context.People.Where(p => p.PersonId == currentPerson.PersonId).First().Churches.Select(c => c.ChurchId);
-                var church = context.Churches.Where(c => c.ChurchId == churchId).FirstOrDefault();
+                var churchIds = context.People.First(p => p.PersonId == currentPerson.PersonId).Churches.Select(c => c.ChurchId);
+                var church    = context.Churches.FirstOrDefault(c => c.ChurchId == churchId);
                 if (church != null && (churchIds.Contains(church.ChurchId) || currentPerson.HasPermission(Permissions.SystemAdministrator)))
                 {
                     SetupPermissions(context, currentPerson, church);
