@@ -1185,12 +1185,10 @@ namespace oikonomos.data.DataAccessors
 
                 if (term.Contains(" "))
                 {
-                    string searchString1 = string.Empty;
-                    string searchString2 = string.Empty;
-                    string[] searchStrings = term.Split(' ');
-                    searchString1 = searchStrings[0];
-                    searchString2 = searchStrings[1];
-                    query = query.Where(p => p.Firstname.Contains(searchString1) && p.Family.FamilyName.Contains(searchString2));
+                    var searchStrings = term.Split(' ');
+                    var searchString1 = searchStrings[0];
+                    var searchString2 = searchStrings[1];
+                    query             = query.Where(p => p.Firstname.Contains(searchString1) && p.Family.FamilyName.Contains(searchString2));
                 }
                 else
                 {
