@@ -350,12 +350,23 @@ namespace oikonomos.data.DataAccessors
         {
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
+                var includedRoles = context
+                                    .PermissionRoles
+                                    .Where(pr => pr.PermissionId == (int)Permissions.IncludeInNotInGroupList)
+                                    .Select(pr => pr.RoleId)
+                                    .ToList();
+
+
                 var peopleNotInGroups = (from p in context.People
+                                         from c in p.Churches
+                                         join pr in context.PersonRoles
+                                           on p.PersonId equals pr.PersonId
                                          join pg in context.PersonGroups
                                            on p.PersonId equals pg.PersonId into tList
                                          from pgEmpty in tList.DefaultIfEmpty()
                                          where pgEmpty.GroupId == null
-                                         && p.ChurchId == currentPerson.ChurchId
+                                         && c.ChurchId == currentPerson.ChurchId
+                                         && includedRoles.Contains(pr.RoleId)
                                          select p);
 
                 int totalRecords = peopleNotInGroups.Count();
@@ -408,6 +419,43 @@ namespace oikonomos.data.DataAccessors
                             }).ToArray()
                 };
                 return sitesGridData;
+            }
+        }
+
+
+        public static List<PersonListViewModel> FetchPeopleNotInAGroup(Person currentPerson)
+        {
+            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            {
+                var includedRoles = context
+                    .PermissionRoles
+                    .Where(pr => pr.PermissionId == (int)Permissions.IncludeInNotInGroupList)
+                    .Select(pr => pr.RoleId)
+                    .ToList();
+                
+                return (from p in context.People
+                        from c in p.Churches
+                        join pr in context.PersonRoles
+                          on p.PersonId equals pr.PersonId
+                        join pg in context.PersonGroups
+                          on p.PersonId equals pg.PersonId into tList
+                        from pgEmpty in tList.DefaultIfEmpty()
+                        where pgEmpty.GroupId == null
+                        && c.ChurchId == currentPerson.ChurchId
+                        && includedRoles.Contains(pr.RoleId)
+                        orderby p.Family.FamilyName, p.PersonId
+                        select new PersonListViewModel
+                        {
+                            PersonId = p.PersonId,
+                            FamilyId = p.FamilyId,
+                            Firstname = p.Firstname,
+                            Surname = p.Family.FamilyName,
+                            HomePhone = p.Family.HomePhone,
+                            CellPhone = p.PersonOptionalFields.Where<PersonOptionalField>(cp => cp.OptionalFieldId == (int)OptionalFields.CellPhone).FirstOrDefault().Value,
+                            WorkPhone = p.PersonOptionalFields.Where<PersonOptionalField>(cp => cp.OptionalFieldId == (int)OptionalFields.WorkPhone).FirstOrDefault().Value,
+                            Email = p.Email
+                        }).ToList();
+
             }
         }
 
@@ -582,38 +630,41 @@ namespace oikonomos.data.DataAccessors
                 List<JqGridFilterRule> rules = filters == null ? null : filters.rules;
                 var groups = FetchGroupList(currentPerson, search, rules, context);
 
-                var leaders = (from g in groups
-                               join p in context.People
-                                on g.LeaderId equals p.PersonId
+                var leaders = (from p in context.People
+                               from c in p.Churches
+                               join g in groups
+                                on p.PersonId equals g.LeaderId
                                where p.Email != null
                                && p.Email != string.Empty
                                && g.ChurchId == currentPerson.ChurchId
-                               && p.ChurchId == currentPerson.ChurchId
+                               && c.ChurchId == currentPerson.ChurchId
                                select p)
                                .ToList();
 
-                var administrators = (from g in groups
-                                      join p in context.People
-                                       on g.AdministratorId equals p.PersonId
+                var administrators = (from p in context.People
+                                      from c in p.Churches
+                                      join g in groups
+                                       on p.PersonId equals g.AdministratorId
                                       where p.Email != null
                                       && p.Email != string.Empty
                                       && g.ChurchId == currentPerson.ChurchId
-                                      && p.ChurchId == currentPerson.ChurchId
+                                      && c.ChurchId == currentPerson.ChurchId
                                       select p)
                                       .ToList();
 
                 var people = new List<Person>();
                 if (includeMembers)
                 {
-                    people = (from g in groups
+                    people = (from p in context.People
+                              from c in p.Churches
                               join pg in context.PersonGroups
-                                on g.GroupId equals pg.GroupId
-                              join p in context.People
-                               on pg.PersonId equals p.PersonId
+                                on p.PersonId equals pg.PersonId
+                              join g in groups
+                            on pg.GroupId equals g.GroupId
                               where p.Email != null
                               && p.Email != string.Empty
                               && g.ChurchId == currentPerson.ChurchId
-                              && p.ChurchId == currentPerson.ChurchId
+                              && c.ChurchId == currentPerson.ChurchId
                               select p).ToList();
                 }
 
@@ -639,6 +690,25 @@ namespace oikonomos.data.DataAccessors
             return addresses;
         }
 
+        public static List<string> FetchGroupCellPhoneNos(Person currentPerson, int groupId, List<int> selectedIds, bool selectedOnly)
+        {
+            List<string> cellPhoneNos = new List<string>();
+            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            {
+                List<PersonViewModel> people = selectedOnly ? FetchPeopleInGroup(currentPerson, groupId, context, selectedIds).ToList() : FetchPeopleInGroup(currentPerson, groupId, context).ToList();
+
+                foreach (PersonViewModel person in people)
+                {
+                    if (person.CellPhone != null && person.CellPhone.Trim() != string.Empty)
+                    {
+                        cellPhoneNos.Add(Utils.ConvertCellPhoneToInternational(person.CellPhone, currentPerson.Church.Country));
+                    }
+                }
+            }
+
+            return cellPhoneNos;
+        }
+
         public static List<string> FetchGroupLeaderCellPhoneNos(Person currentPerson, bool search, JqGridFilters filters, bool includeMembers)
         {
             List<string> cellPhoneNos = new List<string>();
@@ -652,10 +722,11 @@ namespace oikonomos.data.DataAccessors
                                 on g.LeaderId equals p.PersonId
                                join po in context.PersonOptionalFields
                                 on p.PersonId equals po.PersonId
+                                from c in p.Churches
                                where po.OptionalFieldId == (int)OptionalFields.CellPhone
                                && po.Value != string.Empty
                                && g.ChurchId == currentPerson.ChurchId
-                               && p.ChurchId == currentPerson.ChurchId
+                               && c.ChurchId == currentPerson.ChurchId
                                select po).ToList();
 
                 var administrators = (from g in groups
@@ -663,10 +734,11 @@ namespace oikonomos.data.DataAccessors
                                        on g.AdministratorId equals p.PersonId
                                       join po in context.PersonOptionalFields
                                        on p.PersonId equals po.PersonId
+                                       from c in p.Churches
                                       where po.OptionalFieldId == (int)OptionalFields.CellPhone
                                       && po.Value != string.Empty
                                       && g.ChurchId == currentPerson.ChurchId
-                                      && p.ChurchId == currentPerson.ChurchId
+                                      && c.ChurchId == currentPerson.ChurchId
                                       select po).ToList();
 
                 var people = new List<PersonOptionalField>();
@@ -679,10 +751,11 @@ namespace oikonomos.data.DataAccessors
                                on pg.PersonId equals p.PersonId
                               join po in context.PersonOptionalFields
                                on p.PersonId equals po.PersonId
+                               from c in p.Churches
                               where po.OptionalFieldId == (int)OptionalFields.CellPhone
                               && po.Value != string.Empty
                               && g.ChurchId == currentPerson.ChurchId
-                              && p.ChurchId == currentPerson.ChurchId
+                              && c.ChurchId == currentPerson.ChurchId
                               select po).ToList();
                 }
 
@@ -705,13 +778,12 @@ namespace oikonomos.data.DataAccessors
             return cellPhoneNos;
         }
 
-        public static List<string> FetchGroupAddresses(int groupId, List<int> selectedIds)
+        public static List<string> FetchGroupAddresses(Person currentPerson, int groupId, List<int> selectedIds, bool selectedOnly)
         {
             List<string> addresses = new List<string>();
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                List<PersonViewModel> people = FetchPeopleInGroup(groupId, context, selectedIds);
-
+                List<PersonViewModel> people = selectedOnly ? FetchPeopleInGroup(currentPerson, groupId, context, selectedIds).ToList() : FetchPeopleInGroup(currentPerson, groupId, context).ToList();
 
                 foreach (PersonViewModel person in people)
                 {
@@ -725,11 +797,11 @@ namespace oikonomos.data.DataAccessors
             return addresses;
         }
 
-        public static List<PersonViewModel> FetchPeopleInGroup(int groupId)
+        public static IEnumerable<PersonViewModel> FetchPeopleInGroup(Person currentPerson, int groupId)
         {
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                return FetchPeopleInGroup(groupId, context);
+                return FetchPeopleInGroup(currentPerson, groupId, context).ToList();
             }
         }
 
@@ -766,7 +838,7 @@ namespace oikonomos.data.DataAccessors
                                && a.Long != 0
                               select new MapDataHomeGroup
                               {
-                                  HomeGroupName = g.Name,
+                                  GroupName = g.Name,
                                   Lat = a.Lat,
                                   Lng = a.Long
                               }).ToList();
@@ -791,7 +863,7 @@ namespace oikonomos.data.DataAccessors
                             select new HomeGroupsViewModel
                             {
                                 GroupId = g.GroupId,
-                                HomeGroupName = g.Name,
+                                GroupName = g.Name,
                                 LeaderName = g.Leader.Firstname + " " + g.Leader.Family.FamilyName,
                                 LeaderId = g.LeaderId.HasValue ? g.LeaderId.Value : 0,
                                 AdministratorName = g.Administrator == null ? string.Empty : g.Administrator.Firstname + " " + g.Administrator.Family.FamilyName,
@@ -804,8 +876,8 @@ namespace oikonomos.data.DataAccessors
                                 AddressType = g.Address.AddressType,
                                 Lat = g.Address != null ? g.Address.Lat : 0,
                                 Lng = g.Address != null ? g.Address.Long : 0,
-                                GroupClassification = g.GroupClassificationId.HasValue ? g.GroupClassification.Name : string.Empty,
-                                Suburb = g.AddressId.HasValue ? (g.Address.ChurchSuburbId.HasValue ? g.Address.ChurchSuburb.Suburb : string.Empty) : string.Empty
+                                GroupClassificationId = g.GroupClassificationId.HasValue ? g.GroupClassificationId.Value : 0,
+                                SuburbId = g.AddressId == null ? 0 : (g.Address.ChurchSuburbId == null ? 0 : (int)g.Address.ChurchSuburbId)
                             }).ToList();
                 }
 
@@ -816,7 +888,7 @@ namespace oikonomos.data.DataAccessors
                             select new HomeGroupsViewModel
                             {
                                 GroupId = g.GroupId,
-                                HomeGroupName = g.Name,
+                                GroupName = g.Name,
                                 LeaderName = g.Leader.Firstname + " " + g.Leader.Family.FamilyName,
                                 LeaderId = g.LeaderId.HasValue ? g.LeaderId.Value : 0,
                                 AdministratorName = g.Administrator == null ? string.Empty : g.Administrator.Firstname + " " + g.Administrator.Family.FamilyName,
@@ -855,19 +927,29 @@ namespace oikonomos.data.DataAccessors
                     AdministratorId = hg.AdministratorId == null ? 0 : hg.AdministratorId.Value,
                     AdministratorName = hg.AdministratorId == null ? string.Empty : hg.Administrator.Firstname + " " + hg.Administrator.Family.FamilyName,
                     ChurchName = hg.Church.Name,
-                    GroupClassification = hg.GroupClassificationId == null ? string.Empty : hg.GroupClassification.Name,
+                    GroupClassificationId = hg.GroupClassificationId.HasValue ? hg.GroupClassificationId.Value : 0,
                     GroupId = hg.GroupId,
-                    HomeGroupName = hg.Name,
+                    GroupName = hg.Name,
                     Lat = hg.AddressId == null ? 0 : hg.Address.Lat,
                     LeaderId = hg.LeaderId == null ? 0 : hg.LeaderId.Value,
                     LeaderName = hg.LeaderId == null ? string.Empty : hg.Leader.Firstname + " " + hg.Leader.Family.FamilyName,
                     Lng = hg.AddressId == null ? 0 : hg.Address.Long,
-                    Suburb = hg.AddressId == null ? string.Empty : (hg.Address.ChurchSuburbId == null ? string.Empty : hg.Address.ChurchSuburb.Suburb)
+                    SuburbId = hg.AddressId == null ? 0 : (hg.Address.ChurchSuburbId == null ? 0 : (int)hg.Address.ChurchSuburbId)
                 };
 
             }
         }
 
+        public static List<GroupDto> FetchGroupList(Person currentPerson)
+        {
+            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            {
+                return context.Groups
+                    .Where(g => g.ChurchId == currentPerson.ChurchId)
+                    .Select(g => new GroupDto() { GroupId = g.GroupId, GroupName = g.Name })
+                    .ToList();
+            }
+        }
 
         public static void SaveHomeGroup(Person currentPerson, HomeGroupsViewModel hgvm)
         {
@@ -897,7 +979,7 @@ namespace oikonomos.data.DataAccessors
                         context.Groups.AddObject(hg);
                     }
 
-                    hg.Name = hgvm.HomeGroupName;
+                    hg.Name = hgvm.GroupName;
                     if (hgvm.LeaderId == 0 || hgvm.LeaderName == null || hgvm.LeaderName == string.Empty)
                         hg.LeaderId = null;
                     else
@@ -910,7 +992,7 @@ namespace oikonomos.data.DataAccessors
 
 
                     //Check to see if the address already exists
-                    if (hgvm.Address1 != null || hgvm.Address2 != null || hgvm.Address3 != null || hgvm.Address4 != null)
+                    if (hgvm.AddressId>0 || hgvm.Address1 != null || hgvm.Address2 != null || hgvm.Address3 != null || hgvm.Address4 != null || hgvm.SuburbId!=0)
                     {
                         var address = new Address();
 
@@ -939,22 +1021,7 @@ namespace oikonomos.data.DataAccessors
                         address.AddressType = hgvm.AddressType == null ? "" : hgvm.AddressType;
                         address.Lat = hgvm.Lat == null ? 0 : hgvm.Lat;
                         address.Long = hgvm.Lng == null ? 0 : hgvm.Lng;
-
-                        if (hgvm.Suburb != null && hgvm.Suburb != string.Empty && hgvm.Suburb != "null")
-                        {
-                            if (hgvm.Suburb == "Select...")
-                            {
-                                address.ChurchSuburbId = null;
-                            }
-                            else
-                            {
-                                address.ChurchSuburbId = (from c in context.ChurchSuburbs
-                                                          where c.ChurchId == currentPerson.ChurchId
-                                                          && c.Suburb == hgvm.Suburb
-                                                          select c.ChurchSuburbId).FirstOrDefault();
-                            }
-                        }
-
+                        address.ChurchSuburbId = hgvm.SuburbId != 0 ? hgvm.SuburbId : (int?)null;
                         address.Changed = DateTime.Now;
 
                         if (hgvm.AddressId == 0)
@@ -964,17 +1031,8 @@ namespace oikonomos.data.DataAccessors
 
                         hg.Address = address;
                     }
-                    if (hgvm.GroupClassification != null && hgvm.GroupClassification != "" && hgvm.GroupClassification != "null")
-                    {
-                        if (hgvm.GroupClassification == "0")
-                        {
-                            hg.GroupClassificationId = null;
-                        }
-                        else
-                        {
-                            hg.GroupClassificationId = int.Parse(hgvm.GroupClassification);
-                        }
-                    }
+
+                    hg.GroupClassificationId = hgvm.GroupClassificationId == 0 ? (int?)null : hgvm.GroupClassificationId;
 
                     context.SaveChanges();
                 }
@@ -985,7 +1043,7 @@ namespace oikonomos.data.DataAccessors
             }
         }
 
-        public static void SaveGroupSettings(Person currentPerson, GroupSettingsViewModel groupSettings)
+        public static void SaveGroupSettings(Person currentPerson, GroupDto groupSettings)
         {
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
@@ -1051,11 +1109,7 @@ namespace oikonomos.data.DataAccessors
         {
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                var people = (from p in context.People.Include("Family").Include("PersonGroups")
-                              from pg in p.PersonGroups
-                              where p.ChurchId == currentPerson.ChurchId
-                                && (pg.GroupId == groupId)
-                              select p);
+                var people = FetchPeopleInGroup(currentPerson, groupId, context);
 
                 if (request._search)
                 {
@@ -1075,7 +1129,7 @@ namespace oikonomos.data.DataAccessors
                             case "Surname":
                                 {
                                     people = (from p in people
-                                              where p.Family.FamilyName.Contains(ruleData)
+                                              where p.Surname.Contains(ruleData)
                                               select p);
                                     break;
                                 }
@@ -1103,11 +1157,23 @@ namespace oikonomos.data.DataAccessors
                         {
                             if (request.sord.ToLower() == "asc")
                             {
-                                people = people.OrderBy(p => p.Family.FamilyName).Skip((request.page - 1) * request.rows).Take(request.rows);
+                                people = people.OrderBy(p => p.Surname).Skip((request.page - 1) * request.rows).Take(request.rows);
                             }
                             else
                             {
-                                people = people.OrderByDescending(p => p.Family.FamilyName).Skip((request.page - 1) * request.rows).Take(request.rows);
+                                people = people.OrderByDescending(p => p.Surname).Skip((request.page - 1) * request.rows).Take(request.rows);
+                            }
+                            break;
+                        }
+                    case "Role":
+                        {
+                            if (request.sord.ToLower() == "asc")
+                            {
+                                people = people.OrderBy(p => p.RoleName).Skip((request.page - 1) * request.rows).Take(request.rows);
+                            }
+                            else
+                            {
+                                people = people.OrderByDescending(p => p.RoleName).Skip((request.page - 1) * request.rows).Take(request.rows);
                             }
                             break;
                         }
@@ -1125,10 +1191,11 @@ namespace oikonomos.data.DataAccessors
                                 cell = new string[] {
                                                         p.PersonId.ToString(),
                                                         p.Firstname,
-                                                        p.Family.FamilyName,
-                                                        p.Family.HomePhone,
-                                                        p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).FirstOrDefault()==null?"":p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).FirstOrDefault().Value,
-                                                        p.Email
+                                                        p.Surname,
+                                                        p.HomePhone,
+                                                        p.CellPhone,
+                                                        p.Email,
+                                                        p.RoleName
                                     }
                             }).ToArray()
                 };
@@ -1138,13 +1205,19 @@ namespace oikonomos.data.DataAccessors
         }
 
 
-        private static List<PersonViewModel> FetchPeopleInGroup(int groupId, oikonomosEntities context)
+        private static IEnumerable<PersonViewModel> FetchPeopleInGroup(Person currentPerson, int groupId, oikonomosEntities context)
         {
-            return FetchPeopleInGroup(groupId, context, null);
+            return FetchPeopleInGroup(currentPerson, groupId, context, null);
         }
 
-        private static List<PersonViewModel> FetchPeopleInGroup(int groupId, oikonomosEntities context, List<int> selectedIds)
+        private static IEnumerable<PersonViewModel> FetchPeopleInGroup(Person currentPerson, int groupId, oikonomosEntities context, List<int> selectedIds)
         {
+            var rolesToInclude = context
+                                 .PermissionRoles
+                                 .Where(p => p.PermissionId == (int)Permissions.IncludeInChurchList && p.Role.ChurchId == currentPerson.ChurchId)
+                                 .Select(p => p.RoleId)
+                                 .ToList();
+            
             var people = (from p in context.People.Include("PersonOptionalField")
                           join pg in context.PersonGroups
                               on p.PersonId equals pg.PersonId
@@ -1157,6 +1230,7 @@ namespace oikonomos.data.DataAccessors
                           orderby p.Family.FamilyName, p.PersonId
                           where pg.GroupId == groupId
                               && (permissions.PermissionId == (int)Permissions.Login)
+                              && rolesToInclude.Contains(pr.RoleId)
                           select new PersonViewModel
                           {
                               PersonId = p.PersonId,
@@ -1168,7 +1242,8 @@ namespace oikonomos.data.DataAccessors
                               AdministratorChecked = (p.PersonId == g.AdministratorId ? "CHECKED" : ""),
                               LeaderChecked = (p.PersonId == g.LeaderId ? "CHECKED" : ""),
                               HomePhone = p.Family.HomePhone,
-                              CellPhone = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).FirstOrDefault().Value
+                              CellPhone = p.PersonOptionalFields.Where<PersonOptionalField>(po => po.OptionalFieldId == (int)OptionalFields.CellPhone).FirstOrDefault().Value,
+                              RoleName = pr.Role.DisplayName
                           });
 
             if (selectedIds != null)
@@ -1178,7 +1253,7 @@ namespace oikonomos.data.DataAccessors
                           select p);
             }
 
-            return people.ToList();
+            return people.OrderBy(p => p.RoleName).ThenBy(p => p.Surname).ThenBy(p => p.PersonId);
         }
 
         private static IQueryable<Group> FetchGroupList(Person currentPerson, bool search, List<JqGridFilterRule> rules, oikonomosEntities context)

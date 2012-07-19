@@ -116,18 +116,20 @@ namespace oikonomos.data.Services
                 using (MailMessage message = new MailMessage())
                 {
                     message.Subject = "Welcome to " + church.SiteHeader;
-                    message.Body = GetWelcomeLetterBody(firstname,
-                                           surname,
-                                           church.SiteHeader,
-                                           church.Name,
-                                           church.OfficePhone,
-                                           church.OfficeEmail,
-                                           church.Url,
-                                           email,
-                                           password,
-                                           guid.ToString(),
-                                           isVisitor,
-                                           includeUserNamePassword);
+                    message.Body = GetWelcomeLetterBodyFromDataBase(
+                        church.ChurchId,
+                        firstname,
+                        surname,
+                        church.SiteHeader,
+                        church.Name,
+                        church.OfficePhone,
+                        church.OfficeEmail,
+                        church.Url,
+                        email,
+                        password,
+                        guid.ToString(),
+                        isVisitor,
+                        includeUserNamePassword);
 
                     message.To.Add(email);
                     message.IsBodyHtml = true;
@@ -439,6 +441,45 @@ namespace oikonomos.data.Services
             b.AppendLine("</html>");
 
             return b.ToString();
+        }
+
+        private static string GetWelcomeLetterBodyFromDataBase(
+            int    churchId,
+            string firstname,
+            string surname,
+            string systemName,
+            string churchName,
+            string churchOfficeNo,
+            string churchOfficeEmail,
+            string churchWebsite,
+            string email,
+            string password,
+            string guid,
+            bool   isVisitor,
+            bool   includeUsernamePassword)
+        {
+            string emailBody = string.Empty;
+            if (isVisitor)
+            {
+                emailBody = EmailDataAccessor.GetVisitorWelcomeLetter(churchId);
+            }
+            else
+            {
+                emailBody = EmailDataAccessor.GetMemberWelcomeLetter(churchId);
+            }
+
+            emailBody = emailBody.Replace("##SystemName##", systemName);
+            emailBody = emailBody.Replace("##Firstname##", firstname);
+            emailBody = emailBody.Replace("##Surname##", surname);
+            emailBody = emailBody.Replace("##PublicId##", guid);
+            emailBody = emailBody.Replace("##Email##", email);
+            emailBody = emailBody.Replace("##Password##", password);
+            emailBody = emailBody.Replace("##ChurchName##", churchName);
+            emailBody = emailBody.Replace("##ChurchOfficeNo##", churchOfficeNo);
+            emailBody = emailBody.Replace("##ChurchOfficeEmail##", churchOfficeEmail);
+            emailBody = emailBody.Replace("##ChurchWebsite##", churchWebsite);
+
+            return emailBody;
         }
 
         private static string GetResetPasswordBody(string firstname,

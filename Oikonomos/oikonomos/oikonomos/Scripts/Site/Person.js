@@ -67,6 +67,18 @@ function PopulatePerson(person) {
     } else {
         $("#row_roleDropDown").show();
     }
+
+    $("#GroupId").val(person.GroupId);
+    if (person.IsInMultipleGroups == true) {
+        $("#row_groupDropDown").hide();
+    } else {
+        if ($('#GroupId option[value=' + person.GroupId + ']').length == 0) {
+            $("#row_groupDropDown").hide();
+        } else {
+            $("#row_groupDropDown").show();
+        }
+    }
+
     $("#Site").val(person.Site);
     $("#text_heardAbout").val(person.HeardAbout);
     $("#family_members").empty();
@@ -141,6 +153,11 @@ function SavePerson(refreshAfterSave) {
     }
 
     var groupId = $("#hidden_groupId").val();
+    if ($("#row_groupDropDown").length > 0) {
+        if ($('#GroupId option[value=' + $("#hidden_groupId").val() + ']').length != 0) {
+            groupId = $("#GroupId").val();
+        }
+    }
 
     var roleId = $("#hidden_roleId").val();
     if ($("#row_roleDropDown").length > 0) {
@@ -178,7 +195,7 @@ function SavePerson(refreshAfterSave) {
 
     var jqxhr = $.post("/Ajax/SavePerson", $.postify(postData), function (data) {
         if (data.PersonId == 0) {
-            alert("There was a problem saving the person");
+            ShowErrorMessage("Cannot save person", "There was a problem saving the person");
         }
         else {
             $("#hidden_personId").val(data.PersonId + "");
@@ -237,7 +254,7 @@ function DeletePerson(){
 function UpdateFamilyMemberRelationship(relatedPersonId, relationship) {
     $.each(familyMembers, function (index, value) {
         if (value.PersonId == relatedPersonId) {
-            if (relationship == "Select....") {
+            if (relationship == "Select...") {
                 value.Relationship = "";
             }
             else {
@@ -259,13 +276,15 @@ function AddFamilyMember() {
     var lat = $("#hidden_lat").val();
     var lng = $("#hidden_lng").val();
     var groupId = $("#hidden_groupId").val();
-    var roleId = $("#RoleId").val();
+    //var roleId = $("#hidden_roleId").val();
 
     ClearForm();
 
+    $("#RoleId").val($("#RoleId option:first").val());
+    $("#hidden_roleId").val($("#RoleId option:first").val());
+    $("#row_roleDropDown").show();
     $("#hidden_familyId").val(familyId);
     $("#hidden_groupId").val(groupId);
-    $("#hidden_roleId").val(groupId);
     $("#text_surname").val(surname);
     $("#text_homePhone").val(homephone);
     $("#text_address1").val(address1);

@@ -14,13 +14,18 @@ namespace oikonomos.web.Controllers
 {
     public class AjaxController : Controller
     {
+        public JsonResult InitializeChurchSettingsViewModel()
+        {
+            return Json(new ChurchSettingsViewModel() { UITheme = "start", SystemName = "Oiky", AddressType = "street_address", BulkSmsUsername = string.Empty, BulkSmsPassword = string.Empty }, JsonRequestBehavior.AllowGet);
+        }
+        
         public JsonResult PersonAutoComplete(string term)
         {
             AutoCompleteViewModel[] data = new AutoCompleteViewModel[0];
             if (Session[SessionVariable.LoggedOnPerson] != null)
             {
                 Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                if (Request.UrlReferrer.PathAndQuery == "/Home/Homegroups")
+                if (Request.UrlReferrer.PathAndQuery == "/Home/Groups")
                 {
                     data = PersonDataAccessor.FetchPersonAutoComplete(term, currentPerson, true);
                 }
@@ -226,7 +231,7 @@ namespace oikonomos.web.Controllers
             if (Session[SessionVariable.LoggedOnPerson] != null)
             {
                 Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                people = GroupDataAccessor.FetchPeopleInGroup(groupId);
+                people = (List<PersonViewModel>)GroupDataAccessor.FetchPeopleInGroup(currentPerson, groupId);
             }
 
             return Json(new { People = people });
@@ -290,17 +295,26 @@ namespace oikonomos.web.Controllers
             if (Session[SessionVariable.LoggedOnPerson] != null)
             {
                 Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                if (currentPerson.HasPermission(Permissions.SystemAdministrator))
+                SelectNewChurch(churchId, currentPerson);
+            }
+
+            return Json(new { message = "Success" });
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public JsonResult SelectNewChurch(int churchId)
+        {
+            if (Session[SessionVariable.LoggedOnPerson] != null)
+            {
+                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                if (currentPerson.HasPermission(Permissions.Login))
                 {
-                    currentPerson.ChurchId = churchId;
-                    Session[SessionVariable.LoggedOnPerson] = currentPerson;
-                    Session[SessionVariable.Church] = ChurchDataAccessor.FetchChurch(churchId);
+                    SelectNewChurch(churchId, currentPerson);
                 }
             }
 
             return Json(new { message = "Success" });
         }
-        
 
         [AcceptVerbs(HttpVerbs.Post)]
         public JsonResult FetchGroupList(JqGridRequest request)
@@ -456,7 +470,6 @@ namespace oikonomos.web.Controllers
             else
             {
                 Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                //TODO Check for User Roles
                 optionalFields = SettingsDataAccessor.FetchChurchOptionalFields(currentPerson.ChurchId);
             }
 
@@ -1030,7 +1043,7 @@ namespace oikonomos.web.Controllers
             return Json(response, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult SaveGroupAddress(GroupSettingsViewModel groupSettings)
+        public JsonResult SaveGroupAddress(GroupDto groupSettings)
         {
             bool sessionTimedOut = false;
             if (Session[SessionVariable.LoggedOnPerson] == null)
@@ -1098,7 +1111,28 @@ namespace oikonomos.web.Controllers
 
             return Json(response, JsonRequestBehavior.AllowGet);
         }
-        
+
+        public JsonResult CreateNewChurch(ChurchSettingsViewModel churchSettings)
+        {
+            bool sessionTimedOut = false;
+            if (Session[SessionVariable.LoggedOnPerson] == null)
+            {
+                sessionTimedOut = true;
+            }
+            else
+            {
+                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                SettingsDataAccessor.CreateNewChurch(currentPerson, churchSettings);
+            }
+
+            var response = new
+            {
+                SessionTimeOut = sessionTimedOut,
+                Message = "Church Created"
+            };
+
+            return Json(response);
+        }
 
         public JsonResult SaveSite(SiteSettingsViewModel siteSettings)
         {
@@ -1165,7 +1199,7 @@ namespace oikonomos.web.Controllers
                 }
                 else
                 {
-                    message = "You don't have permission to send an email to the group leaders";
+                    message = ExceptionMessage.InvalidCredentials;
                 }
             }
 
@@ -1181,7 +1215,7 @@ namespace oikonomos.web.Controllers
         {
             bool sessionTimedOut = false;
             string message = string.Empty;
-            List<string> addresses = new List<string>();
+            int noNos = 0;
             if (Session[SessionVariable.LoggedOnPerson] == null)
             {
                 sessionTimedOut = true;
@@ -1193,23 +1227,57 @@ namespace oikonomos.web.Controllers
                 if (currentPerson.HasPermission(Permissions.SmsGroupLeaders))
                 {
                     Session[SessionVariable.CellPhoneNos] = GroupDataAccessor.FetchGroupLeaderCellPhoneNos(currentPerson, search, filters, includeMembers);
+                    noNos = ((List<string>)Session[SessionVariable.CellPhoneNos]).Count;
                 }
                 else
                 {
-                    message = "You don't have permission to send an sms to the group leaders";
+                    message = ExceptionMessage.InvalidCredentials;
                 }
             }
 
             var response = new
             {
                 SessionTimeOut = sessionTimedOut,
-                Message = message
+                Message = message,
+                NoNos = noNos
             };
             return Json(response, JsonRequestBehavior.DenyGet);
         }
-        
 
-        public JsonResult FetchGroupEmails(int groupId, List<int> selectedIds)
+        public JsonResult FetchGroupCellPhoneNos(int groupId, List<int> selectedIds, bool selectedOnly)
+        {
+            bool sessionTimedOut = false;
+            string message = string.Empty;
+            int noNos = 0;
+            if (Session[SessionVariable.LoggedOnPerson] == null)
+            {
+                sessionTimedOut = true;
+                message = ExceptionMessage.SessionTimedOut;
+            }
+            else
+            {
+                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                if (currentPerson.HasPermission(Permissions.SmsGroupMembers) || currentPerson.HasPermission(Permissions.SmsChurch))
+                {
+                    Session[SessionVariable.CellPhoneNos] = GroupDataAccessor.FetchGroupCellPhoneNos(currentPerson, groupId, selectedIds, selectedOnly);
+                    noNos = ((List<string>)Session[SessionVariable.CellPhoneNos]).Count;
+                }
+                else
+                {
+                    message = ExceptionMessage.InvalidCredentials;
+                }
+            }
+
+            var response = new
+            {
+                SessionTimeOut = sessionTimedOut,
+                Message = message,
+                NoNos = noNos
+            };
+            return Json(response, JsonRequestBehavior.DenyGet);
+        }
+
+        public JsonResult FetchGroupEmails(int groupId, List<int> selectedIds, bool selectedOnly)
         {
             bool sessionTimedOut = false;
             string message = string.Empty;
@@ -1224,11 +1292,11 @@ namespace oikonomos.web.Controllers
                 Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 if (currentPerson.HasPermission(Permissions.EmailGroupMembers))
                 {
-                    Session[SessionVariable.EmailAddresses] = GroupDataAccessor.FetchGroupAddresses(groupId, selectedIds);
+                    Session[SessionVariable.EmailAddresses] = GroupDataAccessor.FetchGroupAddresses(currentPerson, groupId, selectedIds, selectedOnly);
                 }
                 else
                 {
-                    message = "You don't have permission to send an email to the homegroup";
+                    message = ExceptionMessage.InvalidCredentials;
                 }
             }
 
@@ -1371,6 +1439,7 @@ namespace oikonomos.web.Controllers
         {
             bool sessionTimedOut = false;
             string message = string.Empty;
+            int noNos = 0;
             if (Session[SessionVariable.LoggedOnPerson] == null)
             {
                 sessionTimedOut = true;
@@ -1382,6 +1451,7 @@ namespace oikonomos.web.Controllers
                 if (currentPerson.HasPermission(Permissions.SmsChurch))
                 {
                     Session[SessionVariable.CellPhoneNos] = PersonDataAccessor.FetchChurchCellPhoneNos(currentPerson, search, searchField, searchString);
+                    noNos = ((List<string>)Session[SessionVariable.CellPhoneNos]).Count;
                 }
                 else
                 {
@@ -1392,7 +1462,8 @@ namespace oikonomos.web.Controllers
             var response = new
             {
                 SessionTimeOut = sessionTimedOut,
-                Message = message
+                Message = message,
+                NoNos = noNos
             };
 
             return Json(response, JsonRequestBehavior.DenyGet);
@@ -1462,9 +1533,85 @@ namespace oikonomos.web.Controllers
             return Json(response, JsonRequestBehavior.DenyGet);
         }
 
+        public JsonResult FetchChurchEmailTemplate(int churchEmailTemplateId)
+        {
+            bool sessionTimedOut = false;
+            string message = string.Empty;
+            string emailTemplate = string.Empty;
+            if (Session[SessionVariable.LoggedOnPerson] == null)
+            {
+                sessionTimedOut = true;
+                message = ExceptionMessage.SessionTimedOut;
+            }
+            else
+            {
+                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                if (currentPerson.HasPermission(Permissions.EditEmailTemplates))
+                {
+                    emailTemplate = SettingsDataAccessor.FetchChurchEmailTemplate(currentPerson, churchEmailTemplateId);
+                }
+                else
+                {
+                    message = ExceptionMessage.InvalidCredentials;
+                }
+            }
+
+            var response = new
+            {
+                SessionTimeOut = sessionTimedOut,
+                Message = message,
+                EmailTemplate = emailTemplate
+            };
+            return Json(response, JsonRequestBehavior.DenyGet);
+        }
+
+        [ValidateInput(false)]
+        public JsonResult SaveChurchEmailTemplate(int churchEmailTemplateId, string template)
+        {
+            bool sessionTimedOut = false;
+            string message = string.Empty;
+            if (Session[SessionVariable.LoggedOnPerson] == null)
+            {
+                sessionTimedOut = true;
+                message = ExceptionMessage.SessionTimedOut;
+            }
+            else
+            {
+                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                if (currentPerson.HasPermission(Permissions.EditEmailTemplates))
+                {
+                    SettingsDataAccessor.SaveChurchEmailTemplate(currentPerson, churchEmailTemplateId, template);
+                }
+                else
+                {
+                    message = ExceptionMessage.InvalidCredentials;
+                }
+            }
+
+            var response = new
+            {
+                SessionTimeOut = sessionTimedOut,
+                Message = message
+            };
+            return Json(response, JsonRequestBehavior.DenyGet);
+        }
+        
         
 
         #region Private Methods
+
+        private void SelectNewChurch(int churchId, Person currentPerson)
+        {
+            var newChurch = PersonDataAccessor.SelectNewChurch(currentPerson, churchId);
+            if (newChurch != null)
+            {
+                currentPerson.ChurchId = newChurch.ChurchId;
+                currentPerson.Church = newChurch;
+                Session[SessionVariable.LoggedOnPerson] = currentPerson;
+                Session[SessionVariable.Church] = ChurchDataAccessor.FetchChurch(churchId);
+            }
+        }
+
         private void SearchForFacebookId(int personId, string firstname, string surname, FacebookClient client)
         {
             try

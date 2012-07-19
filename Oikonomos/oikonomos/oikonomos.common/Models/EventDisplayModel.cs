@@ -9,6 +9,7 @@ namespace oikonomos.common.Models
     {
         public List<EventListModel> UpcomingEvents { get; set; }
         public List<EventListModel> PastEvents { get; set; }
+        public int SelectedChurchId { get; set; } 
     }
 
     public class EventListModel

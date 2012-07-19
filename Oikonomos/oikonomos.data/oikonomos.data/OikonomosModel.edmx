@@ -9,21 +9,24 @@
           <EntitySet Name="Address" EntityType="oikonomosModel.Store.Address" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="CanSetRole" EntityType="oikonomosModel.Store.CanSetRole" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Church" EntityType="oikonomosModel.Store.Church" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="ChurchEmailTemplate" EntityType="oikonomosModel.Store.ChurchEmailTemplate" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="ChurchOptionalField" EntityType="oikonomosModel.Store.ChurchOptionalField" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="ChurchSmsProvider" EntityType="oikonomosModel.Store.ChurchSmsProvider" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="ChurchSuburb" EntityType="oikonomosModel.Store.ChurchSuburb" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="EmailTemplate" EntityType="oikonomosModel.Store.EmailTemplate" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Event" EntityType="oikonomosModel.Store.Event" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="EventType" EntityType="oikonomosModel.Store.EventType" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="EventVisibility" EntityType="oikonomosModel.Store.EventVisibility" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Family" EntityType="oikonomosModel.Store.Family" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="FamilyChurch" EntityType="oikonomosModel.Store.FamilyChurch" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Group" EntityType="oikonomosModel.Store.Group" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="GroupClassification" EntityType="oikonomosModel.Store.GroupClassification" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="GroupType" EntityType="oikonomosModel.Store.GroupType" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="OldRole" EntityType="oikonomosModel.Store.OldRole" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="OptionalField" EntityType="oikonomosModel.Store.OptionalField" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Permission" EntityType="oikonomosModel.Store.Permission" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="PermissionRole" EntityType="oikonomosModel.Store.PermissionRole" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Person" EntityType="oikonomosModel.Store.Person" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="PersonChurch" EntityType="oikonomosModel.Store.PersonChurch" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="PersonGroup" EntityType="oikonomosModel.Store.PersonGroup" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="PersonOptionalField" EntityType="oikonomosModel.Store.PersonOptionalField" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="PersonRelationship" EntityType="oikonomosModel.Store.PersonRelationship" store:Type="Tables" Schema="dbo" />
@@ -32,6 +35,7 @@
           <EntitySet Name="Role" EntityType="oikonomosModel.Store.Role" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Site" EntityType="oikonomosModel.Store.Site" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="SmsProvider" EntityType="oikonomosModel.Store.SmsProvider" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Status" EntityType="oikonomosModel.Store.Status" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Table" EntityType="oikonomosModel.Store.Table" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Title" EntityType="oikonomosModel.Store.Title" store:Type="Tables" Schema="dbo" />
           <AssociationSet Name="FK_Address_ChurchSuburb" Association="oikonomosModel.Store.FK_Address_ChurchSuburb">
@@ -49,6 +53,18 @@
           <AssociationSet Name="FK_Church_Address" Association="oikonomosModel.Store.FK_Church_Address">
             <End Role="Address" EntitySet="Address" />
             <End Role="Church" EntitySet="Church" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Church_Status" Association="oikonomosModel.Store.FK_Church_Status">
+            <End Role="Status" EntitySet="Status" />
+            <End Role="Church" EntitySet="Church" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ChurchEmailTemplate_Church" Association="oikonomosModel.Store.FK_ChurchEmailTemplate_Church">
+            <End Role="Church" EntitySet="Church" />
+            <End Role="ChurchEmailTemplate" EntitySet="ChurchEmailTemplate" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ChurchEmailTemplate_EmailTemplate" Association="oikonomosModel.Store.FK_ChurchEmailTemplate_EmailTemplate">
+            <End Role="EmailTemplate" EntitySet="EmailTemplate" />
+            <End Role="ChurchEmailTemplate" EntitySet="ChurchEmailTemplate" />
           </AssociationSet>
           <AssociationSet Name="FK_ChurchOptionalField_Church" Association="oikonomosModel.Store.FK_ChurchOptionalField_Church">
             <End Role="Church" EntitySet="Church" />
@@ -102,6 +118,14 @@
             <End Role="Address" EntitySet="Address" />
             <End Role="Family" EntitySet="Family" />
           </AssociationSet>
+          <AssociationSet Name="FK_FamilyChurch_Church" Association="oikonomosModel.Store.FK_FamilyChurch_Church">
+            <End Role="Church" EntitySet="Church" />
+            <End Role="FamilyChurch" EntitySet="FamilyChurch" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FamilyChurch_Family" Association="oikonomosModel.Store.FK_FamilyChurch_Family">
+            <End Role="Family" EntitySet="Family" />
+            <End Role="FamilyChurch" EntitySet="FamilyChurch" />
+          </AssociationSet>
           <AssociationSet Name="FK_Group_Address" Association="oikonomosModel.Store.FK_Group_Address">
             <End Role="Address" EntitySet="Address" />
             <End Role="Group" EntitySet="Group" />
@@ -142,10 +166,6 @@
             <End Role="Role" EntitySet="Role" />
             <End Role="PermissionRole" EntitySet="PermissionRole" />
           </AssociationSet>
-          <AssociationSet Name="FK_Person_Church" Association="oikonomosModel.Store.FK_Person_Church">
-            <End Role="Church" EntitySet="Church" />
-            <End Role="Person" EntitySet="Person" />
-          </AssociationSet>
           <AssociationSet Name="FK_Person_Family" Association="oikonomosModel.Store.FK_Person_Family">
             <End Role="Family" EntitySet="Family" />
             <End Role="Person" EntitySet="Person" />
@@ -157,6 +177,14 @@
           <AssociationSet Name="FK_Person_Title" Association="oikonomosModel.Store.FK_Person_Title">
             <End Role="Title" EntitySet="Title" />
             <End Role="Person" EntitySet="Person" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonChurch_Church" Association="oikonomosModel.Store.FK_PersonChurch_Church">
+            <End Role="Church" EntitySet="Church" />
+            <End Role="PersonChurch" EntitySet="PersonChurch" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonChurch_Person" Association="oikonomosModel.Store.FK_PersonChurch_Person">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="PersonChurch" EntitySet="PersonChurch" />
           </AssociationSet>
           <AssociationSet Name="FK_PersonContact_Person" Association="oikonomosModel.Store.FK_PersonContact_Person">
             <End Role="Person" EntitySet="Person" />
@@ -252,6 +280,16 @@
           <Property Name="Country" Type="nvarchar" MaxLength="255" />
           <Property Name="EmailLogin" Type="nvarchar" Nullable="false" MaxLength="50" />
           <Property Name="EmailPassword" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="StatusId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ChurchEmailTemplate">
+          <Key>
+            <PropertyRef Name="ChurchEmailTemplateId" />
+          </Key>
+          <Property Name="ChurchEmailTemplateId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ChurchId" Type="int" Nullable="false" />
+          <Property Name="EmailTemplateId" Type="int" Nullable="false" />
+          <Property Name="Template" Type="nvarchar(max)" Nullable="false" />
         </EntityType>
         <EntityType Name="ChurchOptionalField">
           <Key>
@@ -284,6 +322,13 @@
           <Property Name="Suburb" Type="nvarchar" Nullable="false" MaxLength="255" />
           <Property Name="Created" Type="datetime" Nullable="false" />
           <Property Name="Changed" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EmailTemplate">
+          <Key>
+            <PropertyRef Name="EmailTemplateId" />
+          </Key>
+          <Property Name="EmailTemplateId" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="50" />
         </EntityType>
         <EntityType Name="Event">
           <Key>
@@ -334,7 +379,14 @@
           <Property Name="HomePhone" Type="nvarchar" MaxLength="50" />
           <Property Name="AddressId" Type="int" />
           <Property Name="Anniversary" Type="datetime" />
-          <Property Name="ChurchId" Type="int" />
+        </EntityType>
+        <EntityType Name="FamilyChurch">
+          <Key>
+            <PropertyRef Name="ChurchId" />
+            <PropertyRef Name="FamilyId" />
+          </Key>
+          <Property Name="ChurchId" Type="int" Nullable="false" />
+          <Property Name="FamilyId" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Group">
           <Key>
@@ -368,14 +420,6 @@
           </Key>
           <Property Name="GroupTypeId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="255" />
-          <Property Name="Created" Type="datetime" Nullable="false" />
-        </EntityType>
-        <EntityType Name="OldRole">
-          <Key>
-            <PropertyRef Name="RoleId" />
-          </Key>
-          <Property Name="RoleId" Type="int" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="50" />
           <Property Name="Created" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="OptionalField">
@@ -415,7 +459,6 @@
             <PropertyRef Name="PersonId" />
           </Key>
           <Property Name="PersonId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="ChurchId" Type="int" Nullable="false" />
           <Property Name="SiteId" Type="int" />
           <Property Name="TitleId" Type="int" />
           <Property Name="Firstname" Type="nvarchar" Nullable="false" MaxLength="255" />
@@ -429,6 +472,14 @@
           <Property Name="PasswordHash" Type="nvarchar" MaxLength="50" />
           <Property Name="Anniversary" Type="datetime" />
           <Property Name="PublicId" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="PersonChurch">
+          <Key>
+            <PropertyRef Name="ChurchId" />
+            <PropertyRef Name="PersonId" />
+          </Key>
+          <Property Name="ChurchId" Type="int" Nullable="false" />
+          <Property Name="PersonId" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="PersonGroup">
           <Key>
@@ -490,6 +541,7 @@
           <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="255" />
           <Property Name="Created" Type="datetime" Nullable="false" />
           <Property Name="Changed" Type="datetime" Nullable="false" />
+          <Property Name="DisplayName" Type="nvarchar" Nullable="false" MaxLength="255" />
         </EntityType>
         <EntityType Name="Site">
           <Key>
@@ -508,6 +560,13 @@
           </Key>
           <Property Name="SmsProviderId" Type="int" Nullable="false" />
           <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="2550" />
+        </EntityType>
+        <EntityType Name="Status">
+          <Key>
+            <PropertyRef Name="StatusId" />
+          </Key>
+          <Property Name="StatusId" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="50" />
         </EntityType>
         <EntityType Name="Table">
           <Key>
@@ -570,6 +629,42 @@
             </Principal>
             <Dependent Role="Church">
               <PropertyRef Name="AddressId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Church_Status">
+          <End Role="Status" Type="oikonomosModel.Store.Status" Multiplicity="1" />
+          <End Role="Church" Type="oikonomosModel.Store.Church" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Status">
+              <PropertyRef Name="StatusId" />
+            </Principal>
+            <Dependent Role="Church">
+              <PropertyRef Name="StatusId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ChurchEmailTemplate_Church">
+          <End Role="Church" Type="oikonomosModel.Store.Church" Multiplicity="1" />
+          <End Role="ChurchEmailTemplate" Type="oikonomosModel.Store.ChurchEmailTemplate" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Church">
+              <PropertyRef Name="ChurchId" />
+            </Principal>
+            <Dependent Role="ChurchEmailTemplate">
+              <PropertyRef Name="ChurchId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ChurchEmailTemplate_EmailTemplate">
+          <End Role="EmailTemplate" Type="oikonomosModel.Store.EmailTemplate" Multiplicity="1" />
+          <End Role="ChurchEmailTemplate" Type="oikonomosModel.Store.ChurchEmailTemplate" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EmailTemplate">
+              <PropertyRef Name="EmailTemplateId" />
+            </Principal>
+            <Dependent Role="ChurchEmailTemplate">
+              <PropertyRef Name="EmailTemplateId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -729,6 +824,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_FamilyChurch_Church">
+          <End Role="Church" Type="oikonomosModel.Store.Church" Multiplicity="1" />
+          <End Role="FamilyChurch" Type="oikonomosModel.Store.FamilyChurch" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Church">
+              <PropertyRef Name="ChurchId" />
+            </Principal>
+            <Dependent Role="FamilyChurch">
+              <PropertyRef Name="ChurchId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FamilyChurch_Family">
+          <End Role="Family" Type="oikonomosModel.Store.Family" Multiplicity="1" />
+          <End Role="FamilyChurch" Type="oikonomosModel.Store.FamilyChurch" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Family">
+              <PropertyRef Name="FamilyId" />
+            </Principal>
+            <Dependent Role="FamilyChurch">
+              <PropertyRef Name="FamilyId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Group_Address">
           <End Role="Address" Type="oikonomosModel.Store.Address" Multiplicity="0..1" />
           <End Role="Group" Type="oikonomosModel.Store.Group" Multiplicity="*" />
@@ -849,18 +968,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Person_Church">
-          <End Role="Church" Type="oikonomosModel.Store.Church" Multiplicity="1" />
-          <End Role="Person" Type="oikonomosModel.Store.Person" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Church">
-              <PropertyRef Name="ChurchId" />
-            </Principal>
-            <Dependent Role="Person">
-              <PropertyRef Name="ChurchId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Person_Family">
           <End Role="Family" Type="oikonomosModel.Store.Family" Multiplicity="1" />
           <End Role="Person" Type="oikonomosModel.Store.Person" Multiplicity="*" />
@@ -894,6 +1001,30 @@
             </Principal>
             <Dependent Role="Person">
               <PropertyRef Name="TitleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PersonChurch_Church">
+          <End Role="Church" Type="oikonomosModel.Store.Church" Multiplicity="1" />
+          <End Role="PersonChurch" Type="oikonomosModel.Store.PersonChurch" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Church">
+              <PropertyRef Name="ChurchId" />
+            </Principal>
+            <Dependent Role="PersonChurch">
+              <PropertyRef Name="ChurchId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PersonChurch_Person">
+          <End Role="Person" Type="oikonomosModel.Store.Person" Multiplicity="1" />
+          <End Role="PersonChurch" Type="oikonomosModel.Store.PersonChurch" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="PersonId" />
+            </Principal>
+            <Dependent Role="PersonChurch">
+              <PropertyRef Name="PersonId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1053,108 +1184,28 @@
       <Schema Namespace="oikonomosModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
         <EntityContainer Name="oikonomosEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Churches" EntityType="oikonomosModel.Church" />
-          <EntitySet Name="Groups" EntityType="oikonomosModel.Group" />
           <EntitySet Name="GroupTypes" EntityType="oikonomosModel.GroupType" />
-          <EntitySet Name="People" EntityType="oikonomosModel.Person" />
           <EntitySet Name="PersonGroups" EntityType="oikonomosModel.PersonGroup" />
           <EntitySet Name="Sites" EntityType="oikonomosModel.Site" />
           <EntitySet Name="Titles" EntityType="oikonomosModel.Title" />
-          <AssociationSet Name="FK_Person_Church" Association="oikonomosModel.FK_Person_Church">
-            <End Role="Church" EntitySet="Churches" />
-            <End Role="Person" EntitySet="People" />
-          </AssociationSet>
           <AssociationSet Name="FK_Site_Church" Association="oikonomosModel.FK_Site_Church">
             <End Role="Church" EntitySet="Churches" />
             <End Role="Site" EntitySet="Sites" />
           </AssociationSet>
-          <AssociationSet Name="FK_Group_GroupType" Association="oikonomosModel.FK_Group_GroupType">
-            <End Role="GroupType" EntitySet="GroupTypes" />
-            <End Role="Group" EntitySet="Groups" />
-          </AssociationSet>
-          <AssociationSet Name="FK_PersonGroup_Group" Association="oikonomosModel.FK_PersonGroup_Group">
-            <End Role="Group" EntitySet="Groups" />
-            <End Role="PersonGroup" EntitySet="PersonGroups" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Person_Site" Association="oikonomosModel.FK_Person_Site">
-            <End Role="Site" EntitySet="Sites" />
-            <End Role="Person" EntitySet="People" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Person_Title" Association="oikonomosModel.FK_Person_Title">
-            <End Role="Title" EntitySet="Titles" />
-            <End Role="Person" EntitySet="People" />
-          </AssociationSet>
-          <AssociationSet Name="FK_PersonGroup_Person" Association="oikonomosModel.FK_PersonGroup_Person">
-            <End Role="Person" EntitySet="People" />
-            <End Role="PersonGroup" EntitySet="PersonGroups" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Group_Church" Association="oikonomosModel.FK_Group_Church">
-            <End Role="Church" EntitySet="Churches" />
-            <End Role="Group" EntitySet="Groups" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Group_Administrator" Association="oikonomosModel.FK_Group_Administrator">
-            <End Role="Person" EntitySet="People" />
-            <End Role="Group" EntitySet="Groups" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Group_Leader" Association="oikonomosModel.FK_Group_Leader">
-            <End Role="Person" EntitySet="People" />
-            <End Role="Group" EntitySet="Groups" />
-          </AssociationSet>
           <EntitySet Name="Addresses" EntityType="oikonomosModel.Address" />
           <EntitySet Name="PersonRoles" EntityType="oikonomosModel.PersonRole" />
-          <AssociationSet Name="FK_PersonRole_Person" Association="oikonomosModel.FK_PersonRole_Person">
-            <End Role="Person" EntitySet="People" />
-            <End Role="PersonRole" EntitySet="PersonRoles" />
-          </AssociationSet>
           <AssociationSet Name="FK_Church_Address" Association="oikonomosModel.FK_Church_Address">
             <End Role="Address" EntitySet="Addresses" />
             <End Role="Church" EntitySet="Churches" />
           </AssociationSet>
-          <EntitySet Name="Families" EntityType="oikonomosModel.Family" />
-          <AssociationSet Name="FK_Family_Address" Association="oikonomosModel.FK_Family_Address">
-            <End Role="Address" EntitySet="Addresses" />
-            <End Role="Family" EntitySet="Families" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Person_Family" Association="oikonomosModel.FK_Person_Family">
-            <End Role="Family" EntitySet="Families" />
-            <End Role="Person" EntitySet="People" />
-          </AssociationSet>
           <EntitySet Name="PersonRelationships" EntityType="oikonomosModel.PersonRelationship" />
           <EntitySet Name="Relationships" EntityType="oikonomosModel.Relationship" />
-          <AssociationSet Name="FK_PersonRelationship_Person" Association="oikonomosModel.FK_PersonRelationship_Person">
-            <End Role="Person" EntitySet="People" />
-            <End Role="PersonRelationship" EntitySet="PersonRelationships" />
-          </AssociationSet>
-          <AssociationSet Name="FK_PersonRelationship_PersonRelatedTo" Association="oikonomosModel.FK_PersonRelationship_PersonRelatedTo">
-            <End Role="Person" EntitySet="People" />
-            <End Role="PersonRelationship" EntitySet="PersonRelationships" />
-          </AssociationSet>
           <AssociationSet Name="FK_PersonRelationship_Relationship" Association="oikonomosModel.FK_PersonRelationship_Relationship">
             <End Role="Relationship" EntitySet="Relationships" />
             <End Role="PersonRelationship" EntitySet="PersonRelationships" />
           </AssociationSet>
-          <EntitySet Name="Events" EntityType="oikonomosModel.Event" />
           <EntitySet Name="EventVisibilities" EntityType="oikonomosModel.EventVisibility" />
           <EntitySet Name="Tables" EntityType="oikonomosModel.Table" />
-          <AssociationSet Name="FK_Event_ChangedByPerson" Association="oikonomosModel.FK_Event_ChangedByPerson">
-            <End Role="Person" EntitySet="People" />
-            <End Role="Event" EntitySet="Events" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Event_CreatedByPerson" Association="oikonomosModel.FK_Event_CreatedByPerson">
-            <End Role="Person" EntitySet="People" />
-            <End Role="Event" EntitySet="Events" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Event_EventVisibility" Association="oikonomosModel.FK_Event_EventVisibility">
-            <End Role="EventVisibility" EntitySet="EventVisibilities" />
-            <End Role="Event" EntitySet="Events" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Event_Table" Association="oikonomosModel.FK_Event_Table">
-            <End Role="Table" EntitySet="Tables" />
-            <End Role="Event" EntitySet="Events" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Group_Address" Association="oikonomosModel.FK_Group_Address">
-            <End Role="Address" EntitySet="Addresses" />
-            <End Role="Group" EntitySet="Groups" />
-          </AssociationSet>
           <AssociationSet Name="FK_Site_Address" Association="oikonomosModel.FK_Site_Address">
             <End Role="Address" EntitySet="Addresses" />
             <End Role="Site" EntitySet="Sites" />
@@ -1174,10 +1225,6 @@
             <End Role="OptionalField" EntitySet="OptionalFields" />
             <End Role="PersonOptionalField" EntitySet="PersonOptionalFields" />
           </AssociationSet>
-          <AssociationSet Name="FK_PersonOptionField_Person" Association="oikonomosModel.FK_PersonOptionField_Person">
-            <End Role="Person" EntitySet="People" />
-            <End Role="PersonOptionalField" EntitySet="PersonOptionalFields" />
-          </AssociationSet>
           <EntitySet Name="ChurchSuburbs" EntityType="oikonomosModel.ChurchSuburb" />
           <AssociationSet Name="FK_Address_ChurchSuburb" Association="oikonomosModel.FK_Address_ChurchSuburb">
             <End Role="ChurchSuburb" EntitySet="ChurchSuburbs" />
@@ -1191,10 +1238,6 @@
           <AssociationSet Name="FK_GroupClassification_Church" Association="oikonomosModel.FK_GroupClassification_Church">
             <End Role="Church" EntitySet="Churches" />
             <End Role="GroupClassification" EntitySet="GroupClassifications" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Group_GroupClassification" Association="oikonomosModel.FK_Group_GroupClassification">
-            <End Role="GroupClassification" EntitySet="GroupClassifications" />
-            <End Role="Group" EntitySet="Groups" />
           </AssociationSet>
           <AssociationSet Name="FK_GroupClassification_GroupType" Association="oikonomosModel.FK_GroupClassification_GroupType">
             <End Role="GroupType" EntitySet="GroupTypes" />
@@ -1212,10 +1255,6 @@
           <FunctionImport Name="FetchComments" ReturnType="Collection(oikonomosModel.FetchComments_Result)">
           <Parameter Name="groupId" Mode="In" Type="Int32" />
           </FunctionImport>
-          <AssociationSet Name="FK_Event_Church" Association="oikonomosModel.FK_Event_Church">
-            <End Role="Church" EntitySet="Churches" />
-            <End Role="Event" EntitySet="Events" />
-          </AssociationSet>
           <FunctionImport Name="FetchGroupAttendance" ReturnType="Collection(oikonomosModel.FetchGroupAttendance_Result)">
           <Parameter Name="churchId" Mode="In" Type="Int32" />
           </FunctionImport>
@@ -1229,12 +1268,7 @@
             <End Role="SmsProvider" EntitySet="SmsProviders" />
             <End Role="ChurchSmsProvider" EntitySet="ChurchSmsProviders" />
           </AssociationSet>
-          <EntitySet Name="OldRoles" EntityType="oikonomosModel.OldRole" />
           <EntitySet Name="PermissionRoles" EntityType="oikonomosModel.PermissionRole" />
-          <AssociationSet Name="FK_PersonRole_Role1" Association="oikonomosModel.FK_PersonRole_Role1">
-            <End Role="OldRole" EntitySet="OldRoles" />
-            <End Role="PersonRole" EntitySet="PersonRoles" />
-          </AssociationSet>
           <EntitySet Name="Roles" EntityType="oikonomosModel.Role" />
           <AssociationSet Name="FK_Role_Church" Association="oikonomosModel.FK_Role_Church">
             <End Role="Church" EntitySet="Churches" />
@@ -1257,6 +1291,117 @@
             <End Role="Role" EntitySet="Roles" />
             <End Role="Role1" EntitySet="Roles" />
           </AssociationSet>
+          <EntitySet Name="Status" EntityType="oikonomosModel.Status" />
+          <AssociationSet Name="FK_Church_Status" Association="oikonomosModel.FK_Church_Status">
+            <End Role="Status" EntitySet="Status" />
+            <End Role="Church" EntitySet="Churches" />
+          </AssociationSet>
+          <EntitySet Name="Families" EntityType="oikonomosModel.Family" />
+          <EntitySet Name="People" EntityType="oikonomosModel.Person" />
+          <AssociationSet Name="FK_Family_Address" Association="oikonomosModel.FK_Family_Address">
+            <End Role="Address" EntitySet="Addresses" />
+            <End Role="Family" EntitySet="Families" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Person_Family" Association="oikonomosModel.FK_Person_Family">
+            <End Role="Family" EntitySet="Families" />
+            <End Role="Person" EntitySet="People" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Person_Site" Association="oikonomosModel.FK_Person_Site">
+            <End Role="Site" EntitySet="Sites" />
+            <End Role="Person" EntitySet="People" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Person_Title" Association="oikonomosModel.FK_Person_Title">
+            <End Role="Title" EntitySet="Titles" />
+            <End Role="Person" EntitySet="People" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonContact_Person" Association="oikonomosModel.FK_PersonContact_Person">
+            <End Role="Person" EntitySet="People" />
+            <End Role="PersonOptionalField" EntitySet="PersonOptionalFields" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonGroup_Person" Association="oikonomosModel.FK_PersonGroup_Person">
+            <End Role="Person" EntitySet="People" />
+            <End Role="PersonGroup" EntitySet="PersonGroups" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonRelationship_Person" Association="oikonomosModel.FK_PersonRelationship_Person">
+            <End Role="Person" EntitySet="People" />
+            <End Role="PersonRelationship" EntitySet="PersonRelationships" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonRelationship_PersonRelatedTo" Association="oikonomosModel.FK_PersonRelationship_PersonRelatedTo">
+            <End Role="Person" EntitySet="People" />
+            <End Role="PersonRelationship" EntitySet="PersonRelationships" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonRole_Person" Association="oikonomosModel.FK_PersonRole_Person">
+            <End Role="Person" EntitySet="People" />
+            <End Role="PersonRole" EntitySet="PersonRoles" />
+          </AssociationSet>
+          <AssociationSet Name="FamilyChurch" Association="oikonomosModel.FamilyChurch">
+            <End Role="Church" EntitySet="Churches" />
+            <End Role="Family" EntitySet="Families" />
+          </AssociationSet>
+          <AssociationSet Name="PersonChurch" Association="oikonomosModel.PersonChurch">
+            <End Role="Church" EntitySet="Churches" />
+            <End Role="Person" EntitySet="People" />
+          </AssociationSet>
+          <EntitySet Name="Events" EntityType="oikonomosModel.Event" />
+          <AssociationSet Name="FK_Event_Church" Association="oikonomosModel.FK_Event_Church">
+            <End Role="Church" EntitySet="Churches" />
+            <End Role="Event" EntitySet="Events" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Event_ChangedByPerson" Association="oikonomosModel.FK_Event_ChangedByPerson">
+            <End Role="Person" EntitySet="People" />
+            <End Role="Event" EntitySet="Events" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Event_CreatedByPerson" Association="oikonomosModel.FK_Event_CreatedByPerson">
+            <End Role="Person" EntitySet="People" />
+            <End Role="Event" EntitySet="Events" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Event_EventVisibility" Association="oikonomosModel.FK_Event_EventVisibility">
+            <End Role="EventVisibility" EntitySet="EventVisibilities" />
+            <End Role="Event" EntitySet="Events" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Event_Table" Association="oikonomosModel.FK_Event_Table">
+            <End Role="Table" EntitySet="Tables" />
+            <End Role="Event" EntitySet="Events" />
+          </AssociationSet>
+          <EntitySet Name="Groups" EntityType="oikonomosModel.Group" />
+          <AssociationSet Name="FK_Group_Address" Association="oikonomosModel.FK_Group_Address">
+            <End Role="Address" EntitySet="Addresses" />
+            <End Role="Group" EntitySet="Groups" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Group_Church" Association="oikonomosModel.FK_Group_Church">
+            <End Role="Church" EntitySet="Churches" />
+            <End Role="Group" EntitySet="Groups" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Group_Administrator" Association="oikonomosModel.FK_Group_Administrator">
+            <End Role="Person" EntitySet="People" />
+            <End Role="Group" EntitySet="Groups" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Group_GroupClassification" Association="oikonomosModel.FK_Group_GroupClassification">
+            <End Role="GroupClassification" EntitySet="GroupClassifications" />
+            <End Role="Group" EntitySet="Groups" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Group_GroupType" Association="oikonomosModel.FK_Group_GroupType">
+            <End Role="GroupType" EntitySet="GroupTypes" />
+            <End Role="Group" EntitySet="Groups" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Group_Leader" Association="oikonomosModel.FK_Group_Leader">
+            <End Role="Person" EntitySet="People" />
+            <End Role="Group" EntitySet="Groups" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonGroup_Group" Association="oikonomosModel.FK_PersonGroup_Group">
+            <End Role="Group" EntitySet="Groups" />
+            <End Role="PersonGroup" EntitySet="PersonGroups" />
+          </AssociationSet>
+          <EntitySet Name="ChurchEmailTemplates" EntityType="oikonomosModel.ChurchEmailTemplate" />
+          <EntitySet Name="EmailTemplates" EntityType="oikonomosModel.EmailTemplate" />
+          <AssociationSet Name="FK_ChurchEmailTemplate_Church" Association="oikonomosModel.FK_ChurchEmailTemplate_Church">
+            <End Role="Church" EntitySet="Churches" />
+            <End Role="ChurchEmailTemplate" EntitySet="ChurchEmailTemplates" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ChurchEmailTemplate_EmailTemplate" Association="oikonomosModel.FK_ChurchEmailTemplate_EmailTemplate">
+            <End Role="EmailTemplate" EntitySet="EmailTemplates" />
+            <End Role="ChurchEmailTemplate" EntitySet="ChurchEmailTemplates" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="Church">
           <Key>
@@ -1266,9 +1411,7 @@
           <Property Name="Name" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="Created" Type="DateTime" Nullable="false" />
           <Property Name="Changed" Type="DateTime" Nullable="false" />
-          <NavigationProperty Name="People" Relationship="oikonomosModel.FK_Person_Church" FromRole="Church" ToRole="Person" />
           <NavigationProperty Name="Sites" Relationship="oikonomosModel.FK_Site_Church" FromRole="Church" ToRole="Site" />
-          <NavigationProperty Name="Groups" Relationship="oikonomosModel.FK_Group_Church" FromRole="Church" ToRole="Group" />
           <Property Type="String" Name="SiteHeader" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="SiteDescription" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="BackgroundImage" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -1287,31 +1430,15 @@
           <Property Type="String" Name="Country" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="EmailLogin" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="EmailPassword" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Events" Relationship="oikonomosModel.FK_Event_Church" FromRole="Church" ToRole="Event" />
           <NavigationProperty Name="ChurchSmsProviders" Relationship="oikonomosModel.FK_ChurchSmsProvider_Church" FromRole="Church" ToRole="ChurchSmsProvider" />
           <NavigationProperty Name="Roles" Relationship="oikonomosModel.FK_Role_Church" FromRole="Church" ToRole="Role" />
-        </EntityType>
-        <EntityType Name="Group">
-          <Key>
-            <PropertyRef Name="GroupId" />
-          </Key>
-          <Property Name="GroupId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
-          <Property Name="LeaderId" Type="Int32" />
-          <Property Name="GroupTypeId" Type="Int32" Nullable="false" />
-          <Property Name="Created" Type="DateTime" Nullable="false" />
-          <Property Name="Changed" Type="DateTime" Nullable="false" />
-          <NavigationProperty Name="GroupType" Relationship="oikonomosModel.FK_Group_GroupType" FromRole="Group" ToRole="GroupType" />
-          <NavigationProperty Name="PersonGroups" Relationship="oikonomosModel.FK_PersonGroup_Group" FromRole="Group" ToRole="PersonGroup" />
-          <Property Type="Int32" Name="ChurchId" Nullable="false" />
-          <Property Type="Int32" Name="AdministratorId" />
-          <NavigationProperty Name="Church" Relationship="oikonomosModel.FK_Group_Church" FromRole="Group" ToRole="Church" />
-          <NavigationProperty Name="Administrator" Relationship="oikonomosModel.FK_Group_Administrator" FromRole="Group" ToRole="Person" />
-          <NavigationProperty Name="Leader" Relationship="oikonomosModel.FK_Group_Leader" FromRole="Group" ToRole="Person" />
-          <Property Type="Int32" Name="AddressId" />
-          <NavigationProperty Name="Address" Relationship="oikonomosModel.FK_Group_Address" FromRole="Group" ToRole="Address" />
-          <Property Type="Int32" Name="GroupClassificationId" />
-          <NavigationProperty Name="GroupClassification" Relationship="oikonomosModel.FK_Group_GroupClassification" FromRole="Group" ToRole="GroupClassification" />
+          <Property Type="Int32" Name="StatusId" Nullable="false" />
+          <NavigationProperty Name="Status" Relationship="oikonomosModel.FK_Church_Status" FromRole="Church" ToRole="Status" />
+          <NavigationProperty Name="Families" Relationship="oikonomosModel.FamilyChurch" FromRole="Church" ToRole="Family" />
+          <NavigationProperty Name="People" Relationship="oikonomosModel.PersonChurch" FromRole="Church" ToRole="Person" />
+          <NavigationProperty Name="Events" Relationship="oikonomosModel.FK_Event_Church" FromRole="Church" ToRole="Event" />
+          <NavigationProperty Name="Groups" Relationship="oikonomosModel.FK_Group_Church" FromRole="Church" ToRole="Group" />
+          <NavigationProperty Name="ChurchEmailTemplates" Relationship="oikonomosModel.FK_ChurchEmailTemplate_Church" FromRole="Church" ToRole="ChurchEmailTemplate" />
         </EntityType>
         <EntityType Name="GroupType">
           <Key>
@@ -1320,42 +1447,9 @@
           <Property Name="GroupTypeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="Created" Type="DateTime" Nullable="false" />
-          <NavigationProperty Name="Groups" Relationship="oikonomosModel.FK_Group_GroupType" FromRole="GroupType" ToRole="Group" />
           <NavigationProperty Name="GroupClassifications" Relationship="oikonomosModel.FK_GroupClassification_GroupType" FromRole="GroupType" ToRole="GroupClassification" />
+          <NavigationProperty Name="Groups" Relationship="oikonomosModel.FK_Group_GroupType" FromRole="GroupType" ToRole="Group" />
         </EntityType>
-        <EntityType Name="Person">
-          <Key>
-            <PropertyRef Name="PersonId" />
-          </Key>
-          <Property Name="PersonId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ChurchId" Type="Int32" Nullable="false" />
-          <Property Name="SiteId" Type="Int32" />
-          <Property Name="TitleId" Type="Int32" />
-          <Property Name="Firstname" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
-          <Property Name="Email" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
-          <Property Name="FamilyId" Type="Int32" Nullable="false" />
-          <Property Name="Created" Type="DateTime" Nullable="false" />
-          <Property Name="Changed" Type="DateTime" Nullable="false" />
-          <NavigationProperty Name="Church" Relationship="oikonomosModel.FK_Person_Church" FromRole="Person" ToRole="Church" />
-          <NavigationProperty Name="Site" Relationship="oikonomosModel.FK_Person_Site" FromRole="Person" ToRole="Site" />
-          <NavigationProperty Name="Title" Relationship="oikonomosModel.FK_Person_Title" FromRole="Person" ToRole="Title" />
-          <NavigationProperty Name="PersonGroups" Relationship="oikonomosModel.FK_PersonGroup_Person" FromRole="Person" ToRole="PersonGroup" />
-          <NavigationProperty Name="Groups" Relationship="oikonomosModel.FK_Group_Administrator" FromRole="Person" ToRole="Group" />
-          <NavigationProperty Name="Groups1" Relationship="oikonomosModel.FK_Group_Leader" FromRole="Person" ToRole="Group" />
-          <Property Type="DateTime" Name="DateOfBirth" />
-          <Property Type="String" Name="Occupation" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Type="String" Name="Username" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Type="String" Name="PasswordHash" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="PersonRoles" Relationship="oikonomosModel.FK_PersonRole_Person" FromRole="Person" ToRole="PersonRole" />
-          <NavigationProperty Name="Family" Relationship="oikonomosModel.FK_Person_Family" FromRole="Person" ToRole="Family" />
-          <Property Type="DateTime" Name="Anniversary" />
-          <NavigationProperty Name="PersonRelationships" Relationship="oikonomosModel.FK_PersonRelationship_Person" FromRole="Person" ToRole="PersonRelationship" />
-          <NavigationProperty Name="PersonRelationships1" Relationship="oikonomosModel.FK_PersonRelationship_PersonRelatedTo" FromRole="Person" ToRole="PersonRelationship" />
-          <NavigationProperty Name="Events" Relationship="oikonomosModel.FK_Event_ChangedByPerson" FromRole="Person" ToRole="Event" />
-          <NavigationProperty Name="Events1" Relationship="oikonomosModel.FK_Event_CreatedByPerson" FromRole="Person" ToRole="Event" />
-          <Property Type="String" Name="PublicId" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="PersonOptionalFields" Relationship="oikonomosModel.FK_PersonOptionField_Person" FromRole="Person" ToRole="PersonOptionalField" />
-          </EntityType>
         <EntityType Name="PersonGroup">
           <Key>
             <PropertyRef Name="PersonGroupId" />
@@ -1366,8 +1460,8 @@
           <Property Name="Joined" Type="DateTime" Nullable="false" />
           <Property Name="Created" Type="DateTime" Nullable="false" />
           <Property Name="Changed" Type="DateTime" Nullable="false" />
-          <NavigationProperty Name="Group" Relationship="oikonomosModel.FK_PersonGroup_Group" FromRole="PersonGroup" ToRole="Group" />
           <NavigationProperty Name="Person" Relationship="oikonomosModel.FK_PersonGroup_Person" FromRole="PersonGroup" ToRole="Person" />
+          <NavigationProperty Name="Group" Relationship="oikonomosModel.FK_PersonGroup_Group" FromRole="PersonGroup" ToRole="Group" />
         </EntityType>
         <EntityType Name="Site">
           <Key>
@@ -1379,9 +1473,9 @@
           <Property Name="Created" Type="DateTime" Nullable="false" />
           <Property Name="Changed" Type="DateTime" Nullable="false" />
           <NavigationProperty Name="Church" Relationship="oikonomosModel.FK_Site_Church" FromRole="Site" ToRole="Church" />
-          <NavigationProperty Name="People" Relationship="oikonomosModel.FK_Person_Site" FromRole="Site" ToRole="Person" />
           <Property Type="Int32" Name="AddressId" />
           <NavigationProperty Name="Address" Relationship="oikonomosModel.FK_Site_Address" FromRole="Site" ToRole="Address" />
+          <NavigationProperty Name="People" Relationship="oikonomosModel.FK_Person_Site" FromRole="Site" ToRole="Person" />
         </EntityType>
         <EntityType Name="Title">
           <Key>
@@ -1392,18 +1486,6 @@
           <Property Name="Created" Type="DateTime" Nullable="false" />
           <NavigationProperty Name="People" Relationship="oikonomosModel.FK_Person_Title" FromRole="Title" ToRole="Person" />
         </EntityType>
-        <Association Name="FK_Person_Church">
-          <End Role="Church" Type="oikonomosModel.Church" Multiplicity="1" />
-          <End Role="Person" Type="oikonomosModel.Person" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Church">
-              <PropertyRef Name="ChurchId" />
-            </Principal>
-            <Dependent Role="Person">
-              <PropertyRef Name="ChurchId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Site_Church">
           <End Role="Church" Type="oikonomosModel.Church" Multiplicity="1" />
           <End Role="Site" Type="oikonomosModel.Site" Multiplicity="*" />
@@ -1413,102 +1495,6 @@
             </Principal>
             <Dependent Role="Site">
               <PropertyRef Name="ChurchId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Group_GroupType">
-          <End Role="GroupType" Type="oikonomosModel.GroupType" Multiplicity="1" />
-          <End Role="Group" Type="oikonomosModel.Group" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="GroupType">
-              <PropertyRef Name="GroupTypeId" />
-            </Principal>
-            <Dependent Role="Group">
-              <PropertyRef Name="GroupTypeId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_PersonGroup_Group">
-          <End Role="Group" Type="oikonomosModel.Group" Multiplicity="1" />
-          <End Role="PersonGroup" Type="oikonomosModel.PersonGroup" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Group">
-              <PropertyRef Name="GroupId" />
-            </Principal>
-            <Dependent Role="PersonGroup">
-              <PropertyRef Name="GroupId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Person_Site">
-          <End Role="Site" Type="oikonomosModel.Site" Multiplicity="0..1" />
-          <End Role="Person" Type="oikonomosModel.Person" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Site">
-              <PropertyRef Name="SiteId" />
-            </Principal>
-            <Dependent Role="Person">
-              <PropertyRef Name="SiteId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Person_Title">
-          <End Role="Title" Type="oikonomosModel.Title" Multiplicity="0..1" />
-          <End Role="Person" Type="oikonomosModel.Person" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Title">
-              <PropertyRef Name="TitleId" />
-            </Principal>
-            <Dependent Role="Person">
-              <PropertyRef Name="TitleId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_PersonGroup_Person">
-          <End Role="Person" Type="oikonomosModel.Person" Multiplicity="1" />
-          <End Role="PersonGroup" Type="oikonomosModel.PersonGroup" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Person">
-              <PropertyRef Name="PersonId" />
-            </Principal>
-            <Dependent Role="PersonGroup">
-              <PropertyRef Name="PersonId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Group_Church">
-          <End Type="oikonomosModel.Church" Role="Church" Multiplicity="1" />
-          <End Type="oikonomosModel.Group" Role="Group" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Church">
-              <PropertyRef Name="ChurchId" />
-            </Principal>
-            <Dependent Role="Group">
-              <PropertyRef Name="ChurchId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Group_Administrator">
-          <End Type="oikonomosModel.Person" Role="Person" Multiplicity="0..1" />
-          <End Type="oikonomosModel.Group" Role="Group" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Person">
-              <PropertyRef Name="PersonId" />
-            </Principal>
-            <Dependent Role="Group">
-              <PropertyRef Name="AdministratorId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Group_Leader">
-          <End Type="oikonomosModel.Person" Role="Person" Multiplicity="0..1" />
-          <End Type="oikonomosModel.Group" Role="Group" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Person">
-              <PropertyRef Name="PersonId" />
-            </Principal>
-            <Dependent Role="Group">
-              <PropertyRef Name="LeaderId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1526,12 +1512,12 @@
           <Property Type="Decimal" Name="Lat" Nullable="false" Precision="18" Scale="6" />
           <Property Type="Decimal" Name="Long" Nullable="false" Precision="18" Scale="6" />
           <NavigationProperty Name="Churches" Relationship="oikonomosModel.FK_Church_Address" FromRole="Address" ToRole="Church" />
-          <NavigationProperty Name="Families" Relationship="oikonomosModel.FK_Family_Address" FromRole="Address" ToRole="Family" />
           <Property Type="String" Name="AddressType" MaxLength="255" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Groups" Relationship="oikonomosModel.FK_Group_Address" FromRole="Address" ToRole="Group" />
           <NavigationProperty Name="Sites" Relationship="oikonomosModel.FK_Site_Address" FromRole="Address" ToRole="Site" />
           <Property Type="Int32" Name="ChurchSuburbId" />
           <NavigationProperty Name="ChurchSuburb" Relationship="oikonomosModel.FK_Address_ChurchSuburb" FromRole="Address" ToRole="ChurchSuburb" />
+          <NavigationProperty Name="Families" Relationship="oikonomosModel.FK_Family_Address" FromRole="Address" ToRole="Family" />
+          <NavigationProperty Name="Groups" Relationship="oikonomosModel.FK_Group_Address" FromRole="Address" ToRole="Group" />
         </EntityType>
         <EntityType Name="PersonRole">
           <Key>
@@ -1542,22 +1528,9 @@
           <Property Type="Int32" Name="PersonId" Nullable="false" />
           <Property Type="DateTime" Name="Created" Nullable="false" />
           <Property Type="DateTime" Name="Changed" Nullable="false" />
-          <NavigationProperty Name="Person" Relationship="oikonomosModel.FK_PersonRole_Person" FromRole="PersonRole" ToRole="Person" />
-          <NavigationProperty Name="OldRole" Relationship="oikonomosModel.FK_PersonRole_Role1" FromRole="PersonRole" ToRole="OldRole" />
           <NavigationProperty Name="Role" Relationship="oikonomosModel.FK_PersonRole_Role" FromRole="PersonRole" ToRole="Role" />
+          <NavigationProperty Name="Person" Relationship="oikonomosModel.FK_PersonRole_Person" FromRole="PersonRole" ToRole="Person" />
         </EntityType>
-        <Association Name="FK_PersonRole_Person">
-          <End Type="oikonomosModel.Person" Role="Person" Multiplicity="1" />
-          <End Type="oikonomosModel.PersonRole" Role="PersonRole" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Person">
-              <PropertyRef Name="PersonId" />
-            </Principal>
-            <Dependent Role="PersonRole">
-              <PropertyRef Name="PersonId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Church_Address">
           <End Type="oikonomosModel.Address" Role="Address" Multiplicity="0..1" />
           <End Type="oikonomosModel.Church" Role="Church" Multiplicity="*" />
@@ -1567,45 +1540,6 @@
             </Principal>
             <Dependent Role="Church">
               <PropertyRef Name="AddressId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="Family">
-          <Key>
-            <PropertyRef Name="FamilyId" />
-          </Key>
-          <Property Type="Int32" Name="FamilyId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Type="String" Name="FamilyName" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Type="DateTime" Name="Created" Nullable="false" />
-          <Property Type="DateTime" Name="Changed" Nullable="false" />
-          <Property Type="String" Name="HomePhone" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Type="Int32" Name="AddressId" />
-          <Property Type="DateTime" Name="Anniversary" />
-          <Property Type="Int32" Name="ChurchId" />
-          <NavigationProperty Name="Address" Relationship="oikonomosModel.FK_Family_Address" FromRole="Family" ToRole="Address" />
-          <NavigationProperty Name="People" Relationship="oikonomosModel.FK_Person_Family" FromRole="Family" ToRole="Person" />
-        </EntityType>
-        <Association Name="FK_Family_Address">
-          <End Type="oikonomosModel.Address" Role="Address" Multiplicity="0..1" />
-          <End Type="oikonomosModel.Family" Role="Family" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Address">
-              <PropertyRef Name="AddressId" />
-            </Principal>
-            <Dependent Role="Family">
-              <PropertyRef Name="AddressId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Person_Family">
-          <End Type="oikonomosModel.Family" Role="Family" Multiplicity="1" />
-          <End Type="oikonomosModel.Person" Role="Person" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Family">
-              <PropertyRef Name="FamilyId" />
-            </Principal>
-            <Dependent Role="Person">
-              <PropertyRef Name="FamilyId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1619,9 +1553,9 @@
           <Property Type="Int32" Name="RelationshipId" Nullable="false" />
           <Property Type="DateTime" Name="Created" Nullable="false" />
           <Property Type="DateTime" Name="Changed" Nullable="false" />
+          <NavigationProperty Name="Relationship" Relationship="oikonomosModel.FK_PersonRelationship_Relationship" FromRole="PersonRelationship" ToRole="Relationship" />
           <NavigationProperty Name="Person" Relationship="oikonomosModel.FK_PersonRelationship_Person" FromRole="PersonRelationship" ToRole="Person" />
           <NavigationProperty Name="Person1" Relationship="oikonomosModel.FK_PersonRelationship_PersonRelatedTo" FromRole="PersonRelationship" ToRole="Person" />
-          <NavigationProperty Name="Relationship" Relationship="oikonomosModel.FK_PersonRelationship_Relationship" FromRole="PersonRelationship" ToRole="Relationship" />
         </EntityType>
         <EntityType Name="Relationship">
           <Key>
@@ -1632,30 +1566,6 @@
           <Property Type="DateTime" Name="Created" Nullable="false" />
           <NavigationProperty Name="PersonRelationships" Relationship="oikonomosModel.FK_PersonRelationship_Relationship" FromRole="Relationship" ToRole="PersonRelationship" />
         </EntityType>
-        <Association Name="FK_PersonRelationship_Person">
-          <End Type="oikonomosModel.Person" Role="Person" Multiplicity="1" />
-          <End Type="oikonomosModel.PersonRelationship" Role="PersonRelationship" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Person">
-              <PropertyRef Name="PersonId" />
-            </Principal>
-            <Dependent Role="PersonRelationship">
-              <PropertyRef Name="PersonId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_PersonRelationship_PersonRelatedTo">
-          <End Type="oikonomosModel.Person" Role="Person" Multiplicity="1" />
-          <End Type="oikonomosModel.PersonRelationship" Role="PersonRelationship" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Person">
-              <PropertyRef Name="PersonId" />
-            </Principal>
-            <Dependent Role="PersonRelationship">
-              <PropertyRef Name="PersonRelatedToId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_PersonRelationship_Relationship">
           <End Type="oikonomosModel.Relationship" Role="Relationship" Multiplicity="1" />
           <End Type="oikonomosModel.PersonRelationship" Role="PersonRelationship" Multiplicity="*" />
@@ -1668,30 +1578,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="Event">
-          <Key>
-            <PropertyRef Name="EventId" />
-          </Key>
-          <Property Type="Int32" Name="EventId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Type="Int32" Name="TableId" Nullable="false" />
-          <Property Type="Int32" Name="Reference" Nullable="false" />
-          <Property Type="String" Name="Description" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Type="String" Name="Comments" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Type="DateTime" Name="FollowUpDate" />
-          <Property Type="Int32" Name="EventVisibilityId" Nullable="false" />
-          <Property Type="DateTime" Name="Created" Nullable="false" />
-          <Property Type="DateTime" Name="Changed" Nullable="false" />
-          <Property Type="Int32" Name="CreatedByPersonId" Nullable="false" />
-          <Property Type="Int32" Name="ChangedByPersonId" Nullable="false" />
-          <NavigationProperty Name="Person" Relationship="oikonomosModel.FK_Event_ChangedByPerson" FromRole="Event" ToRole="Person" />
-          <NavigationProperty Name="CreatedByPerson" Relationship="oikonomosModel.FK_Event_CreatedByPerson" FromRole="Event" ToRole="Person" />
-          <NavigationProperty Name="EventVisibility" Relationship="oikonomosModel.FK_Event_EventVisibility" FromRole="Event" ToRole="EventVisibility" />
-          <NavigationProperty Name="Table" Relationship="oikonomosModel.FK_Event_Table" FromRole="Event" ToRole="Table" />
-          <Property Type="DateTime" Name="EventDate" Nullable="false" />
-          <Property Type="String" Name="Value" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Type="Int32" Name="ChurchId" Nullable="false" />
-          <NavigationProperty Name="Church" Relationship="oikonomosModel.FK_Event_Church" FromRole="Event" ToRole="Church" />
-        </EntityType>
         <EntityType Name="EventVisibility">
           <Key>
             <PropertyRef Name="EventVisibilityId" />
@@ -1708,69 +1594,9 @@
           <Property Type="Int32" Name="TableId" Nullable="false" />
           <Property Type="String" Name="Name" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Type="DateTime" Name="Created" Nullable="false" />
-          <NavigationProperty Name="Events" Relationship="oikonomosModel.FK_Event_Table" FromRole="Table" ToRole="Event" />
           <NavigationProperty Name="EventTypes" Relationship="oikonomosModel.FK_EventType_Table" FromRole="Table" ToRole="EventType" />
+          <NavigationProperty Name="Events" Relationship="oikonomosModel.FK_Event_Table" FromRole="Table" ToRole="Event" />
         </EntityType>
-        <Association Name="FK_Event_ChangedByPerson">
-          <End Type="oikonomosModel.Person" Role="Person" Multiplicity="1" />
-          <End Type="oikonomosModel.Event" Role="Event" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Person">
-              <PropertyRef Name="PersonId" />
-            </Principal>
-            <Dependent Role="Event">
-              <PropertyRef Name="ChangedByPersonId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Event_CreatedByPerson">
-          <End Type="oikonomosModel.Person" Role="Person" Multiplicity="1" />
-          <End Type="oikonomosModel.Event" Role="Event" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Person">
-              <PropertyRef Name="PersonId" />
-            </Principal>
-            <Dependent Role="Event">
-              <PropertyRef Name="CreatedByPersonId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Event_EventVisibility">
-          <End Type="oikonomosModel.EventVisibility" Role="EventVisibility" Multiplicity="1" />
-          <End Type="oikonomosModel.Event" Role="Event" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="EventVisibility">
-              <PropertyRef Name="EventVisibilityId" />
-            </Principal>
-            <Dependent Role="Event">
-              <PropertyRef Name="EventVisibilityId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Event_Table">
-          <End Type="oikonomosModel.Table" Role="Table" Multiplicity="1" />
-          <End Type="oikonomosModel.Event" Role="Event" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Table">
-              <PropertyRef Name="TableId" />
-            </Principal>
-            <Dependent Role="Event">
-              <PropertyRef Name="TableId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Group_Address">
-          <End Type="oikonomosModel.Address" Role="Address" Multiplicity="0..1" />
-          <End Type="oikonomosModel.Group" Role="Group" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Address">
-              <PropertyRef Name="AddressId" />
-            </Principal>
-            <Dependent Role="Group">
-              <PropertyRef Name="AddressId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Site_Address">
           <End Type="oikonomosModel.Address" Role="Address" Multiplicity="0..1" />
           <End Type="oikonomosModel.Site" Role="Site" Multiplicity="*" />
@@ -1818,7 +1644,7 @@
           <Property Type="DateTime" Name="Created" Nullable="false" />
           <Property Type="DateTime" Name="Changed" Nullable="false" />
           <NavigationProperty Name="OptionalField" Relationship="oikonomosModel.FK_PersonOptionalField_OptionalField" FromRole="PersonOptionalField" ToRole="OptionalField" />
-          <NavigationProperty Name="Person" Relationship="oikonomosModel.FK_PersonOptionField_Person" FromRole="PersonOptionalField" ToRole="Person" />
+          <NavigationProperty Name="Person" Relationship="oikonomosModel.FK_PersonContact_Person" FromRole="PersonOptionalField" ToRole="Person" />
         </EntityType>
         <Association Name="FK_ChurchOptionalField_Church">
           <End Type="oikonomosModel.Church" Role="Church" Multiplicity="1" />
@@ -1853,18 +1679,6 @@
             </Principal>
             <Dependent Role="PersonOptionalField">
               <PropertyRef Name="OptionalFieldId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_PersonOptionField_Person">
-          <End Type="oikonomosModel.Person" Role="Person" Multiplicity="1" />
-          <End Type="oikonomosModel.PersonOptionalField" Role="PersonOptionalField" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Person">
-              <PropertyRef Name="PersonId" />
-            </Principal>
-            <Dependent Role="PersonOptionalField">
-              <PropertyRef Name="PersonId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1915,8 +1729,8 @@
           <Property Type="DateTime" Name="Created" Nullable="false" />
           <Property Type="DateTime" Name="Changed" Nullable="false" />
           <NavigationProperty Name="Church" Relationship="oikonomosModel.FK_GroupClassification_Church" FromRole="GroupClassification" ToRole="Church" />
-          <NavigationProperty Name="Groups" Relationship="oikonomosModel.FK_Group_GroupClassification" FromRole="GroupClassification" ToRole="Group" />
           <NavigationProperty Name="GroupType" Relationship="oikonomosModel.FK_GroupClassification_GroupType" FromRole="GroupClassification" ToRole="GroupType" />
+          <NavigationProperty Name="Groups" Relationship="oikonomosModel.FK_Group_GroupClassification" FromRole="GroupClassification" ToRole="Group" />
         </EntityType>
         <Association Name="FK_GroupClassification_Church">
           <End Type="oikonomosModel.Church" Role="Church" Multiplicity="1" />
@@ -1927,18 +1741,6 @@
             </Principal>
             <Dependent Role="GroupClassification">
               <PropertyRef Name="ChurchId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Group_GroupClassification">
-          <End Type="oikonomosModel.GroupClassification" Role="GroupClassification" Multiplicity="0..1" />
-          <End Type="oikonomosModel.Group" Role="Group" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="GroupClassification">
-              <PropertyRef Name="GroupClassificationId" />
-            </Principal>
-            <Dependent Role="Group">
-              <PropertyRef Name="GroupClassificationId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1995,18 +1797,6 @@
           <Property Type="Int32" Name="Reference" Nullable="false" />
           <Property Type="String" Name="Comments" Nullable="true" />
         </ComplexType>
-        <Association Name="FK_Event_Church">
-          <End Type="oikonomosModel.Church" Role="Church" Multiplicity="1" />
-          <End Type="oikonomosModel.Event" Role="Event" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Church">
-              <PropertyRef Name="ChurchId" />
-            </Principal>
-            <Dependent Role="Event">
-              <PropertyRef Name="ChurchId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <ComplexType Name="FetchGroupAttendance_Result">
           <Property Type="Int32" Name="GroupId" Nullable="false" />
           <Property Type="String" Name="Name" Nullable="false" MaxLength="255" />
@@ -2068,15 +1858,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="OldRole">
-          <Key>
-            <PropertyRef Name="RoleId" />
-          </Key>
-          <Property Type="Int32" Name="RoleId" Nullable="false" />
-          <Property Type="String" Name="Name" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Type="DateTime" Name="Created" Nullable="false" />
-          <NavigationProperty Name="PersonRoles" Relationship="oikonomosModel.FK_PersonRole_Role1" FromRole="OldRole" ToRole="PersonRole" />
-        </EntityType>
         <EntityType Name="PermissionRole">
           <Key>
             <PropertyRef Name="PermissionId" />
@@ -2089,18 +1870,6 @@
           <NavigationProperty Name="Role" Relationship="oikonomosModel.FK_PermissionRole_Role" FromRole="PermissionRole" ToRole="Role" />
           <NavigationProperty Name="Permission" Relationship="oikonomosModel.FK_PermissionRole_Permission" FromRole="PermissionRole" ToRole="Permission" />
         </EntityType>
-        <Association Name="FK_PersonRole_Role1">
-          <End Type="oikonomosModel.OldRole" Role="OldRole" Multiplicity="1" />
-          <End Type="oikonomosModel.PersonRole" Role="PersonRole" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="OldRole">
-              <PropertyRef Name="RoleId" />
-            </Principal>
-            <Dependent Role="PersonRole">
-              <PropertyRef Name="RoleId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityType Name="Role">
           <Key>
             <PropertyRef Name="RoleId" />
@@ -2115,6 +1884,7 @@
           <NavigationProperty Name="PersonRoles" Relationship="oikonomosModel.FK_PersonRole_Role" FromRole="Role" ToRole="PersonRole" />
           <NavigationProperty Name="Role1" Relationship="oikonomosModel.CanSetRole" FromRole="Role" ToRole="Role1" />
           <NavigationProperty Name="Roles" Relationship="oikonomosModel.CanSetRole" FromRole="Role1" ToRole="Role" />
+          <Property Type="String" Name="DisplayName" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_Role_Church">
           <End Type="oikonomosModel.Church" Role="Church" Multiplicity="1" />
@@ -2182,6 +1952,422 @@
           <End Type="oikonomosModel.Role" Role="Role" Multiplicity="*" />
           <End Type="oikonomosModel.Role" Role="Role1" Multiplicity="*" />
         </Association>
+        <EntityType Name="Status">
+          <Key>
+            <PropertyRef Name="StatusId" />
+          </Key>
+          <Property Type="Int32" Name="StatusId" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Churches" Relationship="oikonomosModel.FK_Church_Status" FromRole="Status" ToRole="Church" />
+        </EntityType>
+        <Association Name="FK_Church_Status">
+          <End Type="oikonomosModel.Status" Role="Status" Multiplicity="1" />
+          <End Type="oikonomosModel.Church" Role="Church" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Status">
+              <PropertyRef Name="StatusId" />
+            </Principal>
+            <Dependent Role="Church">
+              <PropertyRef Name="StatusId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Family">
+          <Key>
+            <PropertyRef Name="FamilyId" />
+          </Key>
+          <Property Type="Int32" Name="FamilyId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="FamilyName" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="DateTime" Name="Created" Nullable="false" />
+          <Property Type="DateTime" Name="Changed" Nullable="false" />
+          <Property Type="String" Name="HomePhone" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="AddressId" />
+          <Property Type="DateTime" Name="Anniversary" />
+          <NavigationProperty Name="Address" Relationship="oikonomosModel.FK_Family_Address" FromRole="Family" ToRole="Address" />
+          <NavigationProperty Name="People" Relationship="oikonomosModel.FK_Person_Family" FromRole="Family" ToRole="Person" />
+          <NavigationProperty Name="Churches" Relationship="oikonomosModel.FamilyChurch" FromRole="Family" ToRole="Church" />
+        </EntityType>
+        <EntityType Name="Person">
+          <Key>
+            <PropertyRef Name="PersonId" />
+          </Key>
+          <Property Type="Int32" Name="PersonId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="SiteId" />
+          <Property Type="Int32" Name="TitleId" />
+          <Property Type="String" Name="Firstname" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Email" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="FamilyId" Nullable="false" />
+          <Property Type="DateTime" Name="Created" Nullable="false" />
+          <Property Type="DateTime" Name="Changed" Nullable="false" />
+          <Property Type="DateTime" Name="DateOfBirth" />
+          <Property Type="String" Name="Occupation" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Username" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="PasswordHash" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="DateTime" Name="Anniversary" />
+          <Property Type="String" Name="PublicId" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Family" Relationship="oikonomosModel.FK_Person_Family" FromRole="Person" ToRole="Family" />
+          <NavigationProperty Name="Site" Relationship="oikonomosModel.FK_Person_Site" FromRole="Person" ToRole="Site" />
+          <NavigationProperty Name="Title" Relationship="oikonomosModel.FK_Person_Title" FromRole="Person" ToRole="Title" />
+          <NavigationProperty Name="PersonOptionalFields" Relationship="oikonomosModel.FK_PersonContact_Person" FromRole="Person" ToRole="PersonOptionalField" />
+          <NavigationProperty Name="PersonGroups" Relationship="oikonomosModel.FK_PersonGroup_Person" FromRole="Person" ToRole="PersonGroup" />
+          <NavigationProperty Name="PersonRelationships" Relationship="oikonomosModel.FK_PersonRelationship_Person" FromRole="Person" ToRole="PersonRelationship" />
+          <NavigationProperty Name="PersonRelationships1" Relationship="oikonomosModel.FK_PersonRelationship_PersonRelatedTo" FromRole="Person" ToRole="PersonRelationship" />
+          <NavigationProperty Name="PersonRoles" Relationship="oikonomosModel.FK_PersonRole_Person" FromRole="Person" ToRole="PersonRole" />
+          <NavigationProperty Name="Churches" Relationship="oikonomosModel.PersonChurch" FromRole="Person" ToRole="Church" />
+          <NavigationProperty Name="Events" Relationship="oikonomosModel.FK_Event_ChangedByPerson" FromRole="Person" ToRole="Event" />
+          <NavigationProperty Name="Events1" Relationship="oikonomosModel.FK_Event_CreatedByPerson" FromRole="Person" ToRole="Event" />
+          <NavigationProperty Name="Groups" Relationship="oikonomosModel.FK_Group_Administrator" FromRole="Person" ToRole="Group" />
+          <NavigationProperty Name="Groups1" Relationship="oikonomosModel.FK_Group_Leader" FromRole="Person" ToRole="Group" />
+        </EntityType>
+        <Association Name="FK_Family_Address">
+          <End Type="oikonomosModel.Address" Role="Address" Multiplicity="0..1" />
+          <End Type="oikonomosModel.Family" Role="Family" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Address">
+              <PropertyRef Name="AddressId" />
+            </Principal>
+            <Dependent Role="Family">
+              <PropertyRef Name="AddressId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Person_Family">
+          <End Type="oikonomosModel.Family" Role="Family" Multiplicity="1" />
+          <End Type="oikonomosModel.Person" Role="Person" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Family">
+              <PropertyRef Name="FamilyId" />
+            </Principal>
+            <Dependent Role="Person">
+              <PropertyRef Name="FamilyId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Person_Site">
+          <End Type="oikonomosModel.Site" Role="Site" Multiplicity="0..1" />
+          <End Type="oikonomosModel.Person" Role="Person" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Site">
+              <PropertyRef Name="SiteId" />
+            </Principal>
+            <Dependent Role="Person">
+              <PropertyRef Name="SiteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Person_Title">
+          <End Type="oikonomosModel.Title" Role="Title" Multiplicity="0..1" />
+          <End Type="oikonomosModel.Person" Role="Person" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title">
+              <PropertyRef Name="TitleId" />
+            </Principal>
+            <Dependent Role="Person">
+              <PropertyRef Name="TitleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PersonContact_Person">
+          <End Type="oikonomosModel.Person" Role="Person" Multiplicity="1" />
+          <End Type="oikonomosModel.PersonOptionalField" Role="PersonOptionalField" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="PersonId" />
+            </Principal>
+            <Dependent Role="PersonOptionalField">
+              <PropertyRef Name="PersonId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PersonGroup_Person">
+          <End Type="oikonomosModel.Person" Role="Person" Multiplicity="1" />
+          <End Type="oikonomosModel.PersonGroup" Role="PersonGroup" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="PersonId" />
+            </Principal>
+            <Dependent Role="PersonGroup">
+              <PropertyRef Name="PersonId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PersonRelationship_Person">
+          <End Type="oikonomosModel.Person" Role="Person" Multiplicity="1" />
+          <End Type="oikonomosModel.PersonRelationship" Role="PersonRelationship" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="PersonId" />
+            </Principal>
+            <Dependent Role="PersonRelationship">
+              <PropertyRef Name="PersonId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PersonRelationship_PersonRelatedTo">
+          <End Type="oikonomosModel.Person" Role="Person" Multiplicity="1" />
+          <End Type="oikonomosModel.PersonRelationship" Role="PersonRelationship" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="PersonId" />
+            </Principal>
+            <Dependent Role="PersonRelationship">
+              <PropertyRef Name="PersonRelatedToId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PersonRole_Person">
+          <End Type="oikonomosModel.Person" Role="Person" Multiplicity="1" />
+          <End Type="oikonomosModel.PersonRole" Role="PersonRole" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="PersonId" />
+            </Principal>
+            <Dependent Role="PersonRole">
+              <PropertyRef Name="PersonId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FamilyChurch">
+          <End Type="oikonomosModel.Church" Role="Church" Multiplicity="*" />
+          <End Type="oikonomosModel.Family" Role="Family" Multiplicity="*" />
+        </Association>
+        <Association Name="PersonChurch">
+          <End Type="oikonomosModel.Church" Role="Church" Multiplicity="*" />
+          <End Type="oikonomosModel.Person" Role="Person" Multiplicity="*" />
+        </Association>
+        <EntityType Name="Event">
+          <Key>
+            <PropertyRef Name="EventId" />
+          </Key>
+          <Property Type="Int32" Name="EventId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="TableId" Nullable="false" />
+          <Property Type="Int32" Name="Reference" Nullable="false" />
+          <Property Type="String" Name="Description" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Comments" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="DateTime" Name="FollowUpDate" />
+          <Property Type="Int32" Name="EventVisibilityId" Nullable="false" />
+          <Property Type="DateTime" Name="Created" Nullable="false" />
+          <Property Type="DateTime" Name="Changed" Nullable="false" />
+          <Property Type="Int32" Name="CreatedByPersonId" Nullable="false" />
+          <Property Type="Int32" Name="ChangedByPersonId" Nullable="false" />
+          <Property Type="DateTime" Name="EventDate" Nullable="false" />
+          <Property Type="String" Name="Value" MaxLength="2550" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="ChurchId" Nullable="false" />
+          <NavigationProperty Name="Church" Relationship="oikonomosModel.FK_Event_Church" FromRole="Event" ToRole="Church" />
+          <NavigationProperty Name="ChangedByPerson" Relationship="oikonomosModel.FK_Event_ChangedByPerson" FromRole="Event" ToRole="Person" />
+          <NavigationProperty Name="CreatedByPerson" Relationship="oikonomosModel.FK_Event_CreatedByPerson" FromRole="Event" ToRole="Person" />
+          <NavigationProperty Name="EventVisibility" Relationship="oikonomosModel.FK_Event_EventVisibility" FromRole="Event" ToRole="EventVisibility" />
+          <NavigationProperty Name="Table" Relationship="oikonomosModel.FK_Event_Table" FromRole="Event" ToRole="Table" />
+        </EntityType>
+        <Association Name="FK_Event_Church">
+          <End Type="oikonomosModel.Church" Role="Church" Multiplicity="1" />
+          <End Type="oikonomosModel.Event" Role="Event" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Church">
+              <PropertyRef Name="ChurchId" />
+            </Principal>
+            <Dependent Role="Event">
+              <PropertyRef Name="ChurchId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Event_ChangedByPerson">
+          <End Type="oikonomosModel.Person" Role="Person" Multiplicity="1" />
+          <End Type="oikonomosModel.Event" Role="Event" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="PersonId" />
+            </Principal>
+            <Dependent Role="Event">
+              <PropertyRef Name="ChangedByPersonId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Event_CreatedByPerson">
+          <End Type="oikonomosModel.Person" Role="Person" Multiplicity="1" />
+          <End Type="oikonomosModel.Event" Role="Event" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="PersonId" />
+            </Principal>
+            <Dependent Role="Event">
+              <PropertyRef Name="CreatedByPersonId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Event_EventVisibility">
+          <End Type="oikonomosModel.EventVisibility" Role="EventVisibility" Multiplicity="1" />
+          <End Type="oikonomosModel.Event" Role="Event" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EventVisibility">
+              <PropertyRef Name="EventVisibilityId" />
+            </Principal>
+            <Dependent Role="Event">
+              <PropertyRef Name="EventVisibilityId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Event_Table">
+          <End Type="oikonomosModel.Table" Role="Table" Multiplicity="1" />
+          <End Type="oikonomosModel.Event" Role="Event" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Table">
+              <PropertyRef Name="TableId" />
+            </Principal>
+            <Dependent Role="Event">
+              <PropertyRef Name="TableId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Group">
+          <Key>
+            <PropertyRef Name="GroupId" />
+          </Key>
+          <Property Type="Int32" Name="GroupId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="ChurchId" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="LeaderId" />
+          <Property Type="Int32" Name="AdministratorId" />
+          <Property Type="Int32" Name="GroupTypeId" Nullable="false" />
+          <Property Type="DateTime" Name="Created" Nullable="false" />
+          <Property Type="DateTime" Name="Changed" Nullable="false" />
+          <Property Type="Int32" Name="AddressId" />
+          <Property Type="Int32" Name="GroupClassificationId" />
+          <NavigationProperty Name="Address" Relationship="oikonomosModel.FK_Group_Address" FromRole="Group" ToRole="Address" />
+          <NavigationProperty Name="Church" Relationship="oikonomosModel.FK_Group_Church" FromRole="Group" ToRole="Church" />
+          <NavigationProperty Name="Administrator" Relationship="oikonomosModel.FK_Group_Administrator" FromRole="Group" ToRole="Person" />
+          <NavigationProperty Name="GroupClassification" Relationship="oikonomosModel.FK_Group_GroupClassification" FromRole="Group" ToRole="GroupClassification" />
+          <NavigationProperty Name="GroupType" Relationship="oikonomosModel.FK_Group_GroupType" FromRole="Group" ToRole="GroupType" />
+          <NavigationProperty Name="Leader" Relationship="oikonomosModel.FK_Group_Leader" FromRole="Group" ToRole="Person" />
+          <NavigationProperty Name="PersonGroups" Relationship="oikonomosModel.FK_PersonGroup_Group" FromRole="Group" ToRole="PersonGroup" />
+        </EntityType>
+        <Association Name="FK_Group_Address">
+          <End Type="oikonomosModel.Address" Role="Address" Multiplicity="0..1" />
+          <End Type="oikonomosModel.Group" Role="Group" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Address">
+              <PropertyRef Name="AddressId" />
+            </Principal>
+            <Dependent Role="Group">
+              <PropertyRef Name="AddressId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Group_Church">
+          <End Type="oikonomosModel.Church" Role="Church" Multiplicity="1" />
+          <End Type="oikonomosModel.Group" Role="Group" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Church">
+              <PropertyRef Name="ChurchId" />
+            </Principal>
+            <Dependent Role="Group">
+              <PropertyRef Name="ChurchId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Group_Administrator">
+          <End Type="oikonomosModel.Person" Role="Person" Multiplicity="0..1" />
+          <End Type="oikonomosModel.Group" Role="Group" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="PersonId" />
+            </Principal>
+            <Dependent Role="Group">
+              <PropertyRef Name="AdministratorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Group_GroupClassification">
+          <End Type="oikonomosModel.GroupClassification" Role="GroupClassification" Multiplicity="0..1" />
+          <End Type="oikonomosModel.Group" Role="Group" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GroupClassification">
+              <PropertyRef Name="GroupClassificationId" />
+            </Principal>
+            <Dependent Role="Group">
+              <PropertyRef Name="GroupClassificationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Group_GroupType">
+          <End Type="oikonomosModel.GroupType" Role="GroupType" Multiplicity="1" />
+          <End Type="oikonomosModel.Group" Role="Group" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GroupType">
+              <PropertyRef Name="GroupTypeId" />
+            </Principal>
+            <Dependent Role="Group">
+              <PropertyRef Name="GroupTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Group_Leader">
+          <End Type="oikonomosModel.Person" Role="Person" Multiplicity="0..1" />
+          <End Type="oikonomosModel.Group" Role="Group" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="PersonId" />
+            </Principal>
+            <Dependent Role="Group">
+              <PropertyRef Name="LeaderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PersonGroup_Group">
+          <End Type="oikonomosModel.Group" Role="Group" Multiplicity="1" />
+          <End Type="oikonomosModel.PersonGroup" Role="PersonGroup" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Group">
+              <PropertyRef Name="GroupId" />
+            </Principal>
+            <Dependent Role="PersonGroup">
+              <PropertyRef Name="GroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ChurchEmailTemplate">
+          <Key>
+            <PropertyRef Name="ChurchEmailTemplateId" />
+          </Key>
+          <Property Type="Int32" Name="ChurchEmailTemplateId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="ChurchId" Nullable="false" />
+          <Property Type="Int32" Name="EmailTemplateId" Nullable="false" />
+          <Property Type="String" Name="Template" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Church" Relationship="oikonomosModel.FK_ChurchEmailTemplate_Church" FromRole="ChurchEmailTemplate" ToRole="Church" />
+          <NavigationProperty Name="EmailTemplate" Relationship="oikonomosModel.FK_ChurchEmailTemplate_EmailTemplate" FromRole="ChurchEmailTemplate" ToRole="EmailTemplate" />
+        </EntityType>
+        <EntityType Name="EmailTemplate">
+          <Key>
+            <PropertyRef Name="EmailTemplateId" />
+          </Key>
+          <Property Type="Int32" Name="EmailTemplateId" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="ChurchEmailTemplates" Relationship="oikonomosModel.FK_ChurchEmailTemplate_EmailTemplate" FromRole="EmailTemplate" ToRole="ChurchEmailTemplate" />
+        </EntityType>
+        <Association Name="FK_ChurchEmailTemplate_Church">
+          <End Type="oikonomosModel.Church" Role="Church" Multiplicity="1" />
+          <End Type="oikonomosModel.ChurchEmailTemplate" Role="ChurchEmailTemplate" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Church">
+              <PropertyRef Name="ChurchId" />
+            </Principal>
+            <Dependent Role="ChurchEmailTemplate">
+              <PropertyRef Name="ChurchId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ChurchEmailTemplate_EmailTemplate">
+          <End Type="oikonomosModel.EmailTemplate" Role="EmailTemplate" Multiplicity="1" />
+          <End Type="oikonomosModel.ChurchEmailTemplate" Role="ChurchEmailTemplate" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EmailTemplate">
+              <PropertyRef Name="EmailTemplateId" />
+            </Principal>
+            <Dependent Role="ChurchEmailTemplate">
+              <PropertyRef Name="EmailTemplateId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2189,7 +2375,8 @@
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="oikonomosModelStoreContainer" CdmEntityContainer="oikonomosEntities">
           <EntitySetMapping Name="Churches"><EntityTypeMapping TypeName="oikonomosModel.Church"><MappingFragment StoreEntitySet="Church">
-            <ScalarProperty Name="EmailPassword" ColumnName="EmailPassword" />
+            <ScalarProperty Name="StatusId" ColumnName="StatusId" />
+                <ScalarProperty Name="EmailPassword" ColumnName="EmailPassword" />
                 <ScalarProperty Name="EmailLogin" ColumnName="EmailLogin" />
                 <ScalarProperty Name="Country" ColumnName="Country" />
                 <ScalarProperty Name="Province" ColumnName="Province" />
@@ -2207,39 +2394,10 @@
             <ScalarProperty Name="Created" ColumnName="Created" />
             <ScalarProperty Name="Changed" ColumnName="Changed" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
-          <EntitySetMapping Name="Groups"><EntityTypeMapping TypeName="oikonomosModel.Group"><MappingFragment StoreEntitySet="Group">
-            <ScalarProperty Name="GroupClassificationId" ColumnName="GroupClassificationId" />
-                <ScalarProperty Name="AddressId" ColumnName="AddressId" />
-                <ScalarProperty Name="AdministratorId" ColumnName="AdministratorId" />
-                <ScalarProperty Name="ChurchId" ColumnName="ChurchId" />
-                <ScalarProperty Name="GroupId" ColumnName="GroupId" />
-            <ScalarProperty Name="Name" ColumnName="Name" />
-            <ScalarProperty Name="LeaderId" ColumnName="LeaderId" />
-            <ScalarProperty Name="GroupTypeId" ColumnName="GroupTypeId" />
-            <ScalarProperty Name="Created" ColumnName="Created" />
-            <ScalarProperty Name="Changed" ColumnName="Changed" />
-          </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <EntitySetMapping Name="GroupTypes"><EntityTypeMapping TypeName="oikonomosModel.GroupType"><MappingFragment StoreEntitySet="GroupType">
             <ScalarProperty Name="GroupTypeId" ColumnName="GroupTypeId" />
             <ScalarProperty Name="Name" ColumnName="Name" />
             <ScalarProperty Name="Created" ColumnName="Created" />
-          </MappingFragment></EntityTypeMapping></EntitySetMapping>
-          <EntitySetMapping Name="People"><EntityTypeMapping TypeName="oikonomosModel.Person"><MappingFragment StoreEntitySet="Person">
-            <ScalarProperty Name="PublicId" ColumnName="PublicId" />
-                <ScalarProperty Name="Anniversary" ColumnName="Anniversary" />
-                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
-                <ScalarProperty Name="Username" ColumnName="Username" />
-                <ScalarProperty Name="Occupation" ColumnName="Occupation" />
-                <ScalarProperty Name="DateOfBirth" ColumnName="DateOfBirth" />
-                <ScalarProperty Name="PersonId" ColumnName="PersonId" />
-            <ScalarProperty Name="ChurchId" ColumnName="ChurchId" />
-            <ScalarProperty Name="SiteId" ColumnName="SiteId" />
-            <ScalarProperty Name="TitleId" ColumnName="TitleId" />
-            <ScalarProperty Name="Firstname" ColumnName="Firstname" />
-            <ScalarProperty Name="Email" ColumnName="Email" />
-            <ScalarProperty Name="FamilyId" ColumnName="FamilyId" />
-            <ScalarProperty Name="Created" ColumnName="Created" />
-            <ScalarProperty Name="Changed" ColumnName="Changed" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <EntitySetMapping Name="PersonGroups"><EntityTypeMapping TypeName="oikonomosModel.PersonGroup"><MappingFragment StoreEntitySet="PersonGroup">
             <ScalarProperty Name="PersonGroupId" ColumnName="PersonGroupId" />
@@ -2289,20 +2447,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Families">
-            <EntityTypeMapping TypeName="oikonomosModel.Family">
-              <MappingFragment StoreEntitySet="Family">
-                <ScalarProperty Name="ChurchId" ColumnName="ChurchId" />
-                <ScalarProperty Name="Anniversary" ColumnName="Anniversary" />
-                <ScalarProperty Name="AddressId" ColumnName="AddressId" />
-                <ScalarProperty Name="HomePhone" ColumnName="HomePhone" />
-                <ScalarProperty Name="Changed" ColumnName="Changed" />
-                <ScalarProperty Name="Created" ColumnName="Created" />
-                <ScalarProperty Name="FamilyName" ColumnName="FamilyName" />
-                <ScalarProperty Name="FamilyId" ColumnName="FamilyId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="PersonRelationships">
             <EntityTypeMapping TypeName="oikonomosModel.PersonRelationship">
               <MappingFragment StoreEntitySet="PersonRelationship">
@@ -2321,26 +2465,6 @@
                 <ScalarProperty Name="Created" ColumnName="Created" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="RelationshipId" ColumnName="RelationshipId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Events">
-            <EntityTypeMapping TypeName="oikonomosModel.Event">
-              <MappingFragment StoreEntitySet="Event">
-                <ScalarProperty Name="ChurchId" ColumnName="ChurchId" />
-                <ScalarProperty Name="Value" ColumnName="Value" />
-                <ScalarProperty Name="EventDate" ColumnName="EventDate" />
-                <ScalarProperty Name="ChangedByPersonId" ColumnName="ChangedByPersonId" />
-                <ScalarProperty Name="CreatedByPersonId" ColumnName="CreatedByPersonId" />
-                <ScalarProperty Name="Changed" ColumnName="Changed" />
-                <ScalarProperty Name="Created" ColumnName="Created" />
-                <ScalarProperty Name="EventVisibilityId" ColumnName="EventVisibilityId" />
-                <ScalarProperty Name="FollowUpDate" ColumnName="FollowUpDate" />
-                <ScalarProperty Name="Comments" ColumnName="Comments" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="Reference" ColumnName="Reference" />
-                <ScalarProperty Name="TableId" ColumnName="TableId" />
-                <ScalarProperty Name="EventId" ColumnName="EventId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2479,15 +2603,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="OldRoles">
-            <EntityTypeMapping TypeName="oikonomosModel.OldRole">
-              <MappingFragment StoreEntitySet="OldRole">
-                <ScalarProperty Name="Created" ColumnName="Created" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="RoleId" ColumnName="RoleId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="PermissionRoles">
             <EntityTypeMapping TypeName="oikonomosModel.PermissionRole">
               <MappingFragment StoreEntitySet="PermissionRole">
@@ -2501,6 +2616,7 @@
           <EntitySetMapping Name="Roles">
             <EntityTypeMapping TypeName="oikonomosModel.Role">
               <MappingFragment StoreEntitySet="Role">
+                <ScalarProperty Name="DisplayName" ColumnName="DisplayName" />
                 <ScalarProperty Name="Changed" ColumnName="Changed" />
                 <ScalarProperty Name="Created" ColumnName="Created" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -2531,6 +2647,117 @@
               <ScalarProperty Name="RoleId" ColumnName="RoleId" />
             </EndProperty>
           </AssociationSetMapping>
+          <EntitySetMapping Name="Status">
+            <EntityTypeMapping TypeName="oikonomosModel.Status">
+              <MappingFragment StoreEntitySet="Status">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="StatusId" ColumnName="StatusId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Families">
+            <EntityTypeMapping TypeName="oikonomosModel.Family">
+              <MappingFragment StoreEntitySet="Family">
+                <ScalarProperty Name="Anniversary" ColumnName="Anniversary" />
+                <ScalarProperty Name="AddressId" ColumnName="AddressId" />
+                <ScalarProperty Name="HomePhone" ColumnName="HomePhone" />
+                <ScalarProperty Name="Changed" ColumnName="Changed" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="FamilyName" ColumnName="FamilyName" />
+                <ScalarProperty Name="FamilyId" ColumnName="FamilyId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="People">
+            <EntityTypeMapping TypeName="oikonomosModel.Person">
+              <MappingFragment StoreEntitySet="Person">
+                <ScalarProperty Name="PublicId" ColumnName="PublicId" />
+                <ScalarProperty Name="Anniversary" ColumnName="Anniversary" />
+                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Occupation" ColumnName="Occupation" />
+                <ScalarProperty Name="DateOfBirth" ColumnName="DateOfBirth" />
+                <ScalarProperty Name="Changed" ColumnName="Changed" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="FamilyId" ColumnName="FamilyId" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Firstname" ColumnName="Firstname" />
+                <ScalarProperty Name="TitleId" ColumnName="TitleId" />
+                <ScalarProperty Name="SiteId" ColumnName="SiteId" />
+                <ScalarProperty Name="PersonId" ColumnName="PersonId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="FamilyChurch" TypeName="oikonomosModel.FamilyChurch" StoreEntitySet="FamilyChurch">
+            <EndProperty Name="Family">
+              <ScalarProperty Name="FamilyId" ColumnName="FamilyId" />
+            </EndProperty>
+            <EndProperty Name="Church">
+              <ScalarProperty Name="ChurchId" ColumnName="ChurchId" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="PersonChurch" TypeName="oikonomosModel.PersonChurch" StoreEntitySet="PersonChurch">
+            <EndProperty Name="Person">
+              <ScalarProperty Name="PersonId" ColumnName="PersonId" />
+            </EndProperty>
+            <EndProperty Name="Church">
+              <ScalarProperty Name="ChurchId" ColumnName="ChurchId" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <EntitySetMapping Name="Events">
+            <EntityTypeMapping TypeName="oikonomosModel.Event">
+              <MappingFragment StoreEntitySet="Event">
+                <ScalarProperty Name="ChurchId" ColumnName="ChurchId" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="EventDate" ColumnName="EventDate" />
+                <ScalarProperty Name="ChangedByPersonId" ColumnName="ChangedByPersonId" />
+                <ScalarProperty Name="CreatedByPersonId" ColumnName="CreatedByPersonId" />
+                <ScalarProperty Name="Changed" ColumnName="Changed" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="EventVisibilityId" ColumnName="EventVisibilityId" />
+                <ScalarProperty Name="FollowUpDate" ColumnName="FollowUpDate" />
+                <ScalarProperty Name="Comments" ColumnName="Comments" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Reference" ColumnName="Reference" />
+                <ScalarProperty Name="TableId" ColumnName="TableId" />
+                <ScalarProperty Name="EventId" ColumnName="EventId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Groups">
+            <EntityTypeMapping TypeName="oikonomosModel.Group">
+              <MappingFragment StoreEntitySet="Group">
+                <ScalarProperty Name="GroupClassificationId" ColumnName="GroupClassificationId" />
+                <ScalarProperty Name="AddressId" ColumnName="AddressId" />
+                <ScalarProperty Name="Changed" ColumnName="Changed" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="GroupTypeId" ColumnName="GroupTypeId" />
+                <ScalarProperty Name="AdministratorId" ColumnName="AdministratorId" />
+                <ScalarProperty Name="LeaderId" ColumnName="LeaderId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ChurchId" ColumnName="ChurchId" />
+                <ScalarProperty Name="GroupId" ColumnName="GroupId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ChurchEmailTemplates">
+            <EntityTypeMapping TypeName="oikonomosModel.ChurchEmailTemplate">
+              <MappingFragment StoreEntitySet="ChurchEmailTemplate">
+                <ScalarProperty Name="Template" ColumnName="Template" />
+                <ScalarProperty Name="EmailTemplateId" ColumnName="EmailTemplateId" />
+                <ScalarProperty Name="ChurchId" ColumnName="ChurchId" />
+                <ScalarProperty Name="ChurchEmailTemplateId" ColumnName="ChurchEmailTemplateId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EmailTemplates">
+            <EntityTypeMapping TypeName="oikonomosModel.EmailTemplate">
+              <MappingFragment StoreEntitySet="EmailTemplate">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="EmailTemplateId" ColumnName="EmailTemplateId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -2553,488 +2780,221 @@
     <Diagrams>
       <Diagram Name="Model1" ZoomLevel="73">
         <EntityTypeShape EntityType="oikonomosModel.Church" Width="1.5" PointX="0.75" PointY="4.625" Height="2.1725878906249996" IsExpanded="true" />
-        <EntityTypeShape EntityType="oikonomosModel.Group" Width="1.5" PointX="7.5" PointY="7" Height="2.7494921874999996" IsExpanded="true" />
         <EntityTypeShape EntityType="oikonomosModel.GroupType" Width="1.5" PointX="5.25" PointY="3.375" Height="1.7879850260416657" IsExpanded="true" />
-        <EntityTypeShape EntityType="oikonomosModel.Person" Width="1.5" PointX="5.25" PointY="6.125" Height="5.4417122395833317" IsExpanded="true" />
         <EntityTypeShape EntityType="oikonomosModel.PersonGroup" Width="1.5" PointX="12.75" PointY="7" Height="2.5571907552083317" IsExpanded="true" />
-        <EntityTypeShape EntityType="oikonomosModel.Site" Width="1.5" PointX="3" PointY="9.625" Height="2.3648893229166674" IsExpanded="true" />
+        <EntityTypeShape EntityType="oikonomosModel.Site" Width="1.5" PointX="4.375" PointY="8.625" Height="2.7494921874999996" IsExpanded="true" />
         <EntityTypeShape EntityType="oikonomosModel.Title" Width="1.5" PointX="3" PointY="12.75" Height="1.7879850260416674" IsExpanded="true" />
-        <AssociationConnector Association="oikonomosModel.FK_Person_Church" ManuallyRouted="false">
-          <ConnectorPoint PointX="2.25" PointY="9.2066929835158913" />
-          <ConnectorPoint PointX="2.5416666666666665" PointY="9.2066929835158913" />
-          <ConnectorPoint PointX="2.7708333333333335" PointY="9.2066929835158913" />
-          <ConnectorPoint PointX="2.7916666666666665" PointY="9.2066929835158913" />
-          <ConnectorPoint PointX="2.9583333333333335" PointY="9.2066929835158913" />
-          <ConnectorPoint PointX="4.635416666666667" PointY="9.20669298351589" />
-          <ConnectorPoint PointX="5.083333333333333" PointY="9.2066929835158913" />
-          <ConnectorPoint PointX="5.25" PointY="9.2066929835158913" />
-        </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_Site_Church" ManuallyRouted="false">
-          <ConnectorPoint PointX="2.25" PointY="10.343350748072847" />
-          <ConnectorPoint PointX="2.5416666666666665" PointY="10.343350748072847" />
-          <ConnectorPoint PointX="2.7708333333333335" PointY="10.343350748072847" />
-          <ConnectorPoint PointX="3" PointY="10.343350748072847" />
+          <ConnectorPoint PointX="2.25" PointY="9.99974609375" />
+          <ConnectorPoint PointX="2.4166666666666665" PointY="9.999746093749998" />
+          <ConnectorPoint PointX="2.7395833333333335" PointY="9.99974609375" />
+          <ConnectorPoint PointX="4.375" PointY="9.99974609375" />
         </AssociationConnector>
-        <AssociationConnector Association="oikonomosModel.FK_Group_GroupType" ManuallyRouted="false">
-          <ConnectorPoint PointX="6.75" PointY="4.3651432291666659" />
-          <ConnectorPoint PointX="8.2502477073364258" PointY="4.3651432291666659" />
-          <ConnectorPoint PointX="8.2502477073364258" PointY="7" />
-        </AssociationConnector>
-        <AssociationConnector Association="oikonomosModel.FK_PersonGroup_Group" ManuallyRouted="false">
-          <ConnectorPoint PointX="9" PointY="7.5625" />
-          <ConnectorPoint PointX="10.166666666666666" PointY="7.5624999999999991" />
-          <ConnectorPoint PointX="10.333333333333334" PointY="7.5625" />
-          <ConnectorPoint PointX="12.166666666666666" PointY="7.5624999999999991" />
-          <ConnectorPoint PointX="12.333333333333334" PointY="7.5625" />
-          <ConnectorPoint PointX="12.75" PointY="7.5625" />
-        </AssociationConnector>
-        <AssociationConnector Association="oikonomosModel.FK_Person_Site" ManuallyRouted="false">
-          <ConnectorPoint PointX="4.5" PointY="10.99974609375" />
-          <ConnectorPoint PointX="4.635416666666667" PointY="10.999746093749998" />
-          <ConnectorPoint PointX="5.083333333333333" PointY="10.99974609375" />
-          <ConnectorPoint PointX="5.25" PointY="10.99974609375" />
-        </AssociationConnector>
-        <AssociationConnector Association="oikonomosModel.FK_Person_Title" ManuallyRouted="false">
-          <ConnectorPoint PointX="4.5" PointY="13.889676828174855" />
-          <ConnectorPoint PointX="4.635416666666667" PointY="13.889676828174853" />
-          <ConnectorPoint PointX="4.9114608333333338" PointY="13.889676828174855" />
-          <ConnectorPoint PointX="5.5099258463541672" PointY="13.889676828174855" />
-          <ConnectorPoint PointX="5.6765925130208332" PointY="13.889676828174855" />
-          <ConnectorPoint PointX="5.9990233593749993" PointY="13.889676828174855" />
-          <ConnectorPoint PointX="5.9990233593749993" PointY="12.528219401041666" />
-        </AssociationConnector>
-        <AssociationConnector Association="oikonomosModel.FK_PersonGroup_Person" ManuallyRouted="false">
-          <ConnectorPoint PointX="6" PointY="6.125" />
-          <ConnectorPoint PointX="6" PointY="5.875" />
-          <ConnectorPoint PointX="6.3229186666666672" PointY="5.8749999999999991" />
-          <ConnectorPoint PointX="6.4895853333333333" PointY="5.875" />
-          <ConnectorPoint PointX="7.041666666666667" PointY="5.8749999999999991" />
-          <ConnectorPoint PointX="7.208333333333333" PointY="5.875" />
-          <ConnectorPoint PointX="7.322916666666667" PointY="5.8749999999999991" />
-          <ConnectorPoint PointX="7.489583333333333" PointY="5.875" />
-          <ConnectorPoint PointX="7.7606618740030928" PointY="5.8749999999999991" />
-          <ConnectorPoint PointX="7.9273285406697589" PointY="5.875" />
-          <ConnectorPoint PointX="8.1671620813395176" PointY="5.8749999999999991" />
-          <ConnectorPoint PointX="8.3338287480061854" PointY="5.875" />
-          <ConnectorPoint PointX="8.57316687400309" PointY="5.8749999999999991" />
-          <ConnectorPoint PointX="8.7398335406697587" PointY="5.875" />
-          <ConnectorPoint PointX="10.25" PointY="5.875" />
-          <ConnectorPoint PointX="10.25" PointY="8.125" />
-          <ConnectorPoint PointX="12.166666666666666" PointY="8.125" />
-          <ConnectorPoint PointX="12.333333333333334" PointY="8.125" />
-          <ConnectorPoint PointX="12.375" PointY="8.125" />
-          <ConnectorPoint PointX="12.375" PointY="8.6379723776041679" />
-          <ConnectorPoint PointX="12.75" PointY="8.6379723776041679" />
-        </AssociationConnector>
-        <AssociationConnector Association="oikonomosModel.FK_Group_Church" >
-          <ConnectorPoint PointX="2.25" PointY="5.4762055218198373" />
-          <ConnectorPoint PointX="2.5729166666666665" PointY="5.4762055218198364" />
-          <ConnectorPoint PointX="2.7395833333333335" PointY="5.4762055218198373" />
-          <ConnectorPoint PointX="4.635416666666667" PointY="5.4762055218198364" />
-          <ConnectorPoint PointX="4.802083333333333" PointY="5.4762055218198373" />
-          <ConnectorPoint PointX="4.822916666666667" PointY="5.4762055218198364" />
-          <ConnectorPoint PointX="4.989583333333333" PointY="5.4762055218198373" />
-          <ConnectorPoint PointX="6.7875857301531717" PointY="5.4762055218198364" />
-          <ConnectorPoint PointX="6.9542523968198378" PointY="5.4762055218198373" />
-          <ConnectorPoint PointX="7.322916666666667" PointY="5.4762055218198364" />
-          <ConnectorPoint PointX="7.489583333333333" PointY="5.4762055218198373" />
-          <ConnectorPoint PointX="7.843871353668213" PointY="5.4762055218198373" />
-          <ConnectorPoint PointX="7.843871353668213" PointY="7" />
-        </AssociationConnector>
-        <AssociationConnector Association="oikonomosModel.FK_Group_Administrator" >
-          <ConnectorPoint PointX="6.75" PointY="9.8842298907022688" />
-          <ConnectorPoint PointX="7.041666666666667" PointY="9.8842298907022688" />
-          <ConnectorPoint PointX="7.208333333333333" PointY="9.8842298907022688" />
-          <ConnectorPoint PointX="7.322916666666667" PointY="9.8842298907022688" />
-          <ConnectorPoint PointX="7.489583333333333" PointY="9.8842298907022688" />
-          <ConnectorPoint PointX="7.5" PointY="9.8842298907022688" />
-        </AssociationConnector>
-        <AssociationConnector Association="oikonomosModel.FK_Group_Leader" >
-          <ConnectorPoint PointX="6.75" PointY="8.3796149453511344" />
-          <ConnectorPoint PointX="7.041666666666667" PointY="8.3796149453511344" />
-          <ConnectorPoint PointX="7.208333333333333" PointY="8.3796149453511344" />
-          <ConnectorPoint PointX="7.322916666666667" PointY="8.3796149453511344" />
-          <ConnectorPoint PointX="7.489583333333333" PointY="8.3796149453511344" />
-          <ConnectorPoint PointX="7.5" PointY="8.3796149453511344" />
-        </AssociationConnector>
-        <EntityTypeShape EntityType="oikonomosModel.Address" Width="1.5" PointX="0.75" PointY="1" Height="3.1340950520833326" />
+        <EntityTypeShape EntityType="oikonomosModel.Address" Width="1.5" PointX="20" PointY="1.125" Height="4.0956022135416656" />
         <EntityTypeShape EntityType="oikonomosModel.PersonRole" Width="1.5" PointX="10.5" PointY="4.5" Height="2.172587890624996" />
-        <AssociationConnector Association="oikonomosModel.FK_PersonRole_Person" >
-          <ConnectorPoint PointX="6.75" PointY="6.41814697265625" />
-          <ConnectorPoint PointX="7.041666666666667" PointY="6.418146972656249" />
-          <ConnectorPoint PointX="7.208333333333333" PointY="6.41814697265625" />
-          <ConnectorPoint PointX="7.322916666666667" PointY="6.418146972656249" />
-          <ConnectorPoint PointX="7.489583333333333" PointY="6.41814697265625" />
-          <ConnectorPoint PointX="7.7606618740030928" PointY="6.418146972656249" />
-          <ConnectorPoint PointX="7.9273285406697589" PointY="6.41814697265625" />
-          <ConnectorPoint PointX="8.1671620813395176" PointY="6.418146972656249" />
-          <ConnectorPoint PointX="8.3338287480061854" PointY="6.41814697265625" />
-          <ConnectorPoint PointX="8.57316687400309" PointY="6.418146972656249" />
-          <ConnectorPoint PointX="8.7398335406697587" PointY="6.41814697265625" />
-          <ConnectorPoint PointX="10.166666666666666" PointY="6.418146972656249" />
-          <ConnectorPoint PointX="10.333333333333334" PointY="6.41814697265625" />
-          <ConnectorPoint PointX="10.5" PointY="6.41814697265625" />
-        </AssociationConnector>
-        <AssociationConnector Association="oikonomosModel.FK_Church_Address" >
-          <ConnectorPoint PointX="1.5" PointY="1" />
-          <ConnectorPoint PointX="1.5" PointY="0.75" />
-          <ConnectorPoint PointX="1.5" PointY="0.75" />
-          <ConnectorPoint PointX="1.5" PointY="4.625" />
-        </AssociationConnector>
-        <EntityTypeShape EntityType="oikonomosModel.Family" Width="1.5" PointX="3" PointY="1.125" Height="2.941793619791667" />
-        <AssociationConnector Association="oikonomosModel.FK_Family_Address" >
-          <ConnectorPoint PointX="2.25" PointY="2.9311543695688513" />
-          <ConnectorPoint PointX="3" PointY="2.9311543695688513" />
-        </AssociationConnector>
-        <AssociationConnector Association="oikonomosModel.FK_Person_Family" >
-          <ConnectorPoint PointX="4.5" PointY="4.035638773637821" />
-          <ConnectorPoint PointX="4.90625" PointY="4.441888773637821" />
-          <ConnectorPoint PointX="4.90625" PointY="7.21609587760417" />
-          <ConnectorPoint PointX="5.25" PointY="7.21609587760417" />
+        <AssociationConnector Association="oikonomosModel.FK_Church_Address" ManuallyRouted="false" >
+          <ConnectorPoint PointX="20" PointY="2.9877425130208333" />
+          <ConnectorPoint PointX="19.833333333333332" PointY="2.9877425130208328" />
+          <ConnectorPoint PointX="19.666666666666668" PointY="2.9877425130208333" />
+          <ConnectorPoint PointX="7.833333333333333" PointY="2.9877425130208328" />
+          <ConnectorPoint PointX="7.666666666666667" PointY="2.9877425130208333" />
+          <ConnectorPoint PointX="2.5" PointY="2.9877425130208333" />
+          <ConnectorPoint PointX="2.5" PointY="4.095683593749996" />
+          <ConnectorPoint PointX="2.0925876808424793" PointY="4.0956835937499951" />
+          <ConnectorPoint PointX="1.9259210141758125" PointY="4.095683593749996" />
+          <ConnectorPoint PointX="1.3192364397023617" PointY="4.095683593749996" />
+          <ConnectorPoint PointX="1.3192364397023617" PointY="4.625" />
         </AssociationConnector>
         <EntityTypeShape EntityType="oikonomosModel.PersonRelationship" Width="1.5" PointX="10.5" PointY="13.75" Height="2.7494921875000031" />
         <EntityTypeShape EntityType="oikonomosModel.Relationship" Width="1.5" PointX="8.25" PointY="18.25" Height="1.7879850260416674" />
-        <AssociationConnector Association="oikonomosModel.FK_PersonRelationship_Person" >
-          <ConnectorPoint PointX="6.4052758593749992" PointY="12.528219401041666" />
-          <ConnectorPoint PointX="6.4052758593749992" PointY="15.737488606770835" />
-          <ConnectorPoint PointX="10.5" PointY="15.737488606770835" />
-        </AssociationConnector>
-        <AssociationConnector Association="oikonomosModel.FK_PersonRelationship_PersonRelatedTo" >
-          <ConnectorPoint PointX="5.5927708593749994" PointY="12.528219401041666" />
-          <ConnectorPoint PointX="5.5927708593749994" PointY="15.325234316406251" />
-          <ConnectorPoint PointX="6.3219425260416662" PointY="15.325234316406251" />
-          <ConnectorPoint PointX="6.4886091927083323" PointY="15.325234316406251" />
-          <ConnectorPoint PointX="10.5" PointY="15.325234316406251" />
-        </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_PersonRelationship_Relationship" >
-          <ConnectorPoint PointX="9.34375" PointY="18.25" />
-          <ConnectorPoint PointX="9.34375" PointY="16.149742897135418" />
-          <ConnectorPoint PointX="10.5" PointY="16.149742897135418" />
+          <ConnectorPoint PointX="9" PointY="18.25" />
+          <ConnectorPoint PointX="9" PointY="15.12474609375" />
+          <ConnectorPoint PointX="10.5" PointY="15.12474609375" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="oikonomosModel.Event" Width="1.5" PointX="13.5" PointY="2.375" Height="3.9033007812500031" />
-        <EntityTypeShape EntityType="oikonomosModel.EventVisibility" Width="1.5" PointX="11.25" PointY="1.125" Height="1.7879850260416674" />
+        <EntityTypeShape EntityType="oikonomosModel.EventVisibility" Width="1.5" PointX="10.75" PointY="1" Height="1.7879850260416674" />
         <EntityTypeShape EntityType="oikonomosModel.Table" Width="1.5" PointX="11.25" PointY="17.75" Height="1.7879850260416674" />
-        <AssociationConnector Association="oikonomosModel.FK_Event_ChangedByPerson" >
-          <ConnectorPoint PointX="5.5781220000000005" PointY="6.125" />
-          <ConnectorPoint PointX="5.5781220000000005" PointY="5.6052864583333326" />
-          <ConnectorPoint PointX="6.916666666666667" PointY="5.6052864583333317" />
-          <ConnectorPoint PointX="7.083333333333333" PointY="5.6052864583333326" />
-          <ConnectorPoint PointX="7.322916666666667" PointY="5.6052864583333317" />
-          <ConnectorPoint PointX="7.489583333333333" PointY="5.6052864583333326" />
-          <ConnectorPoint PointX="7.76053802033488" PointY="5.6052864583333317" />
-          <ConnectorPoint PointX="7.927204687001546" PointY="5.6052864583333326" />
-          <ConnectorPoint PointX="8.1669143740030918" PointY="5.6052864583333317" />
-          <ConnectorPoint PointX="8.33358104066976" PointY="5.6052864583333326" />
-          <ConnectorPoint PointX="8.5730430203348789" PointY="5.6052864583333317" />
-          <ConnectorPoint PointX="8.7397096870015467" PointY="5.6052864583333326" />
-          <ConnectorPoint PointX="10.25" PointY="5.6052864583333326" />
-          <ConnectorPoint PointX="10.25" PointY="4.25" />
-          <ConnectorPoint PointX="13.125" PointY="4.25" />
-          <ConnectorPoint PointX="13.125" PointY="4.7112532552083328" />
-          <ConnectorPoint PointX="13.5" PointY="4.7112532552083328" />
-        </AssociationConnector>
-        <AssociationConnector Association="oikonomosModel.FK_Event_CreatedByPerson" >
-          <ConnectorPoint PointX="6.3906259999999993" PointY="6.125" />
-          <ConnectorPoint PointX="6.3906259999999993" PointY="5.6677864583333326" />
-          <ConnectorPoint PointX="6.979166666666667" PointY="5.6677864583333317" />
-          <ConnectorPoint PointX="7.145833333333333" PointY="5.6677864583333326" />
-          <ConnectorPoint PointX="7.322916666666667" PointY="5.6677864583333317" />
-          <ConnectorPoint PointX="7.489583333333333" PointY="5.6677864583333326" />
-          <ConnectorPoint PointX="7.76053802033488" PointY="5.6677864583333317" />
-          <ConnectorPoint PointX="7.927204687001546" PointY="5.6677864583333326" />
-          <ConnectorPoint PointX="8.1669143740030918" PointY="5.6677864583333317" />
-          <ConnectorPoint PointX="8.33358104066976" PointY="5.6677864583333326" />
-          <ConnectorPoint PointX="8.5730430203348789" PointY="5.6677864583333317" />
-          <ConnectorPoint PointX="8.7397096870015467" PointY="5.6677864583333326" />
-          <ConnectorPoint PointX="10" PointY="5.6677864583333326" />
-          <ConnectorPoint PointX="10" PointY="4" />
-          <ConnectorPoint PointX="13.125" PointY="4" />
-          <ConnectorPoint PointX="13.125" PointY="3.5980208834134615" />
-          <ConnectorPoint PointX="13.5" PointY="3.5980208834134615" />
-        </AssociationConnector>
-        <AssociationConnector Association="oikonomosModel.FK_Event_EventVisibility" >
-          <ConnectorPoint PointX="12.75" PointY="2.6439925130208337" />
-          <ConnectorPoint PointX="13.5" PointY="2.6439925130208337" />
-        </AssociationConnector>
-        <AssociationConnector Association="oikonomosModel.FK_Event_Table" >
-          <ConnectorPoint PointX="12.0156265" PointY="17.75" />
-          <ConnectorPoint PointX="12.0156265" PointY="16.749492187500003" />
-          <ConnectorPoint PointX="12.25" PointY="16.749492187500003" />
-          <ConnectorPoint PointX="12.25" PointY="4.84338798567709" />
-          <ConnectorPoint PointX="13.041666666666666" PointY="4.8433879856770892" />
-          <ConnectorPoint PointX="13.208333333333334" PointY="4.84338798567709" />
-          <ConnectorPoint PointX="13.5" PointY="4.84338798567709" />
-        </AssociationConnector>
-        <AssociationConnector Association="oikonomosModel.FK_Group_Address" >
-          <ConnectorPoint PointX="2.25" PointY="1.03125" />
-          <ConnectorPoint PointX="8.6563763536682128" PointY="1.03125" />
-          <ConnectorPoint PointX="8.6563763536682128" PointY="7" />
-        </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_Site_Address" >
-          <ConnectorPoint PointX="2.25" PointY="5.0956022135416656" />
-          <ConnectorPoint PointX="2.625" PointY="5.4706022135416656" />
-          <ConnectorPoint PointX="2.625" PointY="11.537060815093994" />
-          <ConnectorPoint PointX="3" PointY="11.537060815093994" />
+          <ConnectorPoint PointX="20.84375" PointY="5.2206022135416656" />
+          <ConnectorPoint PointX="20.84375" PointY="11.021139322916675" />
+          <ConnectorPoint PointX="20.567705833333331" PointY="11.021139322916675" />
+          <ConnectorPoint PointX="20.401039166666667" PointY="11.021139322916675" />
+          <ConnectorPoint PointX="19.458333333333332" PointY="11.021139322916675" />
+          <ConnectorPoint PointX="19.291666666666668" PointY="11.021139322916675" />
+          <ConnectorPoint PointX="18.458333333333332" PointY="11.021139322916675" />
+          <ConnectorPoint PointX="18.291666666666668" PointY="11.021139322916675" />
+          <ConnectorPoint PointX="15.958333333333334" PointY="11.021139322916675" />
+          <ConnectorPoint PointX="15.791666666666666" PointY="11.021139322916675" />
+          <ConnectorPoint PointX="13.333333333333334" PointY="11.021139322916675" />
+          <ConnectorPoint PointX="13.166666666666666" PointY="11.021139322916675" />
+          <ConnectorPoint PointX="13.020833333333334" PointY="11.021139322916675" />
+          <ConnectorPoint PointX="12.854166666666666" PointY="11.021139322916675" />
+          <ConnectorPoint PointX="11.333333333333334" PointY="11.021139322916675" />
+          <ConnectorPoint PointX="11.166666666666666" PointY="11.021139322916675" />
+          <ConnectorPoint PointX="10.333333333333334" PointY="11.021139322916675" />
+          <ConnectorPoint PointX="10.166666666666666" PointY="11.021139322916675" />
+          <ConnectorPoint PointX="6.427083333333333" PointY="11.021139322916675" />
+          <ConnectorPoint PointX="6.260416666666667" PointY="11.021139322916675" />
+          <ConnectorPoint PointX="5.875" PointY="11.021139322916675" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="oikonomosModel.OptionalField" Width="1.5" PointX="0.75" PointY="11" Height="2.1725878906250031" />
+        <EntityTypeShape EntityType="oikonomosModel.OptionalField" Width="1.5" PointX="0.75" PointY="12.25" Height="2.1725878906250031" />
         <EntityTypeShape EntityType="oikonomosModel.ChurchOptionalField" Width="1.5" PointX="3" PointY="5.625" Height="2.5571907552083388" />
         <EntityTypeShape EntityType="oikonomosModel.PersonOptionalField" Width="1.5" PointX="10.5" PointY="8.375" Height="2.5571907552083388" />
         <AssociationConnector Association="oikonomosModel.FK_ChurchOptionalField_Church" >
-          <ConnectorPoint PointX="2.25" PointY="7.6090354967803258" />
-          <ConnectorPoint PointX="2.5416666666666665" PointY="7.6090354967803249" />
-          <ConnectorPoint PointX="2.8333333333333335" PointY="7.6090354967803258" />
-          <ConnectorPoint PointX="3" PointY="7.6090354967803258" />
+          <ConnectorPoint PointX="2.25" PointY="6.5370725332031281" />
+          <ConnectorPoint PointX="2.4166666666666665" PointY="6.5370725332031272" />
+          <ConnectorPoint PointX="2.5833333333333335" PointY="6.5370725332031281" />
+          <ConnectorPoint PointX="3" PointY="6.5370725332031281" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_ChurchOptionalField_OptionalField" >
-          <ConnectorPoint PointX="2.25" PointY="11.063460538461539" />
-          <ConnectorPoint PointX="2.5660744349011204" PointY="10.747386103560418" />
-          <ConnectorPoint PointX="2.6839255650988791" PointY="10.629534973362661" />
-          <ConnectorPoint PointX="2.6875" PointY="10.625960538461539" />
-          <ConnectorPoint PointX="2.6875" PointY="6.9108802383523136" />
-          <ConnectorPoint PointX="3" PointY="6.9108802383523136" />
+          <ConnectorPoint PointX="2.25" PointY="12.282306692307694" />
+          <ConnectorPoint PointX="2.65625" PointY="11.876056692307694" />
+          <ConnectorPoint PointX="2.65625" PointY="7.5741450664062553" />
+          <ConnectorPoint PointX="3" PointY="7.5741450664062553" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_PersonOptionalField_OptionalField" >
-          <ConnectorPoint PointX="2.25" PointY="12.639109700520834" />
-          <ConnectorPoint PointX="2.5729166666666665" PointY="12.639109700520832" />
-          <ConnectorPoint PointX="2.8489583333333335" PointY="12.639109700520834" />
-          <ConnectorPoint PointX="4.635416666666667" PointY="12.639109700520832" />
-          <ConnectorPoint PointX="5.083333333333333" PointY="12.639109700520834" />
-          <ConnectorPoint PointX="5.5099258463541672" PointY="12.639109700520834" />
-          <ConnectorPoint PointX="5.6765925130208332" PointY="12.639109700520834" />
-          <ConnectorPoint PointX="5.9156900260416663" PointY="12.639109700520834" />
-          <ConnectorPoint PointX="6.0823566927083323" PointY="12.639109700520834" />
-          <ConnectorPoint PointX="6.322430846354167" PointY="12.639109700520834" />
-          <ConnectorPoint PointX="6.489097513020833" PointY="12.639109700520834" />
-          <ConnectorPoint PointX="7.322916666666667" PointY="12.639109700520834" />
-          <ConnectorPoint PointX="7.489583333333333" PointY="12.639109700520834" />
-          <ConnectorPoint PointX="11.25" PointY="12.639109700520834" />
-          <ConnectorPoint PointX="11.25" PointY="10.932190755208339" />
-        </AssociationConnector>
-        <AssociationConnector Association="oikonomosModel.FK_PersonOptionField_Person" >
-          <ConnectorPoint PointX="6.75" PointY="11.9393115234375" />
-          <ConnectorPoint PointX="7.041666666666667" PointY="11.9393115234375" />
-          <ConnectorPoint PointX="7.208333333333333" PointY="11.9393115234375" />
-          <ConnectorPoint PointX="7.322916666666667" PointY="11.9393115234375" />
-          <ConnectorPoint PointX="7.489583333333333" PointY="11.9393115234375" />
-          <ConnectorPoint PointX="10.8437475" PointY="11.9393115234375" />
-          <ConnectorPoint PointX="10.8437475" PointY="10.932190755208339" />
+          <ConnectorPoint PointX="2.25" PointY="13.368122368389425" />
+          <ConnectorPoint PointX="2.5416666666666665" PointY="13.368122368389425" />
+          <ConnectorPoint PointX="2.7083333333333335" PointY="13.368122368389425" />
+          <ConnectorPoint PointX="2.75" PointY="13.368122368389425" />
+          <ConnectorPoint PointX="2.75" PointY="12.5" />
+          <ConnectorPoint PointX="3.6666666666666665" PointY="12.5" />
+          <ConnectorPoint PointX="3.8333333333333335" PointY="12.5" />
+          <ConnectorPoint PointX="5.1041671666666675" PointY="12.5" />
+          <ConnectorPoint PointX="5.2708338333333336" PointY="12.5" />
+          <ConnectorPoint PointX="6.260416666666667" PointY="12.5" />
+          <ConnectorPoint PointX="6.427083333333333" PointY="12.5" />
+          <ConnectorPoint PointX="10.166666666666666" PointY="12.5" />
+          <ConnectorPoint PointX="10.333333333333334" PointY="12.5" />
+          <ConnectorPoint PointX="11.25" PointY="12.5" />
+          <ConnectorPoint PointX="11.25" PointY="10.932190755208334" />
         </AssociationConnector>
         <EntityTypeShape EntityType="oikonomosModel.ChurchSuburb" Width="1.5" PointX="3" PointY="15.875" Height="2.3648893229166674" />
         <AssociationConnector Association="oikonomosModel.FK_Address_ChurchSuburb" >
-          <ConnectorPoint PointX="3.0323066923076918" PointY="15.875" />
-          <ConnectorPoint PointX="2.8245505650988791" PointY="15.667243872791186" />
-          <ConnectorPoint PointX="2.7066994349011209" PointY="15.54939274259343" />
-          <ConnectorPoint PointX="2.65625" PointY="15.498943307692308" />
-          <ConnectorPoint PointX="2.65625" PointY="3.8457495117187497" />
-          <ConnectorPoint PointX="2.25" PointY="3.8457495117187497" />
+          <ConnectorPoint PointX="4.5" PointY="17.360341796874998" />
+          <ConnectorPoint PointX="8.9166666666666661" PointY="17.360341796874998" />
+          <ConnectorPoint PointX="9.0833333333333339" PointY="17.360341796874998" />
+          <ConnectorPoint PointX="10.166666666666666" PointY="17.360341796874998" />
+          <ConnectorPoint PointX="10.333333333333334" PointY="17.360341796874998" />
+          <ConnectorPoint PointX="15.791666666666666" PointY="17.360341796874998" />
+          <ConnectorPoint PointX="15.958333333333334" PointY="17.360341796874998" />
+          <ConnectorPoint PointX="19.291666666666668" PointY="17.360341796874998" />
+          <ConnectorPoint PointX="19.458333333333332" PointY="17.360341796874998" />
+          <ConnectorPoint PointX="20.4843725" PointY="17.360341796874998" />
+          <ConnectorPoint PointX="20.4843725" PointY="5.2206022135416656" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_ChurchSuburb_Church" >
-          <ConnectorPoint PointX="2.25" PointY="11.002833785657051" />
-          <ConnectorPoint PointX="2.5660744349011217" PointY="11.318908220558171" />
-          <ConnectorPoint PointX="2.7151755650988791" PointY="11.46800935075593" />
-          <ConnectorPoint PointX="2.765625" PointY="11.518458785657051" />
-          <ConnectorPoint PointX="2.765625" PointY="17.057444661458334" />
+          <ConnectorPoint PointX="2.25" PointY="11.772039514823717" />
+          <ConnectorPoint PointX="2.6875" PointY="12.209539514823717" />
+          <ConnectorPoint PointX="2.6875" PointY="17.057444661458334" />
           <ConnectorPoint PointX="3" PointY="17.057444661458334" />
         </AssociationConnector>
         <EntityTypeShape EntityType="oikonomosModel.GroupClassification" Width="1.5" PointX="13.5" PointY="11.125" Height="2.7494921875000031" />
         <AssociationConnector Association="oikonomosModel.FK_GroupClassification_Church" >
-          <ConnectorPoint PointX="2.25" PointY="6.1344726612413716" />
-          <ConnectorPoint PointX="2.5416666666666665" PointY="6.1344726612413707" />
-          <ConnectorPoint PointX="2.7395833333333335" PointY="6.1344726612413716" />
-          <ConnectorPoint PointX="2.75" PointY="6.1344726612413716" />
-          <ConnectorPoint PointX="2.75" PointY="8.3071907552083388" />
-          <ConnectorPoint PointX="4.635416666666667" PointY="8.3071907552083371" />
-          <ConnectorPoint PointX="4.9114608333333338" PointY="8.3071907552083388" />
-          <ConnectorPoint PointX="5" PointY="8.3071907552083388" />
-          <ConnectorPoint PointX="5" PointY="12.778219401041667" />
-          <ConnectorPoint PointX="5.5099258463541672" PointY="12.778219401041667" />
-          <ConnectorPoint PointX="5.6765925130208332" PointY="12.778219401041667" />
-          <ConnectorPoint PointX="5.9156900260416663" PointY="12.778219401041667" />
-          <ConnectorPoint PointX="6.0823566927083323" PointY="12.778219401041667" />
-          <ConnectorPoint PointX="6.322430846354167" PointY="12.778219401041667" />
-          <ConnectorPoint PointX="6.489097513020833" PointY="12.778219401041667" />
-          <ConnectorPoint PointX="7.322916666666667" PointY="12.778219401041667" />
-          <ConnectorPoint PointX="7.489583333333333" PointY="12.778219401041667" />
-          <ConnectorPoint PointX="12.166666666666666" PointY="12.778219401041667" />
-          <ConnectorPoint PointX="12.333333333333334" PointY="12.778219401041667" />
-          <ConnectorPoint PointX="12.875" PointY="12.778219401041667" />
-          <ConnectorPoint PointX="12.875" PointY="9.8071907552083317" />
-          <ConnectorPoint PointX="14.25" PointY="9.8071907552083317" />
-          <ConnectorPoint PointX="14.25" PointY="11.125" />
-        </AssociationConnector>
-        <AssociationConnector Association="oikonomosModel.FK_Group_GroupClassification" >
-          <ConnectorPoint PointX="13.5" PointY="11.613608084635416" />
-          <ConnectorPoint PointX="12.833333333333334" PointY="11.613608084635414" />
-          <ConnectorPoint PointX="12.166666666666666" PointY="11.613608084635416" />
-          <ConnectorPoint PointX="11.536459583333334" PointY="11.613608084635416" />
-          <ConnectorPoint PointX="11.369792916666667" PointY="11.613608084635416" />
-          <ConnectorPoint PointX="10.927080833333333" PointY="11.613608084635416" />
-          <ConnectorPoint PointX="10.760414166666665" PointY="11.613608084635416" />
-          <ConnectorPoint PointX="8.96875" PointY="11.613608084635416" />
-          <ConnectorPoint PointX="8.96875" PointY="11.287903645833332" />
+          <ConnectorPoint PointX="2.25" PointY="11.554801812700319" />
+          <ConnectorPoint PointX="2.5729166666666665" PointY="11.554801812700319" />
+          <ConnectorPoint PointX="2.7395833333333335" PointY="11.554801812700319" />
+          <ConnectorPoint PointX="5.1041671666666675" PointY="11.554801812700319" />
+          <ConnectorPoint PointX="5.2708338333333336" PointY="11.554801812700319" />
+          <ConnectorPoint PointX="6.260416666666667" PointY="11.554801812700319" />
+          <ConnectorPoint PointX="6.427083333333333" PointY="11.554801812700319" />
+          <ConnectorPoint PointX="10.166666666666666" PointY="11.554801812700319" />
+          <ConnectorPoint PointX="10.333333333333334" PointY="11.554801812700319" />
+          <ConnectorPoint PointX="11.166666666666666" PointY="11.554801812700319" />
+          <ConnectorPoint PointX="11.333333333333334" PointY="11.554801812700319" />
+          <ConnectorPoint PointX="12.854166666666666" PointY="11.554801812700319" />
+          <ConnectorPoint PointX="13.020833333333334" PointY="11.554801812700319" />
+          <ConnectorPoint PointX="13.5" PointY="11.554801812700319" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_GroupClassification_GroupType" >
-          <ConnectorPoint PointX="6.75" PointY="5.3552864583333326" />
-          <ConnectorPoint PointX="7.125" PointY="5.7302864583333326" />
-          <ConnectorPoint PointX="7.125" PointY="12.355011721679688" />
-          <ConnectorPoint PointX="7.322916666666667" PointY="12.355011721679688" />
-          <ConnectorPoint PointX="7.489583333333333" PointY="12.355011721679688" />
-          <ConnectorPoint PointX="11.166666666666666" PointY="12.355011721679688" />
-          <ConnectorPoint PointX="11.333333333333334" PointY="12.355011721679688" />
-          <ConnectorPoint PointX="12.166666666666666" PointY="12.355011721679688" />
-          <ConnectorPoint PointX="12.333333333333334" PointY="12.355011721679688" />
-          <ConnectorPoint PointX="12.416666666666666" PointY="12.355011721679686" />
-          <ConnectorPoint PointX="12.708333333333334" PointY="12.355011721679688" />
-          <ConnectorPoint PointX="12.791666666666666" PointY="12.355011721679688" />
-          <ConnectorPoint PointX="12.958333333333334" PointY="12.355011721679688" />
-          <ConnectorPoint PointX="13.5" PointY="12.355011721679688" />
+          <ConnectorPoint PointX="6.34375" PointY="5.3552864583333326" />
+          <ConnectorPoint PointX="6.34375" PointY="13.3339794921875" />
+          <ConnectorPoint PointX="10.166666666666666" PointY="13.3339794921875" />
+          <ConnectorPoint PointX="10.333333333333334" PointY="13.3339794921875" />
+          <ConnectorPoint PointX="12.604166666666666" PointY="13.3339794921875" />
+          <ConnectorPoint PointX="12.770833333333334" PointY="13.3339794921875" />
+          <ConnectorPoint PointX="12.854166666666666" PointY="13.3339794921875" />
+          <ConnectorPoint PointX="13.020833333333334" PointY="13.3339794921875" />
+          <ConnectorPoint PointX="13.041666666666666" PointY="13.333979492187499" />
+          <ConnectorPoint PointX="13.406249999999998" PointY="13.3339794921875" />
+          <ConnectorPoint PointX="13.5" PointY="13.3339794921875" />
         </AssociationConnector>
         <EntityTypeShape EntityType="oikonomosModel.EventType" Width="1.5" PointX="15.5" PointY="8" Height="2.3648893229166674" />
         <AssociationConnector Association="oikonomosModel.FK_EventType_Church" >
-          <ConnectorPoint PointX="2.25" PointY="8.7256893693621151" />
-          <ConnectorPoint PointX="2.5416666666666665" PointY="8.7256893693621151" />
-          <ConnectorPoint PointX="2.7708333333333335" PointY="8.7256893693621151" />
-          <ConnectorPoint PointX="2.7916666666666665" PointY="8.7256893693621151" />
-          <ConnectorPoint PointX="2.9583333333333335" PointY="8.7256893693621151" />
-          <ConnectorPoint PointX="3.125" PointY="8.7256893693621151" />
-          <ConnectorPoint PointX="3.125" PointY="8.4321907552083388" />
-          <ConnectorPoint PointX="4.635416666666667" PointY="8.4321907552083371" />
-          <ConnectorPoint PointX="4.9114608333333338" PointY="8.4321907552083388" />
-          <ConnectorPoint PointX="4.9375" PointY="8.4321907552083388" />
-          <ConnectorPoint PointX="4.9375" PointY="12.793844401041667" />
-          <ConnectorPoint PointX="5.5099258463541672" PointY="12.793844401041667" />
-          <ConnectorPoint PointX="5.6765925130208332" PointY="12.793844401041667" />
-          <ConnectorPoint PointX="5.9156900260416663" PointY="12.793844401041667" />
-          <ConnectorPoint PointX="6.0823566927083323" PointY="12.793844401041667" />
-          <ConnectorPoint PointX="6.322430846354167" PointY="12.793844401041667" />
-          <ConnectorPoint PointX="6.489097513020833" PointY="12.793844401041667" />
-          <ConnectorPoint PointX="7.322916666666667" PointY="12.793844401041667" />
-          <ConnectorPoint PointX="7.489583333333333" PointY="12.793844401041667" />
-          <ConnectorPoint PointX="12.166666666666666" PointY="12.793844401041667" />
-          <ConnectorPoint PointX="12.333333333333334" PointY="12.793844401041667" />
-          <ConnectorPoint PointX="12.625" PointY="12.793844401041667" />
-          <ConnectorPoint PointX="12.625" PointY="10.807190755208332" />
-          <ConnectorPoint PointX="12.791666666666666" PointY="10.807190755208332" />
-          <ConnectorPoint PointX="12.958333333333334" PointY="10.807190755208332" />
-          <ConnectorPoint PointX="14.166666666666666" PointY="10.807190755208332" />
-          <ConnectorPoint PointX="14.333333333333334" PointY="10.807190755208332" />
-          <ConnectorPoint PointX="15.760414166666665" PointY="10.807190755208332" />
-          <ConnectorPoint PointX="15.927080833333333" PointY="10.807190755208332" />
-          <ConnectorPoint PointX="16.25" PointY="10.807190755208332" />
-          <ConnectorPoint PointX="16.25" PointY="10.557190755208334" />
+          <ConnectorPoint PointX="2.25" PointY="8.7556930800781263" />
+          <ConnectorPoint PointX="2.4166666666666665" PointY="8.7556930800781245" />
+          <ConnectorPoint PointX="2.7395833333333335" PointY="8.7556930800781263" />
+          <ConnectorPoint PointX="2.875" PointY="8.7556930800781263" />
+          <ConnectorPoint PointX="2.875" PointY="8.375" />
+          <ConnectorPoint PointX="6.260416666666667" PointY="8.375" />
+          <ConnectorPoint PointX="6.427083333333333" PointY="8.375" />
+          <ConnectorPoint PointX="6.75" PointY="8.375" />
+          <ConnectorPoint PointX="6.75" PointY="7.25" />
+          <ConnectorPoint PointX="7.666666666666667" PointY="7.2499999999999991" />
+          <ConnectorPoint PointX="7.833333333333333" PointY="7.25" />
+          <ConnectorPoint PointX="10.166666666666666" PointY="7.2499999999999991" />
+          <ConnectorPoint PointX="10.333333333333334" PointY="7.25" />
+          <ConnectorPoint PointX="11.572918666666666" PointY="7.2499999999999991" />
+          <ConnectorPoint PointX="11.739585333333334" PointY="7.25" />
+          <ConnectorPoint PointX="12.25" PointY="7.25" />
+          <ConnectorPoint PointX="12.25" PointY="6.5" />
+          <ConnectorPoint PointX="15.875" PointY="6.5" />
+          <ConnectorPoint PointX="15.875" PointY="7.6244921875" />
+          <ConnectorPoint PointX="16.5624995" PointY="7.6244921875" />
+          <ConnectorPoint PointX="16.5624995" PointY="8" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_EventType_Table" >
-          <ConnectorPoint PointX="11.593748" PointY="17.75" />
-          <ConnectorPoint PointX="11.593748" PointY="16.999492187500003" />
-          <ConnectorPoint PointX="11.932293166666666" PointY="16.999492187500003" />
-          <ConnectorPoint PointX="12.098959833333334" PointY="16.999492187500003" />
-          <ConnectorPoint PointX="12.375" PointY="16.999492187500003" />
-          <ConnectorPoint PointX="12.375" PointY="10.057190755208332" />
-          <ConnectorPoint PointX="12.416666666666666" PointY="10.057190755208332" />
-          <ConnectorPoint PointX="12.583333333333334" PointY="10.057190755208332" />
-          <ConnectorPoint PointX="14.166666666666666" PointY="10.057190755208332" />
-          <ConnectorPoint PointX="14.333333333333334" PointY="10.057190755208332" />
-          <ConnectorPoint PointX="15.125" PointY="10.057190755208332" />
-          <ConnectorPoint PointX="15.125" PointY="9.2785953776041659" />
-          <ConnectorPoint PointX="15.5" PointY="9.2785953776041659" />
-        </AssociationConnector>
-        <AssociationConnector Association="oikonomosModel.FK_Event_Church" >
-          <ConnectorPoint PointX="2.25" PointY="7.2178389310251152" />
-          <ConnectorPoint PointX="2.5416666666666665" PointY="7.2178389310251143" />
-          <ConnectorPoint PointX="2.8333333333333335" PointY="7.2178389310251152" />
-          <ConnectorPoint PointX="2.9375" PointY="7.2178389310251152" />
-          <ConnectorPoint PointX="2.9375" PointY="5.5625" />
-          <ConnectorPoint PointX="4.635416666666667" PointY="5.5624999999999991" />
-          <ConnectorPoint PointX="4.802083333333333" PointY="5.5625" />
-          <ConnectorPoint PointX="4.822916666666667" PointY="5.5624999999999991" />
-          <ConnectorPoint PointX="4.989583333333333" PointY="5.5625" />
-          <ConnectorPoint PointX="6.8738802083333344" PointY="5.5624999999999991" />
-          <ConnectorPoint PointX="7.040546875" PointY="5.5625" />
-          <ConnectorPoint PointX="7.322916666666667" PointY="5.5624999999999991" />
-          <ConnectorPoint PointX="7.489583333333333" PointY="5.5625" />
-          <ConnectorPoint PointX="7.76053802033488" PointY="5.5624999999999991" />
-          <ConnectorPoint PointX="7.927204687001546" PointY="5.5625" />
-          <ConnectorPoint PointX="8.1669143740030918" PointY="5.5624999999999991" />
-          <ConnectorPoint PointX="8.33358104066976" PointY="5.5625" />
-          <ConnectorPoint PointX="8.5730430203348789" PointY="5.5624999999999991" />
-          <ConnectorPoint PointX="8.7397096870015467" PointY="5.5625" />
-          <ConnectorPoint PointX="9.9166666666666661" PointY="5.5624999999999991" />
-          <ConnectorPoint PointX="10.083333333333334" PointY="5.5625" />
-          <ConnectorPoint PointX="10.4375" PointY="5.5625" />
-          <ConnectorPoint PointX="10.4375" PointY="6.9375" />
-          <ConnectorPoint PointX="12.166666666666666" PointY="6.9374999999999991" />
-          <ConnectorPoint PointX="12.333333333333334" PointY="6.9375" />
-          <ConnectorPoint PointX="13.4375" PointY="6.9375" />
-          <ConnectorPoint PointX="13.4375" PointY="2.3125" />
-          <ConnectorPoint PointX="14.25" PointY="2.3125" />
-          <ConnectorPoint PointX="14.25" PointY="2.375" />
+          <ConnectorPoint PointX="12.75" PointY="18.972052786458335" />
+          <ConnectorPoint PointX="15.875" PointY="18.972052786458335" />
+          <ConnectorPoint PointX="15.875" PointY="10.557190755208334" />
         </AssociationConnector>
         <EntityTypeShape EntityType="oikonomosModel.ChurchSmsProvider" Width="1.5" PointX="16.625" PointY="11.5" Height="2.5571907552083388" />
         <EntityTypeShape EntityType="oikonomosModel.SmsProvider" Width="1.5" PointX="13.375" PointY="15.375" Height="1.595683593749996" />
         <AssociationConnector Association="oikonomosModel.FK_ChurchSmsProvider_Church" >
-          <ConnectorPoint PointX="2.25" PointY="9.92190921310194" />
-          <ConnectorPoint PointX="2.5416666666666665" PointY="9.92190921310194" />
-          <ConnectorPoint PointX="2.7708333333333335" PointY="9.92190921310194" />
-          <ConnectorPoint PointX="2.875" PointY="9.92190921310194" />
-          <ConnectorPoint PointX="2.875" PointY="8.5571907552083388" />
-          <ConnectorPoint PointX="3.0416666666666665" PointY="8.5571907552083388" />
-          <ConnectorPoint PointX="3.2083333333333335" PointY="8.5571907552083388" />
-          <ConnectorPoint PointX="4.635416666666667" PointY="8.5571907552083388" />
-          <ConnectorPoint PointX="4.802083333333333" PointY="8.5571907552083388" />
-          <ConnectorPoint PointX="4.875" PointY="8.5571907552083388" />
-          <ConnectorPoint PointX="4.875" PointY="12.809469401041667" />
-          <ConnectorPoint PointX="5.5099258463541672" PointY="12.809469401041667" />
-          <ConnectorPoint PointX="5.6765925130208332" PointY="12.809469401041667" />
-          <ConnectorPoint PointX="5.9156900260416663" PointY="12.809469401041667" />
-          <ConnectorPoint PointX="6.0823566927083323" PointY="12.809469401041667" />
-          <ConnectorPoint PointX="6.322430846354167" PointY="12.809469401041667" />
-          <ConnectorPoint PointX="6.489097513020833" PointY="12.809469401041667" />
-          <ConnectorPoint PointX="7.322916666666667" PointY="12.809469401041667" />
-          <ConnectorPoint PointX="7.489583333333333" PointY="12.809469401041667" />
-          <ConnectorPoint PointX="12.166666666666666" PointY="12.809469401041667" />
-          <ConnectorPoint PointX="12.333333333333334" PointY="12.809469401041667" />
-          <ConnectorPoint PointX="12.5" PointY="12.809469401041667" />
-          <ConnectorPoint PointX="12.5" PointY="10.822815755208332" />
-          <ConnectorPoint PointX="12.791666666666666" PointY="10.822815755208332" />
-          <ConnectorPoint PointX="12.958333333333334" PointY="10.822815755208332" />
-          <ConnectorPoint PointX="14.166666666666666" PointY="10.822815755208332" />
-          <ConnectorPoint PointX="14.333333333333334" PointY="10.822815755208332" />
-          <ConnectorPoint PointX="15.760414166666665" PointY="10.822815755208332" />
-          <ConnectorPoint PointX="15.927080833333333" PointY="10.822815755208332" />
-          <ConnectorPoint PointX="17.375" PointY="10.822815755208332" />
-          <ConnectorPoint PointX="17.375" PointY="11.5" />
+          <ConnectorPoint PointX="1.6212853521634618" PointY="11.797425130208334" />
+          <ConnectorPoint PointX="1.6212853521634618" PointY="12.047425130208332" />
+          <ConnectorPoint PointX="2.3924358974358975" PointY="12.047425130208332" />
+          <ConnectorPoint PointX="2.6087189487179478" PointY="12.047425130208332" />
+          <ConnectorPoint PointX="5.1041671666666675" PointY="12.047425130208332" />
+          <ConnectorPoint PointX="5.2708338333333336" PointY="12.047425130208332" />
+          <ConnectorPoint PointX="6.260416666666667" PointY="12.047425130208332" />
+          <ConnectorPoint PointX="6.427083333333333" PointY="12.047425130208332" />
+          <ConnectorPoint PointX="10.166666666666666" PointY="12.047425130208332" />
+          <ConnectorPoint PointX="10.333333333333334" PointY="12.047425130208332" />
+          <ConnectorPoint PointX="11.166666666666666" PointY="12.047425130208332" />
+          <ConnectorPoint PointX="11.333333333333334" PointY="12.047425130208332" />
+          <ConnectorPoint PointX="12.854166666666666" PointY="12.047425130208332" />
+          <ConnectorPoint PointX="13.020833333333334" PointY="12.047425130208332" />
+          <ConnectorPoint PointX="13.25" PointY="12.047425130208332" />
+          <ConnectorPoint PointX="13.25" PointY="14.124492187500003" />
+          <ConnectorPoint PointX="13.322916666666666" PointY="14.124492187500003" />
+          <ConnectorPoint PointX="13.489583333333334" PointY="14.124492187500003" />
+          <ConnectorPoint PointX="15.791666666666666" PointY="14.124492187500003" />
+          <ConnectorPoint PointX="15.958333333333334" PointY="14.124492187500003" />
+          <ConnectorPoint PointX="16.25" PointY="14.124492187500003" />
+          <ConnectorPoint PointX="16.25" PointY="13.004493972005211" />
+          <ConnectorPoint PointX="16.625" PointY="13.004493972005211" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_ChurchSmsProvider_SmsProvider" >
           <ConnectorPoint PointX="13.40625" PointY="15.375" />
-          <ConnectorPoint PointX="13.40625" PointY="13.997091471354171" />
-          <ConnectorPoint PointX="16.625" PointY="13.997091471354171" />
+          <ConnectorPoint PointX="13.40625" PointY="13.997090971354172" />
+          <ConnectorPoint PointX="15.791666666666666" PointY="13.997090971354172" />
+          <ConnectorPoint PointX="15.958333333333334" PointY="13.997090971354172" />
+          <ConnectorPoint PointX="16.166666666666668" PointY="13.997090971354172" />
+          <ConnectorPoint PointX="16.333333333333332" PointY="13.997090971354172" />
+          <ConnectorPoint PointX="16.625" PointY="13.997090971354172" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="oikonomosModel.OldRole" Width="1.5" PointX="7.375" PointY="13.125" Height="1.7879850260416674" />
         <EntityTypeShape EntityType="oikonomosModel.PermissionRole" Width="1.5" PointX="18.625" PointY="8.625" Height="2.1725878906250102" />
-        <AssociationConnector Association="oikonomosModel.FK_PersonRole_Role1" >
-          <ConnectorPoint PointX="7.40625" PointY="13.125" />
-          <ConnectorPoint PointX="7.40625" PointY="4.9881027609099187" />
-          <ConnectorPoint PointX="8.1669143740030918" PointY="4.9881027609099178" />
-          <ConnectorPoint PointX="8.33358104066976" PointY="4.9881027609099187" />
-          <ConnectorPoint PointX="8.5730430203348789" PointY="4.9881027609099178" />
-          <ConnectorPoint PointX="8.7397096870015467" PointY="4.9881027609099187" />
-          <ConnectorPoint PointX="9.9166666666666661" PointY="4.9881027609099178" />
-          <ConnectorPoint PointX="10.083333333333334" PointY="4.9881027609099187" />
-          <ConnectorPoint PointX="10.166666666666666" PointY="4.9881027609099178" />
-          <ConnectorPoint PointX="10.333333333333334" PointY="4.9881027609099187" />
-          <ConnectorPoint PointX="10.5" PointY="4.9881027609099187" />
-        </AssociationConnector>
         <EntityTypeShape EntityType="oikonomosModel.Role" Width="1.5" PointX="3.375" PointY="19.375" Height="2.9417936197916674" />
         <AssociationConnector Association="oikonomosModel.FK_Role_Church" >
-          <ConnectorPoint PointX="2.25" PointY="4.829048606770832" />
-          <ConnectorPoint PointX="2.5729166666666665" PointY="4.8290486067708311" />
-          <ConnectorPoint PointX="2.7395833333333335" PointY="4.829048606770832" />
-          <ConnectorPoint PointX="4.71875" PointY="4.829048606770832" />
-          <ConnectorPoint PointX="4.71875" PointY="19.375" />
+          <ConnectorPoint PointX="2.2257692307692327" PointY="11.797425130208334" />
+          <ConnectorPoint PointX="2.625" PointY="12.1966558994391" />
+          <ConnectorPoint PointX="2.625" PointY="20.942047526041669" />
+          <ConnectorPoint PointX="3.375" PointY="20.942047526041669" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_PermissionRole_Role" >
-          <ConnectorPoint PointX="4.875" PointY="21.208639322916667" />
-          <ConnectorPoint PointX="19.375" PointY="21.208639322916667" />
+          <ConnectorPoint PointX="4.875" PointY="21.304790039062503" />
+          <ConnectorPoint PointX="19.375" PointY="21.304790039062503" />
           <ConnectorPoint PointX="19.375" PointY="10.79758789062501" />
         </AssociationConnector>
         <EntityTypeShape EntityType="oikonomosModel.Permission" Width="1.5" PointX="16.375" PointY="4.5" Height="2.3648893229166674" />
@@ -3044,27 +3004,448 @@
           <ConnectorPoint PointX="18.625" PointY="10.708639322916671" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_PersonRole_Role" >
-          <ConnectorPoint PointX="4.8281275" PointY="19.375" />
-          <ConnectorPoint PointX="4.8281275" PointY="5.5193527609099187" />
-          <ConnectorPoint PointX="6.830732969243253" PointY="5.5193527609099178" />
-          <ConnectorPoint PointX="6.9973996359099191" PointY="5.5193527609099187" />
-          <ConnectorPoint PointX="7.322916666666667" PointY="5.5193527609099178" />
-          <ConnectorPoint PointX="7.489583333333333" PointY="5.5193527609099187" />
-          <ConnectorPoint PointX="8.1669143740030918" PointY="5.5193527609099178" />
-          <ConnectorPoint PointX="8.33358104066976" PointY="5.5193527609099187" />
-          <ConnectorPoint PointX="8.5730430203348789" PointY="5.5193527609099178" />
-          <ConnectorPoint PointX="8.7397096870015467" PointY="5.5193527609099187" />
-          <ConnectorPoint PointX="9.9166666666666661" PointY="5.5193527609099178" />
-          <ConnectorPoint PointX="10.083333333333334" PointY="5.5193527609099187" />
-          <ConnectorPoint PointX="10.166666666666666" PointY="5.5193527609099178" />
-          <ConnectorPoint PointX="10.333333333333334" PointY="5.5193527609099187" />
-          <ConnectorPoint PointX="10.5" PointY="5.5193527609099187" />
+          <ConnectorPoint PointX="4.875" PointY="20.671385032552092" />
+          <ConnectorPoint PointX="10.25" PointY="20.671385032552092" />
+          <ConnectorPoint PointX="10.25" PointY="7.047587890624996" />
+          <ConnectorPoint PointX="11.25" PointY="7.047587890624996" />
+          <ConnectorPoint PointX="11.25" PointY="6.672587890624996" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.CanSetRole" >
           <ConnectorPoint PointX="3.9069230769230767" PointY="22.316793619791667" />
           <ConnectorPoint PointX="3.9069230769230767" PointY="22.566793619791667" />
           <ConnectorPoint PointX="4.3534615384615378" PointY="22.566793619791667" />
           <ConnectorPoint PointX="4.3534615384615378" PointY="22.316793619791667" />
+        </AssociationConnector>
+        <EntityTypeShape EntityType="oikonomosModel.Status" Width="1.5" PointX="0.75" PointY="2.25" Height="1.595683593749996" />
+        <AssociationConnector Association="oikonomosModel.FK_Church_Status" >
+          <ConnectorPoint PointX="2.0092543475091458" PointY="3.845683593749996" />
+          <ConnectorPoint PointX="2.0092543475091458" PointY="4.625" />
+        </AssociationConnector>
+        <EntityTypeShape EntityType="oikonomosModel.Family" Width="1.5" PointX="23.5" PointY="5.375" Height="2.9417936197916674" />
+        <EntityTypeShape EntityType="oikonomosModel.Person" Width="1.5" PointX="23.25" PointY="9.875" Height="6.210917968749996" />
+        <AssociationConnector Association="oikonomosModel.FK_Family_Address" >
+          <ConnectorPoint PointX="21.5" PointY="3.1728011067708328" />
+          <ConnectorPoint PointX="22.916666666666668" PointY="3.1728011067708324" />
+          <ConnectorPoint PointX="23.083333333333332" PointY="3.1728011067708328" />
+          <ConnectorPoint PointX="24.25" PointY="3.1728011067708328" />
+          <ConnectorPoint PointX="24.25" PointY="5.375" />
+        </AssociationConnector>
+        <AssociationConnector Association="oikonomosModel.FK_Person_Family" >
+          <ConnectorPoint PointX="24.125" PointY="8.3167936197916674" />
+          <ConnectorPoint PointX="24.125" PointY="9.875" />
+        </AssociationConnector>
+        <AssociationConnector Association="oikonomosModel.FK_Person_Site" >
+          <ConnectorPoint PointX="5.1875005000000005" PointY="11.3744921875" />
+          <ConnectorPoint PointX="5.1875005000000005" PointY="12.980458984375002" />
+          <ConnectorPoint PointX="6.260416666666667" PointY="12.980458984375002" />
+          <ConnectorPoint PointX="6.427083333333333" PointY="12.980458984375002" />
+          <ConnectorPoint PointX="10.166666666666666" PointY="12.980458984375002" />
+          <ConnectorPoint PointX="10.333333333333334" PointY="12.980458984375002" />
+          <ConnectorPoint PointX="12.604166666666666" PointY="12.980458984375002" />
+          <ConnectorPoint PointX="12.770833333333334" PointY="12.980458984375002" />
+          <ConnectorPoint PointX="12.854166666666666" PointY="12.980458984375002" />
+          <ConnectorPoint PointX="13.020833333333334" PointY="12.980458984375002" />
+          <ConnectorPoint PointX="13.041666666666666" PointY="12.980458984375002" />
+          <ConnectorPoint PointX="13.208333333333334" PointY="12.980458984375002" />
+          <ConnectorPoint PointX="13.322916666666666" PointY="12.980458984375002" />
+          <ConnectorPoint PointX="13.322916666666666" PointY="14.682190755208339" />
+          <ConnectorPoint PointX="13.322916666666666" PointY="14.682190755208339" />
+          <ConnectorPoint PointX="13.489583333333334" PointY="14.682190755208339" />
+          <ConnectorPoint PointX="15.791666666666666" PointY="14.682190755208339" />
+          <ConnectorPoint PointX="15.958333333333334" PointY="14.682190755208339" />
+          <ConnectorPoint PointX="19.291666666666668" PointY="14.682190755208339" />
+          <ConnectorPoint PointX="19.458333333333332" PointY="14.682190755208339" />
+          <ConnectorPoint PointX="20.401039166666667" PointY="14.682190755208339" />
+          <ConnectorPoint PointX="20.567705833333331" PointY="14.682190755208339" />
+          <ConnectorPoint PointX="22.416666666666668" PointY="14.682190755208339" />
+          <ConnectorPoint PointX="22.416666666666668" PointY="14.871469706705721" />
+          <ConnectorPoint PointX="23.25" PointY="14.871469706705721" />
+        </AssociationConnector>
+        <AssociationConnector Association="oikonomosModel.FK_Person_Title" >
+          <ConnectorPoint PointX="3.75" PointY="12.75" />
+          <ConnectorPoint PointX="3.75" PointY="12.390625" />
+          <ConnectorPoint PointX="5.1041671666666675" PointY="12.390625" />
+          <ConnectorPoint PointX="5.2708338333333336" PointY="12.390625" />
+          <ConnectorPoint PointX="6.260416666666667" PointY="12.390625" />
+          <ConnectorPoint PointX="6.427083333333333" PointY="12.390625" />
+          <ConnectorPoint PointX="10.166666666666666" PointY="12.390625" />
+          <ConnectorPoint PointX="10.333333333333334" PointY="12.390625" />
+          <ConnectorPoint PointX="11.166666666666666" PointY="12.390625" />
+          <ConnectorPoint PointX="11.333333333333334" PointY="12.390625" />
+          <ConnectorPoint PointX="12.6875" PointY="12.390625" />
+          <ConnectorPoint PointX="12.6875" PointY="14.244690755208339" />
+          <ConnectorPoint PointX="12.854166666666666" PointY="14.244690755208339" />
+          <ConnectorPoint PointX="13.020833333333334" PointY="14.244690755208339" />
+          <ConnectorPoint PointX="13.239583333333332" PointY="14.244690755208339" />
+          <ConnectorPoint PointX="13.489583333333332" PointY="14.244690755208339" />
+          <ConnectorPoint PointX="15.791666666666666" PointY="14.244690755208339" />
+          <ConnectorPoint PointX="15.958333333333334" PointY="14.244690755208339" />
+          <ConnectorPoint PointX="19.291666666666668" PointY="14.244690755208339" />
+          <ConnectorPoint PointX="19.458333333333332" PointY="14.244690755208339" />
+          <ConnectorPoint PointX="20.401039166666667" PointY="14.244690755208339" />
+          <ConnectorPoint PointX="20.567705833333331" PointY="14.244690755208339" />
+          <ConnectorPoint PointX="22.875" PointY="14.244690755208339" />
+          <ConnectorPoint PointX="22.875" PointY="12.289800167643243" />
+          <ConnectorPoint PointX="23.25" PointY="12.289800167643243" />
+        </AssociationConnector>
+        <AssociationConnector Association="oikonomosModel.FK_PersonContact_Person" >
+          <ConnectorPoint PointX="24.080731166666666" PointY="9.875" />
+          <ConnectorPoint PointX="24.080731166666666" PointY="9.65359537760417" />
+          <ConnectorPoint PointX="23.432291666666668" PointY="9.65359537760417" />
+          <ConnectorPoint PointX="23.265625000000004" PointY="9.65359537760417" />
+          <ConnectorPoint PointX="20.927083333333332" PointY="9.65359537760417" />
+          <ConnectorPoint PointX="20.760416666666668" PointY="9.65359537760417" />
+          <ConnectorPoint PointX="20.567705833333331" PointY="9.65359537760417" />
+          <ConnectorPoint PointX="20.401039166666667" PointY="9.65359537760417" />
+          <ConnectorPoint PointX="20.25" PointY="9.65359537760417" />
+          <ConnectorPoint PointX="20.25" PointY="8.375" />
+          <ConnectorPoint PointX="17.552083333333332" PointY="8.375" />
+          <ConnectorPoint PointX="17.385416666666668" PointY="8.375" />
+          <ConnectorPoint PointX="17.25" PointY="8.375" />
+          <ConnectorPoint PointX="17.25" PointY="10.807190755208332" />
+          <ConnectorPoint PointX="15.958333333333334" PointY="10.807190755208332" />
+          <ConnectorPoint PointX="15.791666666666666" PointY="10.807190755208332" />
+          <ConnectorPoint PointX="13.020833333333334" PointY="10.807190755208332" />
+          <ConnectorPoint PointX="12.854166666666666" PointY="10.807190755208332" />
+          <ConnectorPoint PointX="12.375" PointY="10.807190755208332" />
+          <ConnectorPoint PointX="12.375" PointY="9.65359537760417" />
+          <ConnectorPoint PointX="12.333333333333334" PointY="9.65359537760417" />
+          <ConnectorPoint PointX="12.166666666666666" PointY="9.65359537760417" />
+          <ConnectorPoint PointX="12" PointY="9.65359537760417" />
+        </AssociationConnector>
+        <AssociationConnector Association="oikonomosModel.FK_PersonGroup_Person" >
+          <ConnectorPoint PointX="23.25" PointY="14.466728447102868" />
+          <ConnectorPoint PointX="20.567705833333331" PointY="14.466728447102868" />
+          <ConnectorPoint PointX="20.401039166666667" PointY="14.466728447102868" />
+          <ConnectorPoint PointX="19.458333333333332" PointY="14.466728447102868" />
+          <ConnectorPoint PointX="19.291666666666668" PointY="14.466728447102868" />
+          <ConnectorPoint PointX="15.958333333333334" PointY="14.466728447102868" />
+          <ConnectorPoint PointX="15.791666666666666" PointY="14.466728447102868" />
+          <ConnectorPoint PointX="13.489583333333334" PointY="14.466728447102867" />
+          <ConnectorPoint PointX="13.23958333333333" PointY="14.466728447102868" />
+          <ConnectorPoint PointX="12.9375" PointY="14.466728447102868" />
+          <ConnectorPoint PointX="12.9375" PointY="9.5571907552083317" />
+        </AssociationConnector>
+        <AssociationConnector Association="oikonomosModel.FK_PersonRelationship_Person" >
+          <ConnectorPoint PointX="23.25" PointY="15.204693375490123" />
+          <ConnectorPoint PointX="20.567705833333331" PointY="15.204693375490123" />
+          <ConnectorPoint PointX="20.401039166666667" PointY="15.204693375490123" />
+          <ConnectorPoint PointX="19.458333333333332" PointY="15.204693375490123" />
+          <ConnectorPoint PointX="19.291666666666668" PointY="15.204693375490123" />
+          <ConnectorPoint PointX="15.958333333333334" PointY="15.204693375490123" />
+          <ConnectorPoint PointX="15.791666666666666" PointY="15.204693375490123" />
+          <ConnectorPoint PointX="13.489583333333334" PointY="15.204693375490123" />
+          <ConnectorPoint PointX="13.322916666666666" PointY="15.204693375490123" />
+          <ConnectorPoint PointX="12" PointY="15.204693375490123" />
+        </AssociationConnector>
+        <AssociationConnector Association="oikonomosModel.FK_PersonRelationship_PersonRelatedTo" >
+          <ConnectorPoint PointX="23.25" PointY="14.934216200080154" />
+          <ConnectorPoint PointX="20.567705833333331" PointY="14.934216200080154" />
+          <ConnectorPoint PointX="20.401039166666667" PointY="14.934216200080154" />
+          <ConnectorPoint PointX="19.458333333333332" PointY="14.934216200080154" />
+          <ConnectorPoint PointX="19.291666666666668" PointY="14.934216200080154" />
+          <ConnectorPoint PointX="15.958333333333334" PointY="14.934216200080154" />
+          <ConnectorPoint PointX="15.791666666666666" PointY="14.934216200080154" />
+          <ConnectorPoint PointX="13.489583333333334" PointY="14.934216200080154" />
+          <ConnectorPoint PointX="13.322916666666666" PointY="14.934216200080154" />
+          <ConnectorPoint PointX="12" PointY="14.934216200080154" />
+        </AssociationConnector>
+        <AssociationConnector Association="oikonomosModel.FK_PersonRole_Person" >
+          <ConnectorPoint PointX="23.25" PointY="13.594517444661461" />
+          <ConnectorPoint PointX="22.958333333333332" PointY="13.594517444661459" />
+          <ConnectorPoint PointX="22.666666666666668" PointY="13.594517444661461" />
+          <ConnectorPoint PointX="20.567705833333331" PointY="13.594517444661461" />
+          <ConnectorPoint PointX="20.401039166666667" PointY="13.594517444661461" />
+          <ConnectorPoint PointX="19.458333333333332" PointY="13.594517444661461" />
+          <ConnectorPoint PointX="19.291666666666668" PointY="13.594517444661461" />
+          <ConnectorPoint PointX="18.375" PointY="13.594517444661461" />
+          <ConnectorPoint PointX="18.375" PointY="10.875" />
+          <ConnectorPoint PointX="15.958333333333334" PointY="10.875" />
+          <ConnectorPoint PointX="15.791666666666666" PointY="10.875" />
+          <ConnectorPoint PointX="13.020833333333334" PointY="10.875" />
+          <ConnectorPoint PointX="12.854166666666666" PointY="10.875" />
+          <ConnectorPoint PointX="12.25" PointY="10.875" />
+          <ConnectorPoint PointX="12.25" PointY="8.125" />
+          <ConnectorPoint PointX="11.656252" PointY="8.125" />
+          <ConnectorPoint PointX="11.656252" PointY="6.672587890624996" />
+        </AssociationConnector>
+        <AssociationConnector Association="oikonomosModel.FamilyChurch" >
+          <ConnectorPoint PointX="1.0033662198511808" PointY="4.625" />
+          <ConnectorPoint PointX="1.0033662198511808" PointY="4.375" />
+          <ConnectorPoint PointX="1.2359031063690285" PointY="4.3749999999999991" />
+          <ConnectorPoint PointX="1.402569773035695" PointY="4.375" />
+          <ConnectorPoint PointX="1.9259210141758125" PointY="4.3749999999999991" />
+          <ConnectorPoint PointX="2.0925876808424793" PointY="4.375" />
+          <ConnectorPoint PointX="5" PointY="4.375" />
+          <ConnectorPoint PointX="5" PointY="6.922587890624996" />
+          <ConnectorPoint PointX="6.260416666666667" PointY="6.9225878906249951" />
+          <ConnectorPoint PointX="6.427083333333333" PointY="6.922587890624996" />
+          <ConnectorPoint PointX="7.666666666666667" PointY="6.9225878906249951" />
+          <ConnectorPoint PointX="7.833333333333333" PointY="6.922587890624996" />
+          <ConnectorPoint PointX="11.166666666666666" PointY="6.9225878906249951" />
+          <ConnectorPoint PointX="11.333333333333334" PointY="6.922587890624996" />
+          <ConnectorPoint PointX="11.572918666666666" PointY="6.9225878906249951" />
+          <ConnectorPoint PointX="11.739585333333334" PointY="6.922587890624996" />
+          <ConnectorPoint PointX="12.166666666666666" PointY="6.9225878906249951" />
+          <ConnectorPoint PointX="12.333333333333334" PointY="6.922587890624996" />
+          <ConnectorPoint PointX="12.5" PointY="6.922587890624996" />
+          <ConnectorPoint PointX="12.5" PointY="6.75" />
+          <ConnectorPoint PointX="15.791666666666666" PointY="6.7499999999999991" />
+          <ConnectorPoint PointX="15.958333333333334" PointY="6.75" />
+          <ConnectorPoint PointX="16.125" PointY="6.75" />
+          <ConnectorPoint PointX="16.125" PointY="7.4994921875" />
+          <ConnectorPoint PointX="17.385416666666668" PointY="7.4994921874999987" />
+          <ConnectorPoint PointX="17.552083333333332" PointY="7.4994921875" />
+          <ConnectorPoint PointX="20.401039166666667" PointY="7.4994921874999987" />
+          <ConnectorPoint PointX="20.567705833333331" PointY="7.4994921875" />
+          <ConnectorPoint PointX="20.760416666666668" PointY="7.4994921874999987" />
+          <ConnectorPoint PointX="20.927083333333332" PointY="7.4994921875" />
+          <ConnectorPoint PointX="23.125" PointY="7.4994921875" />
+          <ConnectorPoint PointX="23.125" PointY="6.9093224166666669" />
+          <ConnectorPoint PointX="23.177083333333336" PointY="6.909322416666666" />
+          <ConnectorPoint PointX="23.432291666666664" PointY="6.9093224166666669" />
+          <ConnectorPoint PointX="23.5" PointY="6.9093224166666669" />
+        </AssociationConnector>
+        <AssociationConnector Association="oikonomosModel.PersonChurch" >
+          <ConnectorPoint PointX="1.0367251403996396" PointY="11.797425130208334" />
+          <ConnectorPoint PointX="1.0367251403996396" PointY="12.039612630208332" />
+          <ConnectorPoint PointX="2.3846233974358975" PointY="12.039612630208332" />
+          <ConnectorPoint PointX="2.6009064487179478" PointY="12.039612630208332" />
+          <ConnectorPoint PointX="5.1041671666666675" PointY="12.039612630208332" />
+          <ConnectorPoint PointX="5.2708338333333336" PointY="12.039612630208332" />
+          <ConnectorPoint PointX="6.260416666666667" PointY="12.039612630208332" />
+          <ConnectorPoint PointX="6.427083333333333" PointY="12.039612630208332" />
+          <ConnectorPoint PointX="10.166666666666666" PointY="12.039612630208332" />
+          <ConnectorPoint PointX="10.333333333333334" PointY="12.039612630208332" />
+          <ConnectorPoint PointX="11.166666666666666" PointY="12.039612630208332" />
+          <ConnectorPoint PointX="11.333333333333334" PointY="12.039612630208332" />
+          <ConnectorPoint PointX="12.854166666666666" PointY="12.039612630208332" />
+          <ConnectorPoint PointX="13.020833333333334" PointY="12.039612630208332" />
+          <ConnectorPoint PointX="13.125" PointY="12.039612630208332" />
+          <ConnectorPoint PointX="13.125" PointY="14.307190755208339" />
+          <ConnectorPoint PointX="13.239583333333332" PointY="14.307190755208339" />
+          <ConnectorPoint PointX="13.489583333333332" PointY="14.307190755208339" />
+          <ConnectorPoint PointX="15.791666666666666" PointY="14.307190755208339" />
+          <ConnectorPoint PointX="15.958333333333334" PointY="14.307190755208339" />
+          <ConnectorPoint PointX="19.291666666666668" PointY="14.307190755208339" />
+          <ConnectorPoint PointX="19.458333333333332" PointY="14.307190755208339" />
+          <ConnectorPoint PointX="20.401039166666667" PointY="14.307190755208339" />
+          <ConnectorPoint PointX="20.567705833333331" PointY="14.307190755208339" />
+          <ConnectorPoint PointX="22.75" PointY="14.307190755208339" />
+          <ConnectorPoint PointX="22.75" PointY="12.942158806152353" />
+          <ConnectorPoint PointX="22.791666666666668" PointY="12.942158806152353" />
+          <ConnectorPoint PointX="22.958333333333332" PointY="12.942158806152353" />
+          <ConnectorPoint PointX="23.25" PointY="12.942158806152353" />
+        </AssociationConnector>
+        <EntityTypeShape EntityType="oikonomosModel.Event" Width="1.5" PointX="26.5" PointY="8" Height="4.6725065104166674" />
+        <AssociationConnector Association="oikonomosModel.FK_Event_Church" >
+          <ConnectorPoint PointX="1.8263815212637184" PointY="4.625" />
+          <ConnectorPoint PointX="1.8263815212637184" PointY="4.34375" />
+          <ConnectorPoint PointX="1.9259210141758125" PointY="4.3437499999999991" />
+          <ConnectorPoint PointX="2.0925876808424793" PointY="4.34375" />
+          <ConnectorPoint PointX="2.5" PointY="4.34375" />
+          <ConnectorPoint PointX="2.5" PointY="11.6244921875" />
+          <ConnectorPoint PointX="2.5729166666666665" PointY="11.6244921875" />
+          <ConnectorPoint PointX="2.7395833333333335" PointY="11.6244921875" />
+          <ConnectorPoint PointX="5.1041671666666675" PointY="11.6244921875" />
+          <ConnectorPoint PointX="5.2708338333333336" PointY="11.6244921875" />
+          <ConnectorPoint PointX="6.260416666666667" PointY="11.6244921875" />
+          <ConnectorPoint PointX="6.427083333333333" PointY="11.6244921875" />
+          <ConnectorPoint PointX="10.166666666666666" PointY="11.6244921875" />
+          <ConnectorPoint PointX="10.333333333333334" PointY="11.6244921875" />
+          <ConnectorPoint PointX="11.166666666666666" PointY="11.6244921875" />
+          <ConnectorPoint PointX="11.333333333333334" PointY="11.6244921875" />
+          <ConnectorPoint PointX="12.854166666666666" PointY="11.6244921875" />
+          <ConnectorPoint PointX="13.020833333333334" PointY="11.6244921875" />
+          <ConnectorPoint PointX="13.25" PointY="11.6244921875" />
+          <ConnectorPoint PointX="13.25" PointY="10.875" />
+          <ConnectorPoint PointX="15.791666666666666" PointY="10.875" />
+          <ConnectorPoint PointX="15.958333333333334" PointY="10.875" />
+          <ConnectorPoint PointX="18.3125" PointY="10.875" />
+          <ConnectorPoint PointX="18.3125" PointY="11.04758789062501" />
+          <ConnectorPoint PointX="19.291666666666668" PointY="11.04758789062501" />
+          <ConnectorPoint PointX="19.458333333333332" PointY="11.04758789062501" />
+          <ConnectorPoint PointX="20.401039166666667" PointY="11.04758789062501" />
+          <ConnectorPoint PointX="20.567705833333331" PointY="11.04758789062501" />
+          <ConnectorPoint PointX="22.854166666666668" PointY="11.04758789062501" />
+          <ConnectorPoint PointX="23.020833333333332" PointY="11.04758789062501" />
+          <ConnectorPoint PointX="23.125" PointY="11.04758789062501" />
+          <ConnectorPoint PointX="23.125" PointY="9.609375" />
+          <ConnectorPoint PointX="23.265625000000004" PointY="9.609375" />
+          <ConnectorPoint PointX="23.432291666666668" PointY="9.609375" />
+          <ConnectorPoint PointX="24.041666666666668" PointY="9.609375" />
+          <ConnectorPoint PointX="24.208333333333332" PointY="9.609375" />
+          <ConnectorPoint PointX="26" PointY="9.609375" />
+          <ConnectorPoint PointX="26" PointY="11.152659005208335" />
+          <ConnectorPoint PointX="26.5" PointY="11.152659005208335" />
+        </AssociationConnector>
+        <AssociationConnector Association="oikonomosModel.FK_Event_ChangedByPerson" >
+          <ConnectorPoint PointX="24.75" PointY="11.812780074406515" />
+          <ConnectorPoint PointX="26.5" PointY="11.812780074406515" />
+        </AssociationConnector>
+        <AssociationConnector Association="oikonomosModel.FK_Event_CreatedByPerson" >
+          <ConnectorPoint PointX="24.75" PointY="10.781390037203257" />
+          <ConnectorPoint PointX="25.916666666666668" PointY="10.781390037203257" />
+          <ConnectorPoint PointX="26.083333333333332" PointY="10.781390037203257" />
+          <ConnectorPoint PointX="26.5" PointY="10.781390037203257" />
+        </AssociationConnector>
+        <AssociationConnector Association="oikonomosModel.FK_Event_EventVisibility" >
+          <ConnectorPoint PointX="12.25" PointY="1.8939925130208333" />
+          <ConnectorPoint PointX="19.75" PointY="1.8939925130208333" />
+          <ConnectorPoint PointX="19.75" PointY="5.4706022135416656" />
+          <ConnectorPoint PointX="20.401039166666667" PointY="5.4706022135416648" />
+          <ConnectorPoint PointX="20.567705833333331" PointY="5.4706022135416656" />
+          <ConnectorPoint PointX="20.760416666666668" PointY="5.4706022135416648" />
+          <ConnectorPoint PointX="20.927083333333332" PointY="5.4706022135416656" />
+          <ConnectorPoint PointX="23.260416666666668" PointY="5.4706022135416656" />
+          <ConnectorPoint PointX="23.260416666666668" PointY="8.5667936197916674" />
+          <ConnectorPoint PointX="23.265625000000004" PointY="8.5667936197916674" />
+          <ConnectorPoint PointX="23.432291666666668" PointY="8.5667936197916674" />
+          <ConnectorPoint PointX="24.041666666666668" PointY="8.5667936197916674" />
+          <ConnectorPoint PointX="24.208333333333332" PointY="8.5667936197916674" />
+          <ConnectorPoint PointX="26.25" PointY="8.5667936197916674" />
+          <ConnectorPoint PointX="26.25" PointY="7.75" />
+          <ConnectorPoint PointX="27.25" PointY="7.75" />
+          <ConnectorPoint PointX="27.25" PointY="8" />
+        </AssociationConnector>
+        <AssociationConnector Association="oikonomosModel.FK_Event_Table" >
+          <ConnectorPoint PointX="12.75" PointY="18.213819114583334" />
+          <ConnectorPoint PointX="15.791666666666666" PointY="18.213819114583334" />
+          <ConnectorPoint PointX="15.958333333333334" PointY="18.213819114583334" />
+          <ConnectorPoint PointX="19.291666666666668" PointY="18.213819114583334" />
+          <ConnectorPoint PointX="19.458333333333332" PointY="18.213819114583334" />
+          <ConnectorPoint PointX="27.25" PointY="18.213819114583334" />
+          <ConnectorPoint PointX="27.25" PointY="12.672506510416667" />
+        </AssociationConnector>
+        <EntityTypeShape EntityType="oikonomosModel.Group" Width="1.5" PointX="26.5" PointY="2.5" Height="4.2879036458333246" />
+        <AssociationConnector Association="oikonomosModel.FK_Group_Address" >
+          <ConnectorPoint PointX="21.5" PointY="4.2592016601562488" />
+          <ConnectorPoint PointX="22.916666666666668" PointY="4.2592016601562479" />
+          <ConnectorPoint PointX="23.208333333333332" PointY="4.2592016601562488" />
+          <ConnectorPoint PointX="24.166666666666668" PointY="4.2592016601562479" />
+          <ConnectorPoint PointX="24.333333333333332" PointY="4.2592016601562488" />
+          <ConnectorPoint PointX="26.5" PointY="4.2592016601562488" />
+        </AssociationConnector>
+        <AssociationConnector Association="oikonomosModel.FK_Group_Church" >
+          <ConnectorPoint PointX="1.57280898048304" PointY="4.625" />
+          <ConnectorPoint PointX="1.57280898048304" PointY="4.359375" />
+          <ConnectorPoint PointX="1.9259210141758125" PointY="4.3593749999999991" />
+          <ConnectorPoint PointX="2.0925876808424793" PointY="4.359375" />
+          <ConnectorPoint PointX="4.75" PointY="4.359375" />
+          <ConnectorPoint PointX="4.75" PointY="5.6052864583333326" />
+          <ConnectorPoint PointX="4.916666666666667" PointY="5.6052864583333317" />
+          <ConnectorPoint PointX="5.083333333333333" PointY="5.6052864583333326" />
+          <ConnectorPoint PointX="6.260416666666667" PointY="5.6052864583333317" />
+          <ConnectorPoint PointX="6.427083333333333" PointY="5.6052864583333326" />
+          <ConnectorPoint PointX="7.666666666666667" PointY="5.6052864583333317" />
+          <ConnectorPoint PointX="7.833333333333333" PointY="5.6052864583333326" />
+          <ConnectorPoint PointX="10.25" PointY="5.6052864583333326" />
+          <ConnectorPoint PointX="10.25" PointY="4.25" />
+          <ConnectorPoint PointX="19.5" PointY="4.25" />
+          <ConnectorPoint PointX="19.5" PointY="5.4862272135416656" />
+          <ConnectorPoint PointX="20.401039166666667" PointY="5.4862272135416648" />
+          <ConnectorPoint PointX="20.567705833333331" PointY="5.4862272135416656" />
+          <ConnectorPoint PointX="20.760416666666668" PointY="5.4862272135416648" />
+          <ConnectorPoint PointX="20.927083333333332" PointY="5.4862272135416656" />
+          <ConnectorPoint PointX="23" PointY="5.4862272135416656" />
+          <ConnectorPoint PointX="23" PointY="2.8364010533854165" />
+          <ConnectorPoint PointX="26.5" PointY="2.8364010533854165" />
+        </AssociationConnector>
+        <AssociationConnector Association="oikonomosModel.FK_Group_Administrator" >
+          <ConnectorPoint PointX="23.348958333333336" PointY="9.875" />
+          <ConnectorPoint PointX="23.348958333333336" PointY="4.2426505533854169" />
+          <ConnectorPoint PointX="24.166666666666668" PointY="4.242650553385416" />
+          <ConnectorPoint PointX="24.333333333333332" PointY="4.2426505533854169" />
+          <ConnectorPoint PointX="26.5" PointY="4.2426505533854169" />
+        </AssociationConnector>
+        <AssociationConnector Association="oikonomosModel.FK_Group_GroupClassification" >
+          <ConnectorPoint PointX="15" PointY="11.951798188802083" />
+          <ConnectorPoint PointX="15.791666666666666" PointY="11.951798188802083" />
+          <ConnectorPoint PointX="15.958333333333334" PointY="11.951798188802083" />
+          <ConnectorPoint PointX="16.375" PointY="11.951798188802083" />
+          <ConnectorPoint PointX="16.375" PointY="11.25" />
+          <ConnectorPoint PointX="18.291666666666668" PointY="11.25" />
+          <ConnectorPoint PointX="18.458333333333332" PointY="11.25" />
+          <ConnectorPoint PointX="19.291666666666668" PointY="11.25" />
+          <ConnectorPoint PointX="19.458333333333332" PointY="11.25" />
+          <ConnectorPoint PointX="20.401039166666667" PointY="11.25" />
+          <ConnectorPoint PointX="20.567705833333331" PointY="11.25" />
+          <ConnectorPoint PointX="22.9375" PointY="11.25" />
+          <ConnectorPoint PointX="22.9375" PointY="9.6328125" />
+          <ConnectorPoint PointX="23.265625000000004" PointY="9.6328125" />
+          <ConnectorPoint PointX="23.432291666666668" PointY="9.6328125" />
+          <ConnectorPoint PointX="24.041666666666668" PointY="9.6328125" />
+          <ConnectorPoint PointX="24.208333333333332" PointY="9.6328125" />
+          <ConnectorPoint PointX="26.1875" PointY="9.6328125" />
+          <ConnectorPoint PointX="26.1875" PointY="7.5" />
+          <ConnectorPoint PointX="26.8750005" PointY="7.5" />
+          <ConnectorPoint PointX="26.8750005" PointY="6.7879036458333246" />
+        </AssociationConnector>
+        <AssociationConnector Association="oikonomosModel.FK_Group_GroupType" >
+          <ConnectorPoint PointX="6" PointY="3.375" />
+          <ConnectorPoint PointX="6" PointY="3.1249999999999991" />
+          <ConnectorPoint PointX="7.666666666666667" PointY="3.1249999999999987" />
+          <ConnectorPoint PointX="7.833333333333333" PointY="3.1249999999999991" />
+          <ConnectorPoint PointX="19.75" PointY="3.1249999999999991" />
+          <ConnectorPoint PointX="19.75" PointY="5.5018522135416656" />
+          <ConnectorPoint PointX="20.401039166666667" PointY="5.5018522135416648" />
+          <ConnectorPoint PointX="20.567705833333331" PointY="5.5018522135416656" />
+          <ConnectorPoint PointX="20.760416666666668" PointY="5.5018522135416648" />
+          <ConnectorPoint PointX="20.927083333333332" PointY="5.5018522135416656" />
+          <ConnectorPoint PointX="23.125" PointY="5.5018522135416656" />
+          <ConnectorPoint PointX="23.125" PointY="3.6764733300781312" />
+          <ConnectorPoint PointX="24.166666666666668" PointY="3.6764733300781307" />
+          <ConnectorPoint PointX="24.333333333333332" PointY="3.6764733300781312" />
+          <ConnectorPoint PointX="26.5" PointY="3.6764733300781312" />
+        </AssociationConnector>
+        <AssociationConnector Association="oikonomosModel.FK_Group_Leader" >
+          <ConnectorPoint PointX="23.348958333333336" PointY="9.875" />
+          <ConnectorPoint PointX="23.348958333333336" PointY="4.8088277766927021" />
+          <ConnectorPoint PointX="24.166666666666668" PointY="4.8088277766927012" />
+          <ConnectorPoint PointX="24.333333333333332" PointY="4.8088277766927021" />
+          <ConnectorPoint PointX="26.5" PointY="4.8088277766927021" />
+        </AssociationConnector>
+        <AssociationConnector Association="oikonomosModel.FK_PersonGroup_Group" >
+          <ConnectorPoint PointX="27.6249995" PointY="6.7879036458333246" />
+          <ConnectorPoint PointX="27.6249995" PointY="7.734375" />
+          <ConnectorPoint PointX="26.270833333333332" PointY="7.7343749999999991" />
+          <ConnectorPoint PointX="26.104166666666668" PointY="7.734375" />
+          <ConnectorPoint PointX="25.25" PointY="7.734375" />
+          <ConnectorPoint PointX="25.25" PointY="8.5824186197916674" />
+          <ConnectorPoint PointX="24.208333333333332" PointY="8.5824186197916674" />
+          <ConnectorPoint PointX="24.041666666666668" PointY="8.5824186197916674" />
+          <ConnectorPoint PointX="23.432291666666668" PointY="8.5824186197916674" />
+          <ConnectorPoint PointX="23.265625000000004" PointY="8.5824186197916674" />
+          <ConnectorPoint PointX="20.927083333333332" PointY="8.5824186197916674" />
+          <ConnectorPoint PointX="20.760416666666668" PointY="8.5824186197916674" />
+          <ConnectorPoint PointX="20.625" PointY="8.5824186197916674" />
+          <ConnectorPoint PointX="20.625" PointY="7.75" />
+          <ConnectorPoint PointX="20.567705833333331" PointY="7.7499999999999991" />
+          <ConnectorPoint PointX="20.401039166666667" PointY="7.75" />
+          <ConnectorPoint PointX="17.552083333333332" PointY="7.7499999999999991" />
+          <ConnectorPoint PointX="17.385416666666668" PointY="7.75" />
+          <ConnectorPoint PointX="16.645832833333333" PointY="7.7499999999999991" />
+          <ConnectorPoint PointX="16.479166166666669" PointY="7.75" />
+          <ConnectorPoint PointX="14.625" PointY="7.75" />
+          <ConnectorPoint PointX="14.625" PointY="8.2785953776041659" />
+          <ConnectorPoint PointX="14.25" PointY="8.2785953776041659" />
+        </AssociationConnector>
+        <EntityTypeShape EntityType="oikonomosModel.ChurchEmailTemplate" Width="1.5" PointX="7" PointY="7.5" Height="2.1725878906250102" />
+        <EntityTypeShape EntityType="oikonomosModel.EmailTemplate" Width="1.5" PointX="4.75" PointY="0.75" Height="1.595683593749996" />
+        <AssociationConnector Association="oikonomosModel.FK_ChurchEmailTemplate_Church" >
+          <ConnectorPoint PointX="2.25" PointY="8.53125" />
+          <ConnectorPoint PointX="2.4166666666666665" PointY="8.5312499999999982" />
+          <ConnectorPoint PointX="2.7395833333333335" PointY="8.53125" />
+          <ConnectorPoint PointX="2.7916666666666665" PointY="8.53125" />
+          <ConnectorPoint PointX="2.9583333333333335" PointY="8.53125" />
+          <ConnectorPoint PointX="6.260416666666667" PointY="8.53125" />
+          <ConnectorPoint PointX="6.427083333333333" PointY="8.53125" />
+          <ConnectorPoint PointX="7" PointY="8.53125" />
+        </AssociationConnector>
+        <AssociationConnector Association="oikonomosModel.FK_ChurchEmailTemplate_EmailTemplate" >
+          <ConnectorPoint PointX="6.25" PointY="1.547841796874998" />
+          <ConnectorPoint PointX="7.75" PointY="1.547841796874998" />
+          <ConnectorPoint PointX="7.75" PointY="7.5" />
         </AssociationConnector>
         </Diagram>
     </Diagrams>

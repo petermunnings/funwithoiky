@@ -26,7 +26,7 @@ namespace oikonomos.data.DataAccessors
         
         public static void FetchBulkSmsUsernameAndPassword(Person currentPerson, out string username, out string password)
         {
-            if (currentPerson.HasPermission(common.Permissions.SendSms))
+            if (currentPerson.HasPermission(common.Permissions.SmsChurch) || currentPerson.HasPermission(common.Permissions.SmsGroupLeaders) || currentPerson.HasPermission(common.Permissions.SmsGroupMembers))
             {
                 using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
                 {

@@ -9,7 +9,7 @@ namespace oikonomos.common.Models
     {
         public int GroupId { get; set; }
         public string ChurchName { get; set; }
-        public string HomeGroupName { get; set; }
+        public string GroupName { get; set; }
         public string LeaderName { get; set; }
         public int LeaderId { get; set; }
         public string AdministratorName { get; set; }
@@ -22,7 +22,7 @@ namespace oikonomos.common.Models
         public string AddressType { get; set; }
         public decimal Lat { get; set; }
         public decimal Lng { get; set; }
-        public string GroupClassification { get; set; }
-        public string Suburb { get; set; }
+        public int GroupClassificationId { get; set; }
+        public int SuburbId { get; set; }
     }
 }

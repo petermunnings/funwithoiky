@@ -1,0 +1,17 @@
+<<<<<<< HEAD
+#ignorefile
+obj/
+bin/
+*.suo
+*.user
+Log/
+log/
+*.db
+=======
+# Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
+bin
+obj
+
+# mstest test results
+TestResults
+>>>>>>> d17f5dca41e9539b31810fc1c0cc9f9e10c0e638

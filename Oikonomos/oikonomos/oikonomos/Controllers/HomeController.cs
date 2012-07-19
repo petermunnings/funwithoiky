@@ -76,9 +76,8 @@ namespace oikonomos.web.Controllers
             }
 
             viewModel.GroupClassifications = SettingsDataAccessor.FetchGroupClassifications(currentPerson);
-            viewModel.GroupClassifications.Insert(0, new GroupClassificationViewModel() { GroupClassificationId = 0, GroupClassification = "Select...." });
+            viewModel.GroupClassifications.Insert(0, new GroupClassificationViewModel() { GroupClassificationId = 0, GroupClassification = "Select..." });
             viewModel.SelectedGroupClassificationId = 0;
-
             viewModel.Suburbs = SettingsDataAccessor.FetchSuburbs(currentPerson);
             viewModel.EventTypes = SettingsDataAccessor.FetchEventTypes(currentPerson, "group");
 
@@ -236,6 +235,7 @@ namespace oikonomos.web.Controllers
             ViewBag.Message = "Welcome " + currentPerson.Firstname + " " + currentPerson.Family.FamilyName + " from " + churchViewModel.ChurchName;
 
             EventDisplayModel eventDisplayModel = EventDataAccessor.FetchEventsToDisplay(currentPerson);
+            eventDisplayModel.SelectedChurchId = currentPerson.ChurchId;
             return eventDisplayModel;
         }
 
@@ -283,7 +283,24 @@ namespace oikonomos.web.Controllers
             }
 
             //Fetch Groups
-            ViewBag.Groups = GroupDataAccessor.FetchHomeGroups(currentPerson.ChurchId, currentPerson);
+            var groups = GroupDataAccessor.FetchHomeGroups(currentPerson.ChurchId, currentPerson);
+            groups.Insert(0, new HomeGroupsViewModel() { GroupId = 0, GroupName = "Select a group..." });
+            var canChangeGroup = (p.GroupId == 0 && !p.IsInMultipleGroups);
+            if (!canChangeGroup && !p.IsInMultipleGroups)
+            {
+                foreach (var group in groups)
+                {
+                    if (group.GroupId == p.GroupId)
+                    {
+                        canChangeGroup = true;
+                        break;
+                    }
+                }
+            }
+            ViewBag.CanChangeGroup = canChangeGroup;
+            ViewBag.Groups = groups;
+
+            
             List<OptionalFieldViewModel> optionalFields = SettingsDataAccessor.FetchChurchOptionalFields(currentPerson.ChurchId);
             foreach (OptionalFieldViewModel ct in optionalFields)
             {
@@ -443,6 +460,7 @@ namespace oikonomos.web.Controllers
             return View("Login");
         }
 
+        [ValidateInput(false)]
         public ActionResult RunSql(TableGenerationModel tgm)
         {
             tgm.CommandTypeOptions = new List<SelectListItem>();

@@ -24,18 +24,6 @@ namespace oikonomos.common
         Gender = 14
     }
 
-    //public enum SecurityRoles
-    //{
-    //    ChurchAdministrator = 1,
-    //    GroupAdministrator = 2,
-    //    Member = 3,
-    //    SystemAdministrator = 4,
-    //    Contact = 5,
-    //    PastMember = 6,
-    //    Visitor = 7,
-    //    Elder = 8
-    //}
-
     public enum Permissions
     {
         Login = 0,
@@ -56,7 +44,6 @@ namespace oikonomos.common
         AddEvent = 15,
         DeleteEvent = 16,
         EditSettings = 17,
-        SendSms = 18,
         ViewGeneralComments = 19,
         ViewPersonalComments = 20,
         AddSite = 21,
@@ -87,7 +74,13 @@ namespace oikonomos.common
         EditGroupAdministrator = 46,
         DeletePerson = 47,
         IncludeInGroupAttendanceStats = 48,
-        EditPermissions = 49
+        EditPermissions = 49,
+        IncludeInChurchList = 50,
+        IncludeInNotInGroupList = 51,
+        AllocateToGroup = 52,
+        SendVisitorWelcomeLetter = 53,
+        EditEmailTemplates = 54,
+        ViewHelp = 55
     }
 
     public enum Relationships
@@ -129,6 +122,21 @@ namespace oikonomos.common
     public enum SmsProviders
     {
         BulkSmsSouthAfrica = 1
+    }
+
+    public enum ChurchStatuses
+    {
+        Active = 1,
+        Pending = 2,
+        Trial = 3,
+        Cancelled = 4
+    }
+
+    public enum EmailTemplates
+    {
+        WelcomeVisitors = 1,
+        WelcomeMembers = 2,
+        NotifyGroupLeader = 3
     }
 
     public class EventNames

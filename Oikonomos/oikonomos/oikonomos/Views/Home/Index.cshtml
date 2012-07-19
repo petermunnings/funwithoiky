@@ -15,13 +15,22 @@
 } 
 
 <div class="ui-widget" style="text-align:left">
-    <div class="ui-widget-header" style="height:30px">
-         @(((ChurchViewModel)Session[oikonomos.common.SessionVariable.Church]).SiteHeader)
+    <div class="ui-widget-header" style="padding: 10px 10px 20px 10px">
+         <div style="float: left; width:550px">
+            @(((ChurchViewModel)Session[oikonomos.common.SessionVariable.Church]).SiteHeader)
+         </div>
+         <div style="overflow: hidden">
+            @if (ViewBag.CurrentUser !=null && ViewBag.CurrentUser.Churches.Count > 1)
+            {
+                @Html.DropDownListFor(m => m.SelectedChurchId, new SelectList(ViewBag.CurrentUser.Churches, "ChurchId", "Name"), new { @class = "ui-corner-all" })
+            }
+         </div>
     </div>
     <div class="ui-widget-content">
-        <p>
-           @ViewBag.Message
-        </p>
+        <div style="padding: 10px 10px 20px 10px">
+            @ViewBag.Message
+            
+        </div>
         <div id="accordion">
 	        <h3><a href="#">Upcoming events</a></h3>
 	        <div>

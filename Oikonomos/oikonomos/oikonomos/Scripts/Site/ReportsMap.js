@@ -42,7 +42,7 @@
             var hgMarker = new google.maps.Marker({
                 map: map,
                 draggable: false,
-                title: item.HomeGroupName,
+                title: item.GroupName,
                 icon: hgImage
             });
 

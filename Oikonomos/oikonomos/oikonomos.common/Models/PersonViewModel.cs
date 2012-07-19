@@ -59,6 +59,8 @@ namespace oikonomos.common.Models
         public bool HasUsername { get; set; }
         public bool FindFamily { get; set; }
         public int GroupId { get; set; }  //This is for saving it into the right group
+        public bool IsInMultipleGroups { get; set; }
+        public string GroupName { get; set; }
         public string Site { get; set; }
         public string HeardAbout { get; set; }
         public string FacebookId { get; set; }

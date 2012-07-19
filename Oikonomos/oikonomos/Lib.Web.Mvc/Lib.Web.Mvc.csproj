@@ -31,6 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DynamicColumns\ColumnModel.cs" />
+    <Compile Include="DynamicColumns\DynamicColumnResponse.cs" />
     <Compile Include="Html\RenderXmlExtensions.cs" />
     <Compile Include="JQuery\JqGrid\JqGridColumnModel.cs" />
     <Compile Include="JQuery\JqGrid\JqGridConfiguration.cs" />

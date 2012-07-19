@@ -24,6 +24,8 @@ namespace oikonomos.common.Models
         public string SystemName { get; set; }
         public string BulkSmsUsername { get; set; }
         public string BulkSmsPassword { get; set; }
+        public string ContactFirstname { get; set; }
+        public string ContactSurname { get; set; }
     }
 
 

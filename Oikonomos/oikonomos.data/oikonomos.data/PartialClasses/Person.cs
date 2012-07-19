@@ -11,16 +11,8 @@ namespace oikonomos.data
     {
         public bool HasPermission(Permissions permission)
         {
-            foreach (PersonRole personRole in this.PersonRoles)
-            {
-                foreach (PermissionRole permissionRole in personRole.Role.PermissionRoles)
-                {
-                    if (permissionRole.PermissionId == (int)permission)
-                    {
-                        return true;
-                    }
-                }
-            }
+            if (Permissions.Contains((int)permission))
+                return true;
             return false;
         }
 
@@ -37,5 +29,14 @@ namespace oikonomos.data
         {
             get { return Firstname + " " + Family.FamilyName; }
         }
+
+        public int ChurchId { get; set; }
+
+        public Church Church { get; set; }
+
+        public List<int> Permissions { get; set; }
+
+        public bool IsSystemAdministrator { get; set; }
+
     }
 }

@@ -56,7 +56,7 @@ function FetchSmsList() {
     OpenSmsDialog();
     var jqxhr = $.post("/Ajax/FetchGroupLeaderCellPhoneNos", postData, function (data) {
         if (data.Message == "") {
-            SetSmsList();
+            SetSmsList(data.NoNos);
         }
         else {
             $("#responseMessage_text").html(data.Message);
@@ -290,6 +290,12 @@ $(document).ready(function () {
         var roleName = $("#RoleId option[value='" + $("#RoleId").val() + "']").text();
         window.location = "/Report/PeopleList?roleId=" + $("#RoleId").val() + "&roleName=" + roleName;
     });
+
+
+    $("#button_viewPeopleNotInAGroup").click(function () {
+        window.location = "/Report/PeopleNotInAGroup";
+    });
+    
 
     $("#button_exportChurchData").click(function () {
         window.location = "/Report/ExportChurchData";

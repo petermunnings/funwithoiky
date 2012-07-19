@@ -30,6 +30,7 @@ namespace oikonomos.data.DataAccessors
                               where e.Reference == personId
                                   && e.TableId == (int)Tables.Person
                                   && e.EventVisibilityId >= visibilityLevel
+                                  && e.ChurchId == currentPerson.ChurchId
                               select e);
 
                 int totalRecords = events.Count();
@@ -303,9 +304,9 @@ namespace oikonomos.data.DataAccessors
                 }
 
                 string groupIdString = groupId.ToString();
-                var attendanceList = (from e in context.Events
-                                      join pg in context.PersonGroups
-                                         on e.Reference equals pg.PersonId
+                var attendanceList = (from pg in context.PersonGroups
+                                      join e in context.Events
+                                         on pg.PersonId equals e.Reference 
                                       where (e.Description.StartsWith(EventNames.AttendedGroup) || e.Description.StartsWith(EventNames.DidNotAttendGroup))
                                       && e.TableId == (int)Tables.Person
                                       && pg.GroupId == groupId
@@ -361,8 +362,9 @@ namespace oikonomos.data.DataAccessors
                                             }).ToList();
 
                 var upcomingBirthdays = (from p in context.People
+                                         from c in p.Churches
                                          where p.DateOfBirth.HasValue
-                                         && p.ChurchId == currentPerson.ChurchId
+                                         && c.ChurchId == currentPerson.ChurchId
                                          select new EventListModel
                                          {
                                              EntityName = p.Firstname + " " + p.Family.FamilyName,
@@ -371,14 +373,15 @@ namespace oikonomos.data.DataAccessors
                                          }).ToList();
 
                 var upcomingAnniversaries = (from p in context.People
-                                         where p.Anniversary.HasValue
-                                         && p.ChurchId == currentPerson.ChurchId
-                                         select new EventListModel
-                                         {
-                                             EntityName = p.Firstname + " " + p.Family.FamilyName,
-                                             Description = "Anniversary",
-                                             Date = p.Anniversary.Value
-                                         }).ToList();
+                                             from c in p.Churches
+                                             where p.Anniversary.HasValue
+                                             && c.ChurchId == currentPerson.ChurchId
+                                             select new EventListModel
+                                             {
+                                                 EntityName = p.Firstname + " " + p.Family.FamilyName,
+                                                 Description = "Anniversary",
+                                                 Date = p.Anniversary.Value
+                                             }).ToList();
 
                 //TODO - see if this can be done in Linq
                 foreach (EventListModel ub in upcomingBirthdays)
@@ -507,6 +510,8 @@ namespace oikonomos.data.DataAccessors
                 {
                     foreach (EventViewModel personEvent in personEvents.Events)
                     {
+                        if (personEvent.Date == DateTime.MinValue)
+                            personEvent.Date = DateTime.Now;
                         Event pe = SavePersonEvent(context, personEvents, currentPerson, personEvent);
                         CheckToSeeIfEventAlreadyExists(personEvents, context, personEvent, pe);
                     }

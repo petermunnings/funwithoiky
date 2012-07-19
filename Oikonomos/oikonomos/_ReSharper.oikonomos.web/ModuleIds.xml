@@ -1,0 +1,7 @@
+<Modules>
+  <Module PersistentId="42B40471-19BB-4727-9973-924745733AFD" ModuleId="oikonomos.data" />
+  <Module PersistentId="1332384E-DDEF-4B55-81E8-F6F0B0C779DC" ModuleId="Lib.Web.Mvc" />
+  <Module PersistentId="54B0FB5D-AFBE-448A-ABD9-A0FBF75433D9" ModuleId="oikonomos.common" />
+  <Module PersistentId="5FBD2698-019B-430B-82F2-12CD056E6C60" ModuleId="oikonomos.web" />
+  <Module PersistentId="AA7F8F63-288D-4DAE-9055-630E9EAC69D7" ModuleId="oikonomos.test" />
+</Modules>

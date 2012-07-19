@@ -23,7 +23,7 @@ namespace oikonomos.common.Models
 
     public class MapDataHomeGroup
     {
-        public string HomeGroupName { get; set; }
+        public string GroupName { get; set; }
         public decimal Lat { get; set; }
         public decimal Lng { get; set; }
     }

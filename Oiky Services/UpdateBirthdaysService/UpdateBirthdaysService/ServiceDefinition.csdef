@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceDefinition name="UpdateBirthdaysService" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition">
+  <WorkerRole name="UpdateBirthdayWorkerRole" vmsize="Small">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+  </WorkerRole>
+</ServiceDefinition>

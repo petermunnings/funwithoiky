@@ -47,13 +47,14 @@
     <Compile Include="Models\ChurchSettingsViewModel.cs" />
     <Compile Include="Models\ChurchViewModel.cs" />
     <Compile Include="Models\AutoCompleteViewModel.cs" />
+    <Compile Include="Models\EmailTemplateViewModel.cs" />
     <Compile Include="Models\GridSetupViewModel.cs" />
     <Compile Include="Models\EventTypeViewModel.cs" />
     <Compile Include="Models\GroupClassificationViewModel.cs" />
     <Compile Include="Models\HomeGroupEventViewModel.cs" />
     <Compile Include="Models\OptionalFieldViewModel.cs" />
     <Compile Include="Models\EventDisplayModel.cs" />
-    <Compile Include="Models\GroupSettingsViewModel.cs" />
+    <Compile Include="Models\GroupViewModel.cs" />
     <Compile Include="Models\HomeGroupsViewModel.cs" />
     <Compile Include="Models\MapDataViewModel.cs" />
     <Compile Include="Models\RoleViewModel.cs" />

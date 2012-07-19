@@ -9,6 +9,24 @@ namespace oikonomos.data.DataAccessors
 {
     public class SettingsDataAccessor
     {
+        public static void SaveChurchEmailTemplate(Person currentPerson, int churchEmailTemplateId, string template)
+        {
+            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            {
+                var churchEmailTemplate = context.ChurchEmailTemplates.FirstOrDefault(x => x.ChurchEmailTemplateId == churchEmailTemplateId);
+                churchEmailTemplate.Template = template;
+                context.SaveChanges();
+            }
+        }
+
+        public static string FetchChurchEmailTemplate(Person currentPerson, int churchEmailTemplateId)
+        {
+            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            {
+                return context.ChurchEmailTemplates.FirstOrDefault(x => x.ChurchEmailTemplateId == churchEmailTemplateId).Template;
+            }
+        }
+        
         public static List<EventTypeViewModel> FetchEventTypes(Person currentPerson, string eventFor)
         {
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
@@ -112,13 +130,17 @@ namespace oikonomos.data.DataAccessors
         {
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                return (from s in context.ChurchSuburbs
+                var defaultOption = new SuburbViewModel { SuburbId = 0, SuburbName = "Select..." };
+                var suburbs = (from s in context.ChurchSuburbs
                         where s.ChurchId == currentPerson.ChurchId
                         select new SuburbViewModel
                         {
                             SuburbId = s.ChurchSuburbId,
                             SuburbName = s.Suburb
-                        }).ToList();
+                        })
+                        .ToList();
+                suburbs.Insert(0, defaultOption);
+                return suburbs;
             }
         }
 
@@ -163,11 +185,12 @@ namespace oikonomos.data.DataAccessors
                 if (currentPerson.HasPermission(common.Permissions.DeleteSuburb))
                 {
                     var peopleInSuburb = (from p in context.People.Include("Family").Include("Address")
+                                          from c in p.Churches
                                           join f in context.Families
                                             on p.FamilyId equals f.FamilyId
                                           join a in context.Addresses
                                             on f.AddressId equals a.AddressId
-                                          where p.ChurchId == currentPerson.ChurchId
+                                          where c.ChurchId == currentPerson.ChurchId
                                           && a.ChurchSuburbId == suburbId
                                           select p).ToList();
 
@@ -344,49 +367,109 @@ namespace oikonomos.data.DataAccessors
                                         where c.ChurchId == currentPerson.ChurchId
                                         select c).FirstOrDefault();
 
-                    churchToSave.Changed = DateTime.Now;
-                    churchToSave.Name = churchSettings.ChurchName;
-                    churchToSave.OfficeEmail = churchSettings.OfficeEmail;
-                    churchToSave.OfficePhone = churchSettings.OfficePhone;
-                    churchToSave.SiteHeader = churchSettings.SystemName;
-                    churchToSave.UITheme = churchSettings.UITheme;
-                    churchToSave.Url = churchSettings.Url;
-                    churchToSave.Province = churchSettings.Province;
+                    PopulateChurchModel(churchSettings, churchToSave);
+                    PopulateChurchAddress(churchSettings, context, churchToSave);
 
-                    //Check to see if the address already exists
-                    var address = new Address();
+                    context.SaveChanges();
+                }
+            }
+        }
 
-                    if (churchSettings.AddressId > 0)
+        public static void CreateNewChurch(Person currentPerson, ChurchSettingsViewModel churchSettings)
+        {
+            if (currentPerson.HasPermission(common.Permissions.SystemAdministrator))
+            {
+                using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+                {
+                    var newChurch = new Church();
+                    context.AddToChurches(newChurch);
+                    newChurch.Created = DateTime.Now;
+
+                    PopulateChurchModel(churchSettings, newChurch);
+                    newChurch.EmailLogin = "support@oikonomos.co.za";
+                    newChurch.EmailPassword = "sandton2000";
+                    PopulateChurchAddress(churchSettings, context, newChurch);
+                    context.SaveChanges();
+
+                    //Save Roles
+                    var currentChurchRoles = context.Roles.Where(r => (r.ChurchId == currentPerson.ChurchId && r.Name != "System Administrator")).ToList();
+                    foreach (var currentRole in currentChurchRoles)
                     {
-                        address = (from a in context.Addresses
-                                   where a.AddressId == churchSettings.AddressId
-                                   select a).FirstOrDefault();
+                        var newChurchRole = new Role();
+                        context.AddToRoles(newChurchRole);
+                        newChurchRole.Created = DateTime.Now;
+                        newChurchRole.Changed = DateTime.Now;
+                        newChurchRole.Name = currentRole.Name;
+                        newChurchRole.DisplayName = currentRole.DisplayName;
+                        newChurchRole.Church = newChurch;
 
-                        if (address == null) //Should never happen, but just to be sure
+                        foreach (var permission in currentRole.PermissionRoles)
                         {
-                            address = new Address();
-                            address.Created = DateTime.Now;
-                            churchSettings.AddressId = 0;
+                            var newRolePerm = new PermissionRole();
+                            context.AddToPermissionRoles(newRolePerm);
+                            newRolePerm.Created = DateTime.Now;
+                            newRolePerm.Changed = DateTime.Now;
+                            newRolePerm.PermissionId = permission.PermissionId;
+                            newChurchRole.PermissionRoles.Add(newRolePerm);
                         }
                     }
-                    else
+
+                    context.SaveChanges();
+
+                    //Update Role that can be set by any role
+                    foreach (var currentRole in currentChurchRoles)
                     {
-                        address.Created = DateTime.Now;
+                        var newRole = context.Roles.Where(r => (r.ChurchId == newChurch.ChurchId && r.Name == currentRole.Name)).FirstOrDefault();
+                        foreach (var roleToSet in currentRole.Roles)
+                        {
+                            if (roleToSet.Name != "System Administrator")
+                            {
+                                var newRoleToSet = context.Roles.Where(r => (r.ChurchId == newChurch.ChurchId && r.Name == roleToSet.Name)).FirstOrDefault();
+                                newRole.Roles.Add(newRoleToSet);
+                            }
+                        }
                     }
 
-                    address.Line1 = churchSettings.Address1 ?? string.Empty;
-                    address.Line2 = churchSettings.Address2 ?? string.Empty;
-                    address.Line3 = churchSettings.Address3 ?? string.Empty;
-                    address.Line4 = churchSettings.Address4 ?? string.Empty;
-                    address.AddressType = churchSettings.AddressType ?? string.Empty;
-                    address.Lat = churchSettings.Lat;
-                    address.Long = churchSettings.Lng;
-                    address.Changed = DateTime.Now;
+                    context.SaveChanges();
 
-                    if (churchSettings.AddressId == 0)
+                    var churchAdministrator = new Person();
+                    context.AddToPeople(churchAdministrator);
+                    churchAdministrator.Created = DateTime.Now;
+                    churchAdministrator.Changed = DateTime.Now;
+                    churchAdministrator.Firstname = churchSettings.ContactFirstname;
+                    churchAdministrator.Church = newChurch;
+                    var churchAdministratorFamily = new Family();
+                    context.AddToFamilies(churchAdministratorFamily);
+                    churchAdministratorFamily.FamilyName = churchSettings.ContactSurname;
+                    churchAdministratorFamily.ChurchId = newChurch.ChurchId;
+                    churchAdministratorFamily.Created = DateTime.Now;
+                    churchAdministratorFamily.Changed = DateTime.Now;
+                    churchAdministrator.Family = churchAdministratorFamily;
+
+                    context.SaveChanges();
+
+                    //Set the new persons role to administrator
+                    var adminRole = context.Roles.Where(r => (r.ChurchId == newChurch.ChurchId && r.Name == "Church Administrator")).FirstOrDefault();
+                    var personRole = new PersonRole();
+                    personRole.Created = DateTime.Now;
+                    personRole.Changed = DateTime.Now;
+                    personRole.PersonId = churchAdministrator.PersonId;
+                    personRole.RoleId = adminRole.RoleId;
+                    context.AddToPersonRoles(personRole);
+
+                    context.SaveChanges();
+
+                    //Update Church Optional Fields
+                    var churchOptionalFields = context.ChurchOptionalFields.Where(c=>c.ChurchId == currentPerson.ChurchId);
+                    foreach (var co in churchOptionalFields)
                     {
-                        context.Addresses.AddObject(address);
-                        churchToSave.Address = address;
+                        var newCo = new ChurchOptionalField();
+                        context.AddToChurchOptionalFields(newCo);
+                        newCo.Created = DateTime.Now;
+                        newCo.Changed = DateTime.Now;
+                        newCo.ChurchId = newChurch.ChurchId;
+                        newCo.OptionalFieldId = co.OptionalFieldId;
+                        newCo.Visible = co.Visible;
                     }
 
                     context.SaveChanges();
@@ -447,7 +530,7 @@ namespace oikonomos.data.DataAccessors
                 settings.GroupSettings = (from g in context.Groups
                                           where g.LeaderId == currentPerson.PersonId
                                           || g.AdministratorId == currentPerson.PersonId
-                                          select new GroupSettingsViewModel
+                                          select new GroupDto
                                           {
                                               GroupId = g.GroupId,
                                               GroupName = g.Name,
@@ -499,8 +582,74 @@ namespace oikonomos.data.DataAccessors
 
                 settings.RoleId = settings.Roles[0].RoleId;
 
+                settings.EmailTemplates = (from et in context.ChurchEmailTemplates
+                                           where et.ChurchId == currentPerson.ChurchId
+                                           select new EmailTemplateViewModel
+                                           {
+                                               ChurchEmailTemplateId = et.ChurchEmailTemplateId,
+                                               Name = et.EmailTemplate.Name
+                                           }).ToList();
+
+                settings.ChurchEmailTemplateId = settings.EmailTemplates[0].ChurchEmailTemplateId;
+
                 return settings;
             }
         }
+
+
+        private static void PopulateChurchModel(ChurchSettingsViewModel churchSettings, Church churchToSave)
+        {
+            churchToSave.Changed = DateTime.Now;
+            churchToSave.Name = churchSettings.ChurchName;
+            churchToSave.OfficeEmail = churchSettings.OfficeEmail;
+            churchToSave.OfficePhone = churchSettings.OfficePhone;
+            churchToSave.SiteHeader = churchSettings.SystemName;
+            churchToSave.UITheme = churchSettings.UITheme;
+            churchToSave.Url = churchSettings.Url;
+            churchToSave.Province = churchSettings.Province;
+            churchToSave.BackgroundImage = "default.png";
+            churchToSave.StatusId = (int)ChurchStatuses.Pending;
+        }
+
+
+        private static void PopulateChurchAddress(ChurchSettingsViewModel churchSettings, oikonomosEntities context, Church churchToSave)
+        {
+            //Check to see if the address already exists
+            var address = new Address();
+
+            if (churchSettings.AddressId > 0)
+            {
+                address = (from a in context.Addresses
+                           where a.AddressId == churchSettings.AddressId
+                           select a).FirstOrDefault();
+
+                if (address == null) //Should never happen, but just to be sure
+                {
+                    address = new Address();
+                    address.Created = DateTime.Now;
+                    churchSettings.AddressId = 0;
+                }
+            }
+            else
+            {
+                address.Created = DateTime.Now;
+            }
+
+            address.Line1 = churchSettings.Address1 ?? string.Empty;
+            address.Line2 = churchSettings.Address2 ?? string.Empty;
+            address.Line3 = churchSettings.Address3 ?? string.Empty;
+            address.Line4 = churchSettings.Address4 ?? string.Empty;
+            address.AddressType = churchSettings.AddressType ?? string.Empty;
+            address.Lat = churchSettings.Lat;
+            address.Long = churchSettings.Lng;
+            address.Changed = DateTime.Now;
+
+            if (churchSettings.AddressId == 0)
+            {
+                context.Addresses.AddObject(address);
+                churchToSave.Address = address;
+            }
+        }
+
     }
 }

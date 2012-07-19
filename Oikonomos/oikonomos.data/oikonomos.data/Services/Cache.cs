@@ -62,8 +62,12 @@ namespace oikonomos.data.Services
 
         private static PersonRole GetCurrentPersonRole(oikonomosEntities context, Person currentPerson)
         {
-            var currentPersonRole = context.PersonRoles.FirstOrDefault(p => p.PersonId == currentPerson.PersonId);
-            return currentPersonRole;
+            return (from pr in context.PersonRoles
+                    join r in context.Roles
+                      on pr.RoleId equals r.RoleId
+                    where pr.PersonId == currentPerson.PersonId
+                      && r.ChurchId == currentPerson.ChurchId
+                    select pr).FirstOrDefault();
         }
 
         public static List<string> Permissions(oikonomosEntities context)

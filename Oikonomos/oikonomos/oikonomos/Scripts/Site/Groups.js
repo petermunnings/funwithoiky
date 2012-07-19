@@ -62,11 +62,16 @@ function PopulateAttendance() {
 }
 
 function SaveHomeGroup() {
+
     $("#message").html("");
+    var suburbId = 0;
+    if ($("#SelectedSuburbId").val()) {
+        suburbId = $("#SelectedSuburbId").val();
+    };
     var postData = { GroupId: $("#hidden_homeGroupId").val(),
-        HomeGroupName: $("#text_homeGroupName").val(),
+        GroupName: $("#text_groupName").val(),
         LeaderId: $("#hidden_homeGroupLeaderId").val(),
-        LeaderName : $("#text_homeGroupLeader").val(),
+        LeaderName: $("#text_homeGroupLeader").val(),
         AdministratorId: $("#hidden_homeGroupAdministratorId").val(),
         AdministratorName: $("#text_homeGroupAdministrator").val(),
         AddressId: $("#hidden_addressId").val(),
@@ -77,8 +82,8 @@ function SaveHomeGroup() {
         AddressType: $("#hidden_addressType").val(),
         Lat: $("#hidden_lat").val(),
         Lng: $("#hidden_lng").val(),
-        GroupClassification: $("#SelectedGroupClassificationId").val(),
-        Suburb: $("#SelectedSuburbId").val()
+        GroupClassificationId: $("#SelectedGroupClassificationId").val(),
+        SuburbId: suburbId
     };
 
     $.post("/Ajax/SaveHomeGroup", postData, function (data) {
@@ -348,14 +353,41 @@ function SaveComment() {
         });
 }
 
-function FetchEmailList() {
+function FetchEmailList(selectedOnly) {
     var selArr = $("#jqgPeople").getGridParam("selarrrow");
-    var postData = { groupId: selectedGroupId, selectedIds: selArr };
+    var postData = { groupId: selectedGroupId, selectedIds: selArr, selectedOnly: selectedOnly };
 
     OpenEmailDialog();
     var jqxhr = $.post("/Ajax/FetchGroupEmails", $.postify(postData), function (data) {
         if (data.Message == "") {
             SetEmailList();
+        }
+        else {
+            $("#responseMessage_text").html(data.Message);
+            $("#response_Message").dialog(
+            {
+                modal: true,
+                height: 200,
+                width: 500,
+                resizable: true,
+                buttons: {
+                    "Close": function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        }
+    });
+}
+
+function FetchSmsList(selectedOnly) {
+    var selArr = $("#jqgPeople").getGridParam("selarrrow");
+    var postData = { groupId: selectedGroupId, selectedIds: selArr, selectedOnly: selectedOnly };
+
+    OpenSmsDialog();
+    var jqxhr = $.post("/Ajax/FetchGroupCellPhoneNos", $.postify(postData), function (data) {
+        if (data.Message == "") {
+            SetSmsList(data.NoNos);
         }
         else {
             $("#responseMessage_text").html(data.Message);
@@ -440,24 +472,33 @@ function SetupPeopleGrid() {
         datatype: 'json',
         mtype: 'POST',
         postData: { groupId: function () { return selectedGroupId; } },
-        colNames: ['PersonId', 'Firstname', 'Surname', 'HomePhone', 'CellPhone', 'Email'],
+        colNames: ['PersonId', 'Firstname', 'Surname', 'HomePhone', 'CellPhone', 'Email', 'Role'],
         colModel: [
                     { name: 'PersonId', index: 'PersonId', hidden: true, search: false },
                     { name: 'Firstname', index: 'Firstname', align: 'left', width: 150, search: true },
                     { name: 'Surname', index: 'Surname', align: 'left', width: 150, search: true },
-                    { name: 'HomePhone', index: 'HomePhone', align: 'left', width: 110, search: false },
-                    { name: 'CellPhone', index: 'CellPhone', align: 'left', width: 110, search: false },
-                    { name: 'Email', index: 'Email', align: 'left', width: 200, search: false }
+                    { name: 'HomePhone', index: 'HomePhone', align: 'left', width: 125, search: false },
+                    { name: 'CellPhone', index: 'CellPhone', align: 'left', width: 125, search: false },
+                    { name: 'Email', index: 'Email', align: 'left', width: 170, search: false },
+                    { name: 'Role', index: 'Role', align: 'left', width: 75, hidden: true, search: false }
                   ],
         multiselect: true,
         multiboxonly: true,
         pager: $('#jqgpPeople'),
-        rowNum: 25,
+        rowNum: 25, 
         sortname: 'Surname',
+        grouping: true,
+        groupingView: {
+            groupField: ['Role']
+        },
         sortorder: 'asc',
         viewrecords: true,
         width: 'auto',
-        height: 'auto'
+        height: 'auto',
+        gridComplete: function(){
+          $(".jqgroup").addClass("ui-state-active");
+
+        }
     }).navGrid('#jqgpPeople', { edit: false, add: false, del: false, search: false })
     .navButtonAdd('#jqgpPeople', {
         caption: "Delete",
@@ -485,6 +526,7 @@ function SetupPeopleGrid() {
     });
 
     $('#jqgPeople').jqGrid('filterToolbar', { stringResult: true, searchOnEnter: false });
+    
 }
 
 function ReloadPeopleGrid(id) {
@@ -493,6 +535,7 @@ function ReloadPeopleGrid(id) {
     var ret = $("#jqgGroups").getRowData(selectedGroupId);
     $("#groupName").html(ret.GroupName);
     $("#jqgPeople").trigger("reloadGrid");
+    
 
     PopulateAttendance();
 }
@@ -500,25 +543,32 @@ function ReloadPeopleGrid(id) {
 function AddGroup() {
     //Populate fields
     $("#hidden_homeGroupId").val("0");
-    $("#text_homeGroupName").val("");
+    $("#text_groupName").val("");
     $("#text_homeGroupLeader").val("");
     $("#hidden_homeGroupLeaderId").val("0");
     $("#text_homeGroupAdministrator").val("");
     $("#hidden_homeGroupAdministratorId").val("0");
     $("#text_homeGroupAddress").val("");
+    $("#SelectedGroupClassificationId").val("0");
+    $("#SelectedSuburbId").val("0");
 
     $("#edit_homeGroup").dialog(
         {
             modal: true,
-            height: 350,
+            height: 400,
             width: 440,
             resizable: false,
+            title: "Add Group",
             buttons: {
                 "Save": function () {
-                    $("#ajax_loader").show();
-                    rowId = 0;
-                    SaveHomeGroup();
-                    $(this).dialog("close");
+                    if ($("#text_groupName").val() == '') {
+                        ShowErrorMessage("Cannot save group", "You need a name for the group");
+                    } else {
+                        $("#ajax_loader").show();
+                        rowId = 0;
+                        SaveHomeGroup();
+                        $(this).dialog("close");
+                    }
                 },
                 Cancel: function () {
                     $(this).dialog("close");
@@ -533,7 +583,7 @@ function EditGroup() {
     $("#hidden_homeGroupId").val(selectedGroupId);
     var jqxhr = $.post("/Ajax/FetchGroupInfo", $.postify(postData), function (data) {
 
-        $("#text_homeGroupName").val(data.GroupInfo.HomeGroupName);
+        $("#text_groupName").val(data.GroupInfo.GroupName);
         $("#text_homeGroupLeader").val(data.GroupInfo.LeaderName);
         $("#hidden_homeGroupLeaderId").val(data.GroupInfo.LeaderId);
         $("#text_homeGroupAdministrator").val(data.GroupInfo.AdministratorName);
@@ -546,16 +596,8 @@ function EditGroup() {
         $("#hidden_addressId").val(data.GroupInfo.AddressId);
         $("#hidden_lat").val(data.GroupInfo.Lat);
         $("#hidden_lng").val(data.GroupInfo.Lng);
-        var groupClassification = data.GroupInfo.GroupClassification;
-        if (groupClassification == "") {
-            groupClassification = "Select...";
-        }
-        $("#SelectedGroupClassificationId").val(groupClassification);
-        var suburb = data.GroupInfo.Suburb;
-        if (suburb == "") {
-            suburb = "Select...";
-        }
-        $("#SelectedSuburbId").val(suburb);
+        $("#SelectedGroupClassificationId").val(data.GroupInfo.GroupClassificationId);
+        $("#SelectedSuburbId").val(data.GroupInfo.SuburbId);
 
     });
 
@@ -565,12 +607,17 @@ function EditGroup() {
             height: 400,
             width: 440,
             resizable: false,
+            title: "Edit Group details",
             buttons: {
                 "Save": function () {
-                    $("#ajax_loader").show();
-                    rowId = 0;
-                    SaveHomeGroup();
-                    $(this).dialog("close");
+                    if ($("#text_groupName").val() == '') {
+                        ShowErrorMessage("Cannot save group", "You need a name for the group");
+                    } else {
+                        $("#ajax_loader").show();
+                        rowId = 0;
+                        SaveHomeGroup();
+                        $(this).dialog("close");
+                    }
                 },
                 Cancel: function () {
                     $(this).dialog("close");
@@ -924,8 +971,11 @@ $(document).ready(function () {
     });
 
     $("#button_sendEmail").click(function () {
-        FetchEmailList();
+        FetchEmailList($('input[name=radio_selected]:checked').val()=="selected");
     });
 
+    $("#button_sendSms").click(function () {
+        FetchSmsList($('input[name=radio_selected]:checked').val() == "selected");
+    });
 
 })

@@ -47,12 +47,33 @@ namespace oikonomos.web.Controllers
             }
 
             List<PersonListViewModel> peopleList = PersonDataAccessor.FetchPeople(currentUser, roleId);
+
             MemoryStream stream = new MemoryStream();
             CreatePeopleListDocument(currentUser, peopleList, roleName).Save(stream, false);
 
             HttpContext.Response.AddHeader("content-disposition", String.Format("attachment; filename={0}list.pdf", roleName));
             return new FileStreamResult(stream, "application/pdf");
         }
+
+        public FileStreamResult PeopleNotInAGroup()
+        {
+            Person currentUser = SecurityHelper.CheckCurrentUser(Session, Response, ViewBag);
+            if (currentUser == null)
+            {
+                Redirect("/Home/Index");
+            }
+
+            List<PersonListViewModel> peopleList = GroupDataAccessor.FetchPeopleNotInAGroup(currentUser);
+
+            MemoryStream stream = new MemoryStream();
+            CreatePeopleListDocument(currentUser, peopleList, "People not in any group").Save(stream, false);
+
+            HttpContext.Response.AddHeader("content-disposition", String.Format("attachment; filename={0}list.pdf", "PeopleNotInAGroup"));
+            return new FileStreamResult(stream, "application/pdf");
+
+        }
+
+        
 
         //public FileStreamResult PastMemberList()
         //{
@@ -79,7 +100,7 @@ namespace oikonomos.web.Controllers
             }
 
             int groupId = int.Parse(id);
-            List<PersonViewModel> peopleList = GroupDataAccessor.FetchPeopleInGroup(groupId);
+            List<PersonViewModel> peopleList = GroupDataAccessor.FetchPeopleInGroup(currentUser, groupId).ToList();
             
             string hgName = GroupDataAccessor.FetchHomeGroupName(groupId);
             MemoryStream stream = new MemoryStream();
@@ -121,7 +142,7 @@ namespace oikonomos.web.Controllers
             
             HttpContext.Response.AddHeader("content-disposition", "attachment; filename=churchdata.csv");
             StreamWriter sw = new StreamWriter(new MemoryStream());
-            sw.WriteLine(@"Surname, Firstname, CellPhone, Email, HomePhone, WorkPhone, RoleName, Address1, Address2, Address3, Address4, Anniversary, DateOfBirth, Gender, Occupation, Skype, Twitter, Site, HeardAbout");
+            sw.WriteLine(@"Surname, Firstname, CellPhone, Email, HomePhone, WorkPhone, RoleName, Address1, Address2, Address3, Address4, Anniversary, DateOfBirth, Gender, Occupation, Skype, Twitter, Site, HeardAbout, Group");
 
             List<PersonViewModel> list = PersonDataAccessor.FetchExtendedChurchList(currentUser);
             foreach (PersonViewModel person in list)
@@ -144,7 +165,8 @@ namespace oikonomos.web.Controllers
                     person.Skype + ", " +
                     person.Twitter + ", " +
                     person.Site + ", " +
-                    person.HeardAbout
+                    person.HeardAbout + ", " +
+                    person.GroupName
                     );
             }
 
@@ -154,13 +176,13 @@ namespace oikonomos.web.Controllers
         }
 
         #region Private Helper Methods
-        private static MigraDoc.Rendering.PdfDocumentRenderer CreateHomeGroupListDocument(string groupName, List<PersonViewModel> membersList)
+        private static MigraDoc.Rendering.PdfDocumentRenderer CreateHomeGroupListDocument(string groupName, List<PersonViewModel> personList)
         {
             // Create new MigraDoc document
             Document document = new Document();
             document.Info.Title = groupName;
             document.Info.Author = "oikonomos";
-            document.Info.Subject = "Homegroup List for " + groupName;
+            document.Info.Subject = "Group List for " + groupName;
             Section sec = document.AddSection();
             sec.PageSetup.TopMargin = Unit.FromCentimeter(1);
             sec.PageSetup.LeftMargin = Unit.FromCentimeter(1);
@@ -168,7 +190,7 @@ namespace oikonomos.web.Controllers
             document.DefaultPageSetup.LeftMargin = Unit.FromCentimeter(1);
 
             Paragraph p = sec.Headers.Primary.AddParagraph();
-            p.AddText("Homegroup List for " + groupName);
+            p.AddText("Group List for " + groupName);
             p.Format.Font.Size = 10.0;
             p.Format.Font.Bold = true;
             p.Format.Alignment = ParagraphAlignment.Center;
@@ -179,8 +201,9 @@ namespace oikonomos.web.Controllers
             sec.Footers.Primary.Add(pf);
 
             MigraDoc.DocumentObjectModel.Tables.Table membersTable = new MigraDoc.DocumentObjectModel.Tables.Table();
-            AddHeaders(membersTable, "Members");
-            AddHomegroupData(document, membersList, membersTable);
+            personList = personList.OrderBy(x => x.RoleName).ThenBy(x => x.Surname).ThenBy(x => x.PersonId).ToList();
+            AddHeaders(membersTable, null);
+            AddHomegroupData(document, personList, membersTable);
 
             MigraDoc.DocumentObjectModel.Tables.Table visitorsTable = new MigraDoc.DocumentObjectModel.Tables.Table();
 
@@ -201,8 +224,15 @@ namespace oikonomos.web.Controllers
             style.Font.Size = 8.0;
             TextMeasurement tm = new TextMeasurement(style.Font.Clone());
             int familyId = 0;
+            var roleName = string.Empty;
             foreach (PersonViewModel person in personList)
             {
+                if (roleName != person.RoleName)
+                {
+                    roleName = person.RoleName;
+                    AddRoleHeader(table, roleName);
+                }
+                
                 Row row = table.AddRow();
                 Cell cell = row.Cells[0];
                 if (familyId != person.FamilyId)
@@ -547,7 +577,7 @@ namespace oikonomos.web.Controllers
 
         }
 
-        private static void AddHeaders(MigraDoc.DocumentObjectModel.Tables.Table table, string headingType)
+        private static void AddHeaders(MigraDoc.DocumentObjectModel.Tables.Table table, string optionalHeader)
         {
             //Headers
             // Create a font
@@ -562,14 +592,8 @@ namespace oikonomos.web.Controllers
             table.AddColumn(Unit.FromMillimeter(28));
             table.AddColumn(Unit.FromCentimeter(5));
 
-            MigraDoc.DocumentObjectModel.Tables.Row rowHeader = table.AddRow();
-            rowHeader.HeadingFormat = true;
-            rowHeader.Format.Font.ApplyFont(font);
-            rowHeader.Shading.Color = Colors.PaleGoldenrod;
-            rowHeader.Format.Font.Bold = true;
-            Cell cellHeader = rowHeader.Cells[0];
-            cellHeader.AddParagraph(headingType);
-            cellHeader.MergeRight = 5;
+            if(optionalHeader != null)
+                AddRoleHeader(table, optionalHeader);
 
             MigraDoc.DocumentObjectModel.Tables.Row row = table.AddRow();
             row.HeadingFormat = true;
@@ -589,6 +613,19 @@ namespace oikonomos.web.Controllers
             cell = row.Cells[5];
             cell.AddParagraph("Email");
 
+        }
+
+        private static void AddRoleHeader(MigraDoc.DocumentObjectModel.Tables.Table table, string headingType)
+        {
+            Font font = new Font("Arial", 8);
+            MigraDoc.DocumentObjectModel.Tables.Row rowHeader = table.AddRow();
+            rowHeader.HeadingFormat = true;
+            rowHeader.Format.Font.ApplyFont(font);
+            rowHeader.Shading.Color = Colors.PaleGoldenrod;
+            rowHeader.Format.Font.Bold = true;
+            Cell cellHeader = rowHeader.Cells[0];
+            cellHeader.AddParagraph(headingType);
+            cellHeader.MergeRight = 5;
         }
 
         private static string AdjustIfTooWideToFitIn(Cell cell, string text, TextMeasurement tm)

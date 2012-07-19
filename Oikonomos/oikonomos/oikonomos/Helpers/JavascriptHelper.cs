@@ -9,7 +9,7 @@ namespace oikonomos.web.Helpers
     {
         public static string Content(string path)
         {
-            return path.Replace("~",string.Empty) + "?ver=2";
+            return path.Replace("~",string.Empty) + "?ver=17";
         }
     }
 }

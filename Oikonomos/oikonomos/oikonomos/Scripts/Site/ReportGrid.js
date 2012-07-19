@@ -202,7 +202,7 @@ $(document).ready(function () {
         OpenSmsDialog();
         var jqxhr = $.post("/Ajax/FetchChurchCellPhoneNos", $.postify(postData), function (data) {
             if (data.Message == "") {
-                SetSmsList();
+                SetSmsList(data.NoNos);
             }
             else {
                 $("#responseMessage_text").html(data.Message);

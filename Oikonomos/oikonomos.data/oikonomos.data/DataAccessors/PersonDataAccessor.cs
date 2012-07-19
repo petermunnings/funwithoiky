@@ -48,6 +48,10 @@ namespace oikonomos.data.DataAccessors
                                             .FirstOrDefault();
 
                     pg.LastAttended = lastDateAttended == DateTime.MinValue ? "Never" : lastDateAttended.ToString("dd MMM yyyy");
+
+                    var groupClassification = context.Groups.FirstOrDefault(g => g.GroupId == pg.GroupId).GroupClassification;
+                    if (groupClassification != null)
+                        pg.Type = groupClassification.Name;
                 }
 
                 int totalRecords = groups.Count();
@@ -180,17 +184,18 @@ namespace oikonomos.data.DataAccessors
         {
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                var person = (from p in context.People.Include("Church")
+                var people = (from p in context.People
                               where p.Email == emailAddress
                               select p).ToList();
-                
-                if (person.Count == 1)
+
+                if (people.Count == 1)
                 {
+                    var person = FetchPerson(people[0].PersonId, context);
                     string password = RandomPasswordGenerator.Generate(RandomPasswordOptions.AlphaNumeric);
-                    person[0].PasswordHash = FormsAuthentication.HashPasswordForStoringInConfigFile(password, "sha1");
+                    person.PasswordHash = FormsAuthentication.HashPasswordForStoringInConfigFile(password, "sha1");
                     context.SaveChanges();
 
-                    return Email.SendResetPasswordEmail(person[0], password);
+                    return Email.SendResetPasswordEmail(person, password);
                 }
                 else
                 {
@@ -224,9 +229,7 @@ namespace oikonomos.data.DataAccessors
                     return false;
                 }
 
-                var personToUpdate = (from p in context.People
-                                      where p.PersonId == personId
-                                      select p).FirstOrDefault();
+                var personToUpdate = FetchPerson(personId, context);
 
                 if (personToUpdate == null)
                 {
@@ -238,7 +241,7 @@ namespace oikonomos.data.DataAccessors
                 {
                     if (personToUpdate.HasValidEmail())
                     {
-
+                        
                         SendEmailAndPassword(personToUpdate.Firstname,
                             personToUpdate.Family.FamilyName,
                             church,
@@ -267,8 +270,18 @@ namespace oikonomos.data.DataAccessors
         {
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
+                var rolesToInclude = context
+                    .PermissionRoles
+                    .Where(p => p.PermissionId == (int)Permissions.IncludeInChurchList && p.Role.ChurchId == currentPerson.ChurchId)
+                    .Select(p=>p.RoleId)
+                    .ToList();
+
                 var people = (from p in context.People.Include("Family").Include("PersonOptionalFields")
-                              where p.ChurchId == currentPerson.ChurchId
+                              from c in p.Churches
+                              join pr in context.PersonRoles
+                               on p.PersonId equals pr.PersonId
+                              where c.ChurchId == currentPerson.ChurchId
+                              && rolesToInclude.Contains(pr.RoleId)
                               select p);
 
                 if (!(currentPerson.HasPermission(Permissions.ViewChurchContactDetails)))
@@ -304,9 +317,10 @@ namespace oikonomos.data.DataAccessors
                                 if (homegroupId > 0)
                                 {
                                     people = (from p in context.People.Include("Family").Include("PersonOptionalFields")
+                                              from c in p.Churches
                                               join pg in context.PersonGroups
                                               on p.PersonId equals pg.PersonId
-                                              where p.ChurchId == currentPerson.ChurchId
+                                              where c.ChurchId == currentPerson.ChurchId
                                               && pg.GroupId == homegroupId
                                               select p);
                                 }
@@ -385,8 +399,9 @@ namespace oikonomos.data.DataAccessors
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 return (from p in context.People.Include("Family").Include("PersonGroups")
+                        from c in p.Churches
                         from pr in p.PersonRoles
-                        where p.ChurchId == currentPerson.ChurchId
+                        where c.ChurchId == currentPerson.ChurchId
                           && (pr.RoleId == roleId)
                         orderby p.Family.FamilyName, p.PersonId
                         select new PersonListViewModel
@@ -396,8 +411,8 @@ namespace oikonomos.data.DataAccessors
                             Firstname = p.Firstname,
                             Surname = p.Family.FamilyName,
                             HomePhone = p.Family.HomePhone,
-                            CellPhone = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).FirstOrDefault().Value,
-                            WorkPhone = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.WorkPhone).FirstOrDefault().Value,
+                            CellPhone = p.PersonOptionalFields.Where<PersonOptionalField>(cp => cp.OptionalFieldId == (int)OptionalFields.CellPhone).FirstOrDefault().Value,
+                            WorkPhone = p.PersonOptionalFields.Where<PersonOptionalField>(cp => cp.OptionalFieldId == (int)OptionalFields.WorkPhone).FirstOrDefault().Value,
                             Email = p.Email
                         }).ToList();
             }
@@ -408,8 +423,9 @@ namespace oikonomos.data.DataAccessors
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 var people = (from p in context.People.Include("Family").Include("PersonGroups")
+                              from c in p.Churches
                               from pr in p.PersonRoles
-                              where p.ChurchId == currentPerson.ChurchId
+                              where c.ChurchId == currentPerson.ChurchId
                                 && (pr.RoleId == roleId)
                               select p);
 
@@ -669,10 +685,13 @@ namespace oikonomos.data.DataAccessors
                 
                 foreach (string cellPhoneNo in cellPhoneList)
                 {
-                    string intNo = Utils.ConvertCellPhoneToInternational(cellPhoneNo, currentPerson.Church.Country);
-                    if (!validatedNumbers.Contains(intNo))
+                    if (cellPhoneNo != null && cellPhoneNo.Trim() != string.Empty)
                     {
-                        validatedNumbers.Add(intNo);
+                        string intNo = Utils.ConvertCellPhoneToInternational(cellPhoneNo, currentPerson.Church.Country);
+                        if (!validatedNumbers.Contains(intNo))
+                        {
+                            validatedNumbers.Add(intNo);
+                        }
                     }
                 }
             }
@@ -736,7 +755,8 @@ namespace oikonomos.data.DataAccessors
                             Site = p.Site.Name,
                             Skype = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.Skype).FirstOrDefault().Value,
                             Twitter = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.Twitter).FirstOrDefault().Value,
-                            RoleName = (from pr in p.PersonRoles join r in context.Roles on pr.RoleId equals r.RoleId select r.Name).FirstOrDefault()
+                            RoleName = (from pr in p.PersonRoles join r in context.Roles on pr.RoleId equals r.RoleId select r.Name).FirstOrDefault(),
+                            GroupName = p.PersonGroups.Count > 1 ? "Multiple" : (p.PersonGroups.Count == 0 ? "None" : p.PersonGroups.FirstOrDefault().Group.Name)
                         }).ToList();
 
             }
@@ -751,9 +771,10 @@ namespace oikonomos.data.DataAccessors
             }
 
             return (from p in context.People
+                    from c in p.Churches
                     join pr in context.PersonRoles
                         on p.PersonId equals pr.PersonId
-                    where p.ChurchId == currentPerson.ChurchId
+                    where c.ChurchId == currentPerson.ChurchId
                     select p);
         }
         
@@ -769,11 +790,12 @@ namespace oikonomos.data.DataAccessors
             }
 
             var personList = (from p in context.People
+                              from c in p.Churches
                               join pr in context.PersonRoles
                                   on p.PersonId equals pr.PersonId
                               join permissions in context.PermissionRoles
                                   on pr.RoleId equals permissions.RoleId
-                              where p.ChurchId == currentPerson.ChurchId
+                              where c.ChurchId == currentPerson.ChurchId
                                   && permissions.PermissionId == (int)Permissions.Login
                               select p);
 
@@ -851,16 +873,14 @@ namespace oikonomos.data.DataAccessors
         {
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                var person = (from p in context.People.Include("Church").Include("PersonRoles")
+                var person = (from p in context.People.Include("PersonRoles")
                               where p.PublicId == publicId
                               select p).FirstOrDefault();
 
-                if (person != null)
-                {
-                    bool isSysAdmin = person.HasPermission(Permissions.SystemAdministrator); //Work around because Eager loading is not working???
-                    string church = person.Church.Name;
-                    string surname = person.Family.FamilyName;
-                }
+                if (person == null)
+                    return person;
+
+                SetupPermissions(context, person);
                 return person;
             }
         }
@@ -877,14 +897,34 @@ namespace oikonomos.data.DataAccessors
                                 && po.Value == facebookValue
                               select p).FirstOrDefault();
 
-                if (person != null)
-                {
-                    bool isSysAdmin = person.HasPermission(Permissions.SystemAdministrator); //Work around because Eager loading is not working???
-                    string church = person.Church.Name;
-                    string surname = person.Family.FamilyName;
-                }
+                if (person == null)
+                    return person;
+
+                SetupPermissions(context, person);
                 return person;
             }
+        }
+
+        private static void SetupPermissions(oikonomosEntities context, Person person)
+        {
+            SetupPermissions(context, person, person.Churches.First());
+        }
+
+        private static void SetupPermissions(oikonomosEntities context, Person person, Church church)
+        {
+            person.Permissions = (from pr in context.PersonRoles
+                                  join r in context.Roles
+                                    on pr.RoleId equals r.RoleId
+                                  join permissions in context.PermissionRoles
+                                    on r.RoleId equals permissions.RoleId
+                                  where pr.PersonId == person.PersonId
+                                    && r.ChurchId == church.ChurchId
+                                  select permissions.PermissionId)
+                                  .ToList();
+
+            string surname = person.Family.FamilyName;
+            person.Church = church;
+            person.ChurchId = church.ChurchId;
         }
 
         public static void SavePersonFacebookDetails(Person person, long facebookId, DateTime? birthday)
@@ -936,16 +976,22 @@ namespace oikonomos.data.DataAccessors
         {
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                var person = context.People.Include("PersonRoles.Role.PermissionRoles").Where(p => p.PersonId == personId).First();
-                return person;
+                return FetchPerson(personId, context);
             }
+        }
+
+        private static Person FetchPerson(int personId, oikonomosEntities context)
+        {
+            var person = context.People.Include("PersonRoles.Role.PermissionRoles").Where(p => p.PersonId == personId).First();
+            SetupPermissions(context, person);
+            return person;
         }
 
         public static List<Person> FetchPersonFromName(string fullname, string firstname, string surname, string email)
         {
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                var persons = (from p in context.People.Include("Church").Include("Family")
+                var persons = (from p in context.People.Include("Family")
                                join f in context.Families
                                  on p.FamilyId equals f.FamilyId
                                where p.Firstname == firstname
@@ -962,7 +1008,7 @@ namespace oikonomos.data.DataAccessors
                         //Takes out the maiden surname
                         firstname = fullnames[0];
                         surname = fullnames[1];
-                        persons = (from p in context.People.Include("Church").Include("Family")
+                        persons = (from p in context.People.Include("Family")
                                    join f in context.Families
                                      on p.FamilyId equals f.FamilyId
                                    where p.Firstname == firstname
@@ -974,7 +1020,7 @@ namespace oikonomos.data.DataAccessors
                         {
                             firstname = fullnames[0];
                             surname = fullnames[fullnames.Length-1];
-                            persons = (from p in context.People.Include("Church").Include("Family")
+                            persons = (from p in context.People.Include("Family")
                                        join f in context.Families
                                          on p.FamilyId equals f.FamilyId
                                        where p.Firstname == firstname
@@ -987,11 +1033,8 @@ namespace oikonomos.data.DataAccessors
 
                 foreach (Person person in persons)
                 {
-                    bool isSysAdmin = person.HasPermission(Permissions.SystemAdministrator); //Work around because Eager loading is not working???
-                    string church = person.Church.Name;
-                    church = person.Family.FamilyName;
+                    SetupPermissions(context, person);
                 }
-
 
                 return persons;
             }
@@ -999,67 +1042,84 @@ namespace oikonomos.data.DataAccessors
 
         public static PersonViewModel FetchPersonViewModel(int personId, Person currentPerson)
         {
-            //TODO - add security here.  Anyone could troll through the church database - even a visitor
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            if (currentPerson.HasPermission(Permissions.EditChurchPersonalDetails) ||
+               currentPerson.HasPermission(Permissions.EditGroupPersonalDetails) ||
+               currentPerson.HasPermission(Permissions.EditOwnDetails))
             {
-                try
+                using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
                 {
-                    CheckThatChurchIdsMatch(personId, currentPerson, context);
-
-                    var familyId = (from p in context.People
-                                    where p.PersonId == personId
-                                    select p.FamilyId).FirstOrDefault();
-
-                    var person = (from p in context.People.Include("PersonOptionalField").Include("Family")
-                                  where p.PersonId == personId
-                                  select new PersonViewModel
-                                  {
-                                      PersonId = p.PersonId,
-                                      FamilyId = p.FamilyId,
-                                      Firstname = p.Firstname,
-                                      Surname = p.Family.FamilyName,
-                                      Email = p.Email,
-                                      DateOfBirth_Value = p.DateOfBirth,
-                                      Anniversary_Value = p.Anniversary,
-                                      HomePhone = p.Family.HomePhone,
-                                      CellPhone = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).FirstOrDefault().Value,
-                                      WorkPhone = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.WorkPhone).FirstOrDefault().Value,
-                                      Skype = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.Skype).FirstOrDefault().Value,
-                                      Twitter = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.Twitter).FirstOrDefault().Value,
-                                      FacebookId = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.Facebook).FirstOrDefault().Value,
-                                      Occupation = p.Occupation,
-                                      Gender = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.Gender).FirstOrDefault().Value,
-                                      Address1 = p.Family.Address.Line1,
-                                      Address2 = p.Family.Address.Line2,
-                                      Address3 = p.Family.Address.Line3,
-                                      Address4 = p.Family.Address.Line4,
-                                      Lat = p.Family.Address.Lat == null ? 0 : p.Family.Address.Lat,
-                                      Lng = p.Family.Address.Long == null ? 0 : p.Family.Address.Long,
-                                      RoleId = p.PersonRoles.FirstOrDefault().RoleId,
-                                      RoleName = p.PersonRoles.FirstOrDefault().Role.Name,
-                                      HasUsername = p.Username != null,
-                                      FindFamily = false,
-                                      GroupId = 0,
-                                      Site = p.SiteId.HasValue ? p.Site.Name : "Select site...",
-                                      HeardAbout = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.HeardAbout).FirstOrDefault().Value
-                                  }).FirstOrDefault();
-
-
-                    //If the person is only part of one group - then that's his groupid
-                    if ((from pg in context.PersonGroups where pg.PersonId == personId select pg).Count() == 1)
+                    try
                     {
-                        person.GroupId = (from pg in context.PersonGroups where pg.PersonId == personId select pg.GroupId).FirstOrDefault();
-                    }
-                    person.FamilyMembers = FetchFamilyMembers(personId, familyId, context);
-                    person.SecurityRoles = Cache.SecurityRoles(context, currentPerson);
+                        CheckThatChurchIdsMatch(personId, currentPerson, context);
 
-                    return person;
+                        var familyId = (from p in context.People
+                                        where p.PersonId == personId
+                                        select p.FamilyId).FirstOrDefault();
+
+                        var person = (from p in context.People.Include("PersonOptionalField").Include("Family")
+                                      where p.PersonId == personId
+                                      select new PersonViewModel
+                                      {
+                                          PersonId = p.PersonId,
+                                          FamilyId = p.FamilyId,
+                                          Firstname = p.Firstname,
+                                          Surname = p.Family.FamilyName,
+                                          Email = p.Email,
+                                          DateOfBirth_Value = p.DateOfBirth,
+                                          Anniversary_Value = p.Anniversary,
+                                          HomePhone = p.Family.HomePhone,
+                                          CellPhone = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).FirstOrDefault().Value,
+                                          WorkPhone = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.WorkPhone).FirstOrDefault().Value,
+                                          Skype = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.Skype).FirstOrDefault().Value,
+                                          Twitter = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.Twitter).FirstOrDefault().Value,
+                                          FacebookId = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.Facebook).FirstOrDefault().Value,
+                                          Occupation = p.Occupation,
+                                          Gender = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.Gender).FirstOrDefault().Value,
+                                          Address1 = p.Family.Address.Line1,
+                                          Address2 = p.Family.Address.Line2,
+                                          Address3 = p.Family.Address.Line3,
+                                          Address4 = p.Family.Address.Line4,
+                                          Lat = p.Family.Address.Lat == null ? 0 : p.Family.Address.Lat,
+                                          Lng = p.Family.Address.Long == null ? 0 : p.Family.Address.Long,
+                                          HasUsername = p.Username != null,
+                                          FindFamily = false,
+                                          GroupId = 0,
+                                          Site = p.SiteId.HasValue ? p.Site.Name : "Select site...",
+                                          HeardAbout = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.HeardAbout).FirstOrDefault().Value
+                                      }).FirstOrDefault();
+
+                        var role = (from r in context.Roles
+                                    join pr in context.PersonRoles
+                                      on r.RoleId equals pr.RoleId
+                                    where r.ChurchId == currentPerson.ChurchId
+                                    && pr.PersonId == personId
+                                    select r).FirstOrDefault();
+                        person.RoleName = role == null ? string.Empty : role.Name;
+                        person.RoleId = role == null ? 0 : role.RoleId;
+
+                        //If the person is only part of one group - then that's his groupid
+                        if (context.PersonGroups.Where(pg => pg.PersonId == personId && pg.Group.ChurchId == currentPerson.ChurchId).Count() == 1)
+                            person.GroupId = (from pg in context.PersonGroups where pg.PersonId == personId && pg.Group.ChurchId == currentPerson.ChurchId select pg.GroupId).FirstOrDefault();
+                        if (context.PersonGroups.Where(pg => pg.PersonId == personId && pg.Group.ChurchId == currentPerson.ChurchId).Count() > 1)
+                            person.IsInMultipleGroups = true;
+                        else
+                            person.IsInMultipleGroups = false;
+
+                        person.FamilyMembers = FetchFamilyMembers(personId, familyId, context);
+                        person.SecurityRoles = Cache.SecurityRoles(context, currentPerson);
+
+                        return person;
+                    }
+                    catch (Exception ex)
+                    {
+                        //Log ex
+                        return null;
+                    }
                 }
-                catch (Exception ex)
-                {
-                    //Log ex
-                    return null;
-                }
+            }
+            else
+            {
+                throw new Exception(ExceptionMessage.InvalidCredentials);
             }
 
         }
@@ -1068,14 +1128,8 @@ namespace oikonomos.data.DataAccessors
         {
             if (!currentPerson.HasPermission(Permissions.SystemAdministrator))
             {
-                var churchId = (from p in context.People
-                                where p.PersonId == personId
-                                select p.ChurchId).FirstOrDefault();
-
-                if (churchId != currentPerson.ChurchId)
-                {
+                if(!context.People.Where(p=>p.PersonId == personId).First().Churches.Select(c=>c.ChurchId).ToList().Contains(currentPerson.ChurchId))
                     throw new ApplicationException("ChurchId does not match currentPerson ChurchId");
-                }
             }
         }
 
@@ -1120,9 +1174,13 @@ namespace oikonomos.data.DataAccessors
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 var query = (from p in context.People.Include("PersonOptionalField").Include("Address")
+                             from c in p.Churches
                              join pr in context.PersonRoles
                                 on p.PersonId equals pr.PersonId
-                             where p.ChurchId == currentPerson.ChurchId
+                             join r in context.Roles
+                                on pr.RoleId equals r.RoleId
+                             where c.ChurchId == currentPerson.ChurchId
+                               && r.ChurchId == currentPerson.ChurchId
                              select p);
 
                 if (term.Contains(" "))
@@ -1208,14 +1266,17 @@ namespace oikonomos.data.DataAccessors
                 GetPersonToSaveEntity(person, currentPerson, context, out sendWelcomeEmail, out church, out personToSave);
                 bool anniversaryHasChanged = SavePersonalDetails(person, currentPerson, context, personToSave);
                 SaveRole(person, currentPerson, context, personToSave);
+                bool addedToNewGroup = AddPersonToGroup(person, currentPerson, context, personToSave);
                 SaveContactInformation(person, personToSave);
                 SaveAddressInformation(person, personToSave);
                 UpdateRelationships(person, context, personToSave, anniversaryHasChanged);
-                SavePerson(person, context, personToSave);
-                personToSave = FetchPerson(personToSave.PersonId);
+                context.SaveChanges();
+                personToSave = FetchPerson(personToSave.PersonId, context);
                 
                 SendEmails(person, sendWelcomeEmail, church, personToSave);
-                EmailGroupLeader(person, currentPerson, context, church, personToSave);
+                EmailGroupLeader(person, currentPerson, context, church, personToSave, addedToNewGroup);
+
+                context.SaveChanges();
 
                 return personToSave.PersonId;
             }
@@ -1227,151 +1288,196 @@ namespace oikonomos.data.DataAccessors
                 return;
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                var optionalFields = (from pc in context.PersonOptionalFields
-                                      where pc.PersonId == personId
-                                      select pc);
-
-                foreach (PersonOptionalField optionalField in optionalFields)
+                if (RemovePersonFromChurchSpecificTables(personId, currentPerson, context))
                 {
-                    context.DeleteObject(optionalField);
+                    DeletePerson(personId, context);
                 }
-
-                int tableId = (int)Tables.Person;
-
-                //If this person has created or changed any events - change to the person deleting them
-                foreach (var createdEvent in context.Events.Where(e => e.CreatedByPersonId == personId))
-                    createdEvent.CreatedByPersonId = currentPerson.PersonId;
-
-                foreach (var changedEvent in context.Events.Where(e => e.ChangedByPersonId == personId))
-                    changedEvent.ChangedByPersonId = currentPerson.PersonId;
-                
-                var events = (from e in context.Events
-                                      where e.Reference == personId
-                                      && e.TableId == tableId
-                                      select e);
-
-                foreach (Event eventToDelete in events)
-                {
-                    context.DeleteObject(eventToDelete);
-                }
-
-                //Check to see if this address is being used
-                var address = (from p in context.People
-                               join f in context.Families
-                                on p.FamilyId equals f.FamilyId
-                               join a in context.Addresses
-                                on f.AddressId equals a.AddressId  
-                               where p.PersonId != personId
-                               select p).ToList();
-                
-                if (address.Count == 0)
-                {
-                    var addressToDelete = (from a in context.Addresses
-                                           join f in context.Families
-                                            on a.AddressId equals f.AddressId
-                                           join p in context.People
-                                            on f.FamilyId equals p.FamilyId
-                                           where p.PersonId == personId
-                                           select a).FirstOrDefault();
-
-                    context.DeleteObject(addressToDelete);
-                }
-
-                //Remove them from groups
-                var groups = (from g in context.PersonGroups
-                                where g.PersonId == personId
-                                select g);
-
-                foreach (PersonGroup personGroup in groups)
-                {
-                    context.DeleteObject(personGroup);
-                }
-
-                //Remove them from roles
-                var personRoles = (from pr in context.PersonRoles
-                                   where pr.PersonId == personId
-                                   select pr);
-
-                foreach (PersonRole personRole in personRoles)
-                {
-                    context.DeleteObject(personRole);
-                }
-
-                //Remove them from any leadership or admin roles in Home Groups
-                var homeGroups = (from g in context.Groups
-                                  where g.AdministratorId == personId ||
-                                        g.LeaderId == personId
-                                  select g);
-
-                foreach (Group homeGroup in homeGroups)
-                {
-                    if (homeGroup.LeaderId == personId)
-                        homeGroup.LeaderId = null;
-                    if (homeGroup.AdministratorId == personId)
-                        homeGroup.AdministratorId = null;
-                }
-
-                //Remove all the relationships
-                var relationships = (from pr in context.PersonRelationships
-                                   where pr.PersonId == personId
-                                   select pr);
-
-                foreach (PersonRelationship relationship in relationships)
-                {
-                    context.DeleteObject(relationship);
-                }
-
-                var relatedTo = (from pr in context.PersonRelationships
-                                     where pr.PersonRelatedToId == personId
-                                     select pr);
-
-                foreach (PersonRelationship rel in relatedTo)
-                {
-                    context.DeleteObject(rel);
-                }
-
-
-
-                var person = (from p in context.People
-                              where p.PersonId == personId
-                              select p).FirstOrDefault();
-
-                //Check to see if they were the last one in their family
-                var familyMembers = (from p in context.People
-                                     where p.PersonId != personId
-                                     && p.FamilyId == person.FamilyId
-                                     select p).ToList();
-
-                context.DeleteObject(person);
-
-                if (familyMembers.Count == 0)
-                {
-                    var familyToDelete = (from f in context.Families
-                                          join p in context.People
-                                            on f.FamilyId equals p.FamilyId
-                                          where p.PersonId == personId
-                                          select f).FirstOrDefault();
-
-                    context.DeleteObject(familyToDelete);
-                }
-
                 context.SaveChanges();
             }
+        }
 
+        private static void DeletePerson(int personId, oikonomosEntities context)
+        {
+            //Check to see if this address is being used
+            var address = (from p in context.People
+                           join f in context.Families
+                            on p.FamilyId equals f.FamilyId
+                           join a in context.Addresses
+                            on f.AddressId equals a.AddressId
+                           where p.PersonId != personId
+                           select p).ToList();
+
+            if (address.Count == 0)
+            {
+                var addressToDelete = (from a in context.Addresses
+                                       join f in context.Families
+                                        on a.AddressId equals f.AddressId
+                                       join p in context.People
+                                        on f.FamilyId equals p.FamilyId
+                                       where p.PersonId == personId
+                                       select a).FirstOrDefault();
+
+                context.DeleteObject(addressToDelete);
+            }
+
+            //Remove all the relationships
+            var relationships = (from pr in context.PersonRelationships
+                                 where pr.PersonId == personId
+                                 select pr);
+
+            foreach (PersonRelationship relationship in relationships)
+            {
+                context.DeleteObject(relationship);
+            }
+
+            var relatedTo = (from pr in context.PersonRelationships
+                             where pr.PersonRelatedToId == personId
+                             select pr);
+
+            foreach (PersonRelationship rel in relatedTo)
+            {
+                context.DeleteObject(rel);
+            }
+
+
+            var optionalFields = (from pc in context.PersonOptionalFields
+                                  where pc.PersonId == personId
+                                  select pc);
+
+            foreach (PersonOptionalField optionalField in optionalFields)
+            {
+                context.DeleteObject(optionalField);
+            }
+
+            var person = (from p in context.People
+                          where p.PersonId == personId
+                          select p).FirstOrDefault();
+
+            //Check to see if they were the last one in their family
+            var familyMembers = (from p in context.People
+                                 where p.PersonId != personId
+                                 && p.FamilyId == person.FamilyId
+                                 select p).ToList();
+
+            context.DeleteObject(person);
+
+            if (familyMembers.Count == 0)
+            {
+                var familyToDelete = (from f in context.Families
+                                      join p in context.People
+                                        on f.FamilyId equals p.FamilyId
+                                      where p.PersonId == personId
+                                      select f).FirstOrDefault();
+
+                context.DeleteObject(familyToDelete);
+            }
+        }
+
+        private static bool RemovePersonFromChurchSpecificTables(int personId, Person currentPerson, oikonomosEntities context)
+        {
+            int tableId = (int)Tables.Person;
+
+            //If this person has created or changed any events - change to the person deleting them
+            foreach (var createdEvent in context.Events.Where(e => e.CreatedByPersonId == personId))
+                createdEvent.CreatedByPersonId = currentPerson.PersonId;
+
+            foreach (var changedEvent in context.Events.Where(e => e.ChangedByPersonId == personId))
+                changedEvent.ChangedByPersonId = currentPerson.PersonId;
+
+            var events = (from e in context.Events
+                          where e.Reference == personId
+                          && e.TableId == tableId
+                          && e.ChurchId == currentPerson.ChurchId
+                          select e);
+
+            foreach (Event eventToDelete in events)
+            {
+                context.DeleteObject(eventToDelete);
+            }
+
+            //Remove them from groups
+            var groups = (from g in context.Groups
+                          from pg in g.PersonGroups
+                          where pg.PersonId == personId
+                          && g.ChurchId == currentPerson.ChurchId
+                          select pg);
+
+            foreach (PersonGroup personGroup in groups)
+            {
+                context.DeleteObject(personGroup);
+            }
+
+            //Remove them from roles
+            var personRoles = (from r in context.Roles
+                               from pr in r.PersonRoles
+                               where pr.PersonId == personId
+                               && r.ChurchId == currentPerson.ChurchId
+                               select pr);
+
+            foreach (PersonRole personRole in personRoles)
+            {
+                context.DeleteObject(personRole);
+            }
+
+            //Remove them from any leadership or admin roles in Home Groups
+            var groupsThePersonLeadsOrAdministrates = (from g in context.Groups
+                                                       where (g.AdministratorId == personId ||
+                                                             g.LeaderId == personId)
+                                                             && g.ChurchId == currentPerson.ChurchId
+                                                       select g);
+
+            foreach (Group group in groupsThePersonLeadsOrAdministrates)
+            {
+                if (group.LeaderId == personId)
+                    group.LeaderId = null;
+                if (group.AdministratorId == personId)
+                    group.AdministratorId = null;
+            }
+
+            var person = context.People.Where(p => p.PersonId == personId).FirstOrDefault();
+            bool isTheLastChurch = false;
+            var currentChurch = context.Churches.Where(c => c.ChurchId == currentPerson.ChurchId).FirstOrDefault();
+            if (person.Churches.Count == 1 && person.Churches.Contains(currentChurch))
+            {
+                CheckToSeeIfTheFamilyChurchLinkCanBeRemoved(context, person, currentChurch);
+                person.Churches.Remove(currentChurch);
+                isTheLastChurch = true;
+            }
+            return isTheLastChurch;
+        }
+
+        private static void CheckToSeeIfTheFamilyChurchLinkCanBeRemoved(oikonomosEntities context, Person person, Church currentChurch)
+        {
+            var familyMembersInThisChurch = (from p in context.People
+                                             from c in p.Churches
+                                             where p.FamilyId == person.FamilyId
+                                                 && c.ChurchId == currentChurch.ChurchId
+                                             select p).Count();
+            if (familyMembersInThisChurch == 1)
+            {
+                person.Family.Churches.Remove(currentChurch);
+            }
+        }
+
+
+        public static Church SelectNewChurch(Person currentPerson, int churchId)
+        {
+            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            {
+                var churchIds = context.People.Where(p => p.PersonId == currentPerson.PersonId).First().Churches.Select(c => c.ChurchId);
+                var church = context.Churches.Where(c => c.ChurchId == churchId).FirstOrDefault();
+                if (church != null && (churchIds.Contains(church.ChurchId) || currentPerson.HasPermission(Permissions.SystemAdministrator)))
+                {
+                    SetupPermissions(context, currentPerson, church);
+                    return church;
+                }
+                return null;
+            }
         }
 
         #region Private Methods
-        private static void SavePerson(PersonViewModel person, oikonomosEntities context, Person personToSave)
-        {
-            if (person.PersonId == 0)
-            {
-                context.AddToPeople(personToSave);
-            }
 
-            context.SaveChanges();
-        }
-
-        private static void EmailGroupLeader(PersonViewModel person, Person currentPerson, oikonomosEntities context, Church church, Person personToSave)
+        private static void EmailGroupLeader(PersonViewModel person, Person currentPerson, oikonomosEntities context, Church church, Person personToSave, bool addedToNewGroup)
         {
             if (personToSave.HasPermission(Permissions.NotifyGroupLeaderOfVisit) && person.GroupId > 0)
             {
@@ -1381,20 +1487,12 @@ namespace oikonomos.data.DataAccessors
                                    select pg).FirstOrDefault();
 
                 if (personGroup == null)
-                {
-                    personGroup = AddPersonToGroup(person, context, personToSave, personGroup);
-                }
-                else if (personGroup.GroupId != person.GroupId)
-                {
-                    MovePersonToGroup(person, context, personGroup);
+                    return;
+                else if (addedToNewGroup)
                     sendEmailToGroupLeader = true;
-                }
 
-                if (personGroup.Group.LeaderId == currentPerson.PersonId ||
-                    personGroup.Group.AdministratorId == currentPerson.PersonId)
-                {
+                if (personGroup.Group.LeaderId == currentPerson.PersonId || personGroup.Group.AdministratorId == currentPerson.PersonId)
                     sendEmailToGroupLeader = false;  //This is the groupleader
-                }
 
                 if (sendEmailToGroupLeader)
                 {
@@ -1479,17 +1577,46 @@ namespace oikonomos.data.DataAccessors
         {
             if (person.RoleId == 0)
                 return;
-            bool addRole = false;
-            if (personToSave.PersonRoles.Count > 0 && personToSave.PersonRoles.FirstOrDefault().RoleId != person.RoleId)
-            {
-                personToSave.PersonRoles.Remove(personToSave.PersonRoles.FirstOrDefault());
-                addRole = true;
-            }
 
-            if (personToSave.PersonRoles.Count == 0 || addRole)
+            var personRole = context.PersonRoles.FirstOrDefault(pr => (pr.Role.ChurchId == currentPerson.ChurchId) && (pr.PersonId == personToSave.PersonId));
+            if (personRole == null)
             {
                 SavePersonRole(personToSave, person.RoleId);
+                return;
             }
+
+            if (personRole.RoleId == person.RoleId)
+                return;
+
+            context.DeleteObject(personRole);
+            SavePersonRole(personToSave, person.RoleId);
+        }
+
+        private static bool AddPersonToGroup(PersonViewModel person, Person currentPerson, oikonomosEntities context, Person personToSave)
+        {
+            if (person.IsInMultipleGroups)
+                return false;
+
+            if (personToSave.PersonGroups.Count == 1 && personToSave.PersonGroups.First().GroupId != person.GroupId)
+            {
+                if (person.GroupId == 0)
+                {
+                    context.DeleteObject(personToSave.PersonGroups.First());
+                    return false;
+                }
+                else
+                {
+                    personToSave.PersonGroups.First().GroupId = person.GroupId;
+                    return true;
+                }
+            }
+
+            if (personToSave.PersonGroups.Count == 0 && person.GroupId > 0)
+            {
+                SavePersonGroup(personToSave, person.GroupId);
+                return true;
+            }
+            return false;
         }
 
         private static void SavePersonRole(Person personToSave, int roleId)
@@ -1501,23 +1628,14 @@ namespace oikonomos.data.DataAccessors
             personToSave.PersonRoles.Add(pr);
         }
 
-        private static void MovePersonToGroup(PersonViewModel person, oikonomosEntities context, PersonGroup personGroup)
-        {
-            personGroup.GroupId = person.GroupId;
-            context.SaveChanges();
-        }
-
-        private static PersonGroup AddPersonToGroup(PersonViewModel person, oikonomosEntities context, Person personToSave, PersonGroup personGroup)
-        {
-            personGroup = new PersonGroup();
-            personGroup.GroupId = person.GroupId;
-            personGroup.Person = personToSave;
-            personGroup.Joined = DateTime.Now;
-            personGroup.Created = DateTime.Now;
-            personGroup.Changed = DateTime.Now;
-            personToSave.PersonGroups.Add(personGroup);
-            context.SaveChanges();
-            return personGroup;
+        private static void SavePersonGroup(Person personToSave, int groupId)
+        {   
+            PersonGroup pg = new PersonGroup();
+            pg.GroupId = groupId;
+            pg.Created = DateTime.Now;
+            pg.Changed = DateTime.Now;
+            pg.Joined = DateTime.Now;
+            personToSave.PersonGroups.Add(pg);
         }
 
         private static void UpdateRelationships(PersonViewModel person, oikonomosEntities context, Person personToSave, bool anniversaryHasChanged)
@@ -1652,7 +1770,10 @@ namespace oikonomos.data.DataAccessors
             }
             else
             {
-                personToSave.ChurchId = currentPerson.ChurchId;
+                context.AddToPeople(personToSave);
+                personToSave.Churches.Add(church);
+                personToSave.ChurchId = church.ChurchId;
+                personToSave.Church = church;
 
                 personToSave.Created = DateTime.Now;
                 if (church.SendWelcome)
@@ -1688,7 +1809,9 @@ namespace oikonomos.data.DataAccessors
                     {
                         personToSave.Family = new Family();
                         personToSave.Family.Created = DateTime.Now;
-                        personToSave.Family.ChurchId = currentPerson.ChurchId;
+                        personToSave.Family.Churches.Add(church);
+                        personToSave.Family.ChurchId = church.ChurchId;
+                        personToSave.Family.Church = church;
                     }
                     else
                     {
@@ -1699,7 +1822,9 @@ namespace oikonomos.data.DataAccessors
                 {
                     personToSave.Family = new Family();
                     personToSave.Family.Created = DateTime.Now;
-                    personToSave.Family.ChurchId = currentPerson.ChurchId;
+                    personToSave.Family.Churches.Add(church);
+                    personToSave.Family.ChurchId = church.ChurchId;
+                    personToSave.Family.Church = church;
                 }
             }
             else
@@ -1711,8 +1836,10 @@ namespace oikonomos.data.DataAccessors
                 if (personToSave.Family == null)
                 {
                     personToSave.Family = new Family();
-                    personToSave.Family.Created = DateTime.Now;
-                    personToSave.Family.ChurchId = currentPerson.ChurchId;
+                    personToSave.Family.Created = DateTime.Now; 
+                    personToSave.Family.Churches.Add(church);
+                    personToSave.Family.ChurchId = church.ChurchId;
+                    personToSave.Family.Church = church;
                 }
             }
 
@@ -1741,7 +1868,7 @@ namespace oikonomos.data.DataAccessors
                   church,
                   email,
                   password,
-                  true,
+                  personToSave.HasPermission(Permissions.SendVisitorWelcomeLetter),
                   includeUsername);
         }
 
@@ -1759,7 +1886,7 @@ namespace oikonomos.data.DataAccessors
                   church,
                   email,
                   password,
-                  false,
+                  personToSave.HasPermission(Permissions.SendVisitorWelcomeLetter),
                   false);
         }
 
@@ -1881,9 +2008,8 @@ namespace oikonomos.data.DataAccessors
                 {
                     AddPersonRelationship(familyMember.PersonId, person.PersonId, (int)oppositeRelationship, familyMemberToUpdate, context);
 
-                    var personToUpdate = (from p in context.People
-                                          where p.PersonId == person.PersonId
-                                          select p).FirstOrDefault();
+                    var personToUpdate = FetchPerson(person.PersonId, context); 
+
                     //What about the rest of the family
                     if (relationship == Relationships.Husband || relationship == Relationships.Wife)
                     {
@@ -2049,10 +2175,10 @@ namespace oikonomos.data.DataAccessors
                         && p.PasswordHash == passwordHash
                         && permissions.PermissionId == (int)Permissions.Login
                     select p).FirstOrDefault();
-            if (person != null)
-            {
-                bool isSysAdmin = person.HasPermission(Permissions.SystemAdministrator); //Work around because Eager loading is not working???
-            }
+            if (person == null)
+                return person;
+
+            SetupPermissions(context, person);
             return person;
         }
 
@@ -2066,5 +2192,6 @@ namespace oikonomos.data.DataAccessors
                     select p).FirstOrDefault();
         }
         #endregion Private Methods
+
     }
 }

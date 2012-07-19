@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "UpdateBirthdaysService", "UpdateBirthdaysService\UpdateBirthdaysService.ccproj", "{2C91B6F4-E48D-4F13-8EEF-418942BD070D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdateBirthdayWorkerRole", "UpdateBirthdayWorkerRole\UpdateBirthdayWorkerRole.csproj", "{C0E1BFD6-B079-4F67-BDED-E1712F6B255D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2C91B6F4-E48D-4F13-8EEF-418942BD070D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C91B6F4-E48D-4F13-8EEF-418942BD070D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C91B6F4-E48D-4F13-8EEF-418942BD070D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C91B6F4-E48D-4F13-8EEF-418942BD070D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0E1BFD6-B079-4F67-BDED-E1712F6B255D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0E1BFD6-B079-4F67-BDED-E1712F6B255D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0E1BFD6-B079-4F67-BDED-E1712F6B255D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0E1BFD6-B079-4F67-BDED-E1712F6B255D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
