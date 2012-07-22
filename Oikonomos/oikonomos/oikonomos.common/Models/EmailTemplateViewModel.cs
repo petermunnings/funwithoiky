@@ -7,7 +7,7 @@ namespace oikonomos.common.Models
 {
     public class EmailTemplateViewModel
     {
-        public int ChurchEmailTemplateId { get; set; }
+        public int EmailTemplateId { get; set; }
         public string Name { get; set; }
     }
 }

@@ -9,21 +9,27 @@ namespace oikonomos.data.DataAccessors
 {
     public class SettingsDataAccessor
     {
-        public static void SaveChurchEmailTemplate(Person currentPerson, int churchEmailTemplateId, string template)
+        public static void SaveChurchEmailTemplate(Person currentPerson, int churchId, int emailTemplateId, string template)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                var churchEmailTemplate = context.ChurchEmailTemplates.FirstOrDefault(x => x.ChurchEmailTemplateId == churchEmailTemplateId);
+                var churchEmailTemplate = context.ChurchEmailTemplates.FirstOrDefault(x => x.ChurchId == churchId && x.EmailTemplateId == emailTemplateId);
+                if (churchEmailTemplate == null)
+                {
+                    churchEmailTemplate = new ChurchEmailTemplate {ChurchId = churchId, EmailTemplateId = emailTemplateId};
+                    context.ChurchEmailTemplates.AddObject(churchEmailTemplate);
+                }
                 churchEmailTemplate.Template = template;
                 context.SaveChanges();
             }
         }
 
-        public static string FetchChurchEmailTemplate(Person currentPerson, int churchEmailTemplateId)
+        public static string FetchChurchEmailTemplate(Person currentPerson, int churchId, int emailTemplateId)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                return context.ChurchEmailTemplates.FirstOrDefault(x => x.ChurchEmailTemplateId == churchEmailTemplateId).Template;
+                var churchEmailTemplate = context.ChurchEmailTemplates.FirstOrDefault(x => x.ChurchId == churchId && x.EmailTemplateId == emailTemplateId);
+                return churchEmailTemplate==null ? string.Empty : churchEmailTemplate.Template;
             }
         }
         
@@ -582,17 +588,30 @@ namespace oikonomos.data.DataAccessors
 
                 settings.RoleId = settings.Roles[0].RoleId;
 
-                settings.EmailTemplates = (from et in context.ChurchEmailTemplates
-                                           where et.ChurchId == currentPerson.ChurchId
-                                           select new EmailTemplateViewModel
-                                           {
-                                               ChurchEmailTemplateId = et.ChurchEmailTemplateId,
-                                               Name = et.EmailTemplate.Name
-                                           }).ToList();
-
-                settings.ChurchEmailTemplateId = settings.EmailTemplates[0].ChurchEmailTemplateId;
-
                 return settings;
+            }
+        }
+
+        public static SysAdminViewModel FetchSysAdminViewModel(Person currentPerson)
+        {
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            {
+                var sysAdminViewModel = new SysAdminViewModel();
+                if (currentPerson.HasPermission(Permissions.SystemAdministrator))
+                {
+                    sysAdminViewModel.EmailTemplates = (from et in context.EmailTemplates
+                                                        select new EmailTemplateViewModel
+                                                        {
+                                                            EmailTemplateId = et.EmailTemplateId,
+                                                            Name = et.Name
+                                                        }).ToList();
+
+                    sysAdminViewModel.EmailTemplateId = sysAdminViewModel.EmailTemplates[0].EmailTemplateId;
+
+                    sysAdminViewModel.ChurchId = currentPerson.ChurchId;
+                    sysAdminViewModel.Churches = ChurchDataAccessor.FetchChurches(currentPerson);
+                }
+                return sysAdminViewModel;
             }
         }
 

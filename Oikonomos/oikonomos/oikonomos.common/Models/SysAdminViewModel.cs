@@ -9,5 +9,7 @@ namespace oikonomos.common.Models
     {
         public int ChurchId { get; set; }
         public List<ChurchViewModel> Churches { get; set; }
+        public int EmailTemplateId { get; set; }
+        public List<EmailTemplateViewModel> EmailTemplates { get; set; }
     }
 }

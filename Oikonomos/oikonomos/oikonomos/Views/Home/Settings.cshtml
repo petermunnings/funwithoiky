@@ -44,39 +44,35 @@
         {
             if (ViewBag.GroupId > 0)
             {
-        <li><a href="#tabs-group">Group</a></li>
+                <li><a href="#tabs-group">Group</a></li>
             }
         }
         @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditSettings))
         {
-        <li><a href="#tabs-church">Contact Details</a></li>
-        <li><a href="#tabs-sites">Sites</a></li>
-        <li><a href="#tabs-generalSettings">General Settings</a></li>
-        <li><a href="#tabs-smsSettings">Sms Settings</a></li>
+            <li><a href="#tabs-church">Contact Details</a></li>
+            <li><a href="#tabs-sites">Sites</a></li>
+            <li><a href="#tabs-generalSettings">General Settings</a></li>
+            <li><a href="#tabs-smsSettings">Sms Settings</a></li>
         }
         @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditPermissions))
         {
-        <li><a href="#tabs-permissionSettings">Permissions</a></li>
-        }
-        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditEmailTemplates))
-        {
-        <li><a href="#tabs-emailTemplates">Email Templates</a></li>
+            <li><a href="#tabs-permissionSettings">Permissions</a></li>
         }
         
     </ul>
     <div id="tabs-personal">
         <table class="ui-widget">
             <tr>
-		        <td>Current password</td>
-		        <td><input type="password" id="currentPassword" class="ui-corner-all" /></td>
+                <td>Current password</td>
+                <td><input type="password" id="currentPassword" class="ui-corner-all" /></td>
             </tr>
             <tr>
                 <td>New password</td>
-		        <td><input type="password" id="newPassword1" class="ui-corner-all" /></td>
+                <td><input type="password" id="newPassword1" class="ui-corner-all" /></td>
             </tr>
             <tr>
                 <td>Retype new password</td>
-		        <td><input type="password" id="newPassword2" class="ui-corner-all" /></td>
+                <td><input type="password" id="newPassword2" class="ui-corner-all" /></td>
             </tr>
             <tr>
                 <td>&nbsp;</td>
@@ -91,64 +87,64 @@
             </tr>
         </table>
     </div>
-@if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditOwnGroups))
-{
-    if (ViewBag.GroupId > 0)
+    @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditOwnGroups))
     {
+        if (ViewBag.GroupId > 0)
+        {
 
-    <div id="tabs-group">
-        <p>
-            Update location of @ViewBag.GroupName group
-        </p>
-        <div id="groupAddress" style="display:table">
-            <div class="tableRow">
-            <div style="text-align:right; display:table-cell">Address&nbsp;</div>
-            <div style="text-align:left; display:table-cell"><input id="text_address1" type="text" value="@Model.GroupSettings.Address1" class="ui-corner-all" />
-            <img id="ajax_gpsCoordinates" alt="loading" src="/Content/images/ajax-loader.gif" style="display:none" /></div>
-            </div>
+            <div id="tabs-group">
+                <p>
+                    Update location of @ViewBag.GroupName group
+                </p>
+                <div id="groupAddress" style="display:table">
+                    <div class="tableRow">
+                        <div style="text-align:right; display:table-cell">Address&nbsp;</div>
+                        <div style="text-align:left; display:table-cell"><input id="text_address1" type="text" value="@Model.GroupSettings.Address1" class="ui-corner-all" />
+                            <img id="ajax_gpsCoordinates" alt="loading" src="/Content/images/ajax-loader.gif" style="display:none" /></div>
+                    </div>
 
-            <div class="tableRow">
-            <div style="text-align:right; display:table-cell">&nbsp;</div>
-            <div style="text-align:left; display:table-cell"><input id="text_address2" type="text" value="@Model.GroupSettings.Address2" class="ui-corner-all" /></div>
-            <img id="ajax_gpsCoordinates2" alt="loading" src="/Content/images/ajax-loader.gif" style="display:none" />
-            </div>
+                    <div class="tableRow">
+                        <div style="text-align:right; display:table-cell">&nbsp;</div>
+                        <div style="text-align:left; display:table-cell"><input id="text_address2" type="text" value="@Model.GroupSettings.Address2" class="ui-corner-all" /></div>
+                        <img id="ajax_gpsCoordinates2" alt="loading" src="/Content/images/ajax-loader.gif" style="display:none" />
+                    </div>
 
-            <div class="tableRow">
-            <div style="text-align:right; display:table-cell">&nbsp;</div>
-            <div style="text-align:left; display:table-cell"><input id="text_address3" type="text" value="@Model.GroupSettings.Address3" class="ui-corner-all" /></div>
+                    <div class="tableRow">
+                        <div style="text-align:right; display:table-cell">&nbsp;</div>
+                        <div style="text-align:left; display:table-cell"><input id="text_address3" type="text" value="@Model.GroupSettings.Address3" class="ui-corner-all" /></div>
+                    </div>
+    
+                    <div class="tableRow">
+                        <div style="text-align:right; display:table-cell">&nbsp;</div>
+                        <div style="text-align:left; display:table-cell">
+                            <input id="text_address4" type="text" value="@Model.GroupSettings.Address4" class="ui-corner-all" />
+                            <input id="hidden_lat" type="hidden" value="@Model.GroupSettings.Lat" />
+                            <input id="hidden_lng" type="hidden" value="@Model.GroupSettings.Lng" />
+                            <input id="hidden_addressType" type="hidden" value="@Model.GroupSettings.AddressType" />
+                            <input id="hidden_groupId" type="hidden" value="@Model.GroupSettings.GroupId" />
+                            <input id="hidden_addressId" type="hidden" value="@Model.GroupSettings.AddressId" />
+                            <input id="hidden_addressChosen" type="hidden"/>
+                        </div>
+                    </div>
+
+                    <div class="tableRow">
+                        <div style="text-align:right; display:table-cell; width:160px">
+                        </div>
+                        <div style="text-align:left; display:table-cell">
+                            <button id="button_saveAddress">Save</button>&nbsp;
+                            <img id="ajax_loaderAddress" src="/Content/images/ajax-loader.gif" style="display:none" />
+                            <span id="saveAddressMessage"></span>
+                        </div>
+                    </div>
+                </div>
             </div>
     
-            <div class="tableRow">
-            <div style="text-align:right; display:table-cell">&nbsp;</div>
-            <div style="text-align:left; display:table-cell">
-                <input id="text_address4" type="text" value="@Model.GroupSettings.Address4" class="ui-corner-all" />
-                <input id="hidden_lat" type="hidden" value="@Model.GroupSettings.Lat" />
-                <input id="hidden_lng" type="hidden" value="@Model.GroupSettings.Lng" />
-                <input id="hidden_addressType" type="hidden" value="@Model.GroupSettings.AddressType" />
-                <input id="hidden_groupId" type="hidden" value="@Model.GroupSettings.GroupId" />
-                <input id="hidden_addressId" type="hidden" value="@Model.GroupSettings.AddressId" />
-                <input id="hidden_addressChosen" type="hidden"/>
-            </div>
-            </div>
-
-            <div class="tableRow">
-                <div style="text-align:right; display:table-cell; width:160px">
-                </div>
-                <div style="text-align:left; display:table-cell">
-                    <button id="button_saveAddress">Save</button>&nbsp;
-                    <img id="ajax_loaderAddress" src="/Content/images/ajax-loader.gif" style="display:none" />
-                    <span id="saveAddressMessage"></span>
-                </div>
-            </div>
-        </div>
-    </div>
-    
+        }
     }
-}
 
-@if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditSettings))
-{
-    <div id="tabs-church">
+    @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditSettings))
+    {
+        <div id="tabs-church">
             <div>
                 <div id="churchContactDetails" style="display:table">
                     <div class="tableRow">
@@ -183,7 +179,7 @@
                     <div class="tableRow">
                         <div style="text-align:right; display:table-cell">Address&nbsp;</div>
                         <div style="text-align:left; display:table-cell"><input id="text_churchaddress1" type="text" value="@Model.ChurchSettings.Address1" class="ui-corner-all" />
-                        <img id="ajax_churchGpsCoordinates" alt="loading" src="/Content/images/ajax-loader.gif" style="display:none" /></div>
+                            <img id="ajax_churchGpsCoordinates" alt="loading" src="/Content/images/ajax-loader.gif" style="display:none" /></div>
                     </div>
 
                     <div class="tableRow">
@@ -218,32 +214,32 @@
                                         {
                                             <text>selected="selected"</text>
                                         }
-                                        >humanity</option>
+                                    >humanity</option>
                                 <option @if (Model.ChurchSettings.UITheme == "redmond")
                                         {
                                             <text>selected="selected"</text>
                                         }
-                                        >redmond</option>
+                                    >redmond</option>
                                 <option @if (Model.ChurchSettings.UITheme == "sunny")
                                         {
                                             <text>selected="selected"</text>
                                         }
-                                        >sunny</option>
+                                    >sunny</option>
                                 <option @if (Model.ChurchSettings.UITheme == "ui-lightness")
                                         {
                                             <text>selected="selected"</text>
                                         }
-                                        >ui-lightness</option>
+                                    >ui-lightness</option>
                                 <option @if (Model.ChurchSettings.UITheme == "start")
                                         {
                                             <text>selected="selected"</text>
                                         }
-                                        >start</option>
+                                    >start</option>
                                 <option @if (Model.ChurchSettings.UITheme == "excite-bike")
                                         {
                                             <text>selected="selected"</text>
                                         }
-                                        >excite-bike</option>                                        
+                                    >excite-bike</option>                                        
 
 
                             </select>
@@ -256,32 +252,32 @@
                     </div>
                 </div>
             </div>
-        <button id="button_saveChurch">Save</button>&nbsp;<img id="ajaxLoader_Church" src="/Content/images/ajax-loader.gif" style="display:none" />
-        <span id="saveMessage_Church"></span>             
-    </div>
-    <div id="tabs-sites">
-        <div style="text-align:left; vertical-align:middle" class="ui-widget-content">
+            <button id="button_saveChurch">Save</button>&nbsp;<img id="ajaxLoader_Church" src="/Content/images/ajax-loader.gif" style="display:none" />
+            <span id="saveMessage_Church"></span>             
+        </div>
+        <div id="tabs-sites">
+            <div style="text-align:left; vertical-align:middle" class="ui-widget-content">
                 <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="siteText" class="ui-corner-all" />&nbsp;
                 <button id="addButton">Add</button>&nbsp;<span id="saveMessage_Sites"></span><br />&nbsp;
-        </div>
+            </div>
 
-        <table id="jqgSites" cellpadding="0" cellspacing="0" style="width:800px"></table>
-        <div id="jqgpSites" style="text-align:center;"></div>
+            <table id="jqgSites" cellpadding="0" cellspacing="0" style="width:800px"></table>
+            <div id="jqgpSites" style="text-align:center;"></div>
  
-    </div>
-    <div id="tabs-generalSettings">
-        <div class="ui-widget-header">Optional fields</div>
+        </div>
+        <div id="tabs-generalSettings">
+            <div class="ui-widget-header">Optional fields</div>
             <div style="display:table; table-layout: fixed;">
                 <div class="tableRow">
                     <div style="display:table-cell; width:300px">
-                         <div>
+                        <div>
                             <ul id="optionalFieldList"></ul>
                         </div>
                         <button id="button_saveGeneralSettings">Save</button>&nbsp;<img id="ajaxLoader_generalSettings" src="/Content/images/ajax-loader.gif" style="display:none" />
                         <span id="saveMessage_generalSettings"></span>
                     </div>
                     <div style="display:table-cell; width:390px">
-	                    <div id="div_suburbs" class="ui-widget-content ui-corner-all" style="display:table">
+                        <div id="div_suburbs" class="ui-widget-content ui-corner-all" style="display:table">
                             <div class="tableRow ui-widget-header" id="row_suburbs">
                                 <div style="text-align:left; display:table-cell; vertical-align:middle; width:390px">&nbsp;<img id="button_expandCollapseSuburbs" src="/Content/Images/collapse.png" style="width:10px"/>&nbsp;&nbsp;&nbsp;<span style="text-align:left">Suburbs</span></div>
                             </div>
@@ -301,7 +297,7 @@
                             </div>
                         </div>
                     
-                    	<div id="div_hgClassification" class="ui-widget-content ui-corner-all" style="display:table">
+                        <div id="div_hgClassification" class="ui-widget-content ui-corner-all" style="display:table">
                             <div class="tableRow ui-widget-header" id="row_hgClassifications">
                                 <div style="text-align:left; display:table-cell; vertical-align:middle; width:390px">&nbsp;<img id="button_expandCollapseHGClassification" src="/Content/Images/collapse.png" style="width:10px"/>&nbsp;&nbsp;&nbsp;<span style="text-align:left">Group Classifications</span></div>
                             </div>
@@ -322,7 +318,7 @@
                         </div>
 
                     
-                    	<div id="div_hgEventType" class="ui-widget-content ui-corner-all" style="display:table">
+                        <div id="div_hgEventType" class="ui-widget-content ui-corner-all" style="display:table">
                             <div class="tableRow ui-widget-header" id="row_hgEventTypes">
                                 <div style="text-align:left; display:table-cell; vertical-align:middle; width:390px">&nbsp;<img id="button_expandCollapseHGEventType" src="/Content/Images/collapse.png" style="width:10px"/>&nbsp;&nbsp;&nbsp;<span style="text-align:left">Group Events</span></div>
                             </div>
@@ -346,70 +342,51 @@
             </div>
         </div>
     
-    <div id="tabs-smsSettings">
-        <p>Currently only one sms provider, Bulk SMS, is supported.  In order to use the sms functionality you will need a Bulk Sms account.  You can set up an account here: <a href="bulksms.2way.co.za">bulksms.2way.co.za</a></p>
-        <p>Once your account is setup, please fill in the credentials below:</p>
-        <div id="bulkSmsDetails" style="display:table">
-            <div class="tableRow">
-                <div style="text-align:right; display:table-cell">Bulk Sms Username&nbsp;</div>
-                <div style="text-align:left; display:table-cell">
-                    <input id="text_bulkSmsUsername" value="@Model.ChurchSettings.BulkSmsUsername" type="text" class="ui-corner-all" />
+        <div id="tabs-smsSettings">
+            <p>Currently only one sms provider, Bulk SMS, is supported.  In order to use the sms functionality you will need a Bulk Sms account.  You can set up an account here: <a href="bulksms.2way.co.za">bulksms.2way.co.za</a></p>
+            <p>Once your account is setup, please fill in the credentials below:</p>
+            <div id="bulkSmsDetails" style="display:table">
+                <div class="tableRow">
+                    <div style="text-align:right; display:table-cell">Bulk Sms Username&nbsp;</div>
+                    <div style="text-align:left; display:table-cell">
+                        <input id="text_bulkSmsUsername" value="@Model.ChurchSettings.BulkSmsUsername" type="text" class="ui-corner-all" />
+                    </div>
+                </div>
+                <div class="tableRow">
+                    <div style="text-align:right; display:table-cell">Bulk Sms Password&nbsp;</div>
+                    <div style="text-align:left; display:table-cell">
+                        <input id="text_bulkSmsPassword" value="@Model.ChurchSettings.BulkSmsPassword" type="password" class="ui-corner-all" />
+                    </div>
                 </div>
             </div>
-            <div class="tableRow">
-                <div style="text-align:right; display:table-cell">Bulk Sms Password&nbsp;</div>
-                <div style="text-align:left; display:table-cell">
-                    <input id="text_bulkSmsPassword" value="@Model.ChurchSettings.BulkSmsPassword" type="password" class="ui-corner-all" />
-                </div>
-            </div>
+            <button id="button_saveBulkSmsDetails">Save</button>&nbsp;<img id="ajaxLoader_BulkSmsDetails" src="/Content/images/ajax-loader.gif" style="display:none" />
+            <span id="saveMessage_BulkSmsDetails"></span>
         </div>
-        <button id="button_saveBulkSmsDetails">Save</button>&nbsp;<img id="ajaxLoader_BulkSmsDetails" src="/Content/images/ajax-loader.gif" style="display:none" />
-        <span id="saveMessage_BulkSmsDetails"></span>
-    </div>
-}
+    }
     
-@if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditPermissions))
-{
-    <div id="tabs-permissionSettings">
-        <div>Role:&nbsp;@Html.DropDownListFor(m => m.RoleId, new SelectList(Model.Roles, "RoleId", "Name"))</div>
-        <table>
-            <tr>
-                <td>
-                    <table id="jqgPermissionsLinked" cellpadding="0" cellspacing="0" style="width:400px"></table>
-                    <div id="jqgpPermissionsLinked" style="text-align:center;"></div>
-                </td>
-                <td>
-                    <button id="addPermission" style="width:120px"><< Add</button><br />
-                    <button id="removePermission" style="width:120px">Remove >></button>
-                </td>
-                <td>
-                    <table id="jqgPermissionsUnLinked" cellpadding="0" cellspacing="0" style="width:400px"></table>
-                    <div id="jqgpPermissionsUnLinked" style="text-align:center;"></div>
-                </td>
-            </tr>
-        </table>
+    @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditPermissions))
+    {
+        <div id="tabs-permissionSettings">
+            <div>Role:&nbsp;@Html.DropDownListFor(m => m.RoleId, new SelectList(Model.Roles, "RoleId", "Name"))</div>
+            <table>
+                <tr>
+                    <td>
+                        <table id="jqgPermissionsLinked" cellpadding="0" cellspacing="0" style="width:400px"></table>
+                        <div id="jqgpPermissionsLinked" style="text-align:center;"></div>
+                    </td>
+                    <td>
+                        <button id="addPermission" style="width:120px"><< Add</button><br />
+                        <button id="removePermission" style="width:120px">Remove >></button>
+                    </td>
+                    <td>
+                        <table id="jqgPermissionsUnLinked" cellpadding="0" cellspacing="0" style="width:400px"></table>
+                        <div id="jqgpPermissionsUnLinked" style="text-align:center;"></div>
+                    </td>
+                </tr>
+            </table>
         
-    </div>
-}
-
-@if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditEmailTemplates))
-{
-    <div id="tabs-emailTemplates" style="height:600px">
-    
-    <script src="@oikonomos.web.Helpers.JavascriptHelper.Content("~/Helpers/TinyMCE/jscripts/tiny_mce/jquery.tinymce.js")" type="text/javascript"></script>
-    <div>
-        Select template : @Html.DropDownListFor(m => m.ChurchEmailTemplateId, new SelectList(Model.EmailTemplates, "ChurchEmailTemplateId", "Name"), new { @class = "ui-corner-all" })
-        <br />
-        <br />
-    </div>
-    <div>
-		<textarea id="elm1" name="elm1" rows="30" cols="80" class="tinymce" style="height:500px;width:740px">
-			
-		</textarea>
-	</div>
-    <div><br /><button id="SaveEmailTemplate">Save Template</button></div>
-    </div>
-}
+        </div>
+    }
 </div>
 
 <script type="text/javascript">

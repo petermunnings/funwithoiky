@@ -16,7 +16,7 @@ namespace oikonomos.web.Controllers
     {
         public JsonResult InitializeChurchSettingsViewModel()
         {
-            return Json(new ChurchSettingsViewModel() { UITheme = "start", SystemName = "Oiky", AddressType = "street_address", BulkSmsUsername = string.Empty, BulkSmsPassword = string.Empty }, JsonRequestBehavior.AllowGet);
+            return Json(new ChurchSettingsViewModel { UITheme = "start", SystemName = "Oiky", AddressType = "street_address", BulkSmsUsername = string.Empty, BulkSmsPassword = string.Empty }, JsonRequestBehavior.AllowGet);
         }
         
         public JsonResult PersonAutoComplete(string term)
@@ -1533,7 +1533,7 @@ namespace oikonomos.web.Controllers
             return Json(response, JsonRequestBehavior.DenyGet);
         }
 
-        public JsonResult FetchChurchEmailTemplate(int churchEmailTemplateId)
+        public JsonResult FetchChurchEmailTemplate(int churchId, int emailTemplateId)
         {
             bool sessionTimedOut = false;
             string message = string.Empty;
@@ -1548,7 +1548,7 @@ namespace oikonomos.web.Controllers
                 Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 if (currentPerson.HasPermission(Permissions.EditEmailTemplates))
                 {
-                    emailTemplate = SettingsDataAccessor.FetchChurchEmailTemplate(currentPerson, churchEmailTemplateId);
+                    emailTemplate = SettingsDataAccessor.FetchChurchEmailTemplate(currentPerson, churchId, emailTemplateId);
                 }
                 else
                 {
@@ -1566,7 +1566,7 @@ namespace oikonomos.web.Controllers
         }
 
         [ValidateInput(false)]
-        public JsonResult SaveChurchEmailTemplate(int churchEmailTemplateId, string template)
+        public JsonResult SaveChurchEmailTemplate(int churchId, int emailTemplateId, string template)
         {
             bool sessionTimedOut = false;
             string message = string.Empty;
@@ -1580,7 +1580,7 @@ namespace oikonomos.web.Controllers
                 Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 if (currentPerson.HasPermission(Permissions.EditEmailTemplates))
                 {
-                    SettingsDataAccessor.SaveChurchEmailTemplate(currentPerson, churchEmailTemplateId, template);
+                    SettingsDataAccessor.SaveChurchEmailTemplate(currentPerson, churchId, emailTemplateId, template);
                 }
                 else
                 {

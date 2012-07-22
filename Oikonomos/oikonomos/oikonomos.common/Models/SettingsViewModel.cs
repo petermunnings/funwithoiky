@@ -10,7 +10,5 @@ namespace oikonomos.common.Models
         public List<OptionalFieldViewModel> OptionalFields { get; set; }
         public int RoleId { get; set; }
         public List<RoleViewModel> Roles { get; set; }
-        public int ChurchEmailTemplateId { get; set; }
-        public List<EmailTemplateViewModel> EmailTemplates { get; set; }
     }
 }

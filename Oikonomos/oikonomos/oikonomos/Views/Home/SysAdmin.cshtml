@@ -7,12 +7,14 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<script src="@oikonomos.web.Helpers.JavascriptHelper.Content("~/Helpers/TinyMCE/jscripts/tiny_mce/jquery.tinymce.js")" type="text/javascript"></script>
+
 <div class="ui-widget" style="text-align:left">
     <div class="ui-widget-content">
         <div id="accordion">
             <h3><a href="#">Switch to a different church</a></h3>
-        	<div>
-		        Select a church to switch to @Html.DropDownListFor(m => m.ChurchId, new SelectList(Model.Churches, "ChurchId", "ChurchName"))
+            <div>
+                Select a church to switch to @Html.DropDownListFor(m => m.ChurchId, new SelectList(Model.Churches, "ChurchId", "ChurchName"))
             </div>
             <h3><a href="#">Add a new church</a></h3>
             <div>
@@ -97,17 +99,32 @@
                 </div>           
             </div>
         
+            <h3><a href="#">Email Templates</a></h3>
+            <div>
+                <div>
+                    Select church : @Html.DropDownListFor(m => m.ChurchId, new SelectList(Model.Churches, "ChurchId", "ChurchName"), new { @id = "SelectedChurchId", @class = "ui-corner-all" })
+                    Select template : @Html.DropDownListFor(m => m.EmailTemplateId, new SelectList(Model.EmailTemplates, "EmailTemplateId", "Name"), new { @class = "ui-corner-all" })
+                    <br />
+                    <br />
+                </div>
+                <div>
+                    <textarea id="elm1" name="elm1" rows="30" cols="80" class="tinymce" style="height:500px;width:740px">
+			
+		            </textarea>
+                </div>
+                <div><br /><button id="SaveEmailTemplate">Save Template</button></div>
+            </div>
+
             <h3><a href="#">Run Sql</a></h3>
-        	<div>
+            <div>
                 <textarea cols="100" rows="7" data-bind="value: queryString"></textarea><br />
                 <button data-bind="click: runQuery">Go</button>   
                 
                 <p>Results</p>
-                <table border="1px" class="ui-widget">
-                        <table id="jqgQueryResults" cellpadding="0" cellspacing="0"></table>
-                        <div id="jqgpQueryResults" style="text-align:center;"></div>
-                </table>
+                <table id="jqgQueryResults" cellpadding="0" cellspacing="0"></table>
+                <div id="jqgpQueryResults" style="text-align:center;"></div>
             </div>
+
         </div>
     </div>
 </div>

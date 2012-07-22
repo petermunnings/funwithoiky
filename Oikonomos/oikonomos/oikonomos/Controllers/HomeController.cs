@@ -54,10 +54,7 @@ namespace oikonomos.web.Controllers
 
             if (currentPerson.HasPermission(Permissions.SystemAdministrator))
             {
-                SysAdminViewModel viewModel = new SysAdminViewModel();
-                viewModel.ChurchId = currentPerson.ChurchId;
-                viewModel.Churches = ChurchDataAccessor.FetchChurches(currentPerson);
-                return View(viewModel); 
+                return View(SettingsDataAccessor.FetchSysAdminViewModel(currentPerson)); 
             }
             else
             {

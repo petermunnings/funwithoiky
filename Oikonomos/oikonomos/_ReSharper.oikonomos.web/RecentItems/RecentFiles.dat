@@ -1,15 +1,9 @@
 ﻿<RecentFiles>
   <RecentFiles>
-    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:EmailDataAccessor.cs" caret="0" fromTop="0" />
-    <File id="42B40471-19BB-4727-9973-924745733AFD/d:Services/f:Email.cs" caret="0" fromTop="0" />
-    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Controllers/f:AccountController.cs" caret="0" fromTop="0" />
-    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:HomeGroupDataAccessor.cs" caret="0" fromTop="0" />
-    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:ChurchDataAccessor.cs" caret="0" fromTop="0" />
     <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Controllers/f:ReportController.cs" caret="0" fromTop="0" />
     <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Controllers/f:HomeController.cs" caret="0" fromTop="0" />
     <File id="42B40471-19BB-4727-9973-924745733AFD/d:Services/f:Cache.cs" caret="0" fromTop="0" />
     <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:PermissionDataAccessor.cs" caret="0" fromTop="0" />
-    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Helpers/f:JavascriptHelper.cs" caret="0" fromTop="0" />
     <File id="54B0FB5D-AFBE-448A-ABD9-A0FBF75433D9/d:Models/f:EventDisplayModel.cs" caret="0" fromTop="0" />
     <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/f:Web.config" caret="0" fromTop="0" />
     <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Views/f:Web.config" caret="0" fromTop="0" />
@@ -27,12 +21,28 @@
     <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/f:FacebookLogin.htm" caret="0" fromTop="0" />
     <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Views/d:Home/f:RunSql.cshtml" caret="0" fromTop="0" />
     <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Views/d:Home/f:Groups.cshtml" caret="7760" fromTop="20" />
-    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:PersonDataAccessor.cs" caret="65504" fromTop="16" />
     <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Scripts/d:Site/f:Groups.js" caret="1231" fromTop="21" />
-    <File id="AA7F8F63-288D-4DAE-9055-630E9EAC69D7/f:EventTest.cs" caret="13" fromTop="0" />
+    <File id="AA7F8F63-288D-4DAE-9055-630E9EAC69D7/f:EventTest.cs" caret="605" fromTop="13" />
+    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:SettingsDataAccessor.cs" caret="0" fromTop="0" />
+    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:PersonDataAccessor.cs" caret="61461" fromTop="0" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Controllers/f:AjaxController.cs" caret="0" fromTop="0" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Scripts/d:Site/f:Settings.js" caret="0" fromTop="0" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Views/d:Home/f:SysAdmin.cshtml" caret="0" fromTop="0" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Helpers/f:JavascriptHelper.cs" caret="0" fromTop="0" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Scripts/d:Site/f:SysAdmin.js" caret="774" fromTop="19" />
   </RecentFiles>
   <RecentEdits>
-    <File id="AA7F8F63-288D-4DAE-9055-630E9EAC69D7/f:EventTest.cs" caret="475" fromTop="20" />
     <File id="AA7F8F63-288D-4DAE-9055-630E9EAC69D7/f:EventTest.cs" caret="13" fromTop="0" />
+    <File id="AA7F8F63-288D-4DAE-9055-630E9EAC69D7/f:EventTest.cs" caret="744" fromTop="21" />
+    <File id="AA7F8F63-288D-4DAE-9055-630E9EAC69D7/f:EventTest.cs" caret="1101" fromTop="28" />
+    <File id="AA7F8F63-288D-4DAE-9055-630E9EAC69D7/f:EventTest.cs" caret="605" fromTop="13" />
+    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:PersonDataAccessor.cs" caret="66198" fromTop="29" />
+    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:PersonDataAccessor.cs" caret="69964" fromTop="22" />
+    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:PersonDataAccessor.cs" caret="72692" fromTop="22" />
+    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:PersonDataAccessor.cs" caret="74271" fromTop="28" />
+    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:PersonDataAccessor.cs" caret="71661" fromTop="1" />
+    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:PersonDataAccessor.cs" caret="63925" fromTop="11" />
+    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:PersonDataAccessor.cs" caret="60648" fromTop="16" />
+    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:PersonDataAccessor.cs" caret="61461" fromTop="18" />
   </RecentEdits>
 </RecentFiles>
