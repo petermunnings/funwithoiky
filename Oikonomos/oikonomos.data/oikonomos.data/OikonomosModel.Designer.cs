@@ -29,8 +29,6 @@ using System.Runtime.Serialization;
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_ChurchSuburb_Church", "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Church), "ChurchSuburb", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.ChurchSuburb), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_GroupClassification_Church", "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Church), "GroupClassification", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.GroupClassification), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_GroupClassification_GroupType", "GroupType", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.GroupType), "GroupClassification", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.GroupClassification), true)]
-[assembly: EdmRelationshipAttribute("oikonomosModel", "FK_EventType_Church", "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Church), "EventType", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.EventType), true)]
-[assembly: EdmRelationshipAttribute("oikonomosModel", "FK_EventType_Table", "Table", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Table), "EventType", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.EventType), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_ChurchSmsProvider_Church", "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Church), "ChurchSmsProvider", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.ChurchSmsProvider), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_ChurchSmsProvider_SmsProvider", "SmsProvider", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.SmsProvider), "ChurchSmsProvider", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.ChurchSmsProvider), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_Role_Church", "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Church), "Role", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.Role), true)]
@@ -64,6 +62,8 @@ using System.Runtime.Serialization;
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_PersonGroup_Group", "Group", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Group), "PersonGroup", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.PersonGroup), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_ChurchEmailTemplate_Church", "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Church), "ChurchEmailTemplate", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.ChurchEmailTemplate), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_ChurchEmailTemplate_EmailTemplate", "EmailTemplate", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.EmailTemplate), "ChurchEmailTemplate", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.ChurchEmailTemplate), true)]
+[assembly: EdmRelationshipAttribute("oikonomosModel", "FK_EventType_Church", "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Church), "EventType", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.EventType), true)]
+[assembly: EdmRelationshipAttribute("oikonomosModel", "FK_EventType_Table", "Table", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Table), "EventType", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.EventType), true)]
 
 #endregion
 
@@ -374,22 +374,6 @@ namespace oikonomos.data
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        public ObjectSet<EventType> EventTypes
-        {
-            get
-            {
-                if ((_EventTypes == null))
-                {
-                    _EventTypes = base.CreateObjectSet<EventType>("EventTypes");
-                }
-                return _EventTypes;
-            }
-        }
-        private ObjectSet<EventType> _EventTypes;
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
         public ObjectSet<ChurchSmsProvider> ChurchSmsProviders
         {
             get
@@ -578,6 +562,22 @@ namespace oikonomos.data
             }
         }
         private ObjectSet<EmailTemplate> _EmailTemplates;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<EventType> EventTypes
+        {
+            get
+            {
+                if ((_EventTypes == null))
+                {
+                    _EventTypes = base.CreateObjectSet<EventType>("EventTypes");
+                }
+                return _EventTypes;
+            }
+        }
+        private ObjectSet<EventType> _EventTypes;
 
         #endregion
         #region AddTo Methods
@@ -711,14 +711,6 @@ namespace oikonomos.data
         }
     
         /// <summary>
-        /// Deprecated Method for adding a new object to the EventTypes EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
-        /// </summary>
-        public void AddToEventTypes(EventType eventType)
-        {
-            base.AddObject("EventTypes", eventType);
-        }
-    
-        /// <summary>
         /// Deprecated Method for adding a new object to the ChurchSmsProviders EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
         public void AddToChurchSmsProviders(ChurchSmsProvider churchSmsProvider)
@@ -812,6 +804,14 @@ namespace oikonomos.data
         public void AddToEmailTemplates(EmailTemplate emailTemplate)
         {
             base.AddObject("EmailTemplates", emailTemplate);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the EventTypes EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToEventTypes(EventType eventType)
+        {
+            base.AddObject("EventTypes", eventType);
         }
 
         #endregion
@@ -1912,28 +1912,6 @@ namespace oikonomos.data
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_EventType_Church", "EventType")]
-        public EntityCollection<EventType> EventTypes
-        {
-            get
-            {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<EventType>("oikonomosModel.FK_EventType_Church", "EventType");
-            }
-            set
-            {
-                if ((value != null))
-                {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<EventType>("oikonomosModel.FK_EventType_Church", "EventType", value);
-                }
-            }
-        }
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [XmlIgnoreAttribute()]
-        [SoapIgnoreAttribute()]
-        [DataMemberAttribute()]
         [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_ChurchSmsProvider_Church", "ChurchSmsProvider")]
         public EntityCollection<ChurchSmsProvider> ChurchSmsProviders
         {
@@ -2116,6 +2094,28 @@ namespace oikonomos.data
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<ChurchEmailTemplate>("oikonomosModel.FK_ChurchEmailTemplate_Church", "ChurchEmailTemplate", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_EventType_Church", "EventType")]
+        public EntityCollection<EventType> EventTypes
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<EventType>("oikonomosModel.FK_EventType_Church", "EventType");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<EventType>("oikonomosModel.FK_EventType_Church", "EventType", value);
                 }
             }
         }
@@ -8896,28 +8896,6 @@ namespace oikonomos.data
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_EventType_Table", "EventType")]
-        public EntityCollection<EventType> EventTypes
-        {
-            get
-            {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<EventType>("oikonomosModel.FK_EventType_Table", "EventType");
-            }
-            set
-            {
-                if ((value != null))
-                {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<EventType>("oikonomosModel.FK_EventType_Table", "EventType", value);
-                }
-            }
-        }
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [XmlIgnoreAttribute()]
-        [SoapIgnoreAttribute()]
-        [DataMemberAttribute()]
         [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_Event_Table", "Event")]
         public EntityCollection<Event> Events
         {
@@ -8930,6 +8908,28 @@ namespace oikonomos.data
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Event>("oikonomosModel.FK_Event_Table", "Event", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_EventType_Table", "EventType")]
+        public EntityCollection<EventType> EventTypes
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<EventType>("oikonomosModel.FK_EventType_Table", "EventType");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<EventType>("oikonomosModel.FK_EventType_Table", "EventType", value);
                 }
             }
         }

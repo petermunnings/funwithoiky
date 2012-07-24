@@ -1,17 +1,9 @@
 ﻿<RecentFiles>
   <RecentFiles>
-    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Controllers/f:ReportController.cs" caret="0" fromTop="0" />
-    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Controllers/f:HomeController.cs" caret="0" fromTop="0" />
-    <File id="42B40471-19BB-4727-9973-924745733AFD/d:Services/f:Cache.cs" caret="0" fromTop="0" />
-    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:PermissionDataAccessor.cs" caret="0" fromTop="0" />
-    <File id="54B0FB5D-AFBE-448A-ABD9-A0FBF75433D9/d:Models/f:EventDisplayModel.cs" caret="0" fromTop="0" />
-    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/f:Web.config" caret="0" fromTop="0" />
-    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Views/f:Web.config" caret="0" fromTop="0" />
     <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Helpers/f:SecurityHelper.cs" caret="0" fromTop="0" />
     <File id="42B40471-19BB-4727-9973-924745733AFD/d:PartialClasses/f:Family.cs" caret="0" fromTop="0" />
     <File id="42B40471-19BB-4727-9973-924745733AFD/d:Services/f:Filters.cs" caret="0" fromTop="0" />
     <File id="1332384E-DDEF-4B55-81E8-F6F0B0C779DC/d:DynamicColumns/f:ColumnModel.cs" caret="0" fromTop="0" />
-    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Controllers/f:SysAdminController.cs" caret="0" fromTop="0" />
     <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Scripts/d:Site/f:Person.js" caret="0" fromTop="0" />
     <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Scripts/d:Site/f:AddressLookup.js" caret="0" fromTop="0" />
     <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Views/d:Home/f:ReportsAdmin.cshtml" caret="0" fromTop="0" />
@@ -20,29 +12,55 @@
     <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Views/d:Home/f:Index.cshtml" caret="0" fromTop="0" />
     <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/f:FacebookLogin.htm" caret="0" fromTop="0" />
     <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Views/d:Home/f:RunSql.cshtml" caret="0" fromTop="0" />
-    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Views/d:Home/f:Groups.cshtml" caret="7760" fromTop="20" />
     <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Scripts/d:Site/f:Groups.js" caret="1231" fromTop="21" />
     <File id="AA7F8F63-288D-4DAE-9055-630E9EAC69D7/f:EventTest.cs" caret="605" fromTop="13" />
-    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:SettingsDataAccessor.cs" caret="0" fromTop="0" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Helpers/d:TinyMCE/d:jscripts/d:tiny_mce/f:jquery.tinymce.js" caret="0" fromTop="0" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Helpers/d:TinyMCE/d:jscripts/d:tiny_mce/f:tiny_mce_src.js" caret="315298" fromTop="21" />
     <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:PersonDataAccessor.cs" caret="61461" fromTop="0" />
+    <File id="42B40471-19BB-4727-9973-924745733AFD/f:OikonomosModel.Designer.cs" caret="156436" fromTop="20" />
+    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:SettingsDataAccessor.cs" caret="3938" fromTop="27" />
     <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Controllers/f:AjaxController.cs" caret="0" fromTop="0" />
-    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Scripts/d:Site/f:Settings.js" caret="0" fromTop="0" />
-    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Views/d:Home/f:SysAdmin.cshtml" caret="0" fromTop="0" />
     <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Helpers/f:JavascriptHelper.cs" caret="0" fromTop="0" />
-    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Scripts/d:Site/f:SysAdmin.js" caret="774" fromTop="19" />
+    <File id="1332384E-DDEF-4B55-81E8-F6F0B0C779DC/d:DynamicColumns/f:DynamicColumnResponse.cs" caret="385" fromTop="11" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Scripts/d:Site/f:Settings.js" caret="0" fromTop="0" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Scripts/d:Site/f:SysAdmin.js" caret="946" fromTop="7" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Controllers/f:SysAdminController.cs" caret="332" fromTop="4" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Views/d:Home/f:SysAdmin.cshtml" caret="0" fromTop="0" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Controllers/f:ChurchController.cs" caret="624" fromTop="20" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Views/d:Home/f:Person.cshtml" caret="1676" fromTop="20" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Views/d:Home/f:Settings.cshtml" caret="674" fromTop="12" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Views/d:Home/f:Groups.cshtml" caret="339" fromTop="5" />
   </RecentFiles>
   <RecentEdits>
-    <File id="AA7F8F63-288D-4DAE-9055-630E9EAC69D7/f:EventTest.cs" caret="13" fromTop="0" />
-    <File id="AA7F8F63-288D-4DAE-9055-630E9EAC69D7/f:EventTest.cs" caret="744" fromTop="21" />
-    <File id="AA7F8F63-288D-4DAE-9055-630E9EAC69D7/f:EventTest.cs" caret="1101" fromTop="28" />
-    <File id="AA7F8F63-288D-4DAE-9055-630E9EAC69D7/f:EventTest.cs" caret="605" fromTop="13" />
-    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:PersonDataAccessor.cs" caret="66198" fromTop="29" />
-    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:PersonDataAccessor.cs" caret="69964" fromTop="22" />
-    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:PersonDataAccessor.cs" caret="72692" fromTop="22" />
-    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:PersonDataAccessor.cs" caret="74271" fromTop="28" />
-    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:PersonDataAccessor.cs" caret="71661" fromTop="1" />
-    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:PersonDataAccessor.cs" caret="63925" fromTop="11" />
-    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:PersonDataAccessor.cs" caret="60648" fromTop="16" />
-    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:PersonDataAccessor.cs" caret="61461" fromTop="18" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Helpers/f:JavascriptHelper.cs" caret="207" fromTop="11" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Helpers/f:JavascriptHelper.cs" caret="0" fromTop="0" />
+    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:SettingsDataAccessor.cs" caret="3325" fromTop="20" />
+    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:SettingsDataAccessor.cs" caret="3620" fromTop="24" />
+    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:SettingsDataAccessor.cs" caret="2713" fromTop="5" />
+    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:SettingsDataAccessor.cs" caret="3123" fromTop="13" />
+    <File id="42B40471-19BB-4727-9973-924745733AFD/d:DataAccessors/f:SettingsDataAccessor.cs" caret="35040" fromTop="27" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Scripts/d:Site/f:SysAdmin.js" caret="624" fromTop="17" />
+    <File id="1332384E-DDEF-4B55-81E8-F6F0B0C779DC/d:DynamicColumns/f:DynamicColumnResponse.cs" caret="385" fromTop="11" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Controllers/f:SysAdminController.cs" caret="3759" fromTop="15" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Controllers/f:SysAdminController.cs" caret="3759" fromTop="27" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Scripts/d:Site/f:SysAdmin.js" caret="1414" fromTop="24" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Scripts/d:Site/f:SysAdmin.js" caret="1324" fromTop="20" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Controllers/f:SysAdminController.cs" caret="3463" fromTop="19" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Controllers/f:SysAdminController.cs" caret="2572" fromTop="15" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Controllers/f:SysAdminController.cs" caret="3463" fromTop="29" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Controllers/f:SysAdminController.cs" caret="2421" fromTop="11" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Controllers/f:SysAdminController.cs" caret="1240" fromTop="8" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Controllers/f:SysAdminController.cs" caret="934" fromTop="17" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Controllers/f:SysAdminController.cs" caret="3972" fromTop="39" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Controllers/f:SysAdminController.cs" caret="932" fromTop="12" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Controllers/f:SysAdminController.cs" caret="3972" fromTop="18" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Controllers/f:SysAdminController.cs" caret="1468" fromTop="25" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Controllers/f:SysAdminController.cs" caret="1862" fromTop="32" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Controllers/f:SysAdminController.cs" caret="48" fromTop="1" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Scripts/d:Site/f:SysAdmin.js" caret="915" fromTop="5" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Controllers/f:SysAdminController.cs" caret="486" fromTop="16" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Views/d:Home/f:Groups.cshtml" caret="728" fromTop="15" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Views/d:Home/f:Groups.cshtml" caret="864" fromTop="19" />
+    <File id="5FBD2698-019B-430B-82F2-12CD056E6C60/d:Views/d:Home/f:Groups.cshtml" caret="1040" fromTop="23" />
   </RecentEdits>
 </RecentFiles>

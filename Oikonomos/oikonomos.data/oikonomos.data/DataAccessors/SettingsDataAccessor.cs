@@ -55,35 +55,30 @@ namespace oikonomos.data.DataAccessors
         public static List<EventTypeViewModel> AddEventType(Person currentPerson, string eventType, string eventFor)
         {
 
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 var tableId = (from t in context.Tables
                                where t.Name == eventFor
                                select t.TableId).FirstOrDefault();
 
                 if (currentPerson.HasPermission(common.Permissions.AddEvent))
-                {//Check to see if it is not already in the db
+                {
+                    var check = CheckToSeeIfTheEventIsAlreadyThere(currentPerson, eventType, tableId, context);
 
-
-                    var check = (from e in context.EventTypes
-                                 where e.ChurchId == currentPerson.ChurchId
-                                 && e.TableId == tableId
-                                 && e.Name == eventType
-                                 select e).Count();
-                    
                     if (check == 0)
                     {
-                        EventType newEventType = new EventType();
-                        newEventType.Created = DateTime.Now;
-                        newEventType.Changed = DateTime.Now;
-                        newEventType.Name = eventType;
-                        newEventType.ChurchId = currentPerson.ChurchId;
-                        newEventType.TableId = tableId;
+                        var newEventType = new EventType
+                                               {
+                                                   Created  = DateTime.Now,
+                                                   Changed  = DateTime.Now,
+                                                   Name     = eventType,
+                                                   ChurchId = currentPerson.ChurchId,
+                                                   TableId  = tableId
+                                               };
 
                         context.EventTypes.AddObject(newEventType);
                         context.SaveChanges();
                     }
-
                 }
 
                 return (from e in context.EventTypes
@@ -95,6 +90,17 @@ namespace oikonomos.data.DataAccessors
                             EventType = e.Name
                         }).ToList();
             }
+        }
+
+        private static int CheckToSeeIfTheEventIsAlreadyThere(Person currentPerson, string eventType, int tableId,
+                                                              oikonomosEntities context)
+        {
+            var check = (from e in context.EventTypes
+                         where e.ChurchId == currentPerson.ChurchId
+                               && e.TableId == tableId
+                               && e.Name == eventType
+                         select e).Count();
+            return check;
         }
 
         public static List<EventTypeViewModel> DeleteEventType(Person currentPerson, int eventTypeId, string eventFor)

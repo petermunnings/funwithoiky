@@ -15,15 +15,15 @@ var ChurchViewModel = function () {
             } else {
                 ShowErrorMessage("Could not create church", data.Message);
             }
-        }).error(function (jqXHR, textStatus, errorThrown) {
-            SendErrorEmail("Error calling CreateNewChurch", jqXHR.responseText);
+        }).error(function (jqXhr, textStatus, errorThrown) {
+            SendErrorEmail("Error calling CreateNewChurch", jqXhr.responseText);
             self.showChurchFields = false;
         });
     };
 
     self.runQuery = function () {
         $("#jqgQueryResults").GridUnload();
-        populateGrid(ko.toJS(self.queryString));
+        populateGrid(ko.toJSON(self.queryString));
     };
 };
 
@@ -35,13 +35,19 @@ function populateGrid(queryString) {
         dataType: "json",
         success: function (result) {
             var rowData = result.RowValues,
-                columnModel = result.ColumnModel;
+                columnModel = result.ColumnModel,
+                message = result.Message;
 
+            if (message != null) {
+                alert(message);
+                return;
+            }
+            
             $("#jqgQueryResults").jqGrid({
                 datatype: 'local',
                 data: rowData,
                 gridview: true,
-                rowNum: 15, 
+                rowNum: 15,
                 colModel: columnModel,
                 height: "auto",
                 loadError: function (xhr, status, error) {
