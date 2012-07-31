@@ -7,8 +7,6 @@ Log/
 log/
 *.db
 
-*resharper.user
-
 # Visual Studio
 [Dd]ebug/
 [Rr]elease/
