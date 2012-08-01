@@ -149,4 +149,6 @@
   <Module PersistentId="nunit.framework, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77" ModuleId="nunit.framework" />
   <Module PersistentId="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f" ModuleId="Rhino.Mocks" />
   <Module PersistentId="FE1C517D-4E67-403F-BF8D-0709A78DD900" ModuleId="oikonomos.repositories.interfaces" />
+  <Module PersistentId="AutoMapper, Version=2.1.267.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005" ModuleId="AutoMapper" />
+  <Module PersistentId="19DA1C75-7E17-4DE5-9956-8B4BD1A9C248" ModuleId="oikonomos.repositories" />
 </Modules>

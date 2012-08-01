@@ -33,10 +33,9 @@ namespace oikonomos.services.tests
                 .Return(eventTypeItem);
 
             IEventTypeService eventTypeService = new EventTypeService(eventTypeRepository);
-            var newEventType = new EventTypeDto();
-            var eventTypeId = eventTypeService.Save(newEventType);
-
-            var savedEvent = eventTypeService.GetItem(eventTypeId);
+            var newEventType                   = new EventTypeDto();
+            var eventTypeId                    = eventTypeService.Save(newEventType);
+            var savedEvent                     = eventTypeService.GetItem(eventTypeId);
             Assert.That(savedEvent.EventTypeId, Is.EqualTo(1));
         }
     }

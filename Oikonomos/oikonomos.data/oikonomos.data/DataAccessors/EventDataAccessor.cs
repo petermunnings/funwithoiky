@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using oikonomos.data;
 using oikonomos.common;
 using System.Configuration;
 using oikonomos.common.Models;
-using System.Data.Objects.DataClasses;
-using System.Web.Security;
 using System.Data.Objects;
 using Lib.Web.Mvc.JQuery.JqGrid;
 using LinqKit;
