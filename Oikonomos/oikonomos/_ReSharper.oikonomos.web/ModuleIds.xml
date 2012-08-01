@@ -143,10 +143,10 @@
   <Module PersistentId="System.Workflow.ComponentModel, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" ModuleId="System.Workflow.ComponentModel" />
   <Module PersistentId="System.Workflow.Activities, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" ModuleId="System.Workflow.Activities" />
   <Module PersistentId="System.Workflow.Runtime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" ModuleId="System.Workflow.Runtime" />
-  <Module PersistentId="919FD655-F067-4BA2-B932-D926E85DD6B4" ModuleId="Script Documents" />
-  <Module PersistentId="Facebook, Version=5.0.10.0, Culture=neutral, PublicKeyToken=58cb4f2111d1e6de" ModuleId="Facebook_1" />
-  <Module PersistentId="MigraDoc.DocumentObjectModel, Version=1.31.3066.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb" ModuleId="MigraDoc.DocumentObjectModel_1" />
-  <Module PersistentId="MigraDoc.Rendering, Version=1.31.3066.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb" ModuleId="MigraDoc.Rendering_1" />
-  <Module PersistentId="PdfSharp, Version=1.31.1789.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb" ModuleId="PdfSharp_1" />
-  <Module PersistentId="LinqKit, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bc217f8844052a91" ModuleId="LinqKit_1" />
+  <Module PersistentId="BB21F4DD-E8C9-4969-B6EB-27B35CC1AF10" ModuleId="oikonomos.services.interfaces" />
+  <Module PersistentId="7939F5A9-5DDF-4481-8C7F-980B1622FB69" ModuleId="oikonomos.services" />
+  <Module PersistentId="F6A99C43-0867-469F-8552-724E5D6CBAC8" ModuleId="oikonomos.services.tests" />
+  <Module PersistentId="nunit.framework, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77" ModuleId="nunit.framework" />
+  <Module PersistentId="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f" ModuleId="Rhino.Mocks" />
+  <Module PersistentId="FE1C517D-4E67-403F-BF8D-0709A78DD900" ModuleId="oikonomos.repositories.interfaces" />
 </Modules>

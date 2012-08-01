@@ -18,6 +18,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "oikonomos.services.interfaces", "oikonomos.services.interfaces\oikonomos.services.interfaces.csproj", "{BB21F4DD-E8C9-4969-B6EB-27B35CC1AF10}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{F089C386-BAB8-4272-9D72-12FDB3585A8F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "oikonomos.services", "oikonomos.services\oikonomos.services.csproj", "{7939F5A9-5DDF-4481-8C7F-980B1622FB69}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{AC50BB4F-638B-4ACC-9E53-35FFAED495CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "oikonomos.services.tests", "oikonomos.services.tests\oikonomos.services.tests.csproj", "{F6A99C43-0867-469F-8552-724E5D6CBAC8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repositories", "Repositories", "{0B58F68F-8814-465F-81EA-22023181F830}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "oikonomos.repositories.interfaces", "oikonomos.repositories.interfaces\oikonomos.repositories.interfaces.csproj", "{FE1C517D-4E67-403F-BF8D-0709A78DD900}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = oikonomos.web.vsmdi
@@ -47,8 +61,31 @@ Global
 		{AA7F8F63-288D-4DAE-9055-630E9EAC69D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA7F8F63-288D-4DAE-9055-630E9EAC69D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA7F8F63-288D-4DAE-9055-630E9EAC69D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB21F4DD-E8C9-4969-B6EB-27B35CC1AF10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB21F4DD-E8C9-4969-B6EB-27B35CC1AF10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB21F4DD-E8C9-4969-B6EB-27B35CC1AF10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB21F4DD-E8C9-4969-B6EB-27B35CC1AF10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7939F5A9-5DDF-4481-8C7F-980B1622FB69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7939F5A9-5DDF-4481-8C7F-980B1622FB69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7939F5A9-5DDF-4481-8C7F-980B1622FB69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7939F5A9-5DDF-4481-8C7F-980B1622FB69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6A99C43-0867-469F-8552-724E5D6CBAC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6A99C43-0867-469F-8552-724E5D6CBAC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6A99C43-0867-469F-8552-724E5D6CBAC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6A99C43-0867-469F-8552-724E5D6CBAC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE1C517D-4E67-403F-BF8D-0709A78DD900}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE1C517D-4E67-403F-BF8D-0709A78DD900}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE1C517D-4E67-403F-BF8D-0709A78DD900}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE1C517D-4E67-403F-BF8D-0709A78DD900}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{AA7F8F63-288D-4DAE-9055-630E9EAC69D7} = {AC50BB4F-638B-4ACC-9E53-35FFAED495CE}
+		{F6A99C43-0867-469F-8552-724E5D6CBAC8} = {AC50BB4F-638B-4ACC-9E53-35FFAED495CE}
+		{BB21F4DD-E8C9-4969-B6EB-27B35CC1AF10} = {F089C386-BAB8-4272-9D72-12FDB3585A8F}
+		{7939F5A9-5DDF-4481-8C7F-980B1622FB69} = {F089C386-BAB8-4272-9D72-12FDB3585A8F}
+		{FE1C517D-4E67-403F-BF8D-0709A78DD900} = {0B58F68F-8814-465F-81EA-22023181F830}
 	EndGlobalSection
 EndGlobal

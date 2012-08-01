@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{54B0FB5D-AFBE-448A-ABD9-A0FBF75433D9}</ProjectGuid>
+    <ProjectGuid>{BB21F4DD-E8C9-4969-B6EB-27B35CC1AF10}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>oikonomos.common</RootNamespace>
-    <AssemblyName>oikonomos.common</AssemblyName>
+    <RootNamespace>oikonomos.services.interfaces</RootNamespace>
+    <AssemblyName>oikonomos.services.interfaces</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -33,7 +33,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,35 +40,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DTOs\EventTypeDto.cs" />
-    <Compile Include="Enums.cs" />
-    <Compile Include="Models\AdminReportsViewModel.cs" />
-    <Compile Include="Models\AttendanceEventViewModel.cs" />
-    <Compile Include="Models\ChurchSettingsViewModel.cs" />
-    <Compile Include="Models\ChurchViewModel.cs" />
-    <Compile Include="Models\AutoCompleteViewModel.cs" />
-    <Compile Include="Models\EmailTemplateViewModel.cs" />
-    <Compile Include="Models\GridSetupViewModel.cs" />
-    <Compile Include="Models\EventTypeViewModel.cs" />
-    <Compile Include="Models\GroupClassificationViewModel.cs" />
-    <Compile Include="Models\HomeGroupEventViewModel.cs" />
-    <Compile Include="Models\OptionalFieldViewModel.cs" />
-    <Compile Include="Models\EventDisplayModel.cs" />
-    <Compile Include="Models\GroupViewModel.cs" />
-    <Compile Include="Models\HomeGroupsViewModel.cs" />
-    <Compile Include="Models\MapDataViewModel.cs" />
-    <Compile Include="Models\RoleViewModel.cs" />
-    <Compile Include="Models\PersonEventViewModel.cs" />
-    <Compile Include="Models\PersonGroupModel.cs" />
-    <Compile Include="Models\PersonListViewModel.cs" />
-    <Compile Include="Models\PersonViewModel.cs" />
-    <Compile Include="Models\SettingsViewModel.cs" />
-    <Compile Include="Models\SiteSettingsViewModel.cs" />
-    <Compile Include="Models\SuburbViewModel.cs" />
-    <Compile Include="Models\SysAdminViewModel.cs" />
-    <Compile Include="Models\TableGenerationModel.cs" />
+    <Compile Include="IEventTypeService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utils.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\oikonomos.common\oikonomos.common.csproj">
+      <Project>{54B0FB5D-AFBE-448A-ABD9-A0FBF75433D9}</Project>
+      <Name>oikonomos.common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
