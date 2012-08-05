@@ -9,7 +9,7 @@ function DeleteSite(site) {
         var grid = $('#jqgSites');
         grid.trigger("reloadGrid");
     })
-    .error(function (jqXhr, textStatus, errorThrown) {
+    .error(function (jqXhr) {
         SendErrorEmail("Error calling DeleteSite", jqXhr.responseText);
     });
 }
@@ -33,8 +33,8 @@ function SaveSite(site) {
         var grid = $('#jqgSites');
         grid.trigger("reloadGrid");
     })
-    .error(function (jqXHR, textStatus, errorThrown) {
-        SendErrorEmail("Error calling SaveSite", jqXHR.responseText);
+    .error(function (jqXhr) {
+        SendErrorEmail("Error calling SaveSite", jqXhr.responseText);
     });
 }
 
@@ -103,13 +103,13 @@ function ChangePassword() {
         var postData = { currentPassword: $("#currentPassword").val(), 
                          newPassword: $("#newPassword1").val() };
 
-        var jqxhr = $.post("/Ajax/ChangePassword", $.postify(postData), function (data) {
+        $.post("/Ajax/ChangePassword", $.postify(postData), function (data) {
                 $("#span_passwordMessage").html(data.Message);
                 $("#ajax_changePassword").hide();
         })
-        .error(function (jqXHR, textStatus, errorThrown) {
+        .error(function (jqXhr) {
             $("#ajax_changePassword").hide();
-            SendErrorEmail("Error calling ChangePassword", jqXHR.responseText);
+            SendErrorEmail("Error calling ChangePassword", jqXhr.responseText);
         });
     }
 }
@@ -127,14 +127,14 @@ function SaveAddress() {
                  };
 
     $("#ajax_loaderAddress").show();
-    var jqxhr = $.post("/Ajax/SaveGroupAddress", $.postify(postData), function (data) {
-            $("#saveAddressMessage").html(data.Message);
-            $("#ajax_loaderAddress").hide();
-        })
-        .error(function (jqXHR, textStatus, errorThrown) {
-            $("#ajax_loaderAddress").hide();
-            SendErrorEmail("Error calling SaveGroupAddress", jqXHR.responseText);
-        });
+    $.post("/Ajax/SaveGroupAddress", $.postify(postData), function (data) {
+        $("#saveAddressMessage").html(data.Message);
+        $("#ajax_loaderAddress").hide();
+    })
+    .error(function (jqXhr) {
+        $("#ajax_loaderAddress").hide();
+        SendErrorEmail("Error calling SaveGroupAddress", jqXhr.responseText);
+    });
 
 }
 
@@ -165,8 +165,8 @@ function FetchSuburbs(load) {
     $.post("/Ajax/FetchSuburbs", function (data) {
         PopulateSuburbs(data.Suburbs, load);
     })
-    .error(function (jqXHR, textStatus, errorThrown) {
-        SendErrorEmail("Error calling FetchSuburbs", jqXHR.responseText);
+    .error(function (jqXhr) {
+        SendErrorEmail("Error calling FetchSuburbs", jqXhr.responseText);
     });
 }
 
@@ -175,12 +175,12 @@ function AddSuburb() {
         var postData = { suburb: $("#input_newSuburb").val() };
 
         $.post("/Ajax/AddSuburb", $.postify(postData), function (data) {
-            $("#input_newSuburb").val('')
+            $("#input_newSuburb").val('');
             PopulateSuburbs(data.Suburbs);
         })
-    .error(function (jqXHR, textStatus, errorThrown) {
-        SendErrorEmail("Error calling AddSuburb", jqXHR.responseText);
-    });
+        .error(function (jqXhr) {
+            SendErrorEmail("Error calling AddSuburb", jqXhr.responseText);
+        });
     }
 }
 
@@ -188,11 +188,11 @@ function DeleteSuburb(suburbId) {
     var postData = { suburbId: suburbId };
 
     $.post("/Ajax/DeleteSuburb", $.postify(postData), function (data) {
-        $("#input_newSuburb").val('')
+        $("#input_newSuburb").val('');
         PopulateSuburbs(data.Suburbs);
     })
-    .error(function (jqXHR, textStatus, errorThrown) {
-        SendErrorEmail("Error calling DeleteSuburb", jqXHR.responseText);
+    .error(function (jqXhr) {
+        SendErrorEmail("Error calling DeleteSuburb", jqXhr.responseText);
     });
 }
 
@@ -222,8 +222,8 @@ function FetchHGClassifications(load) {
     $.post("/Ajax/FetchGroupClassifications", function (data) {
         PopulateHGClassifications(data.GroupClassifications, load);
     })
-    .error(function (jqXHR, textStatus, errorThrown) {
-        SendErrorEmail("Error calling FetchGroupClassifications", jqXHR.responseText);
+    .error(function (jqXhr) {
+        SendErrorEmail("Error calling FetchGroupClassifications", jqXhr.responseText);
     });
 }
 
@@ -232,11 +232,11 @@ function AddHGClassification() {
         var postData = { groupClassification: $("#input_newHGClassification").val() };
 
         $.post("/Ajax/AddGroupClassification", $.postify(postData), function (data) {
-            $("#input_newHGClassification").val('')
+            $("#input_newHGClassification").val('');
             PopulateHGClassifications(data.GroupClassifications);
         })
-    .error(function (jqXHR, textStatus, errorThrown) {
-        SendErrorEmail("Error calling AddGroupClassification", jqXHR.responseText);
+    .error(function (jqXhr) {
+        SendErrorEmail("Error calling AddGroupClassification", jqXhr.responseText);
     });
     }
 }
@@ -245,11 +245,11 @@ function DeleteHGClassification(hgClassificationId) {
     var postData = { groupClassificationId: hgClassificationId };
 
     $.post("/Ajax/DeleteGroupClassification", $.postify(postData), function (data) {
-        $("#input_newHGClassification").val('')
+        $("#input_newHGClassification").val('');
         PopulateHGClassifications(data.GroupClassifications);
     })
-    .error(function (jqXHR, textStatus, errorThrown) {
-        SendErrorEmail("Error calling DeleteGroupClassification", jqXHR.responseText);
+    .error(function (jqXhr) {
+        SendErrorEmail("Error calling DeleteGroupClassification", jqXhr.responseText);
     });
 }
 
@@ -279,7 +279,7 @@ function FetchStandardComments(load) {
     $.post("/Ajax/FetchStandardComments", function (data) {
         PopulateStandardComments(data.StandardComments, load);
     })
-    .error(function (jqXhr, textStatus, errorThrown) {
+    .error(function (jqXhr) {
         SendErrorEmail("Error calling FetchStandardComments", jqXhr.responseText);
     });
 }
@@ -292,9 +292,9 @@ function AddStandardComment() {
             $("#input_newstandardComment").val('');
             PopulateStandardComments(data.StandardComments);
         })
-    .error(function (jqXhr, textStatus, errorThrown) {
-        SendErrorEmail("Error calling AddStandardComment", jqXhr.responseText);
-    });
+        .error(function (jqXhr) {
+            SendErrorEmail("Error calling AddStandardComment", jqXhr.responseText);
+        });
     }
 }
 
@@ -305,7 +305,7 @@ function DeleteStandardComment(standardCommentId) {
         $("#input_newStandardComment").val('');
         PopulateStandardComments(data.StandardComments);
     })
-    .error(function (jqXhr, textStatus, errorThrown) {
+    .error(function (jqXhr) {
         SendErrorEmail("Error calling DeleteStandardComment", jqXhr.responseText);
     });
 }
@@ -338,17 +338,79 @@ function CollapseOthers(button, load) {
 
 }
 
-$(document).ready(function () {
+function SaveOptionalFields() {
+    $("#saveMessage_generalSettings").html("");
+    $("#ajaxLoader_generalSettings").show();
+    var postData = { OptionalFields: optionalFields };
+    $.post("/Ajax/SaveOptionalFields", $.postify(postData), function() {
+        $("#saveMessage_generalSettings").html("Settings saved");
+        $("#ajaxLoader_generalSettings").hide();
+    })
+        .error(function(jqXhr) {
+            $("#saveMessage_generalSettings").html("");
+            $("#ajaxLoader_generalSettings").hide();
+            SendErrorEmail("Error calling SaveOptionalFields", jqXhr.responseText);
+        });
+    }
 
-    $("#text_officePhone").mask("(999) 9999999");
+function SaveChurchSettings() {
+    $("#saveMessage_Church").html("");
+    $("#ajaxLoader_Church").show();
+    var postData = { ChurchName: $("#text_churchName").val(),
+        OfficePhone: $("#text_officePhone").val(),
+        OfficeEmail: $("#text_officeEmail").val(),
+        Url: $("#text_url").val(),
+        AddressId: $("#hidden_churchaddressId").val(),
+        Address1: $("#text_churchaddress1").val(),
+        Address2: $("#text_churchaddress2").val(),
+        Address3: $("#text_churchaddress3").val(),
+        Address4: $("#text_churchaddress4").val(),
+        Lat: $("#hidden_churchlat").val(),
+        Lng: $("#hidden_churchlng").val(),
+        AddressType: $("#hidden_churchaddressType").val(),
+        UITheme: $("#select_uiTheme").val(),
+        SystemName: $("#text_systemName").val(),
+        Province: $("#hidden_churchProvince").val()
+    };
 
+
+    $.post("/Ajax/SaveChurchContactDetails", $.postify(postData), function (data) {
+        $("#saveMessage_Church").html(data.Message);
+        $("#ajaxLoader_Church").hide();
+    })
+        .error(function (jqXhr) {
+            $("#saveMessage_Church").html("");
+            $("#ajaxLoader_Church").hide();
+            SendErrorEmail("Error calling SaveChurchContactDetails", jqXhr.responseText);
+        });
+}
+
+function SaveBulkSmsSettings() {
+    $("#saveMessage_BulkSmsDetails").html("");
+    $("#ajaxLoader_BulkSmsDetails").show();
+    var postData = { BulkSmsUsername: $("#text_bulkSmsUsername").val(),
+        BulkSmsPassword: $("#text_bulkSmsPassword").val()
+    };
+
+    $.post("/Ajax/SaveBulkSmsDetails", $.postify(postData), function(data) {
+        $("#saveMessage_BulkSmsDetails").html(data.Message);
+        $("#ajaxLoader_BulkSmsDetails").hide();
+    })
+    .error(function(jqXhr) {
+        $("#saveMessage_BulkSmsDetails").html("");
+        $("#ajaxLoader_BulkSmsDetails").hide();
+        SendErrorEmail("Error calling SaveBulkSmsDetails", jqXhr.responseText);
+    });
+}
+
+function FetchOptionalFields() {
     $.post("/Ajax/FetchOptionalFields", function (data) {
         optionalFields = data.OptionalFields;
         $("#optionalFieldTemplate")
             .tmpl(optionalFields)
             .appendTo("#optionalFieldList");
-        //For some reason the "checked is not working"
-        $(".optionalField").each(function (index) {
+
+        $(".optionalField").each(function () {
             $(this).prop("checked", $.tmplItem(this).data.Display);
             if ($.tmplItem(this).data.Name == 'SuburbLookup') {
                 if ($.tmplItem(this).data.Display) {
@@ -377,73 +439,24 @@ $(document).ready(function () {
         });
 
     })
-    .error(function (jqXHR, textStatus, errorThrown) { SendErrorEmail("Error calling FetchOptionalFields", jqXHR.responseText); });
+    .error(function (jqXhr) { SendErrorEmail("Error calling FetchOptionalFields", jqXhr.responseText); });
+}
+$(document).ready(function () {
+
+    $("#text_officePhone").mask("(999) 9999999");
+
+    FetchOptionalFields();
 
     $("#button_saveGeneralSettings").click(function () {
-        $("#saveMessage_generalSettings").html("");
-        //Send the updated data back to the server
-        $("#ajaxLoader_generalSettings").show();
-        var postData = { OptionalFields: optionalFields };
-        $.post("/Ajax/SaveOptionalFields", $.postify(postData), function (data) {
-            $("#saveMessage_generalSettings").html("Settings saved");
-            $("#ajaxLoader_generalSettings").hide();
-        })
-        .error(function (jqXHR, textStatus, errorThrown) {
-            $("#saveMessage_generalSettings").html("");
-            $("#ajaxLoader_generalSettings").hide();
-            SendErrorEmail("Error calling SaveOptionalFields", jqXHR.responseText);
-        });
+        SaveOptionalFields();
     });
 
     $("#button_saveChurch").click(function () {
-        $("#saveMessage_Church").html("");
-        //Send the updated data back to the server
-        $("#ajaxLoader_Church").show();
-        var postData = { ChurchName: $("#text_churchName").val(),
-            OfficePhone: $("#text_officePhone").val(),
-            OfficeEmail: $("#text_officeEmail").val(),
-            Url: $("#text_url").val(),
-            AddressId: $("#hidden_churchaddressId").val(),
-            Address1: $("#text_churchaddress1").val(),
-            Address2: $("#text_churchaddress2").val(),
-            Address3: $("#text_churchaddress3").val(),
-            Address4: $("#text_churchaddress4").val(),
-            Lat: $("#hidden_churchlat").val(),
-            Lng: $("#hidden_churchlng").val(),
-            AddressType: $("#hidden_churchaddressType").val(),
-            UITheme: $("#select_uiTheme").val(),
-            SystemName: $("#text_systemName").val(),
-            Province: $("#hidden_churchProvince").val()
-        };
-
-
-        $.post("/Ajax/SaveChurchContactDetails", $.postify(postData), function (data) {
-            $("#saveMessage_Church").html(data.Message);
-            $("#ajaxLoader_Church").hide();
-        })
-        .error(function (jqXHR, textStatus, errorThrown) {
-            $("#saveMessage_Church").html("");
-            $("#ajaxLoader_Church").hide();
-            SendErrorEmail("Error calling SaveChurchContactDetails", jqXHR.responseText);
-        });
+        SaveChurchSettings();
     });
 
     $("#button_saveBulkSmsDetails").click(function () {
-        $("#saveMessage_BulkSmsDetails").html("");
-        $("#ajaxLoader_BulkSmsDetails").show();
-        var postData = { BulkSmsUsername: $("#text_bulkSmsUsername").val(),
-            BulkSmsPassword: $("#text_bulkSmsPassword").val()
-        };
-
-        $.post("/Ajax/SaveBulkSmsDetails", $.postify(postData), function (data) {
-            $("#saveMessage_BulkSmsDetails").html(data.Message);
-            $("#ajaxLoader_BulkSmsDetails").hide();
-        })
-        .error(function (jqXHR, textStatus, errorThrown) {
-            $("#saveMessage_BulkSmsDetails").html("");
-            $("#ajaxLoader_BulkSmsDetails").hide();
-            SendErrorEmail("Error calling SaveBulkSmsDetails", jqXHR.responseText);
-        });
+        SaveBulkSmsSettings();
     });
 
     $("#optionalFieldList").delegate(".optionalField", "click", function () {
@@ -668,15 +681,10 @@ $(document).ready(function () {
     });
 
     $('#jqgSites').jqGrid({
-        //url from wich data should be requested
         url: '/Ajax/FetchSites',
-        //type of data
         datatype: 'json',
-        //url access method type
         mtype: 'POST',
-        //columns names
         colNames: ['SiteId', 'SiteName', 'Address1', 'Address2', 'Address3', 'Address4'],
-        //columns model
         colModel: [
                     { name: 'SiteId', index: 'PersonId', hidden: true },
                     { name: 'SiteName', index: 'SiteName', align: 'left', width: 180 },
@@ -685,19 +693,12 @@ $(document).ready(function () {
                     { name: 'Address3', index: 'Address3', align: 'left', width: 100 },
                     { name: 'Address4', index: 'Address4', align: 'left', width: 100 }
                   ],
-        //pager for grid
         pager: $('#jqgpSites'),
-        //number of rows per page
         rowNum: 15,
-        //initial sorting column
         sortname: 'SiteName',
-        //initial sorting direction
         sortorder: 'asc',
-        //we want to display total records count
         viewrecords: true,
-        //grid width
         width: 'auto',
-        //grid height
         height: 'auto',
         onSelectRow: function (id) {
             var postData = { siteId: id };
@@ -715,7 +716,6 @@ $(document).ready(function () {
     $("#siteText").keypress(function () {
         $("#saveMessage_Sites").html("");
     });
-
 
     $("#text_siteaddress1").autocomplete({
         source: function (request, response) {
@@ -826,7 +826,6 @@ $(document).ready(function () {
             $("#jqgPermissionsLinked").trigger("reloadGrid");
             $("#jqgPermissionsUnLinked").trigger("reloadGrid");
         });
-
     });
 
     $("#removePermission").click(function () {
