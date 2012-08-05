@@ -64,6 +64,10 @@ using System.Runtime.Serialization;
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_ChurchEmailTemplate_EmailTemplate", "EmailTemplate", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.EmailTemplate), "ChurchEmailTemplate", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.ChurchEmailTemplate), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_StandardComment_Church", "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Church), "StandardComment", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.StandardComment), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_EventType_Church", "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Church), "EventType", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.EventType), true)]
+[assembly: EdmRelationshipAttribute("oikonomosModel", "FK_Comment_AboutPerson", "Person", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Person), "Comment", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.Comment), true)]
+[assembly: EdmRelationshipAttribute("oikonomosModel", "FK_Comment_MadeByPerson", "Person", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Person), "Comment", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.Comment), true)]
+[assembly: EdmRelationshipAttribute("oikonomosModel", "FK_Comment_Role", "Role", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Role), "Comment", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.Comment), true)]
+[assembly: EdmRelationshipAttribute("oikonomosModel", "CanViewComment", "Role", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.Role), "Role1", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.Role))]
 
 #endregion
 
@@ -594,6 +598,22 @@ namespace oikonomos.data
             }
         }
         private ObjectSet<EventType> _EventTypes;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<Comment> Comments
+        {
+            get
+            {
+                if ((_Comments == null))
+                {
+                    _Comments = base.CreateObjectSet<Comment>("Comments");
+                }
+                return _Comments;
+            }
+        }
+        private ObjectSet<Comment> _Comments;
 
         #endregion
         #region AddTo Methods
@@ -836,6 +856,14 @@ namespace oikonomos.data
         public void AddToEventTypes(EventType eventType)
         {
             base.AddObject("EventTypes", eventType);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the Comments EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToComments(Comment comment)
+        {
+            base.AddObject("Comments", comment);
         }
 
         #endregion
@@ -3124,6 +3152,308 @@ namespace oikonomos.data
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Church>("oikonomosModel.FK_ChurchSuburb_Church", "Church", value);
+                }
+            }
+        }
+
+        #endregion
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="oikonomosModel", Name="Comment")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class Comment : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new Comment object.
+        /// </summary>
+        /// <param name="commentId">Initial value of the CommentId property.</param>
+        /// <param name="comment1">Initial value of the Comment1 property.</param>
+        /// <param name="aboutPersonId">Initial value of the AboutPersonId property.</param>
+        /// <param name="madeByPersonId">Initial value of the MadeByPersonId property.</param>
+        /// <param name="madeByRoleId">Initial value of the MadeByRoleId property.</param>
+        /// <param name="commentDate">Initial value of the CommentDate property.</param>
+        public static Comment CreateComment(global::System.Int32 commentId, global::System.String comment1, global::System.Int32 aboutPersonId, global::System.Int32 madeByPersonId, global::System.Int32 madeByRoleId, global::System.DateTime commentDate)
+        {
+            Comment comment = new Comment();
+            comment.CommentId = commentId;
+            comment.Comment1 = comment1;
+            comment.AboutPersonId = aboutPersonId;
+            comment.MadeByPersonId = madeByPersonId;
+            comment.MadeByRoleId = madeByRoleId;
+            comment.CommentDate = commentDate;
+            return comment;
+        }
+
+        #endregion
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 CommentId
+        {
+            get
+            {
+                return _CommentId;
+            }
+            set
+            {
+                if (_CommentId != value)
+                {
+                    OnCommentIdChanging(value);
+                    ReportPropertyChanging("CommentId");
+                    _CommentId = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("CommentId");
+                    OnCommentIdChanged();
+                }
+            }
+        }
+        private global::System.Int32 _CommentId;
+        partial void OnCommentIdChanging(global::System.Int32 value);
+        partial void OnCommentIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Comment1
+        {
+            get
+            {
+                return _Comment1;
+            }
+            set
+            {
+                OnComment1Changing(value);
+                ReportPropertyChanging("Comment1");
+                _Comment1 = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Comment1");
+                OnComment1Changed();
+            }
+        }
+        private global::System.String _Comment1;
+        partial void OnComment1Changing(global::System.String value);
+        partial void OnComment1Changed();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 AboutPersonId
+        {
+            get
+            {
+                return _AboutPersonId;
+            }
+            set
+            {
+                OnAboutPersonIdChanging(value);
+                ReportPropertyChanging("AboutPersonId");
+                _AboutPersonId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("AboutPersonId");
+                OnAboutPersonIdChanged();
+            }
+        }
+        private global::System.Int32 _AboutPersonId;
+        partial void OnAboutPersonIdChanging(global::System.Int32 value);
+        partial void OnAboutPersonIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 MadeByPersonId
+        {
+            get
+            {
+                return _MadeByPersonId;
+            }
+            set
+            {
+                OnMadeByPersonIdChanging(value);
+                ReportPropertyChanging("MadeByPersonId");
+                _MadeByPersonId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("MadeByPersonId");
+                OnMadeByPersonIdChanged();
+            }
+        }
+        private global::System.Int32 _MadeByPersonId;
+        partial void OnMadeByPersonIdChanging(global::System.Int32 value);
+        partial void OnMadeByPersonIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 MadeByRoleId
+        {
+            get
+            {
+                return _MadeByRoleId;
+            }
+            set
+            {
+                OnMadeByRoleIdChanging(value);
+                ReportPropertyChanging("MadeByRoleId");
+                _MadeByRoleId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("MadeByRoleId");
+                OnMadeByRoleIdChanged();
+            }
+        }
+        private global::System.Int32 _MadeByRoleId;
+        partial void OnMadeByRoleIdChanging(global::System.Int32 value);
+        partial void OnMadeByRoleIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime CommentDate
+        {
+            get
+            {
+                return _CommentDate;
+            }
+            set
+            {
+                OnCommentDateChanging(value);
+                ReportPropertyChanging("CommentDate");
+                _CommentDate = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("CommentDate");
+                OnCommentDateChanged();
+            }
+        }
+        private global::System.DateTime _CommentDate;
+        partial void OnCommentDateChanging(global::System.DateTime value);
+        partial void OnCommentDateChanged();
+
+        #endregion
+    
+        #region Navigation Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_Comment_AboutPerson", "Person")]
+        public Person Person
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Person>("oikonomosModel.FK_Comment_AboutPerson", "Person").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Person>("oikonomosModel.FK_Comment_AboutPerson", "Person").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<Person> PersonReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Person>("oikonomosModel.FK_Comment_AboutPerson", "Person");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Person>("oikonomosModel.FK_Comment_AboutPerson", "Person", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_Comment_MadeByPerson", "Person")]
+        public Person Person1
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Person>("oikonomosModel.FK_Comment_MadeByPerson", "Person").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Person>("oikonomosModel.FK_Comment_MadeByPerson", "Person").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<Person> Person1Reference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Person>("oikonomosModel.FK_Comment_MadeByPerson", "Person");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Person>("oikonomosModel.FK_Comment_MadeByPerson", "Person", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_Comment_Role", "Role")]
+        public Role Role
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Role>("oikonomosModel.FK_Comment_Role", "Role").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Role>("oikonomosModel.FK_Comment_Role", "Role").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<Role> RoleReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Role>("oikonomosModel.FK_Comment_Role", "Role");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Role>("oikonomosModel.FK_Comment_Role", "Role", value);
                 }
             }
         }
@@ -6722,6 +7052,50 @@ namespace oikonomos.data
                 }
             }
         }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_Comment_AboutPerson", "Comment")]
+        public EntityCollection<Comment> Comments
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Comment>("oikonomosModel.FK_Comment_AboutPerson", "Comment");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Comment>("oikonomosModel.FK_Comment_AboutPerson", "Comment", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_Comment_MadeByPerson", "Comment")]
+        public EntityCollection<Comment> Comments1
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Comment>("oikonomosModel.FK_Comment_MadeByPerson", "Comment");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Comment>("oikonomosModel.FK_Comment_MadeByPerson", "Comment", value);
+                }
+            }
+        }
 
         #endregion
     }
@@ -8177,7 +8551,7 @@ namespace oikonomos.data
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
         [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "CanSetRole", "Role1")]
-        public EntityCollection<Role> Role1
+        public EntityCollection<Role> CanSetRole
         {
             get
             {
@@ -8199,7 +8573,7 @@ namespace oikonomos.data
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
         [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "CanSetRole", "Role")]
-        public EntityCollection<Role> Roles
+        public EntityCollection<Role> CanSetRoles
         {
             get
             {
@@ -8210,6 +8584,72 @@ namespace oikonomos.data
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Role>("oikonomosModel.CanSetRole", "Role", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_Comment_Role", "Comment")]
+        public EntityCollection<Comment> Comments
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Comment>("oikonomosModel.FK_Comment_Role", "Comment");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Comment>("oikonomosModel.FK_Comment_Role", "Comment", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "CanViewComment", "Role1")]
+        public EntityCollection<Role> CanViewComment
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Role>("oikonomosModel.CanViewComment", "Role1");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Role>("oikonomosModel.CanViewComment", "Role1", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "CanViewComment", "Role")]
+        public EntityCollection<Role> CanViewCommentRoles
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Role>("oikonomosModel.CanViewComment", "Role");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Role>("oikonomosModel.CanViewComment", "Role", value);
                 }
             }
         }

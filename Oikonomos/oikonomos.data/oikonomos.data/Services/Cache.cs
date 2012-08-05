@@ -48,9 +48,9 @@ namespace oikonomos.data.Services
             var currentPersonRole = GetCurrentPersonRole(context, currentPerson);
             if (currentPersonRole != null)
                 securityRoles = (from r in context.Roles
-                                 from parentRole in r.Roles
+                                 from canSetRole in r.CanSetRoles
                                  where r.ChurchId == currentPerson.ChurchId
-                                 && parentRole.RoleId == currentPersonRole.RoleId
+                                 && canSetRole.RoleId == currentPersonRole.RoleId
                                  select new RoleViewModel()
                                  {
                                      RoleId = r.RoleId,

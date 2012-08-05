@@ -411,12 +411,12 @@ namespace oikonomos.data.DataAccessors
                     foreach (var currentRole in currentChurchRoles)
                     {
                         var newRole = context.Roles.Where(r => (r.ChurchId == newChurch.ChurchId && r.Name == currentRole.Name)).FirstOrDefault();
-                        foreach (var roleToSet in currentRole.Roles)
+                        foreach (var roleToSet in currentRole.CanSetRoles)
                         {
                             if (roleToSet.Name != "System Administrator")
                             {
-                                var newRoleToSet = context.Roles.Where(r => (r.ChurchId == newChurch.ChurchId && r.Name == roleToSet.Name)).FirstOrDefault();
-                                newRole.Roles.Add(newRoleToSet);
+                                var newRoleToSet = context.Roles.FirstOrDefault(r => (r.ChurchId == newChurch.ChurchId && r.Name == roleToSet.Name));
+                                newRole.CanSetRoles.Add(newRoleToSet);
                             }
                         }
                     }

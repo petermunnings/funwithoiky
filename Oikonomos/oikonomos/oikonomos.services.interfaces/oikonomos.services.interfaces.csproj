@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -40,11 +41,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ICommentService.cs" />
     <Compile Include="IEventService.cs" />
     <Compile Include="IEventTypeService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\oikonomos.data\oikonomos.data\oikonomos.data.csproj">
+      <Project>{42B40471-19BB-4727-9973-924745733AFD}</Project>
+      <Name>oikonomos.data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\oikonomos.common\oikonomos.common.csproj">
       <Project>{54B0FB5D-AFBE-448A-ABD9-A0FBF75433D9}</Project>
       <Name>oikonomos.common</Name>
