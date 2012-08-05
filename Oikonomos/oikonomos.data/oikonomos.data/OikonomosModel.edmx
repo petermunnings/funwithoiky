@@ -15,6 +15,7 @@
           <EntitySet Name="ChurchSuburb" EntityType="oikonomosModel.Store.ChurchSuburb" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="EmailTemplate" EntityType="oikonomosModel.Store.EmailTemplate" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Event" EntityType="oikonomosModel.Store.Event" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="EventType" EntityType="oikonomosModel.Store.EventType" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="EventVisibility" EntityType="oikonomosModel.Store.EventVisibility" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Family" EntityType="oikonomosModel.Store.Family" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="FamilyChurch" EntityType="oikonomosModel.Store.FamilyChurch" store:Type="Tables" Schema="dbo" />
@@ -105,6 +106,10 @@
           <AssociationSet Name="FK_Event_Table" Association="oikonomosModel.Store.FK_Event_Table">
             <End Role="Table" EntitySet="Table" />
             <End Role="Event" EntitySet="Event" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventType_Church" Association="oikonomosModel.Store.FK_EventType_Church">
+            <End Role="Church" EntitySet="Church" />
+            <End Role="EventType" EntitySet="EventType" />
           </AssociationSet>
           <AssociationSet Name="FK_Family_Address" Association="oikonomosModel.Store.FK_Family_Address">
             <End Role="Address" EntitySet="Address" />
@@ -343,6 +348,14 @@
           <Property Name="ChangedByPersonId" Type="int" Nullable="false" />
           <Property Name="EventDate" Type="datetime" Nullable="false" />
           <Property Name="Value" Type="nvarchar" MaxLength="2550" />
+          <Property Name="ChurchId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EventType">
+          <Key>
+            <PropertyRef Name="EventTypeId" />
+          </Key>
+          <Property Name="EventTypeId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="255" />
           <Property Name="ChurchId" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="EventVisibility">
@@ -778,6 +791,18 @@
             </Principal>
             <Dependent Role="Event">
               <PropertyRef Name="TableId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventType_Church">
+          <End Role="Church" Type="oikonomosModel.Store.Church" Multiplicity="1" />
+          <End Role="EventType" Type="oikonomosModel.Store.EventType" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Church">
+              <PropertyRef Name="ChurchId" />
+            </Principal>
+            <Dependent Role="EventType">
+              <PropertyRef Name="ChurchId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1379,6 +1404,11 @@
             <End Role="Church" EntitySet="Churches" />
             <End Role="StandardComment" EntitySet="StandardComments" />
           </AssociationSet>
+          <EntitySet Name="EventTypes" EntityType="oikonomosModel.EventType" />
+          <AssociationSet Name="FK_EventType_Church" Association="oikonomosModel.FK_EventType_Church">
+            <End Role="Church" EntitySet="Churches" />
+            <End Role="EventType" EntitySet="EventTypes" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="Church">
           <Key>
@@ -1416,6 +1446,7 @@
           <NavigationProperty Name="Groups" Relationship="oikonomosModel.FK_Group_Church" FromRole="Church" ToRole="Group" />
           <NavigationProperty Name="ChurchEmailTemplates" Relationship="oikonomosModel.FK_ChurchEmailTemplate_Church" FromRole="Church" ToRole="ChurchEmailTemplate" />
           <NavigationProperty Name="StandardComments" Relationship="oikonomosModel.FK_StandardComment_Church" FromRole="Church" ToRole="StandardComment" />
+          <NavigationProperty Name="EventTypes" Relationship="oikonomosModel.FK_EventType_Church" FromRole="Church" ToRole="EventType" />
         </EntityType>
         <EntityType Name="GroupType">
           <Key>
@@ -2328,6 +2359,27 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="EventType">
+          <Key>
+            <PropertyRef Name="EventTypeId" />
+          </Key>
+          <Property Type="Int32" Name="EventTypeId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="ChurchId" Nullable="false" />
+          <NavigationProperty Name="Church" Relationship="oikonomosModel.FK_EventType_Church" FromRole="EventType" ToRole="Church" />
+        </EntityType>
+        <Association Name="FK_EventType_Church">
+          <End Type="oikonomosModel.Church" Role="Church" Multiplicity="1" />
+          <End Type="oikonomosModel.EventType" Role="EventType" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Church">
+              <PropertyRef Name="ChurchId" />
+            </Principal>
+            <Dependent Role="EventType">
+              <PropertyRef Name="ChurchId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2715,6 +2767,15 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="EventTypes">
+            <EntityTypeMapping TypeName="oikonomosModel.EventType">
+              <MappingFragment StoreEntitySet="EventType">
+                <ScalarProperty Name="ChurchId" ColumnName="ChurchId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="EventTypeId" ColumnName="EventTypeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -2745,6 +2806,8 @@
           <ConnectorPoint PointX="2.25" PointY="9.99974609375" />
           <ConnectorPoint PointX="2.4166666666666665" PointY="9.999746093749998" />
           <ConnectorPoint PointX="2.7083333333333335" PointY="9.99974609375" />
+          <ConnectorPoint PointX="4.041666666666667" PointY="9.99974609375" />
+          <ConnectorPoint PointX="4.208333333333333" PointY="9.99974609375" />
           <ConnectorPoint PointX="4.375" PointY="9.99974609375" />
         </AssociationConnector>
         <EntityTypeShape EntityType="oikonomosModel.Address" Width="1.5" PointX="20" PointY="1.125" Height="4.0956022135416656" />
@@ -2757,10 +2820,10 @@
           <ConnectorPoint PointX="7.666666666666667" PointY="2.9877425130208333" />
           <ConnectorPoint PointX="2.5" PointY="2.9877425130208333" />
           <ConnectorPoint PointX="2.5" PointY="4.095683593749996" />
-          <ConnectorPoint PointX="2.1747590984113958" PointY="4.0956835937499951" />
-          <ConnectorPoint PointX="2.0080924317447288" PointY="4.095683593749996" />
-          <ConnectorPoint PointX="1.2584459862264603" PointY="4.095683593749996" />
-          <ConnectorPoint PointX="1.2584459862264603" PointY="4.625" />
+          <ConnectorPoint PointX="2.2003355079997942" PointY="4.0956835937499951" />
+          <ConnectorPoint PointX="2.0336688413331272" PointY="4.095683593749996" />
+          <ConnectorPoint PointX="1.25954796475874" PointY="4.095683593749996" />
+          <ConnectorPoint PointX="1.25954796475874" PointY="4.625" />
         </AssociationConnector>
         <EntityTypeShape EntityType="oikonomosModel.PersonRelationship" Width="1.5" PointX="10.5" PointY="13.75" Height="2.7494921875000031" />
         <EntityTypeShape EntityType="oikonomosModel.Relationship" Width="1.5" PointX="8.25" PointY="18.25" Height="1.7879850260416674" />
@@ -2780,8 +2843,10 @@
           <ConnectorPoint PointX="19.291666666666668" PointY="11.021139322916675" />
           <ConnectorPoint PointX="18.458333333333332" PointY="11.021139322916675" />
           <ConnectorPoint PointX="18.291666666666668" PointY="11.021139322916675" />
+          <ConnectorPoint PointX="17.458333333333332" PointY="11.021139322916675" />
+          <ConnectorPoint PointX="17.291666666666668" PointY="11.021139322916675" />
           <ConnectorPoint PointX="13.333333333333334" PointY="11.021139322916675" />
-          <ConnectorPoint PointX="13.166666666666666" PointY="11.021139322916675" />
+          <ConnectorPoint PointX="13.104166666666666" PointY="11.021139322916675" />
           <ConnectorPoint PointX="12.989583333333334" PointY="11.021139322916675" />
           <ConnectorPoint PointX="12.822916666666666" PointY="11.021139322916675" />
           <ConnectorPoint PointX="11.333333333333334" PointY="11.021139322916675" />
@@ -2798,23 +2863,23 @@
         <AssociationConnector Association="oikonomosModel.FK_ChurchOptionalField_Church" >
           <ConnectorPoint PointX="2.25" PointY="6.5370725332031281" />
           <ConnectorPoint PointX="2.4166666666666665" PointY="6.5370725332031272" />
-          <ConnectorPoint PointX="2.5833333333333335" PointY="6.5370725332031281" />
-          <ConnectorPoint PointX="2.6666666666666665" PointY="6.5370725332031272" />
-          <ConnectorPoint PointX="2.8333333333333335" PointY="6.5370725332031281" />
+          <ConnectorPoint PointX="2.6458333333333335" PointY="6.5370725332031281" />
           <ConnectorPoint PointX="3" PointY="6.5370725332031281" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_ChurchOptionalField_OptionalField" >
           <ConnectorPoint PointX="2.2257692307692305" PointY="12.25" />
-          <ConnectorPoint PointX="2.2906342305741965" PointY="12.185135000195032" />
-          <ConnectorPoint PointX="2.4454089376950332" PointY="12.030360293074196" />
+          <ConnectorPoint PointX="2.2865957690357352" PointY="12.189173461733493" />
+          <ConnectorPoint PointX="2.4477166300027253" PointY="12.028052600766504" />
+          <ConnectorPoint PointX="2.5035744349011204" PointY="11.972194795868109" />
+          <ConnectorPoint PointX="2.6214255650988791" PointY="11.854343665670353" />
           <ConnectorPoint PointX="2.625" PointY="11.850769230769231" />
           <ConnectorPoint PointX="2.625" PointY="7.5741450664062553" />
-          <ConnectorPoint PointX="2.6666666666666665" PointY="7.5741450664062544" />
-          <ConnectorPoint PointX="2.8333333333333335" PointY="7.5741450664062553" />
           <ConnectorPoint PointX="3" PointY="7.5741450664062553" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_PersonOptionalField_OptionalField" >
           <ConnectorPoint PointX="2.25" PointY="12.276537461538462" />
+          <ConnectorPoint PointX="2.5035744349011204" PointY="12.02296302663734" />
+          <ConnectorPoint PointX="2.6214255650988791" PointY="11.905111896439584" />
           <ConnectorPoint PointX="2.6515374615384619" PointY="11.875" />
           <ConnectorPoint PointX="5.1041671666666675" PointY="11.875" />
           <ConnectorPoint PointX="5.2708338333333336" PointY="11.875" />
@@ -2838,8 +2903,10 @@
           <ConnectorPoint PointX="21.2031275" PointY="5.2206022135416656" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_ChurchSuburb_Church" >
-          <ConnectorPoint PointX="2.25" PointY="11.952802485576923" />
-          <ConnectorPoint PointX="2.6875" PointY="12.390302485576923" />
+          <ConnectorPoint PointX="2.25" PointY="11.948187100961539" />
+          <ConnectorPoint PointX="2.5035744349011213" PointY="12.201761535862659" />
+          <ConnectorPoint PointX="2.6214255650988791" PointY="12.319612666060417" />
+          <ConnectorPoint PointX="2.6875" PointY="12.385687100961539" />
           <ConnectorPoint PointX="2.6875" PointY="17.057444661458334" />
           <ConnectorPoint PointX="3" PointY="17.057444661458334" />
         </AssociationConnector>
@@ -2848,6 +2915,8 @@
           <ConnectorPoint PointX="2.25" PointY="11.4682421875" />
           <ConnectorPoint PointX="2.4166666666666665" PointY="11.468242187499998" />
           <ConnectorPoint PointX="2.7083333333333335" PointY="11.4682421875" />
+          <ConnectorPoint PointX="4.041666666666667" PointY="11.4682421875" />
+          <ConnectorPoint PointX="4.208333333333333" PointY="11.4682421875" />
           <ConnectorPoint PointX="5.1041671666666675" PointY="11.4682421875" />
           <ConnectorPoint PointX="5.2708338333333336" PointY="11.4682421875" />
           <ConnectorPoint PointX="6.260416666666667" PointY="11.4682421875" />
@@ -2858,7 +2927,7 @@
           <ConnectorPoint PointX="11.333333333333334" PointY="11.4682421875" />
           <ConnectorPoint PointX="12.822916666666666" PointY="11.4682421875" />
           <ConnectorPoint PointX="12.989583333333334" PointY="11.4682421875" />
-          <ConnectorPoint PointX="13.166666666666666" PointY="11.4682421875" />
+          <ConnectorPoint PointX="13.104166666666666" PointY="11.4682421875" />
           <ConnectorPoint PointX="13.333333333333334" PointY="11.4682421875" />
           <ConnectorPoint PointX="13.5" PointY="11.4682421875" />
         </AssociationConnector>
@@ -2867,62 +2936,66 @@
           <ConnectorPoint PointX="6.34375" PointY="13.333979492187499" />
           <ConnectorPoint PointX="10.166666666666666" PointY="13.333979492187499" />
           <ConnectorPoint PointX="10.333333333333334" PointY="13.333979492187499" />
-          <ConnectorPoint PointX="12.822916666666666" PointY="13.333979492187497" />
+          <ConnectorPoint PointX="12.416666666666666" PointY="13.333979492187499" />
+          <ConnectorPoint PointX="12.583333333333334" PointY="13.333979492187499" />
+          <ConnectorPoint PointX="12.822916666666666" PointY="13.333979492187499" />
+          <ConnectorPoint PointX="12.989583333333334" PointY="13.333979492187499" />
+          <ConnectorPoint PointX="13.104166666666666" PointY="13.333979492187499" />
           <ConnectorPoint PointX="13.333333333333334" PointY="13.333979492187499" />
           <ConnectorPoint PointX="13.5" PointY="13.333979492187499" />
         </AssociationConnector>
         <EntityTypeShape EntityType="oikonomosModel.ChurchSmsProvider" Width="1.5" PointX="16.625" PointY="11.5" Height="2.5571907552083388" />
         <EntityTypeShape EntityType="oikonomosModel.SmsProvider" Width="1.5" PointX="13.375" PointY="15.375" Height="1.595683593749996" />
         <AssociationConnector Association="oikonomosModel.FK_ChurchSmsProvider_Church" >
-          <ConnectorPoint PointX="1.4502864615384614" PointY="11.797425130208334" />
-          <ConnectorPoint PointX="1.4502864615384614" PointY="12.047425130208334" />
-          <ConnectorPoint PointX="2.3450107672275631" PointY="12.047425130208332" />
-          <ConnectorPoint PointX="2.6202574102564102" PointY="12.047425130208334" />
-          <ConnectorPoint PointX="5.1041671666666675" PointY="12.047425130208334" />
-          <ConnectorPoint PointX="5.2708338333333336" PointY="12.047425130208334" />
-          <ConnectorPoint PointX="6.260416666666667" PointY="12.047425130208334" />
-          <ConnectorPoint PointX="6.427083333333333" PointY="12.047425130208334" />
-          <ConnectorPoint PointX="10.166666666666666" PointY="12.047425130208334" />
-          <ConnectorPoint PointX="10.333333333333334" PointY="12.047425130208334" />
-          <ConnectorPoint PointX="12.822916666666666" PointY="12.047425130208334" />
-          <ConnectorPoint PointX="12.989583333333334" PointY="12.047425130208334" />
-          <ConnectorPoint PointX="13.0625" PointY="12.047425130208334" />
-          <ConnectorPoint PointX="13.0625" PointY="14.124492187500003" />
-          <ConnectorPoint PointX="13.104166666666666" PointY="14.124492187500001" />
-          <ConnectorPoint PointX="13.489583333333334" PointY="14.124492187500003" />
-          <ConnectorPoint PointX="16.25" PointY="14.124492187500003" />
-          <ConnectorPoint PointX="16.25" PointY="13.004493972005211" />
-          <ConnectorPoint PointX="16.625" PointY="13.004493972005211" />
+          <ConnectorPoint PointX="2.25" PointY="5.1249994999999995" />
+          <ConnectorPoint PointX="2.4166666666666665" PointY="5.1249994999999986" />
+          <ConnectorPoint PointX="2.6458333333333335" PointY="5.1249994999999995" />
+          <ConnectorPoint PointX="4.125" PointY="5.1249994999999995" />
+          <ConnectorPoint PointX="4.125" PointY="11.6244921875" />
+          <ConnectorPoint PointX="5.1041671666666675" PointY="11.6244921875" />
+          <ConnectorPoint PointX="5.2708338333333336" PointY="11.6244921875" />
+          <ConnectorPoint PointX="6.260416666666667" PointY="11.6244921875" />
+          <ConnectorPoint PointX="6.427083333333333" PointY="11.6244921875" />
+          <ConnectorPoint PointX="10.166666666666666" PointY="11.6244921875" />
+          <ConnectorPoint PointX="10.333333333333334" PointY="11.6244921875" />
+          <ConnectorPoint PointX="11.166666666666666" PointY="11.6244921875" />
+          <ConnectorPoint PointX="11.333333333333334" PointY="11.6244921875" />
+          <ConnectorPoint PointX="12.822916666666666" PointY="11.6244921875" />
+          <ConnectorPoint PointX="12.989583333333334" PointY="11.6244921875" />
+          <ConnectorPoint PointX="13.1875" PointY="11.6244921875" />
+          <ConnectorPoint PointX="13.1875" PointY="10.75" />
+          <ConnectorPoint PointX="17.375" PointY="10.75" />
+          <ConnectorPoint PointX="17.375" PointY="11.5" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_ChurchSmsProvider_SmsProvider" >
           <ConnectorPoint PointX="13.40625" PointY="15.375" />
           <ConnectorPoint PointX="13.40625" PointY="13.997090971354172" />
-          <ConnectorPoint PointX="16.166666666666668" PointY="13.997090971354172" />
-          <ConnectorPoint PointX="16.333333333333332" PointY="13.997090971354172" />
           <ConnectorPoint PointX="16.625" PointY="13.997090971354172" />
         </AssociationConnector>
         <EntityTypeShape EntityType="oikonomosModel.PermissionRole" Width="1.5" PointX="18.625" PointY="8.625" Height="2.1725878906250102" />
         <EntityTypeShape EntityType="oikonomosModel.Role" Width="1.5" PointX="3.375" PointY="19.375" Height="2.9417936197916674" />
         <AssociationConnector Association="oikonomosModel.FK_Role_Church" >
-          <ConnectorPoint PointX="2.25" PointY="11.958571716346153" />
-          <ConnectorPoint PointX="2.65625" PointY="12.364821716346153" />
-          <ConnectorPoint PointX="2.65625" PointY="20.942047526041669" />
+          <ConnectorPoint PointX="2.25" PointY="11.977033254807692" />
+          <ConnectorPoint PointX="2.5035744349011213" PointY="12.230607689708812" />
+          <ConnectorPoint PointX="2.6214255650988791" PointY="12.34845881990657" />
+          <ConnectorPoint PointX="2.71875" PointY="12.445783254807692" />
+          <ConnectorPoint PointX="2.71875" PointY="20.942047526041669" />
           <ConnectorPoint PointX="3.375" PointY="20.942047526041669" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_PermissionRole_Role" >
-          <ConnectorPoint PointX="4.875" PointY="21.661602543131519" />
-          <ConnectorPoint PointX="19.375" PointY="21.661602543131519" />
+          <ConnectorPoint PointX="4.875" PointY="21.723932429758264" />
+          <ConnectorPoint PointX="19.375" PointY="21.723932429758264" />
           <ConnectorPoint PointX="19.375" PointY="10.79758789062501" />
         </AssociationConnector>
         <EntityTypeShape EntityType="oikonomosModel.Permission" Width="1.5" PointX="16.375" PointY="4.5" Height="2.3648893229166674" />
         <AssociationConnector Association="oikonomosModel.FK_PermissionRole_Permission" >
-          <ConnectorPoint PointX="17.125" PointY="7.2494921875" />
-          <ConnectorPoint PointX="17.125" PointY="9.7112939453125051" />
-          <ConnectorPoint PointX="18.625" PointY="9.7112939453125051" />
+          <ConnectorPoint PointX="16.875" PointY="7.2494921875" />
+          <ConnectorPoint PointX="16.875" PointY="9.5625" />
+          <ConnectorPoint PointX="18.625" PointY="9.5625" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_PersonRole_Role" >
-          <ConnectorPoint PointX="4.875" PointY="20.8497912845866" />
-          <ConnectorPoint PointX="10.25" PointY="20.8497912845866" />
+          <ConnectorPoint PointX="4.875" PointY="20.880956227899972" />
+          <ConnectorPoint PointX="10.25" PointY="20.880956227899972" />
           <ConnectorPoint PointX="10.25" PointY="7.047587890624996" />
           <ConnectorPoint PointX="11.25" PointY="7.047587890624996" />
           <ConnectorPoint PointX="11.25" PointY="6.672587890624996" />
@@ -2935,8 +3008,8 @@
         </AssociationConnector>
         <EntityTypeShape EntityType="oikonomosModel.Status" Width="1.5" PointX="0.75" PointY="2.25" Height="1.595683593749996" />
         <AssociationConnector Association="oikonomosModel.FK_Church_Status" >
-          <ConnectorPoint PointX="2.0914257650780623" PointY="3.845683593749996" />
-          <ConnectorPoint PointX="2.0914257650780623" PointY="4.625" />
+          <ConnectorPoint PointX="2.1170021746664607" PointY="3.845683593749996" />
+          <ConnectorPoint PointX="2.1170021746664607" PointY="4.625" />
         </AssociationConnector>
         <EntityTypeShape EntityType="oikonomosModel.Family" Width="1.5" PointX="23.5" PointY="5.375" Height="2.9417936197916674" />
         <EntityTypeShape EntityType="oikonomosModel.Person" Width="1.5" PointX="23.25" PointY="9.875" Height="6.210917968749996" />
@@ -2958,19 +3031,25 @@
           <ConnectorPoint PointX="6.427083333333333" PointY="12.980458984374998" />
           <ConnectorPoint PointX="10.166666666666666" PointY="12.980458984374998" />
           <ConnectorPoint PointX="10.333333333333334" PointY="12.980458984374998" />
-          <ConnectorPoint PointX="12.822916666666666" PointY="12.980458984374998" />
-          <ConnectorPoint PointX="12.989583333333334" PointY="12.980458984374998" />
-          <ConnectorPoint PointX="13.125" PointY="12.980458984374998" />
-          <ConnectorPoint PointX="13.125" PointY="14.307190755208339" />
-          <ConnectorPoint PointX="13.322916666666666" PointY="14.307190755208339" />
-          <ConnectorPoint PointX="13.489583333333334" PointY="14.307190755208339" />
-          <ConnectorPoint PointX="19.291666666666668" PointY="14.307190755208339" />
-          <ConnectorPoint PointX="19.458333333333332" PointY="14.307190755208339" />
-          <ConnectorPoint PointX="21.119794166666669" PointY="14.307190755208339" />
-          <ConnectorPoint PointX="21.286460833333333" PointY="14.307190755208339" />
-          <ConnectorPoint PointX="22.5" PointY="14.307190755208339" />
-          <ConnectorPoint PointX="22.5" PointY="12.078122500000006" />
-          <ConnectorPoint PointX="23.25" PointY="12.078122500000006" />
+          <ConnectorPoint PointX="12.5" PointY="12.980458984374998" />
+          <ConnectorPoint PointX="12.5" PointY="14.557190755208339" />
+          <ConnectorPoint PointX="12.822916666666666" PointY="14.557190755208339" />
+          <ConnectorPoint PointX="12.989583333333334" PointY="14.557190755208339" />
+          <ConnectorPoint PointX="13.322916666666666" PointY="14.557190755208339" />
+          <ConnectorPoint PointX="13.489583333333334" PointY="14.557190755208339" />
+          <ConnectorPoint PointX="18.291666666666668" PointY="14.557190755208339" />
+          <ConnectorPoint PointX="18.458333333333332" PointY="14.557190755208339" />
+          <ConnectorPoint PointX="19.291666666666668" PointY="14.557190755208339" />
+          <ConnectorPoint PointX="19.458333333333332" PointY="14.557190755208339" />
+          <ConnectorPoint PointX="21.119794166666669" PointY="14.557190755208339" />
+          <ConnectorPoint PointX="21.286460833333333" PointY="14.557190755208339" />
+          <ConnectorPoint PointX="22.5" PointY="14.557190755208339" />
+          <ConnectorPoint PointX="22.5" PointY="13.309876836588543" />
+          <ConnectorPoint PointX="22.541666666666668" PointY="13.309876836588543" />
+          <ConnectorPoint PointX="22.708333333333332" PointY="13.309876836588543" />
+          <ConnectorPoint PointX="22.791666666666668" PointY="13.309876836588543" />
+          <ConnectorPoint PointX="22.958333333333332" PointY="13.309876836588543" />
+          <ConnectorPoint PointX="23.25" PointY="13.309876836588543" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_Person_Title" >
           <ConnectorPoint PointX="3.75" PointY="12.75" />
@@ -2981,26 +3060,30 @@
           <ConnectorPoint PointX="6.427083333333333" PointY="12.5" />
           <ConnectorPoint PointX="10.166666666666666" PointY="12.5" />
           <ConnectorPoint PointX="10.333333333333334" PointY="12.5" />
-          <ConnectorPoint PointX="12.822916666666666" PointY="12.499999999999998" />
-          <ConnectorPoint PointX="13.145833333333334" PointY="12.5" />
+          <ConnectorPoint PointX="12.822916666666666" PointY="12.5" />
+          <ConnectorPoint PointX="12.989583333333334" PointY="12.5" />
           <ConnectorPoint PointX="13.1875" PointY="12.5" />
-          <ConnectorPoint PointX="13.1875" PointY="14.275940755208339" />
-          <ConnectorPoint PointX="13.322916666666666" PointY="14.275940755208339" />
-          <ConnectorPoint PointX="13.489583333333334" PointY="14.275940755208339" />
-          <ConnectorPoint PointX="19.291666666666668" PointY="14.275940755208339" />
-          <ConnectorPoint PointX="19.458333333333332" PointY="14.275940755208339" />
-          <ConnectorPoint PointX="21.119794166666669" PointY="14.275940755208339" />
-          <ConnectorPoint PointX="21.286460833333333" PointY="14.275940755208339" />
-          <ConnectorPoint PointX="22.875" PointY="14.275940755208339" />
-          <ConnectorPoint PointX="22.875" PointY="15.276008673177076" />
-          <ConnectorPoint PointX="23.25" PointY="15.276008673177076" />
+          <ConnectorPoint PointX="13.1875" PointY="14.400940755208339" />
+          <ConnectorPoint PointX="13.322916666666666" PointY="14.400940755208339" />
+          <ConnectorPoint PointX="13.489583333333334" PointY="14.400940755208339" />
+          <ConnectorPoint PointX="18.291666666666668" PointY="14.400940755208339" />
+          <ConnectorPoint PointX="18.458333333333332" PointY="14.400940755208339" />
+          <ConnectorPoint PointX="19.291666666666668" PointY="14.400940755208339" />
+          <ConnectorPoint PointX="19.458333333333332" PointY="14.400940755208339" />
+          <ConnectorPoint PointX="21.119794166666669" PointY="14.400940755208339" />
+          <ConnectorPoint PointX="21.286460833333333" PointY="14.400940755208339" />
+          <ConnectorPoint PointX="22.416666666666668" PointY="14.400940755208339" />
+          <ConnectorPoint PointX="22.583333333333332" PointY="14.400940755208339" />
+          <ConnectorPoint PointX="22.875" PointY="14.400940755208339" />
+          <ConnectorPoint PointX="22.875" PointY="12.147479863606783" />
+          <ConnectorPoint PointX="23.25" PointY="12.147479863606783" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_PersonContact_Person" >
           <ConnectorPoint PointX="23.25" PointY="10.896139322916675" />
           <ConnectorPoint PointX="23.083333333333332" PointY="10.896139322916675" />
           <ConnectorPoint PointX="22.916666666666668" PointY="10.896139322916675" />
-          <ConnectorPoint PointX="22.833333333333332" PointY="10.896139322916675" />
-          <ConnectorPoint PointX="22.666666666666668" PointY="10.896139322916675" />
+          <ConnectorPoint PointX="22.833333333333332" PointY="10.896139322916673" />
+          <ConnectorPoint PointX="22.541666666666668" PointY="10.896139322916675" />
           <ConnectorPoint PointX="21.286460833333333" PointY="10.896139322916675" />
           <ConnectorPoint PointX="21.119794166666669" PointY="10.896139322916675" />
           <ConnectorPoint PointX="20.927083333333332" PointY="10.896139322916675" />
@@ -3011,76 +3094,74 @@
           <ConnectorPoint PointX="18.291666666666668" PointY="10.896139322916675" />
           <ConnectorPoint PointX="18.208333333333332" PointY="10.896139322916675" />
           <ConnectorPoint PointX="18.041666666666668" PointY="10.896139322916675" />
+          <ConnectorPoint PointX="17.458333333333332" PointY="10.896139322916675" />
+          <ConnectorPoint PointX="17.291666666666668" PointY="10.896139322916675" />
           <ConnectorPoint PointX="13.333333333333334" PointY="10.896139322916675" />
-          <ConnectorPoint PointX="13.166666666666666" PointY="10.896139322916675" />
+          <ConnectorPoint PointX="13.104166666666666" PointY="10.896139322916675" />
           <ConnectorPoint PointX="12.989583333333334" PointY="10.896139322916675" />
           <ConnectorPoint PointX="12.822916666666666" PointY="10.896139322916675" />
           <ConnectorPoint PointX="12" PointY="10.896139322916675" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_PersonGroup_Person" >
-          <ConnectorPoint PointX="23.25" PointY="14.403595377604169" />
-          <ConnectorPoint PointX="22.958333333333332" PointY="14.403595377604169" />
-          <ConnectorPoint PointX="22.791666666666668" PointY="14.403595377604169" />
-          <ConnectorPoint PointX="21.286460833333333" PointY="14.403595377604169" />
-          <ConnectorPoint PointX="21.119794166666669" PointY="14.403595377604169" />
-          <ConnectorPoint PointX="19.458333333333332" PointY="14.403595377604169" />
-          <ConnectorPoint PointX="19.291666666666668" PointY="14.403595377604169" />
-          <ConnectorPoint PointX="13.489583333333334" PointY="14.403595377604169" />
-          <ConnectorPoint PointX="13.322916666666666" PointY="14.403595377604169" />
-          <ConnectorPoint PointX="12.90625" PointY="14.403595377604169" />
+          <ConnectorPoint PointX="23.25" PointY="14.718496093750002" />
+          <ConnectorPoint PointX="21.286460833333333" PointY="14.718496093750002" />
+          <ConnectorPoint PointX="21.119794166666669" PointY="14.718496093750002" />
+          <ConnectorPoint PointX="19.458333333333332" PointY="14.718496093750002" />
+          <ConnectorPoint PointX="19.291666666666668" PointY="14.718496093750002" />
+          <ConnectorPoint PointX="18.458333333333332" PointY="14.718496093750002" />
+          <ConnectorPoint PointX="18.291666666666668" PointY="14.718496093750002" />
+          <ConnectorPoint PointX="13.489583333333334" PointY="14.718496093750002" />
+          <ConnectorPoint PointX="13.322916666666666" PointY="14.718496093750002" />
+          <ConnectorPoint PointX="12.90625" PointY="14.718496093750002" />
           <ConnectorPoint PointX="12.90625" PointY="9.5571907552083317" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_PersonRelationship_Person" >
           <ConnectorPoint PointX="23.25" PointY="14.839802025390622" />
-          <ConnectorPoint PointX="22.958333333333332" PointY="14.839802025390622" />
-          <ConnectorPoint PointX="22.791666666666668" PointY="14.839802025390622" />
           <ConnectorPoint PointX="21.286460833333333" PointY="14.839802025390622" />
           <ConnectorPoint PointX="21.119794166666669" PointY="14.839802025390622" />
           <ConnectorPoint PointX="19.458333333333332" PointY="14.839802025390622" />
           <ConnectorPoint PointX="19.291666666666668" PointY="14.839802025390622" />
+          <ConnectorPoint PointX="18.458333333333332" PointY="14.839802025390622" />
+          <ConnectorPoint PointX="18.291666666666668" PointY="14.839802025390622" />
           <ConnectorPoint PointX="13.489583333333334" PointY="14.839802025390622" />
           <ConnectorPoint PointX="13.322916666666666" PointY="14.839802025390622" />
           <ConnectorPoint PointX="12" PointY="14.839802025390622" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_PersonRelationship_PersonRelatedTo" >
           <ConnectorPoint PointX="23.25" PointY="15.05790534928385" />
-          <ConnectorPoint PointX="22.958333333333332" PointY="15.05790534928385" />
-          <ConnectorPoint PointX="22.791666666666668" PointY="15.05790534928385" />
           <ConnectorPoint PointX="21.286460833333333" PointY="15.05790534928385" />
           <ConnectorPoint PointX="21.119794166666669" PointY="15.05790534928385" />
           <ConnectorPoint PointX="19.458333333333332" PointY="15.05790534928385" />
           <ConnectorPoint PointX="19.291666666666668" PointY="15.05790534928385" />
+          <ConnectorPoint PointX="18.458333333333332" PointY="15.05790534928385" />
+          <ConnectorPoint PointX="18.291666666666668" PointY="15.05790534928385" />
           <ConnectorPoint PointX="13.489583333333334" PointY="15.05790534928385" />
           <ConnectorPoint PointX="13.322916666666666" PointY="15.05790534928385" />
           <ConnectorPoint PointX="12" PointY="15.05790534928385" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_PersonRole_Person" >
-          <ConnectorPoint PointX="23.25" PointY="13.602994850260416" />
-          <ConnectorPoint PointX="22.833333333333332" PointY="13.602994850260416" />
-          <ConnectorPoint PointX="22.666666666666668" PointY="13.602994850260416" />
-          <ConnectorPoint PointX="22.583333333333332" PointY="13.602994850260416" />
-          <ConnectorPoint PointX="22.416666666666668" PointY="13.602994850260416" />
-          <ConnectorPoint PointX="21.286460833333333" PointY="13.602994850260416" />
-          <ConnectorPoint PointX="21.119794166666669" PointY="13.602994850260416" />
-          <ConnectorPoint PointX="19.458333333333332" PointY="13.602994850260416" />
-          <ConnectorPoint PointX="19.291666666666668" PointY="13.602994850260416" />
-          <ConnectorPoint PointX="18.375" PointY="13.602994850260416" />
-          <ConnectorPoint PointX="18.375" PointY="10.5" />
-          <ConnectorPoint PointX="12.989583333333334" PointY="10.5" />
-          <ConnectorPoint PointX="12.822916666666666" PointY="10.5" />
-          <ConnectorPoint PointX="12.25" PointY="10.5" />
+          <ConnectorPoint PointX="23.25" PointY="15.432258673177076" />
+          <ConnectorPoint PointX="21.286460833333333" PointY="15.432258673177076" />
+          <ConnectorPoint PointX="21.119794166666669" PointY="15.432258673177076" />
+          <ConnectorPoint PointX="19.458333333333332" PointY="15.432258673177076" />
+          <ConnectorPoint PointX="19.291666666666668" PointY="15.432258673177076" />
+          <ConnectorPoint PointX="18.375" PointY="15.432258673177076" />
+          <ConnectorPoint PointX="18.375" PointY="10.25" />
+          <ConnectorPoint PointX="12.989583333333334" PointY="10.25" />
+          <ConnectorPoint PointX="12.822916666666666" PointY="10.25" />
+          <ConnectorPoint PointX="12.25" PointY="10.25" />
           <ConnectorPoint PointX="12.25" PointY="8.125" />
-          <ConnectorPoint PointX="11.656252" PointY="8.125" />
-          <ConnectorPoint PointX="11.656252" PointY="6.672587890624996" />
+          <ConnectorPoint PointX="11.25" PointY="8.125" />
+          <ConnectorPoint PointX="11.25" PointY="6.672587890624996" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FamilyChurch" >
-          <ConnectorPoint PointX="0.93732147708849722" PointY="4.625" />
-          <ConnectorPoint PointX="0.93732147708849722" PointY="4.3749999999999982" />
-          <ConnectorPoint PointX="1.1038136208436613" PointY="4.3749999999999973" />
-          <ConnectorPoint PointX="1.2704802875103278" PointY="4.3749999999999982" />
-          <ConnectorPoint PointX="2.0281699136107925" PointY="4.3749999999999973" />
-          <ConnectorPoint PointX="2.1948365802774594" PointY="4.3749999999999982" />
-          <ConnectorPoint PointX="5" PointY="4.3749999999999982" />
+          <ConnectorPoint PointX="0.97352198237936993" PointY="4.625" />
+          <ConnectorPoint PointX="0.97352198237936993" PointY="4.375" />
+          <ConnectorPoint PointX="1.1762146314254067" PointY="4.3749999999999991" />
+          <ConnectorPoint PointX="1.3428812980920732" PointY="4.375" />
+          <ConnectorPoint PointX="2.0336688413331272" PointY="4.3749999999999991" />
+          <ConnectorPoint PointX="2.2003355079997942" PointY="4.375" />
+          <ConnectorPoint PointX="5" PointY="4.375" />
           <ConnectorPoint PointX="5" PointY="6.922587890624996" />
           <ConnectorPoint PointX="6.260416666666667" PointY="6.9225878906249951" />
           <ConnectorPoint PointX="6.427083333333333" PointY="6.922587890624996" />
@@ -3088,14 +3169,12 @@
           <ConnectorPoint PointX="7.833333333333333" PointY="6.922587890624996" />
           <ConnectorPoint PointX="11.166666666666666" PointY="6.9225878906249951" />
           <ConnectorPoint PointX="11.333333333333334" PointY="6.922587890624996" />
-          <ConnectorPoint PointX="11.572918666666666" PointY="6.9225878906249951" />
-          <ConnectorPoint PointX="11.739585333333334" PointY="6.922587890624996" />
           <ConnectorPoint PointX="12.5" PointY="6.922587890624996" />
           <ConnectorPoint PointX="12.5" PointY="6.75" />
           <ConnectorPoint PointX="16.125" PointY="6.75" />
           <ConnectorPoint PointX="16.125" PointY="7.4994921875" />
-          <ConnectorPoint PointX="17.041666666666668" PointY="7.4994921874999987" />
-          <ConnectorPoint PointX="17.208333333333332" PointY="7.4994921875" />
+          <ConnectorPoint PointX="16.791666666666668" PointY="7.4994921874999987" />
+          <ConnectorPoint PointX="16.958333333333332" PointY="7.4994921875" />
           <ConnectorPoint PointX="20.760416666666668" PointY="7.4994921874999987" />
           <ConnectorPoint PointX="20.927083333333332" PointY="7.4994921875" />
           <ConnectorPoint PointX="21.119794166666669" PointY="7.4994921874999987" />
@@ -3107,37 +3186,49 @@
           <ConnectorPoint PointX="23.5" PointY="6.9093224166666669" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.PersonChurch" >
-          <ConnectorPoint PointX="1.831681692307692" PointY="11.797425130208334" />
-          <ConnectorPoint PointX="1.831681692307692" PointY="12.047425130208334" />
-          <ConnectorPoint PointX="2.3450107672275631" PointY="12.047425130208332" />
-          <ConnectorPoint PointX="2.6202574102564102" PointY="12.047425130208334" />
-          <ConnectorPoint PointX="5.1041671666666675" PointY="12.047425130208334" />
-          <ConnectorPoint PointX="5.2708338333333336" PointY="12.047425130208334" />
-          <ConnectorPoint PointX="6.260416666666667" PointY="12.047425130208334" />
-          <ConnectorPoint PointX="6.427083333333333" PointY="12.047425130208334" />
-          <ConnectorPoint PointX="10.166666666666666" PointY="12.047425130208334" />
-          <ConnectorPoint PointX="10.333333333333334" PointY="12.047425130208334" />
-          <ConnectorPoint PointX="12.822916666666666" PointY="12.047425130208334" />
-          <ConnectorPoint PointX="12.989583333333334" PointY="12.047425130208334" />
-          <ConnectorPoint PointX="13.25" PointY="12.047425130208334" />
-          <ConnectorPoint PointX="13.25" PointY="14.338440755208339" />
-          <ConnectorPoint PointX="13.322916666666666" PointY="14.338440755208339" />
-          <ConnectorPoint PointX="13.489583333333334" PointY="14.338440755208339" />
-          <ConnectorPoint PointX="19.291666666666668" PointY="14.338440755208339" />
-          <ConnectorPoint PointX="19.458333333333332" PointY="14.338440755208339" />
-          <ConnectorPoint PointX="21.119794166666669" PointY="14.338440755208339" />
-          <ConnectorPoint PointX="21.286460833333333" PointY="14.338440755208339" />
-          <ConnectorPoint PointX="22.75" PointY="14.338440755208339" />
-          <ConnectorPoint PointX="22.75" PointY="12.840558675130211" />
-          <ConnectorPoint PointX="23.25" PointY="12.840558675130211" />
+          <ConnectorPoint PointX="1.4192921704099237" PointY="4.625" />
+          <ConnectorPoint PointX="1.4192921704099237" PointY="4.328125" />
+          <ConnectorPoint PointX="2.0336688413331272" PointY="4.3281249999999991" />
+          <ConnectorPoint PointX="2.2003355079997942" PointY="4.328125" />
+          <ConnectorPoint PointX="2.5625" PointY="4.328125" />
+          <ConnectorPoint PointX="2.5625" PointY="12.484375" />
+          <ConnectorPoint PointX="2.5729166666666665" PointY="12.484375" />
+          <ConnectorPoint PointX="2.7708333333333335" PointY="12.484375" />
+          <ConnectorPoint PointX="5.1041671666666675" PointY="12.484375" />
+          <ConnectorPoint PointX="5.2708338333333336" PointY="12.484375" />
+          <ConnectorPoint PointX="6.260416666666667" PointY="12.484375" />
+          <ConnectorPoint PointX="6.427083333333333" PointY="12.484375" />
+          <ConnectorPoint PointX="10.166666666666666" PointY="12.484375" />
+          <ConnectorPoint PointX="10.333333333333334" PointY="12.484375" />
+          <ConnectorPoint PointX="12.822916666666666" PointY="12.484375" />
+          <ConnectorPoint PointX="12.989583333333334" PointY="12.484375" />
+          <ConnectorPoint PointX="13.25" PointY="12.484375" />
+          <ConnectorPoint PointX="13.25" PointY="14.307190755208339" />
+          <ConnectorPoint PointX="13.322916666666666" PointY="14.307190755208339" />
+          <ConnectorPoint PointX="13.489583333333334" PointY="14.307190755208339" />
+          <ConnectorPoint PointX="18.291666666666668" PointY="14.307190755208339" />
+          <ConnectorPoint PointX="18.458333333333332" PointY="14.307190755208339" />
+          <ConnectorPoint PointX="19.291666666666668" PointY="14.307190755208339" />
+          <ConnectorPoint PointX="19.458333333333332" PointY="14.307190755208339" />
+          <ConnectorPoint PointX="21.119794166666669" PointY="14.307190755208339" />
+          <ConnectorPoint PointX="21.286460833333333" PointY="14.307190755208339" />
+          <ConnectorPoint PointX="22.416666666666668" PointY="14.307190755208339" />
+          <ConnectorPoint PointX="22.583333333333332" PointY="14.307190755208339" />
+          <ConnectorPoint PointX="22.625" PointY="14.307190755208339" />
+          <ConnectorPoint PointX="22.625" PointY="10.461294445312504" />
+          <ConnectorPoint PointX="22.666666666666668" PointY="10.461294445312504" />
+          <ConnectorPoint PointX="22.833333333333332" PointY="10.461294445312504" />
+          <ConnectorPoint PointX="22.916666666666668" PointY="10.461294445312504" />
+          <ConnectorPoint PointX="23.083333333333332" PointY="10.461294445312504" />
+          <ConnectorPoint PointX="23.25" PointY="10.461294445312504" />
         </AssociationConnector>
         <EntityTypeShape EntityType="oikonomosModel.Event" Width="1.5" PointX="26.5" PointY="8" Height="4.6725065104166674" />
         <AssociationConnector Association="oikonomosModel.FK_Event_Church" >
-          <ConnectorPoint PointX="1.5488292240326231" PointY="4.625" />
-          <ConnectorPoint PointX="1.5488292240326231" PointY="4.3437499999999982" />
-          <ConnectorPoint PointX="2.0281699136107925" PointY="4.3437499999999973" />
-          <ConnectorPoint PointX="2.1948365802774594" PointY="4.3437499999999982" />
-          <ConnectorPoint PointX="2.5" PointY="4.3437499999999982" />
+          <ConnectorPoint PointX="1.6391482598714227" PointY="4.625" />
+          <ConnectorPoint PointX="1.6391482598714227" PointY="4.34375" />
+          <ConnectorPoint PointX="2.0336688413331272" PointY="4.3437499999999991" />
+          <ConnectorPoint PointX="2.2003355079997942" PointY="4.34375" />
+          <ConnectorPoint PointX="2.5" PointY="4.34375" />
           <ConnectorPoint PointX="2.5" PointY="11.6244921875" />
           <ConnectorPoint PointX="2.5416666666666665" PointY="11.6244921875" />
           <ConnectorPoint PointX="2.7083333333333335" PointY="11.6244921875" />
@@ -3152,8 +3243,8 @@
           <ConnectorPoint PointX="12.822916666666666" PointY="11.6244921875" />
           <ConnectorPoint PointX="12.989583333333334" PointY="11.6244921875" />
           <ConnectorPoint PointX="13.25" PointY="11.6244921875" />
-          <ConnectorPoint PointX="13.25" PointY="10.75" />
-          <ConnectorPoint PointX="18.125" PointY="10.75" />
+          <ConnectorPoint PointX="13.25" PointY="10.625" />
+          <ConnectorPoint PointX="18.125" PointY="10.625" />
           <ConnectorPoint PointX="18.125" PointY="11.04758789062501" />
           <ConnectorPoint PointX="18.291666666666668" PointY="11.04758789062501" />
           <ConnectorPoint PointX="18.458333333333332" PointY="11.04758789062501" />
@@ -3161,7 +3252,7 @@
           <ConnectorPoint PointX="19.458333333333332" PointY="11.04758789062501" />
           <ConnectorPoint PointX="21.119794166666669" PointY="11.04758789062501" />
           <ConnectorPoint PointX="21.286460833333333" PointY="11.04758789062501" />
-          <ConnectorPoint PointX="22.666666666666668" PointY="11.04758789062501" />
+          <ConnectorPoint PointX="22.541666666666668" PointY="11.047587890625009" />
           <ConnectorPoint PointX="22.833333333333332" PointY="11.04758789062501" />
           <ConnectorPoint PointX="23" PointY="11.04758789062501" />
           <ConnectorPoint PointX="23" PointY="9.625" />
@@ -3219,11 +3310,11 @@
           <ConnectorPoint PointX="26.5" PointY="4.2592016601562488" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_Group_Church" >
-          <ConnectorPoint PointX="1.8301662354883743" PointY="4.625" />
-          <ConnectorPoint PointX="1.8301662354883743" PointY="4.3593749999999982" />
-          <ConnectorPoint PointX="2.0281699136107925" PointY="4.3593749999999973" />
-          <ConnectorPoint PointX="2.1948365802774594" PointY="4.3593749999999982" />
-          <ConnectorPoint PointX="4.75" PointY="4.3593749999999982" />
+          <ConnectorPoint PointX="1.8780752172689419" PointY="4.625" />
+          <ConnectorPoint PointX="1.8780752172689419" PointY="4.359375" />
+          <ConnectorPoint PointX="2.0336688413331272" PointY="4.3593749999999991" />
+          <ConnectorPoint PointX="2.2003355079997942" PointY="4.359375" />
+          <ConnectorPoint PointX="4.75" PointY="4.359375" />
           <ConnectorPoint PointX="4.75" PointY="5.6052864583333326" />
           <ConnectorPoint PointX="4.916666666666667" PointY="5.6052864583333317" />
           <ConnectorPoint PointX="5.083333333333333" PointY="5.6052864583333326" />
@@ -3240,32 +3331,36 @@
           <ConnectorPoint PointX="21.119794166666669" PointY="5.4862272135416648" />
           <ConnectorPoint PointX="21.286460833333333" PointY="5.4862272135416656" />
           <ConnectorPoint PointX="23" PointY="5.4862272135416656" />
-          <ConnectorPoint PointX="23" PointY="4.6142043561808226" />
-          <ConnectorPoint PointX="23.041666666666668" PointY="4.6142043561808217" />
-          <ConnectorPoint PointX="23.208333333333332" PointY="4.6142043561808226" />
-          <ConnectorPoint PointX="23.268229166666668" PointY="4.6142043561808217" />
-          <ConnectorPoint PointX="23.434895833333332" PointY="4.6142043561808226" />
-          <ConnectorPoint PointX="24.166666666666668" PointY="4.6142043561808217" />
-          <ConnectorPoint PointX="24.333333333333332" PointY="4.6142043561808226" />
-          <ConnectorPoint PointX="26.5" PointY="4.6142043561808226" />
+          <ConnectorPoint PointX="23" PointY="4.6197334306271829" />
+          <ConnectorPoint PointX="23.041666666666668" PointY="4.619733430627182" />
+          <ConnectorPoint PointX="23.208333333333332" PointY="4.6197334306271829" />
+          <ConnectorPoint PointX="23.268229166666668" PointY="4.619733430627182" />
+          <ConnectorPoint PointX="23.434895833333332" PointY="4.6197334306271829" />
+          <ConnectorPoint PointX="24.166666666666668" PointY="4.619733430627182" />
+          <ConnectorPoint PointX="24.333333333333332" PointY="4.6197334306271829" />
+          <ConnectorPoint PointX="26.5" PointY="4.6197334306271829" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_Group_Administrator" >
           <ConnectorPoint PointX="23.3515625" PointY="9.875" />
-          <ConnectorPoint PointX="23.3515625" PointY="3.8534037123616578" />
-          <ConnectorPoint PointX="24.166666666666668" PointY="3.8534037123616574" />
-          <ConnectorPoint PointX="24.333333333333332" PointY="3.8534037123616578" />
-          <ConnectorPoint PointX="26.5" PointY="3.8534037123616578" />
+          <ConnectorPoint PointX="23.3515625" PointY="3.864461861254378" />
+          <ConnectorPoint PointX="24.166666666666668" PointY="3.8644618612543775" />
+          <ConnectorPoint PointX="24.333333333333332" PointY="3.864461861254378" />
+          <ConnectorPoint PointX="26.5" PointY="3.864461861254378" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_Group_GroupClassification" >
           <ConnectorPoint PointX="15" PointY="11.951798188802083" />
           <ConnectorPoint PointX="16.375" PointY="11.951798188802083" />
           <ConnectorPoint PointX="16.375" PointY="11.25" />
+          <ConnectorPoint PointX="17.291666666666668" PointY="11.25" />
+          <ConnectorPoint PointX="17.458333333333332" PointY="11.25" />
           <ConnectorPoint PointX="18.291666666666668" PointY="11.25" />
           <ConnectorPoint PointX="18.458333333333332" PointY="11.25" />
           <ConnectorPoint PointX="19.291666666666668" PointY="11.25" />
           <ConnectorPoint PointX="19.458333333333332" PointY="11.25" />
           <ConnectorPoint PointX="21.119794166666669" PointY="11.25" />
           <ConnectorPoint PointX="21.286460833333333" PointY="11.25" />
+          <ConnectorPoint PointX="22.541666666666668" PointY="11.25" />
+          <ConnectorPoint PointX="22.708333333333332" PointY="11.25" />
           <ConnectorPoint PointX="22.75" PointY="11.25" />
           <ConnectorPoint PointX="22.75" PointY="9.609375" />
           <ConnectorPoint PointX="23.268229166666668" PointY="9.609375" />
@@ -3289,12 +3384,12 @@
           <ConnectorPoint PointX="21.119794166666669" PointY="5.5018522135416648" />
           <ConnectorPoint PointX="21.286460833333333" PointY="5.5018522135416656" />
           <ConnectorPoint PointX="23.125" PointY="5.5018522135416656" />
-          <ConnectorPoint PointX="23.125" PointY="3.8534037123616578" />
-          <ConnectorPoint PointX="23.268229166666668" PointY="3.8534037123616574" />
-          <ConnectorPoint PointX="23.434895833333332" PointY="3.8534037123616578" />
-          <ConnectorPoint PointX="24.166666666666668" PointY="3.8534037123616574" />
-          <ConnectorPoint PointX="24.333333333333332" PointY="3.8534037123616578" />
-          <ConnectorPoint PointX="26.5" PointY="3.8534037123616578" />
+          <ConnectorPoint PointX="23.125" PointY="3.864461861254378" />
+          <ConnectorPoint PointX="23.268229166666668" PointY="3.8644618612543775" />
+          <ConnectorPoint PointX="23.434895833333332" PointY="3.864461861254378" />
+          <ConnectorPoint PointX="24.166666666666668" PointY="3.8644618612543775" />
+          <ConnectorPoint PointX="24.333333333333332" PointY="3.864461861254378" />
+          <ConnectorPoint PointX="26.5" PointY="3.864461861254378" />
         </AssociationConnector>
         <AssociationConnector Association="oikonomosModel.FK_Group_Leader" >
           <ConnectorPoint PointX="23.3515625" PointY="9.875" />
@@ -3328,6 +3423,8 @@
           <ConnectorPoint PointX="2.25" PointY="8.40359537760417" />
           <ConnectorPoint PointX="2.4166666666666665" PointY="8.4035953776041676" />
           <ConnectorPoint PointX="2.7083333333333335" PointY="8.40359537760417" />
+          <ConnectorPoint PointX="4.041666666666667" PointY="8.40359537760417" />
+          <ConnectorPoint PointX="4.208333333333333" PointY="8.40359537760417" />
           <ConnectorPoint PointX="6.260416666666667" PointY="8.40359537760417" />
           <ConnectorPoint PointX="6.427083333333333" PointY="8.40359537760417" />
           <ConnectorPoint PointX="7" PointY="8.40359537760417" />
@@ -3339,10 +3436,21 @@
         </AssociationConnector>
         <EntityTypeShape EntityType="oikonomosModel.StandardComment" Width="1.5" PointX="3" PointY="23.375" Height="1.7879850260416674" />
         <AssociationConnector Association="oikonomosModel.FK_StandardComment_Church" >
-          <ConnectorPoint PointX="2.2130769230769225" PointY="11.9897265625" />
-          <ConnectorPoint PointX="2.625" PointY="12.401649639423077" />
-          <ConnectorPoint PointX="2.625" PointY="24.268992513020834" />
+          <ConnectorPoint PointX="2.25" PointY="11.9747255625" />
+          <ConnectorPoint PointX="2.5035744349011213" PointY="12.22829999740112" />
+          <ConnectorPoint PointX="2.6214255650988791" PointY="12.346151127598878" />
+          <ConnectorPoint PointX="2.65625" PointY="12.3809755625" />
+          <ConnectorPoint PointX="2.65625" PointY="24.268992513020834" />
           <ConnectorPoint PointX="3" PointY="24.268992513020834" />
+        </AssociationConnector>
+        <EntityTypeShape EntityType="oikonomosModel.EventType" Width="1.5" PointX="3" PointY="26.375" Height="1.7879850260416674" />
+        <AssociationConnector Association="oikonomosModel.FK_EventType_Church" >
+          <ConnectorPoint PointX="2.205" PointY="11.9897265625" />
+          <ConnectorPoint PointX="2.5035744349011213" PointY="12.28830099740112" />
+          <ConnectorPoint PointX="2.6214255650988791" PointY="12.406152127598878" />
+          <ConnectorPoint PointX="2.625" PointY="12.4097265625" />
+          <ConnectorPoint PointX="2.625" PointY="27.268992513020834" />
+          <ConnectorPoint PointX="3" PointY="27.268992513020834" />
         </AssociationConnector>
         </Diagram>
     </Diagrams>

@@ -13,9 +13,13 @@ namespace oikonomos.services.tests
         public void CanCreateANewEventType()
         {
             var eventTypeRepository = MockRepository.GenerateStub<IEventTypeRepository>();
+
             IEventTypeService eventTypeService = new EventTypeService(eventTypeRepository);
             var newEventType                   = new EventTypeDto();
-            var result                         = eventTypeService.Save(newEventType);
+            eventTypeRepository
+                .Expect(e => e.SaveItem(newEventType))
+                .Return(1);
+            var result                         = eventTypeService.CreateEventType(newEventType);
 
             Assert.That(result, Is.EqualTo(1));
         }
@@ -24,19 +28,17 @@ namespace oikonomos.services.tests
         public void CanGetCreatedEventType()
         {
             var eventTypeRepository = MockRepository.GenerateStub<IEventTypeRepository>();
-            var eventTypeItem = new EventTypeDto
+            var expectedEventTypeDto = new EventTypeDto
                                     {
                                         EventTypeId = 1
                                     };
             eventTypeRepository
                 .Expect(et => et.GetItem(1))
-                .Return(eventTypeItem);
+                .Return(expectedEventTypeDto);
 
             IEventTypeService eventTypeService = new EventTypeService(eventTypeRepository);
-            var newEventType                   = new EventTypeDto();
-            var eventTypeId                    = eventTypeService.Save(newEventType);
-            var savedEvent                     = eventTypeService.GetItem(eventTypeId);
-            Assert.That(savedEvent.EventTypeId, Is.EqualTo(1));
+            var eventTypeDto                   = eventTypeService.GetEventType(1);
+            Assert.That(eventTypeDto, Is.EqualTo(expectedEventTypeDto));
         }
     }
 }

@@ -63,6 +63,7 @@ using System.Runtime.Serialization;
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_ChurchEmailTemplate_Church", "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Church), "ChurchEmailTemplate", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.ChurchEmailTemplate), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_ChurchEmailTemplate_EmailTemplate", "EmailTemplate", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.EmailTemplate), "ChurchEmailTemplate", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.ChurchEmailTemplate), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_StandardComment_Church", "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Church), "StandardComment", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.StandardComment), true)]
+[assembly: EdmRelationshipAttribute("oikonomosModel", "FK_EventType_Church", "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Church), "EventType", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.EventType), true)]
 
 #endregion
 
@@ -577,6 +578,22 @@ namespace oikonomos.data
             }
         }
         private ObjectSet<StandardComment> _StandardComments;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<EventType> EventTypes
+        {
+            get
+            {
+                if ((_EventTypes == null))
+                {
+                    _EventTypes = base.CreateObjectSet<EventType>("EventTypes");
+                }
+                return _EventTypes;
+            }
+        }
+        private ObjectSet<EventType> _EventTypes;
 
         #endregion
         #region AddTo Methods
@@ -811,6 +828,14 @@ namespace oikonomos.data
         public void AddToStandardComments(StandardComment standardComment)
         {
             base.AddObject("StandardComments", standardComment);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the EventTypes EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToEventTypes(EventType eventType)
+        {
+            base.AddObject("EventTypes", eventType);
         }
 
         #endregion
@@ -2115,6 +2140,28 @@ namespace oikonomos.data
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<StandardComment>("oikonomosModel.FK_StandardComment_Church", "StandardComment", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_EventType_Church", "EventType")]
+        public EntityCollection<EventType> EventTypes
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<EventType>("oikonomosModel.FK_EventType_Church", "EventType");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<EventType>("oikonomosModel.FK_EventType_Church", "EventType", value);
                 }
             }
         }
@@ -3763,6 +3810,154 @@ namespace oikonomos.data
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Table>("oikonomosModel.FK_Event_Table", "Table", value);
+                }
+            }
+        }
+
+        #endregion
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="oikonomosModel", Name="EventType")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class EventType : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new EventType object.
+        /// </summary>
+        /// <param name="eventTypeId">Initial value of the EventTypeId property.</param>
+        /// <param name="name">Initial value of the Name property.</param>
+        /// <param name="churchId">Initial value of the ChurchId property.</param>
+        public static EventType CreateEventType(global::System.Int32 eventTypeId, global::System.String name, global::System.Int32 churchId)
+        {
+            EventType eventType = new EventType();
+            eventType.EventTypeId = eventTypeId;
+            eventType.Name = name;
+            eventType.ChurchId = churchId;
+            return eventType;
+        }
+
+        #endregion
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 EventTypeId
+        {
+            get
+            {
+                return _EventTypeId;
+            }
+            set
+            {
+                if (_EventTypeId != value)
+                {
+                    OnEventTypeIdChanging(value);
+                    ReportPropertyChanging("EventTypeId");
+                    _EventTypeId = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("EventTypeId");
+                    OnEventTypeIdChanged();
+                }
+            }
+        }
+        private global::System.Int32 _EventTypeId;
+        partial void OnEventTypeIdChanging(global::System.Int32 value);
+        partial void OnEventTypeIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Name
+        {
+            get
+            {
+                return _Name;
+            }
+            set
+            {
+                OnNameChanging(value);
+                ReportPropertyChanging("Name");
+                _Name = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Name");
+                OnNameChanged();
+            }
+        }
+        private global::System.String _Name;
+        partial void OnNameChanging(global::System.String value);
+        partial void OnNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 ChurchId
+        {
+            get
+            {
+                return _ChurchId;
+            }
+            set
+            {
+                OnChurchIdChanging(value);
+                ReportPropertyChanging("ChurchId");
+                _ChurchId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ChurchId");
+                OnChurchIdChanged();
+            }
+        }
+        private global::System.Int32 _ChurchId;
+        partial void OnChurchIdChanging(global::System.Int32 value);
+        partial void OnChurchIdChanged();
+
+        #endregion
+    
+        #region Navigation Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_EventType_Church", "Church")]
+        public Church Church
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Church>("oikonomosModel.FK_EventType_Church", "Church").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Church>("oikonomosModel.FK_EventType_Church", "Church").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<Church> ChurchReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Church>("oikonomosModel.FK_EventType_Church", "Church");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Church>("oikonomosModel.FK_EventType_Church", "Church", value);
                 }
             }
         }

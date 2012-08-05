@@ -13,14 +13,19 @@ namespace oikonomos.services
             _eventTypeRepository = eventTypeRepository;
         }
 
-        int IEventTypeService.Save(EventTypeDto newEventType)
+        int IEventTypeService.CreateEventType(EventTypeDto newEventType)
         {
-            return 1;
+            return _eventTypeRepository.SaveItem(newEventType);
         }
 
-        public EventTypeDto GetItem(int eventTypeId)
+        EventTypeDto IEventTypeService.GetEventType(int eventTypeId)
         {
             return _eventTypeRepository.GetItem(eventTypeId);
+        }
+
+        void IEventTypeService.DeleteEventType(int eventTypeId)
+        {
+            _eventTypeRepository.DeleteItem(eventTypeId);
         }
     }
 }

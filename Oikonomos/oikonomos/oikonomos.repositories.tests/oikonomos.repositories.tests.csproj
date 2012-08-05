@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{BB21F4DD-E8C9-4969-B6EB-27B35CC1AF10}</ProjectGuid>
+    <ProjectGuid>{F3D322E8-95D3-408A-B4E8-911D92D5AEED}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>oikonomos.services.interfaces</RootNamespace>
-    <AssemblyName>oikonomos.services.interfaces</AssemblyName>
+    <RootNamespace>oikonomos.repositories.tests</RootNamespace>
+    <AssemblyName>oikonomos.repositories.tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -31,8 +31,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -40,15 +43,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IEventService.cs" />
-    <Compile Include="IEventTypeService.cs" />
+    <Compile Include="EventTypeTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\oikonomos.data\oikonomos.data\oikonomos.data.csproj">
+      <Project>{42B40471-19BB-4727-9973-924745733AFD}</Project>
+      <Name>oikonomos.data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\oikonomos.common\oikonomos.common.csproj">
       <Project>{54B0FB5D-AFBE-448A-ABD9-A0FBF75433D9}</Project>
       <Name>oikonomos.common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\oikonomos.repositories.interfaces\oikonomos.repositories.interfaces.csproj">
+      <Project>{FE1C517D-4E67-403F-BF8D-0709A78DD900}</Project>
+      <Name>oikonomos.repositories.interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\oikonomos.repositories\oikonomos.repositories.csproj">
+      <Project>{19DA1C75-7E17-4DE5-9956-8B4BD1A9C248}</Project>
+      <Name>oikonomos.repositories</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

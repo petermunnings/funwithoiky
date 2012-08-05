@@ -4,7 +4,8 @@ namespace oikonomos.services.interfaces
 {
     public interface IEventTypeService
     {
-        int Save(EventTypeDto newEventType);
-        EventTypeDto GetItem(int eventTypeId);
+        int          CreateEventType(EventTypeDto newEventType);
+        EventTypeDto GetEventType(int eventTypeId);
+        void         DeleteEventType(int eventTypeId);
     }
 }
