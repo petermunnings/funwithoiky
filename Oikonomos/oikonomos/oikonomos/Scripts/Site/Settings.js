@@ -9,8 +9,8 @@ function DeleteSite(site) {
         var grid = $('#jqgSites');
         grid.trigger("reloadGrid");
     })
-    .error(function (jqXHR, textStatus, errorThrown) {
-        SendErrorEmail("Error calling DeleteSite", jqXHR.responseText);
+    .error(function (jqXhr, textStatus, errorThrown) {
+        SendErrorEmail("Error calling DeleteSite", jqXhr.responseText);
     });
 }
 
@@ -253,65 +253,60 @@ function DeleteHGClassification(hgClassificationId) {
     });
 }
 
-function PopulateHGEventTypes(hgEventTypes, load) {
-    if (hgEventTypes.length == 0) {
-        $("#hgEventTypeNone").show();
-        $("#hgEventTypeList").hide();
+function PopulateStandardComments(standardComments, load) {
+    if (standardComments.length == 0) {
+        $("#standardCommentNone").show();
+        $("#standardCommentsList").hide();
     }
     else {
-        $("#hgEventTypeNone").hide();
-        $("#hgEventTypeList").empty();
-        $("#hgEventTypeTemplate")
-                .tmpl(hgEventTypes)
-                .appendTo("#hgEventTypeList");
-        $("#hgEventTypeList").show();
-        $(".deleteHGEventType").button();
+        $("#standardCommentNone").hide();
+        $("#standardCommentsList").empty();
+        $("#standardCommentTemplate")
+                .tmpl(standardComments)
+                .appendTo("#standardCommentsList");
+        $("#standardCommentsList").show();
+        $(".deleteStandardComment").button();
     }
-    $("#div_hgEventType").show();
-    $("#button_expandCollapseHGEventType").prop("title", "Collapse");
-    $("#button_expandCollapseHGEventType").removeClass("ui-icon-triangle-1-e");
-    $("#button_expandCollapseHGEventType").addClass("ui-icon-triangle-1-s");
-    $("#hgEventTypeContent").slideDown('medium');
-    CollapseOthers($("#button_expandCollapseHGEventType"), load);
+    $("#div_StandardComment").show();
+    $("#button_expandCollapseStandardComments").prop("title", "Collapse");
+    $("#button_expandCollapseStandardComments").removeClass("ui-icon-triangle-1-e");
+    $("#button_expandCollapseStandardComments").addClass("ui-icon-triangle-1-s");
+    $("#standardCommentsContent").slideDown('medium');
+    CollapseOthers($("#button_expandCollapseStandardComments"), load);
 }
 
-function FetchHGEventTypes(load) {
-    var postData = { eventFor: 'Group' };
-    $.post("/Ajax/FetchEventTypes", $.postify(postData), function (data) {
-        PopulateHGEventTypes(data.EventTypes, load);
+function FetchStandardComments(load) {
+    $.post("/Ajax/FetchStandardComments", function (data) {
+        PopulateStandardComments(data.StandardComments, load);
     })
-    .error(function (jqXHR, textStatus, errorThrown) {
-        SendErrorEmail("Error calling FetchEventTypes", jqXHR.responseText);
+    .error(function (jqXhr, textStatus, errorThrown) {
+        SendErrorEmail("Error calling FetchStandardComments", jqXhr.responseText);
     });
 }
 
-function AddHGEventType() {
-    if ($("#input_newHGEventType").val() != "") {
-        var postData = { eventType: $("#input_newHGEventType").val(),
-                         eventFor: 'Group'
-        };
+function AddStandardComment() {
+    if ($("#input_newStandardComment").val() != "") {
+        var postData = { standardComment: $("#input_newStandardComment").val()};
 
-        $.post("/Ajax/AddEventType", $.postify(postData), function (data) {
-            $("#input_newHGEventType").val('')
-            PopulateHGEventTypes(data.EventTypes);
+        $.post("/Ajax/AddStandardComment", $.postify(postData), function (data) {
+            $("#input_newstandardComment").val('');
+            PopulateStandardComments(data.StandardComments);
         })
-    .error(function (jqXHR, textStatus, errorThrown) {
-        SendErrorEmail("Error calling AddEventType", jqXHR.responseText);
+    .error(function (jqXhr, textStatus, errorThrown) {
+        SendErrorEmail("Error calling AddStandardComment", jqXhr.responseText);
     });
     }
 }
 
-function DeleteHGEventType(hgEventTypeId) {
-    var postData = { eventTypeId: hgEventTypeId,
-                     eventFor: 'Group'
-    };
+function DeleteStandardComment(standardCommentId) {
+    var postData = { standardCommentId: standardCommentId};
 
-    $.post("/Ajax/DeleteEventType", $.postify(postData), function (data) {
-        $("#input_newHGEventType").val('')
-        PopulateHGEventTypes(data.EventTypes);
+    $.post("/Ajax/DeleteStandardComment", $.postify(postData), function (data) {
+        $("#input_newStandardComment").val('');
+        PopulateStandardComments(data.StandardComments);
     })
-    .error(function (jqXHR, textStatus, errorThrown) {
-        SendErrorEmail("Error calling DeleteEventType", jqXHR.responseText);
+    .error(function (jqXhr, textStatus, errorThrown) {
+        SendErrorEmail("Error calling DeleteStandardComment", jqXhr.responseText);
     });
 }
 
@@ -332,12 +327,12 @@ function CollapseOthers(button, load) {
             $("#suburbContent").hide();
         }
     }
-    if (button.selector != "#button_expandCollapseHGEventType") {
-        $("#button_expandCollapseHGEventType").prop("title", "Expand");
-        $("#button_expandCollapseHGEventType").prop("src", "/Content/Images/collapse.png");
-        $("#hgEventTypeContent").slideUp('medium');
+    if (button.selector != "#button_expandCollapseStandardComments") {
+        $("#button_expandCollapseStandardComments").prop("title", "Expand");
+        $("#button_expandCollapseStandardComments").prop("src", "/Content/Images/collapse.png");
+        $("#standardCommentsContent").slideUp('medium');
         if (load) {
-            $("#hgEventTypeContent").hide();
+            $("#standardCommentsContent").hide();
         }
     }
 
@@ -371,12 +366,12 @@ $(document).ready(function () {
                     $("#div_hgClassification").hide();
                 }
             }
-            if ($.tmplItem(this).data.Name == 'Home Group Events') {
+            if ($.tmplItem(this).data.Name == 'Standard Comments') {
                 if ($.tmplItem(this).data.Display) {
-                    FetchHGEventTypes(true);
+                    FetchStandardComments(true);
                 }
                 else {
-                    $("#div_hgEventType").hide();
+                    $("#div_StandardComment").hide();
                 }
             }
         });
@@ -470,12 +465,12 @@ $(document).ready(function () {
                 $("#div_hgClassification").hide();
             }
         }
-        if ($.tmplItem(this).data.Name == 'Home Group Events') {
+        if ($.tmplItem(this).data.Name == 'Standard Comments') {
             if ($.tmplItem(this).data.Display) {
-                FetchHGEventTypes(false);
+                FetchStandardComments(false);
             }
             else {
-                $("#div_hgEventType").hide();
+                $("#div_StandardComment").hide();
             }
         }
     });
@@ -488,8 +483,8 @@ $(document).ready(function () {
         AddHGClassification();
     });
 
-    $("#button_addHGEventType").click(function () {
-        AddHGEventType();
+    $("#button_addStandardComment").click(function () {
+        AddStandardComment();
     });
 
     $("#suburbList").delegate(".deleteSuburb", "click", function () {
@@ -500,8 +495,8 @@ $(document).ready(function () {
         DeleteHGClassification($.tmplItem(this).data.GroupClassificationId);
     });
 
-    $("#hgEventTypeList").delegate(".deleteHGEventType", "click", function () {
-        DeleteHGEventType($.tmplItem(this).data.EventTypeId);
+    $("#standardCommentsList").delegate(".deleteStandardComment", "click", function () {
+        DeleteStandardComment($.tmplItem(this).data.StandardCommentId);
     });
 
     $(".optionsButton").live('mouseover mouseout', function (event) {
@@ -530,12 +525,12 @@ $(document).ready(function () {
         }
     });
 
-    $("#row_hgEventTypes").click(function () {
-        if ($("#button_expandCollapseHGEventType").prop("title") == "Expand") {
-            $("#button_expandCollapseHGEventType").prop("title", "Collapse");
-            $("#button_expandCollapseHGEventType").prop("src", "/Content/Images/expand.png");
-            $("#hgEventTypeContent").slideDown('medium');
-            CollapseOthers($("#button_expandCollapseHGEventType"), false);
+    $("#row_StandardComments").click(function () {
+        if ($("#button_expandCollapseStandardComments").prop("title") == "Expand") {
+            $("#button_expandCollapseStandardComments").prop("title", "Collapse");
+            $("#button_expandCollapseStandardComments").prop("src", "/Content/Images/expand.png");
+            $("#standardCommentsContent").slideDown('medium');
+            CollapseOthers($("#button_expandCollapseStandardComments"), false);
         }
     });
 

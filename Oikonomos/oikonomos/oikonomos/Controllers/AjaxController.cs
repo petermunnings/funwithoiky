@@ -610,87 +610,84 @@ namespace oikonomos.web.Controllers
             return Json(response, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult FetchEventTypes(string eventFor)
+        public JsonResult FetchStandardComments()
         {
-            List<EventTypeViewModel> eventTypes = new List<EventTypeViewModel>();
-            bool sessionTimedOut = false;
+            var standardComments = new List<StandardCommentViewModel>();
+            var sessionTimedOut = false;
             if (Session[SessionVariable.LoggedOnPerson] == null)
             {
                 sessionTimedOut = true;
             }
             else
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                eventTypes = SettingsDataAccessor.FetchEventTypes(currentPerson, eventFor);
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                standardComments = SettingsDataAccessor.FetchStandardComments(currentPerson);
             }
 
             var response = new
             {
                 SessionTimeOut = sessionTimedOut,
-                EventTypes = eventTypes
+                StandardComments = standardComments
             };
             return Json(response, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult AddEventType(string eventType, string eventFor)
+        public JsonResult AddStandardComment(string standardComment)
         {
             try
             {
-                List<EventTypeViewModel> eventTypes = new List<EventTypeViewModel>();
-                bool sessionTimedOut = false;
+                var standardComments = new List<StandardCommentViewModel>();
+                var sessionTimedOut = false;
                 if (Session[SessionVariable.LoggedOnPerson] == null)
                 {
                     sessionTimedOut = true;
                 }
                 else
                 {
-                    Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                    eventTypes = SettingsDataAccessor.AddEventType(currentPerson, eventType, eventFor);
+                    var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                    standardComments = SettingsDataAccessor.AddStandardComment(currentPerson, standardComment);
                 }
 
                 var response = new
                 {
                     SessionTimeOut = sessionTimedOut,
-                    EventTypes = eventTypes
+                    StandardComments = standardComments
                 };
                 return Json(response, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
                 Email.SendExceptionEmail(ex);
-                List<EventTypeViewModel> eventTypes = new List<EventTypeViewModel>();
-                EventTypeViewModel et = new EventTypeViewModel();
-                et.EventTypeId = 0;
-                et.EventType = "Error saving event";
-                eventTypes.Add(et);
+                var comments = new List<StandardCommentViewModel>();
+                comments.Add(new StandardCommentViewModel {StandardCommentId = 0, StandardComment = "Error saving comment"});
                 var response = new
                 {
                     SessionTimeOut = false,
-                    EventTypes = eventTypes
+                    StandardComments = comments
                 };
                 return Json(response); 
 
             }
         }
 
-        public JsonResult DeleteEventType(int eventTypeId, string eventFor)
+        public JsonResult DeleteStandardComment(int standardCommentId)
         {
-            List<EventTypeViewModel> eventTypes = new List<EventTypeViewModel>();
-            bool sessionTimedOut = false;
+            var standardComments = new List<StandardCommentViewModel>();
+            var sessionTimedOut = false;
             if (Session[SessionVariable.LoggedOnPerson] == null)
             {
                 sessionTimedOut = true;
             }
             else
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                eventTypes = SettingsDataAccessor.DeleteEventType(currentPerson, eventTypeId, eventFor);
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                standardComments = SettingsDataAccessor.DeleteStandardComment(currentPerson, standardCommentId);
             }
 
             var response = new
             {
                 SessionTimeOut = sessionTimedOut,
-                EventTypes = eventTypes
+                StandardComments = standardComments
             };
             return Json(response, JsonRequestBehavior.AllowGet);
         }

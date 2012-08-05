@@ -29,11 +29,11 @@
     </div>
 </script>
 
-<script id="hgEventTypeTemplate" type="text/x-jquery-tmpl">
+<script id="standardCommentTemplate" type="text/x-jquery-tmpl">
     <div class="tableRow">
         <div style="text-align:left; display:table-cell; width:30px">&nbsp;</div>
-        <div style="text-align:left; display:table-cell; width:200px">${EventType}</div>
-        <div style="text-align:left; display:table-cell; width:160px"><button class="deleteHGEventType" title="Delete Group Event" style="width:75px">Delete</button></div>
+        <div style="text-align:left; display:table-cell; width:200px">${StandardComment}</div>
+        <div style="text-align:left; display:table-cell; width:160px"><button class="deleteStandardComment" title="Delete Standard Comment" style="width:75px">Delete</button></div>
     </div>
 </script>
 
@@ -318,22 +318,22 @@
                         </div>
 
                     
-                        <div id="div_hgEventType" class="ui-widget-content ui-corner-all" style="display:table">
-                            <div class="tableRow ui-widget-header" id="row_hgEventTypes">
-                                <div style="text-align:left; display:table-cell; vertical-align:middle; width:390px">&nbsp;<img id="button_expandCollapseHGEventType" src="/Content/Images/collapse.png" style="width:10px"/>&nbsp;&nbsp;&nbsp;<span style="text-align:left">Group Events</span></div>
+                        <div id="div_StandardComment" class="ui-widget-content ui-corner-all" style="display:table">
+                            <div class="tableRow ui-widget-header" id="row_StandardComments">
+                                <div style="text-align:left; display:table-cell; vertical-align:middle; width:390px">&nbsp;<img id="button_expandCollapseStandardComments" src="/Content/Images/collapse.png" style="width:10px"/>&nbsp;&nbsp;&nbsp;<span style="text-align:left">Standard Comments</span></div>
                             </div>
-                            <div id="hgEventTypeContent">
-                                <div id="hgEventTypeAdd" class="tableRow">
+                            <div id="standardCommentsContent">
+                                <div id="standardCommentsAdd" class="tableRow">
                                     <div style="text-align:left; display:table-cell; width:30px">&nbsp;</div>
-                                    <div style="text-align:left; display:table-cell; width:200px; vertical-align:middle"><input id="input_newHGEventType" type="text" class="ui-corner-all" /></div>
-                                    <div style="text-align:left; display:table-cell; width:160px; vertical-align:middle"><button id="button_addHGEventType" title="Add a new Group Event" style="width:75px">Add</button></div>
+                                    <div style="text-align:left; display:table-cell; width:200px; vertical-align:middle"><input id="input_newStandardComment" type="text" class="ui-corner-all" /></div>
+                                    <div style="text-align:left; display:table-cell; width:160px; vertical-align:middle"><button id="button_addStandardComment" title="Add a new Standard Comment" style="width:75px">Add</button></div>
                                 </div>
-                                <div id="hgEventTypeNone" class="tableRow">
+                                <div id="standardCommentNone" class="tableRow">
                                     <div style="text-align:left; display:table-cell; width:30px">&nbsp;</div>
-                                    <div style="text-align:left; display:table-cell; width:200px">No group events to display</div>
+                                    <div style="text-align:left; display:table-cell; width:200px">No standard comments to display</div>
                                     <div style="text-align:left; display:table-cell; width:160px">&nbsp;</div>
                                 </div>
-                                <div id="hgEventTypeList" style="display:table-row-group">
+                                <div id="standardCommentsList" style="display:table-row-group">
                                 </div>  
                             </div>
                         </div>                

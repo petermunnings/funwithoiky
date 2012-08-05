@@ -11,16 +11,17 @@ namespace oikonomos.repositories
     {
         public EventTypeRepository()
         {
-            Mapper.CreateMap<EventType, EventTypeDto>();
+            //Mapper.CreateMap<EventType, EventTypeDto>();
         }
 
         public EventTypeDto GetItem(int eventTypeId)
         {
             using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                var eventType = context.EventTypes.First(e => e.EventTypeId == eventTypeId);
-                return Mapper.Map<EventType, EventTypeDto>(eventType);
+                //var eventType = context.EventTypes.First(e => e.EventTypeId == eventTypeId);
+                //return Mapper.Map<EventType, EventTypeDto>(eventType);
             }
+            return null;
         }
     }
 }

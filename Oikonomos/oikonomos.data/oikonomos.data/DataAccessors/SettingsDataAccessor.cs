@@ -33,106 +33,85 @@ namespace oikonomos.data.DataAccessors
             }
         }
         
-        public static List<EventTypeViewModel> FetchEventTypes(Person currentPerson, string eventFor)
+        public static List<StandardCommentViewModel> FetchStandardComments(Person currentPerson)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                var tableId = (from t in context.Tables
-                               where t.Name == eventFor
-                               select t.TableId).FirstOrDefault();
-
-                return (from e in context.EventTypes
+                return (from e in context.StandardComments
                         where e.ChurchId == currentPerson.ChurchId
-                        && e.TableId==tableId
-                        select new EventTypeViewModel
+                        select new StandardCommentViewModel
                         {
-                            EventTypeId = e.EventTypeId,
-                            EventType = e.Name
+                            StandardCommentId = e.StandardCommentId,
+                            StandardComment = e.StandardComment1
                         }).ToList();
             }
         }
 
-        public static List<EventTypeViewModel> AddEventType(Person currentPerson, string eventType, string eventFor)
+        public static List<StandardCommentViewModel> AddStandardComment(Person currentPerson, string standardComment)
         {
 
             using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                var tableId = (from t in context.Tables
-                               where t.Name == eventFor
-                               select t.TableId).FirstOrDefault();
-
                 if (currentPerson.HasPermission(common.Permissions.AddEvent))
                 {
-                    var check = CheckToSeeIfTheEventIsAlreadyThere(currentPerson, eventType, tableId, context);
+                    var check = CheckToSeeIfTheCommentIsAlreadyThere(currentPerson, standardComment, context);
 
                     if (check == 0)
                     {
-                        var newEventType = new EventType
+                        var newStandardComment = new StandardComment
                                                {
-                                                   Created  = DateTime.Now,
-                                                   Changed  = DateTime.Now,
-                                                   Name     = eventType,
-                                                   ChurchId = currentPerson.ChurchId,
-                                                   TableId  = tableId
+                                                   StandardComment1= standardComment,
+                                                   ChurchId        = currentPerson.ChurchId
                                                };
 
-                        context.EventTypes.AddObject(newEventType);
+                        context.StandardComments.AddObject(newStandardComment);
                         context.SaveChanges();
                     }
                 }
 
-                return (from e in context.EventTypes
+                return (from e in context.StandardComments
                         where e.ChurchId == currentPerson.ChurchId
-                        && e.TableId == tableId
-                        select new EventTypeViewModel
+                        select new StandardCommentViewModel
                         {
-                            EventTypeId = e.EventTypeId,
-                            EventType = e.Name
+                            StandardCommentId = e.StandardCommentId,
+                            StandardComment = e.StandardComment1
                         }).ToList();
             }
         }
 
-        private static int CheckToSeeIfTheEventIsAlreadyThere(Person currentPerson, string eventType, int tableId,
-                                                              oikonomosEntities context)
+        private static int CheckToSeeIfTheCommentIsAlreadyThere(Person currentPerson, string comment, oikonomosEntities context)
         {
-            var check = (from e in context.EventTypes
+            var check = (from e in context.StandardComments
                          where e.ChurchId == currentPerson.ChurchId
-                               && e.TableId == tableId
-                               && e.Name == eventType
+                               && e.StandardComment1 == comment
                          select e).Count();
             return check;
         }
 
-        public static List<EventTypeViewModel> DeleteEventType(Person currentPerson, int eventTypeId, string eventFor)
+        public static List<StandardCommentViewModel> DeleteStandardComment(Person currentPerson, int standardCommentId)
         {
 
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                var tableId = (from t in context.Tables
-                               where t.Name == eventFor
-                               select t.TableId).FirstOrDefault();
-                
-                if (currentPerson.HasPermission(common.Permissions.DeleteEvent))
+                if (currentPerson.HasPermission(Permissions.DeleteEvent))
                 {
-                    var eventTypeToDelete = (from e in context.EventTypes
+                    var eventTypeToDelete = (from e in context.StandardComments
                                              where e.ChurchId == currentPerson.ChurchId
-                                             && e.TableId == tableId
-                                             && e.EventTypeId == eventTypeId
+                                                   && e.StandardCommentId == standardCommentId
                                              select e).FirstOrDefault();
 
-                    context.EventTypes.DeleteObject(eventTypeToDelete);
+                    context.StandardComments.DeleteObject(eventTypeToDelete);
 
                     context.SaveChanges();
 
                 }
 
-                return (from e in context.EventTypes
+                return (from e in context.StandardComments
                         where e.ChurchId == currentPerson.ChurchId
-                        && e.TableId == tableId
-                        select new EventTypeViewModel
+                        select new StandardCommentViewModel
                         {
-                            EventTypeId = e.EventTypeId,
-                            EventType = e.Name
+                            StandardCommentId = e.StandardCommentId,
+                            StandardComment = e.StandardComment1
                         }).ToList();
 
             }

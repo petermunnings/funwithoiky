@@ -64,7 +64,7 @@ namespace oikonomos.web.Controllers
 
         public ActionResult Groups(int? groupId)
         {
-            GroupViewModel viewModel = new GroupViewModel();
+            var viewModel = new GroupViewModel();
             
             Person currentPerson = SecurityHelper.CheckCurrentUser(Session, Response, ViewBag);
             if (currentPerson == null)
@@ -76,7 +76,7 @@ namespace oikonomos.web.Controllers
             viewModel.GroupClassifications.Insert(0, new GroupClassificationViewModel() { GroupClassificationId = 0, GroupClassification = "Select..." });
             viewModel.SelectedGroupClassificationId = 0;
             viewModel.Suburbs = SettingsDataAccessor.FetchSuburbs(currentPerson);
-            viewModel.EventTypes = SettingsDataAccessor.FetchEventTypes(currentPerson, "group");
+            viewModel.StandardComments = SettingsDataAccessor.FetchStandardComments(currentPerson);
 
             List<OptionalFieldViewModel> optionalFields = SettingsDataAccessor.FetchChurchOptionalFields(currentPerson.ChurchId);
             foreach (OptionalFieldViewModel ct in optionalFields)

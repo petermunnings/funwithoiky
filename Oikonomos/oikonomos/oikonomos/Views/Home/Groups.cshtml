@@ -39,7 +39,7 @@
 
 <script id="eventTypeTemplate" type="text/x-jquery-tmpl">
     <div class="tableRow">
-        <div style="display:table-cell"><input type="checkbox" id="checkbox_${EventTypeId}" class="checkbox_eventType" value="${EventType}" /><label for="checkbox_${EventTypeId}">${EventType}</label></div>
+        <div style="display:table-cell"><input type="checkbox" id="checkbox_${EventTypeId}" class="checkbox_standardComment" value="${StandardComment}" /><label for="checkbox_${StandardCommentId}">${StandardComment}</label></div>
     </div>
 </script>
 
@@ -263,9 +263,9 @@
             <div style="display:table-cell">&nbsp;<input type="hidden" id="hidden_eventPersonId" /></div>
         </div>
         @Html.CheckBoxList("eventsList",          
-                   x => x.EventTypes,           
-                   x => x.EventType,        
-                   x => x.EventType,
+                   x => x.StandardComments,           
+                   x => x.StandardComment,        
+                   x => x.StandardComment,
                    null,
                    null,
                    new HtmlListInfo(HtmlTag.vertical_columns, 1),

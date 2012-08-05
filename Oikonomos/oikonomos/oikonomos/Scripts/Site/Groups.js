@@ -408,7 +408,7 @@ function FetchSmsList(selectedOnly) {
 }
 
 function ShowLeaveEvents(personId) {
-    $(".checkbox_eventType").prop("checked", false);
+    $(".checkbox_standardComment").prop("checked", false);
     $("#text_leaveOther").val("");
     $("#add_LeaveEvent").dialog(
     {

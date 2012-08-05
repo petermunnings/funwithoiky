@@ -50,7 +50,7 @@
     <Compile Include="Models\AutoCompleteViewModel.cs" />
     <Compile Include="Models\EmailTemplateViewModel.cs" />
     <Compile Include="Models\GridSetupViewModel.cs" />
-    <Compile Include="Models\EventTypeViewModel.cs" />
+    <Compile Include="Models\StandardCommentViewModel.cs" />
     <Compile Include="Models\GroupClassificationViewModel.cs" />
     <Compile Include="Models\HomeGroupEventViewModel.cs" />
     <Compile Include="Models\OptionalFieldViewModel.cs" />

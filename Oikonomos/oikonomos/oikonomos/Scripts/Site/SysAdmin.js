@@ -71,7 +71,7 @@ EmailTemplate = {
             dfr.resolve(data.EmailTemplate);
         })
             .error(function (jqXhr, textStatus, errorThrown) {
-                SendErrorEmail("Error calling DeleteEventType", jqXhr.responseText);
+                SendErrorEmail("Error calling DeleteStandardComment", jqXhr.responseText);
                 dfr.reject();
             });
         return dfr.promise();
@@ -86,7 +86,7 @@ EmailTemplate = {
             alert(data.Message);
         })
             .error(function (jqXhr, textStatus, errorThrown) {
-                SendErrorEmail("Error calling DeleteEventType", jqXhr.responseText);
+                SendErrorEmail("Error calling DeleteStandardComment", jqXhr.responseText);
             });
     }
 };
