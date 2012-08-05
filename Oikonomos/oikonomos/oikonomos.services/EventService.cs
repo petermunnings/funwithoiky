@@ -1,14 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using oikonomos.common.DTOs;
+using oikonomos.repositories.interfaces;
 using oikonomos.services.interfaces;
 
 namespace oikonomos.services
 {
     public class EventService : IEventService
     {
+        private readonly IEventRepository _eventRepository;
+
+        public EventService(IEventRepository eventRepository)
+        {
+            _eventRepository = eventRepository;
+        }
+
         public int CreateEvent(EventDto eventDto)
         {
             throw new NotImplementedException();
@@ -17,6 +23,11 @@ namespace oikonomos.services
         public void UpdateEvent(EventDto eventDto)
         {
             throw new NotImplementedException();
+        }
+
+        public IEnumerable<EventDto> GetListOfCompletedEvents(int personId)
+        {
+            return _eventRepository.GetListOfCompletedEvents(personId);
         }
     }
 }
