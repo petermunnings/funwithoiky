@@ -17,14 +17,12 @@ namespace oikonomos.repositories
 
         IEnumerable<CommentDto> ICommentRepository.GetListOfComments(Person currentPerson, int personId)
         {
-            var roleIdsToCheckFor = currentPerson.PersonRoles.Select(p => p.RoleId).ToArray();
-
             var comments = (from c in _context.Comments
                                 where c.AboutPersonId == personId
                                 select c);
-
             return (from comment in comments 
-                    where comment.Role.CanViewComment.Any(c => roleIdsToCheckFor.Contains(c.RoleId)) 
+                    let canViewRoleIds = (from c in comment.Role.CanViewCommentRoles select c.RoleId) 
+                    where canViewRoleIds.Contains(currentPerson.RoleId) 
                     select new CommentDto {Comment = comment.Comment1, CommentDate = comment.CommentDate, CommentId = comment.CommentId});
         }
     }

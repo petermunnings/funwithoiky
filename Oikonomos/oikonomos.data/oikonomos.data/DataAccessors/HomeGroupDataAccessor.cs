@@ -358,15 +358,14 @@ namespace oikonomos.data.DataAccessors
 
 
                 var peopleNotInGroups = (from p in context.People
-                                         from c in p.Churches
-                                         join pr in context.PersonRoles
-                                           on p.PersonId equals pr.PersonId
+                                         join c in context.PersonChurches
+                                           on p.PersonId equals c.PersonId
                                          join pg in context.PersonGroups
                                            on p.PersonId equals pg.PersonId into tList
                                          from pgEmpty in tList.DefaultIfEmpty()
                                          where pgEmpty.GroupId == null
                                          && c.ChurchId == currentPerson.ChurchId
-                                         && includedRoles.Contains(pr.RoleId)
+                                         && includedRoles.Contains(p.RoleId)
                                          select p);
 
                 int totalRecords = peopleNotInGroups.Count();
@@ -413,7 +412,7 @@ namespace oikonomos.data.DataAccessors
                                                     p.Firstname,
                                                     p.Family.FamilyName,
                                                     p.Family.HomePhone,
-                                                    p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).FirstOrDefault()==null?"":p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).FirstOrDefault().Value,
+                                                    p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.CellPhone)==null?"":p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).FirstOrDefault().Value,
                                                     p.Email
                                 }
                             }).ToArray()
@@ -425,7 +424,7 @@ namespace oikonomos.data.DataAccessors
 
         public static List<PersonListViewModel> FetchPeopleNotInAGroup(Person currentPerson)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 var includedRoles = context
                     .PermissionRoles
@@ -434,15 +433,14 @@ namespace oikonomos.data.DataAccessors
                     .ToList();
                 
                 return (from p in context.People
-                        from c in p.Churches
-                        join pr in context.PersonRoles
-                          on p.PersonId equals pr.PersonId
+                        join c in context.PersonChurches
+                          on p.PersonId equals c.PersonId
                         join pg in context.PersonGroups
                           on p.PersonId equals pg.PersonId into tList
                         from pgEmpty in tList.DefaultIfEmpty()
                         where pgEmpty.GroupId == null
                         && c.ChurchId == currentPerson.ChurchId
-                        && includedRoles.Contains(pr.RoleId)
+                        && includedRoles.Contains(p.RoleId)
                         orderby p.Family.FamilyName, p.PersonId
                         select new PersonListViewModel
                         {
@@ -451,8 +449,8 @@ namespace oikonomos.data.DataAccessors
                             Firstname = p.Firstname,
                             Surname = p.Family.FamilyName,
                             HomePhone = p.Family.HomePhone,
-                            CellPhone = p.PersonOptionalFields.Where<PersonOptionalField>(cp => cp.OptionalFieldId == (int)OptionalFields.CellPhone).FirstOrDefault().Value,
-                            WorkPhone = p.PersonOptionalFields.Where<PersonOptionalField>(cp => cp.OptionalFieldId == (int)OptionalFields.WorkPhone).FirstOrDefault().Value,
+                            CellPhone = p.PersonOptionalFields.FirstOrDefault(cp => cp.OptionalFieldId == (int)OptionalFields.CellPhone).Value,
+                            WorkPhone = p.PersonOptionalFields.FirstOrDefault(cp => cp.OptionalFieldId == (int)OptionalFields.WorkPhone).Value,
                             Email = p.Email
                         }).ToList();
 
@@ -631,7 +629,8 @@ namespace oikonomos.data.DataAccessors
                 var groups = FetchGroupList(currentPerson, search, rules, context);
 
                 var leaders = (from p in context.People
-                               from c in p.Churches
+                               join c in context.PersonChurches
+                                 on p.PersonId equals c.PersonId
                                join g in groups
                                 on p.PersonId equals g.LeaderId
                                where p.Email != null
@@ -642,7 +641,8 @@ namespace oikonomos.data.DataAccessors
                                .ToList();
 
                 var administrators = (from p in context.People
-                                      from c in p.Churches
+                                      join c in context.PersonChurches
+                                        on p.PersonId equals c.PersonId
                                       join g in groups
                                        on p.PersonId equals g.AdministratorId
                                       where p.Email != null
@@ -656,7 +656,8 @@ namespace oikonomos.data.DataAccessors
                 if (includeMembers)
                 {
                     people = (from p in context.People
-                              from c in p.Churches
+                              join c in context.PersonChurches
+                                on p.PersonId equals c.PersonId
                               join pg in context.PersonGroups
                                 on p.PersonId equals pg.PersonId
                               join g in groups
@@ -722,7 +723,8 @@ namespace oikonomos.data.DataAccessors
                                 on g.LeaderId equals p.PersonId
                                join po in context.PersonOptionalFields
                                 on p.PersonId equals po.PersonId
-                                from c in p.Churches
+                               join c in context.PersonChurches
+                                 on p.PersonId equals c.PersonId
                                where po.OptionalFieldId == (int)OptionalFields.CellPhone
                                && po.Value != string.Empty
                                && g.ChurchId == currentPerson.ChurchId
@@ -734,7 +736,8 @@ namespace oikonomos.data.DataAccessors
                                        on g.AdministratorId equals p.PersonId
                                       join po in context.PersonOptionalFields
                                        on p.PersonId equals po.PersonId
-                                       from c in p.Churches
+                                      join c in context.PersonChurches
+                                        on p.PersonId equals c.PersonId
                                       where po.OptionalFieldId == (int)OptionalFields.CellPhone
                                       && po.Value != string.Empty
                                       && g.ChurchId == currentPerson.ChurchId
@@ -751,7 +754,8 @@ namespace oikonomos.data.DataAccessors
                                on pg.PersonId equals p.PersonId
                               join po in context.PersonOptionalFields
                                on p.PersonId equals po.PersonId
-                               from c in p.Churches
+                              join c in context.PersonChurches
+                                on p.PersonId equals c.PersonId
                               where po.OptionalFieldId == (int)OptionalFields.CellPhone
                               && po.Value != string.Empty
                               && g.ChurchId == currentPerson.ChurchId
@@ -1223,27 +1227,25 @@ namespace oikonomos.data.DataAccessors
                               on p.PersonId equals pg.PersonId
                           join g in context.Groups
                               on pg.GroupId equals g.GroupId
-                          join pr in context.PersonRoles
-                              on p.PersonId equals pr.PersonId
                           join permissions in context.PermissionRoles
-                              on pr.RoleId equals permissions.RoleId
+                              on p.RoleId equals permissions.RoleId
                           orderby p.Family.FamilyName, p.PersonId
                           where pg.GroupId == groupId
                               && (permissions.PermissionId == (int)Permissions.Login)
-                              && rolesToInclude.Contains(pr.RoleId)
+                              && rolesToInclude.Contains(p.RoleId)
                           select new PersonViewModel
                           {
-                              PersonId = p.PersonId,
-                              FamilyId = p.Family.FamilyId,
-                              Firstname = p.Firstname,
-                              Surname = p.Family.FamilyName,
-                              Email = p.Email,
-                              DateOfBirth_Value = p.DateOfBirth,
-                              AdministratorChecked = (p.PersonId == g.AdministratorId ? "CHECKED" : ""),
-                              LeaderChecked = (p.PersonId == g.LeaderId ? "CHECKED" : ""),
-                              HomePhone = p.Family.HomePhone,
-                              CellPhone = p.PersonOptionalFields.Where<PersonOptionalField>(po => po.OptionalFieldId == (int)OptionalFields.CellPhone).FirstOrDefault().Value,
-                              RoleName = pr.Role.DisplayName
+                              PersonId             = p.PersonId,
+                              FamilyId             = p.Family.FamilyId,
+                              Firstname            = p.Firstname,
+                              Surname              = p.Family.FamilyName,
+                              Email                = p.Email,
+                              DateOfBirth_Value    = p.DateOfBirth,
+                              AdministratorChecked = p.PersonId == g.AdministratorId ? "CHECKED" : "",
+                              LeaderChecked        = p.PersonId == g.LeaderId ? "CHECKED" : "",
+                              HomePhone            = p.Family.HomePhone,
+                              CellPhone            = p.PersonOptionalFields.FirstOrDefault(po => po.OptionalFieldId == (int)OptionalFields.CellPhone).Value,
+                              RoleName             = p.Role.DisplayName
                           });
 
             if (selectedIds != null)

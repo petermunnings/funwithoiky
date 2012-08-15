@@ -440,14 +440,7 @@ namespace oikonomos.data.DataAccessors
                     context.SaveChanges();
 
                     //Set the new persons role to administrator
-                    var adminRole = context.Roles.Where(r => (r.ChurchId == newChurch.ChurchId && r.Name == "Church Administrator")).FirstOrDefault();
-                    var personRole = new PersonRole();
-                    personRole.Created = DateTime.Now;
-                    personRole.Changed = DateTime.Now;
-                    personRole.PersonId = churchAdministrator.PersonId;
-                    personRole.RoleId = adminRole.RoleId;
-                    context.AddToPersonRoles(personRole);
-
+                    churchAdministrator.RoleId = context.Roles.First(r => (r.ChurchId == newChurch.ChurchId && r.Name == "Church Administrator")).RoleId;
                     context.SaveChanges();
 
                     //Update Church Optional Fields

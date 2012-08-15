@@ -44,35 +44,21 @@ namespace oikonomos.data.Services
         {
             //TODO - not a good idea to cache these - gives everyone the same security role.
             //       rethink this later
-            var securityRoles = new List<RoleViewModel>();
-            var currentPersonRole = GetCurrentPersonRole(context, currentPerson);
-            if (currentPersonRole != null)
-                securityRoles = (from r in context.Roles
-                                 from canSetRole in r.CanSetRoles
-                                 where r.ChurchId == currentPerson.ChurchId
-                                 && canSetRole.RoleId == currentPersonRole.RoleId
-                                 select new RoleViewModel()
-                                 {
-                                     RoleId = r.RoleId,
-                                     Name = r.Name
-                                 }).ToList();
+            return (from r in context.Roles
+                    from canSetRole in r.CanSetRoles
+                    where r.ChurchId == currentPerson.ChurchId
+                          && canSetRole.RoleId == currentPerson.RoleId
+                    select new RoleViewModel()
+                               {
+                                   RoleId = r.RoleId,
+                                   Name = r.Name
+                               }).ToList();
 
-            return securityRoles;
-        }
-
-        private static PersonRole GetCurrentPersonRole(oikonomosEntities context, Person currentPerson)
-        {
-            return (from pr in context.PersonRoles
-                    join r in context.Roles
-                      on pr.RoleId equals r.RoleId
-                    where pr.PersonId == currentPerson.PersonId
-                      && r.ChurchId == currentPerson.ChurchId
-                    select pr).FirstOrDefault();
         }
 
         public static List<string> Permissions(oikonomosEntities context)
         {
-            List<string> permissions = Cache.FetchCacheValue<List<string>>(CacheNames.Permissions);
+            var permissions = Cache.FetchCacheValue<List<string>>(CacheNames.Permissions);
             if (permissions == null)
             {
                 //Fetch Permissions from Database

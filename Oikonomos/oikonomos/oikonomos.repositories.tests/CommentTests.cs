@@ -10,16 +10,12 @@ namespace oikonomos.repositories.tests
     public class CommentTests
     {
         [Test]
+        [Explicit("Just used to test db - don't know how to Mock out EF")]
         public void ShouldGetTheRightNumberOfComments()
         {
             var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString);
             ICommentRepository commentsRepo = new CommentRepository(context);
-            var currentPerson = new Person {PersonId = 256};
-            var personRole1 = new PersonRole {PersonId = 256, RoleId = 1};
-            var personRole2 = new PersonRole { PersonId = 256, RoleId = 2 };
-
-            currentPerson.PersonRoles.Add(personRole1);
-            currentPerson.PersonRoles.Add(personRole2);
+            var currentPerson = new Person {PersonId = 256, RoleId = 1};
 
             var sut = commentsRepo.GetListOfComments(currentPerson, 256);
 

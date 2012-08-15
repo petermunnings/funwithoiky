@@ -11,18 +11,12 @@ namespace oikonomos.data
     {
         public bool HasPermission(Permissions permission)
         {
-            if (Permissions.Contains((int)permission))
-                return true;
-            return false;
+            return Permissions.Contains((int)permission);
         }
 
         public bool HasValidEmail()
         {
-            if (Email!=null && Email != string.Empty && Utils.ValidEmailAddress(Email))
-            {
-                return true;
-            }
-            return false;
+            return !string.IsNullOrEmpty(Email) && Utils.ValidEmailAddress(Email);
         }
 
         public string Fullname
@@ -33,6 +27,10 @@ namespace oikonomos.data
         public int ChurchId { get; set; }
 
         public Church Church { get; set; }
+
+        public int RoleId { get; set; }
+
+        public Role Role { get; set; }
 
         public List<int> Permissions { get; set; }
 
