@@ -8,8 +8,9 @@ log/
 *.db
 
 <<<<<<< HEAD
+=======
 *resharper.user
-
+>>>>>>> Update git ignore
 # Visual Studio
 [Dd]ebug/
 [Rr]elease/
@@ -17,8 +18,7 @@ log/
 *.suo
 *.csproj.user
  
-=======
->>>>>>> Adding uncommitted files
 # Resharper
 *[Rr]e[Ss]harper.user
 _ReSharper.*/
+
