@@ -23,7 +23,7 @@ namespace oikonomos.data.DataAccessors
 
         public static List<RoleViewModel> FetchRoles(Person currentPerson)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 return Cache.SecurityRoles(context, currentPerson);
             }

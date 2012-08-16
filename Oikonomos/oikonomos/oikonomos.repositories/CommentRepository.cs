@@ -21,7 +21,7 @@ namespace oikonomos.repositories
                                 where c.AboutPersonId == personId
                                 select c);
             return (from comment in comments 
-                    let canViewRoleIds = (from c in comment.Role.CanViewCommentRoles select c.RoleId) 
+                    let canViewRoleIds = (from c in comment.Role.CommentThatCanBeViewed select c.RoleId) 
                     where canViewRoleIds.Contains(currentPerson.RoleId) 
                     select new CommentDto {Comment = comment.Comment1, CommentDate = comment.CommentDate, CommentId = comment.CommentId});
         }

@@ -176,7 +176,7 @@ namespace oikonomos.data.DataAccessors
                 if (currentPerson.HasPermission(common.Permissions.DeleteSuburb))
                 {
                     var peopleInSuburb = (from p in context.People.Include("Family").Include("Address")
-                                          from c in p.Churches
+                                          from c in p.PersonChurches
                                           join f in context.Families
                                             on p.FamilyId equals f.FamilyId
                                           join a in context.Addresses
@@ -423,19 +423,18 @@ namespace oikonomos.data.DataAccessors
 
                     context.SaveChanges();
 
-                    var churchAdministrator = new Person();
+                    var churchAdministrator              = new Person();
                     context.AddToPeople(churchAdministrator);
-                    churchAdministrator.Created = DateTime.Now;
-                    churchAdministrator.Changed = DateTime.Now;
-                    churchAdministrator.Firstname = churchSettings.ContactFirstname;
-                    churchAdministrator.Church = newChurch;
-                    var churchAdministratorFamily = new Family();
+                    churchAdministrator.Created          = DateTime.Now;
+                    churchAdministrator.Changed          = DateTime.Now;
+                    churchAdministrator.Firstname        = churchSettings.ContactFirstname;
+                    churchAdministrator.Church           = newChurch;
+                    var churchAdministratorFamily        = new Family();
                     context.AddToFamilies(churchAdministratorFamily);
                     churchAdministratorFamily.FamilyName = churchSettings.ContactSurname;
-                    churchAdministratorFamily.ChurchId = newChurch.ChurchId;
-                    churchAdministratorFamily.Created = DateTime.Now;
-                    churchAdministratorFamily.Changed = DateTime.Now;
-                    churchAdministrator.Family = churchAdministratorFamily;
+                    churchAdministratorFamily.Created    = DateTime.Now;
+                    churchAdministratorFamily.Changed    = DateTime.Now;
+                    churchAdministrator.Family           = churchAdministratorFamily;
 
                     context.SaveChanges();
 

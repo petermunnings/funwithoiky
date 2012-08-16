@@ -28,6 +28,8 @@ namespace oikonomos.data
 
         public Church Church { get; set; }
 
+        public List<Church> Churches { get; set; } 
+
         public int RoleId { get; set; }
 
         public Role Role { get; set; }

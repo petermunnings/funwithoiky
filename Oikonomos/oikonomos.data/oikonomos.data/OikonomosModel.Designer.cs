@@ -8,12 +8,13 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.ComponentModel;
+using System.Data.EntityClient;
 using System.Data.Objects;
 using System.Data.Objects.DataClasses;
-using System.Data.EntityClient;
-using System.ComponentModel;
-using System.Xml.Serialization;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 [assembly: EdmSchemaAttribute()]
 #region EDM Relationship Metadata
@@ -615,6 +616,7 @@ namespace oikonomos.data
         private ObjectSet<Title> _Titles;
 
         #endregion
+
         #region AddTo Methods
     
         /// <summary>
@@ -866,6 +868,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Function Imports
     
         /// <summary>
@@ -907,11 +910,11 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
-    
 
     #endregion
-    
+
     #region Entities
     
     /// <summary>
@@ -952,6 +955,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -1222,6 +1226,7 @@ namespace oikonomos.data
         partial void OnChurchSuburbIdChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -1352,6 +1357,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -1390,6 +1396,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -1828,6 +1835,7 @@ namespace oikonomos.data
         partial void OnStatusIdChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -2172,6 +2180,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -2202,6 +2211,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -2304,6 +2314,7 @@ namespace oikonomos.data
         partial void OnTemplateChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -2384,6 +2395,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -2418,6 +2430,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -2568,6 +2581,7 @@ namespace oikonomos.data
         partial void OnChangedChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -2648,6 +2662,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -2682,6 +2697,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -2832,6 +2848,7 @@ namespace oikonomos.data
         partial void OnCreatedChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -2912,6 +2929,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -2944,6 +2962,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -3070,6 +3089,7 @@ namespace oikonomos.data
         partial void OnChangedChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -3134,6 +3154,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -3168,6 +3189,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -3318,6 +3340,7 @@ namespace oikonomos.data
         partial void OnCommentDateChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -3328,7 +3351,7 @@ namespace oikonomos.data
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
         [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_Comment_AboutPerson", "Person")]
-        public Person Person
+        public Person AboutPerson
         {
             get
             {
@@ -3344,7 +3367,7 @@ namespace oikonomos.data
         /// </summary>
         [BrowsableAttribute(false)]
         [DataMemberAttribute()]
-        public EntityReference<Person> PersonReference
+        public EntityReference<Person> AboutPersonReference
         {
             get
             {
@@ -3366,7 +3389,7 @@ namespace oikonomos.data
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
         [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_Comment_MadeByPerson", "Person")]
-        public Person Person1
+        public Person MadeByPerson
         {
             get
             {
@@ -3382,7 +3405,7 @@ namespace oikonomos.data
         /// </summary>
         [BrowsableAttribute(false)]
         [DataMemberAttribute()]
-        public EntityReference<Person> Person1Reference
+        public EntityReference<Person> MadeByPersonReference
         {
             get
             {
@@ -3436,6 +3459,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -3462,6 +3486,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -3516,6 +3541,7 @@ namespace oikonomos.data
         partial void OnNameChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -3542,6 +3568,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -3586,6 +3613,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -3928,6 +3956,7 @@ namespace oikonomos.data
         partial void OnChurchIdChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -4122,6 +4151,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -4150,6 +4180,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -4228,6 +4259,7 @@ namespace oikonomos.data
         partial void OnChurchIdChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -4270,6 +4302,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -4298,6 +4331,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -4376,6 +4410,7 @@ namespace oikonomos.data
         partial void OnCreatedChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -4402,6 +4437,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -4432,6 +4468,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -4606,6 +4643,7 @@ namespace oikonomos.data
         partial void OnAnniversaryChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -4670,6 +4708,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -4704,6 +4743,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -4950,6 +4990,7 @@ namespace oikonomos.data
         partial void OnGroupClassificationIdChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -5204,6 +5245,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -5238,6 +5280,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -5388,6 +5431,7 @@ namespace oikonomos.data
         partial void OnChangedChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -5490,6 +5534,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -5518,6 +5563,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -5596,6 +5642,7 @@ namespace oikonomos.data
         partial void OnCreatedChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -5644,6 +5691,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -5672,6 +5720,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -5774,6 +5823,7 @@ namespace oikonomos.data
         partial void OnCreatedChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -5822,6 +5872,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -5858,6 +5909,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -6056,6 +6108,7 @@ namespace oikonomos.data
         partial void OnDependentOnChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -6082,6 +6135,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -6112,6 +6166,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -6217,6 +6272,7 @@ namespace oikonomos.data
         partial void OnChangedChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -6297,6 +6353,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -6329,6 +6386,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -6671,6 +6729,7 @@ namespace oikonomos.data
         partial void OnPublicIdChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -7031,6 +7090,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -7059,6 +7119,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -7140,6 +7201,7 @@ namespace oikonomos.data
         partial void OnRoleIdChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -7258,6 +7320,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -7292,6 +7355,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -7442,6 +7506,7 @@ namespace oikonomos.data
         partial void OnChangedChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -7522,6 +7587,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -7556,6 +7622,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -7706,6 +7773,7 @@ namespace oikonomos.data
         partial void OnChangedChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -7786,6 +7854,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -7820,6 +7889,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -7970,6 +8040,7 @@ namespace oikonomos.data
         partial void OnChangedChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -8088,6 +8159,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -8116,6 +8188,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -8194,6 +8267,7 @@ namespace oikonomos.data
         partial void OnCreatedChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -8220,6 +8294,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -8254,6 +8329,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -8404,6 +8480,7 @@ namespace oikonomos.data
         partial void OnDisplayNameChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -8600,6 +8677,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -8632,6 +8710,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -8782,6 +8861,7 @@ namespace oikonomos.data
         partial void OnAddressIdChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -8884,6 +8964,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -8910,6 +8991,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -8964,6 +9046,7 @@ namespace oikonomos.data
         partial void OnNameChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -8990,6 +9073,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -9018,6 +9102,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -9096,6 +9181,7 @@ namespace oikonomos.data
         partial void OnChurchIdChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -9138,6 +9224,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -9164,6 +9251,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -9218,6 +9306,7 @@ namespace oikonomos.data
         partial void OnNameChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -9244,6 +9333,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -9272,6 +9362,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -9350,6 +9441,7 @@ namespace oikonomos.data
         partial void OnCreatedChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -9376,6 +9468,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -9404,6 +9497,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -9482,6 +9576,7 @@ namespace oikonomos.data
         partial void OnCreatedChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -9508,9 +9603,11 @@ namespace oikonomos.data
         }
 
         #endregion
+
     }
 
     #endregion
+
     #region ComplexTypes
     
     /// <summary>
@@ -9535,6 +9632,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -9586,6 +9684,7 @@ namespace oikonomos.data
         partial void OnCommentsChanged();
 
         #endregion
+
     }
     
     /// <summary>
@@ -9612,6 +9711,7 @@ namespace oikonomos.data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -9951,8 +10051,10 @@ namespace oikonomos.data
         partial void OnC12Changed();
 
         #endregion
+
     }
 
     #endregion
+
     
 }

@@ -1594,8 +1594,8 @@
           <Property Type="Int32" Name="MadeByPersonId" Nullable="false" />
           <Property Type="Int32" Name="MadeByRoleId" Nullable="false" />
           <Property Type="DateTime" Name="CommentDate" Nullable="false" />
-          <NavigationProperty Name="Person" Relationship="oikonomosModel.FK_Comment_AboutPerson" FromRole="Comment" ToRole="Person" />
-          <NavigationProperty Name="Person1" Relationship="oikonomosModel.FK_Comment_MadeByPerson" FromRole="Comment" ToRole="Person" />
+          <NavigationProperty Name="AboutPerson" Relationship="oikonomosModel.FK_Comment_AboutPerson" FromRole="Comment" ToRole="Person" />
+          <NavigationProperty Name="MadeByPerson" Relationship="oikonomosModel.FK_Comment_MadeByPerson" FromRole="Comment" ToRole="Person" />
           <NavigationProperty Name="Role" Relationship="oikonomosModel.FK_Comment_Role" FromRole="Comment" ToRole="Role" />
         </EntityType>
         <EntityType Name="EmailTemplate">

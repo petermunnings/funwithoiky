@@ -365,7 +365,7 @@ namespace oikonomos.data.DataAccessors
                                          from pgEmpty in tList.DefaultIfEmpty()
                                          where pgEmpty.GroupId == null
                                          && c.ChurchId == currentPerson.ChurchId
-                                         && includedRoles.Contains(p.RoleId)
+                                         && includedRoles.Contains(c.RoleId)
                                          select p);
 
                 int totalRecords = peopleNotInGroups.Count();
@@ -440,18 +440,18 @@ namespace oikonomos.data.DataAccessors
                         from pgEmpty in tList.DefaultIfEmpty()
                         where pgEmpty.GroupId == null
                         && c.ChurchId == currentPerson.ChurchId
-                        && includedRoles.Contains(p.RoleId)
+                        && includedRoles.Contains(c.RoleId)
                         orderby p.Family.FamilyName, p.PersonId
                         select new PersonListViewModel
                         {
-                            PersonId = p.PersonId,
-                            FamilyId = p.FamilyId,
+                            PersonId  = p.PersonId,
+                            FamilyId  = p.FamilyId,
                             Firstname = p.Firstname,
-                            Surname = p.Family.FamilyName,
+                            Surname   = p.Family.FamilyName,
                             HomePhone = p.Family.HomePhone,
                             CellPhone = p.PersonOptionalFields.FirstOrDefault(cp => cp.OptionalFieldId == (int)OptionalFields.CellPhone).Value,
                             WorkPhone = p.PersonOptionalFields.FirstOrDefault(cp => cp.OptionalFieldId == (int)OptionalFields.WorkPhone).Value,
-                            Email = p.Email
+                            Email     = p.Email
                         }).ToList();
 
             }
@@ -803,7 +803,7 @@ namespace oikonomos.data.DataAccessors
 
         public static IEnumerable<PersonViewModel> FetchPeopleInGroup(Person currentPerson, int groupId)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 return FetchPeopleInGroup(currentPerson, groupId, context).ToList();
             }
@@ -811,7 +811,7 @@ namespace oikonomos.data.DataAccessors
 
         public static MapDataViewModel FetchPeopleInChurch(int churchId)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 var mapDataModel = (from c in context.Churches
                                     where c.ChurchId == churchId
@@ -823,7 +823,11 @@ namespace oikonomos.data.DataAccessors
                                     }).FirstOrDefault();
 
                 var members = (from f in context.Families
-                               where f.ChurchId == churchId
+                               join p in context.People
+                                on f.FamilyId equals p.FamilyId
+                               join pc in context.PersonChurches
+                                on p.PersonId equals pc.PersonId
+                               where pc.ChurchId == churchId
                                 && f.Address.Lat != 0
                                 && f.Address.Long != 0
                                select new MapDataMember
@@ -1223,16 +1227,19 @@ namespace oikonomos.data.DataAccessors
                                  .ToList();
             
             var people = (from p in context.People.Include("PersonOptionalField")
+                          join pc in context.PersonChurches
+                              on p.PersonId equals pc.PersonId 
                           join pg in context.PersonGroups
                               on p.PersonId equals pg.PersonId
                           join g in context.Groups
                               on pg.GroupId equals g.GroupId
                           join permissions in context.PermissionRoles
-                              on p.RoleId equals permissions.RoleId
+                              on pc.RoleId equals permissions.RoleId
                           orderby p.Family.FamilyName, p.PersonId
                           where pg.GroupId == groupId
                               && (permissions.PermissionId == (int)Permissions.Login)
-                              && rolesToInclude.Contains(p.RoleId)
+                              && pc.ChurchId == currentPerson.ChurchId
+                              && rolesToInclude.Contains(pc.RoleId)
                           select new PersonViewModel
                           {
                               PersonId             = p.PersonId,
@@ -1245,7 +1252,7 @@ namespace oikonomos.data.DataAccessors
                               LeaderChecked        = p.PersonId == g.LeaderId ? "CHECKED" : "",
                               HomePhone            = p.Family.HomePhone,
                               CellPhone            = p.PersonOptionalFields.FirstOrDefault(po => po.OptionalFieldId == (int)OptionalFields.CellPhone).Value,
-                              RoleName             = p.Role.DisplayName
+                              RoleName             = pc.Role.DisplayName
                           });
 
             if (selectedIds != null)

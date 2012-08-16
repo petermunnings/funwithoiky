@@ -62,7 +62,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>OikonomosModel.edmx</DependentUpon>
     </Compile>
-    <Compile Include="PartialClasses\Family.cs" />
     <Compile Include="PartialClasses\Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\MembersRepository.cs" />
@@ -90,9 +89,6 @@
       <Project>{54B0FB5D-AFBE-448A-ABD9-A0FBF75433D9}</Project>
       <Name>oikonomos.common</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="OikonomosModel.edmx.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
