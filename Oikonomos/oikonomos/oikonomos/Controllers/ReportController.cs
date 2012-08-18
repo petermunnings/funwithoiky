@@ -1,26 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.IO;
-using PdfSharp.Pdf;
-using PdfSharp.Drawing;
 using oikonomos.web.Helpers;
 using oikonomos.data;
 using oikonomos.data.DataAccessors;
 using oikonomos.common.Models;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
-using MigraDoc.Rendering;
 using System.Text;
-using oikonomos.common;
 
 namespace oikonomos.web.Controllers
 {
     public class ReportController : Controller
     {
-        private static string[] Months={"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        private static readonly string[] Months={"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
         public FileStreamResult ChurchList(bool search, string searchField, string searchString)
         {
@@ -30,8 +25,8 @@ namespace oikonomos.web.Controllers
                 Redirect("/Home/Index");
             }
 
-            List<PersonListViewModel> churchList = PersonDataAccessor.FetchChurchList(currentUser, search, searchField, searchString);
-            MemoryStream stream = new MemoryStream();
+            var churchList = PersonDataAccessor.FetchChurchList(currentUser, search, searchField, searchString);
+            var stream = new MemoryStream();
             CreatePeopleListDocument(currentUser, churchList, "Member").Save(stream, false);
 
             HttpContext.Response.AddHeader("content-disposition", "attachment; filename=churchlist.pdf");
@@ -46,9 +41,9 @@ namespace oikonomos.web.Controllers
                 Redirect("/Home/Index");
             }
 
-            List<PersonListViewModel> peopleList = PersonDataAccessor.FetchPeople(currentUser, roleId);
+            var peopleList = PersonDataAccessor.FetchPeople(currentUser, roleId);
 
-            MemoryStream stream = new MemoryStream();
+            var stream = new MemoryStream();
             CreatePeopleListDocument(currentUser, peopleList, roleName).Save(stream, false);
 
             HttpContext.Response.AddHeader("content-disposition", String.Format("attachment; filename={0}list.pdf", roleName));
@@ -63,33 +58,15 @@ namespace oikonomos.web.Controllers
                 Redirect("/Home/Index");
             }
 
-            List<PersonListViewModel> peopleList = GroupDataAccessor.FetchPeopleNotInAGroup(currentUser);
+            var peopleList = GroupDataAccessor.FetchPeopleNotInAGroup(currentUser);
 
-            MemoryStream stream = new MemoryStream();
+            var stream = new MemoryStream();
             CreatePeopleListDocument(currentUser, peopleList, "People not in any group").Save(stream, false);
 
             HttpContext.Response.AddHeader("content-disposition", String.Format("attachment; filename={0}list.pdf", "PeopleNotInAGroup"));
             return new FileStreamResult(stream, "application/pdf");
 
         }
-
-        
-
-        //public FileStreamResult PastMemberList()
-        //{
-        //    Person currentUser = SecurityHelper.CheckCurrentUser(Session, Response, ViewBag);
-        //    if (currentUser == null)
-        //    {
-        //        Redirect("/Home/Index");
-        //    }
-
-        //    List<PersonListViewModel> visitorList = PersonDataAccessor.FetchPeople(currentUser, (int)SecurityRoles.PastMember);
-        //    MemoryStream stream = new MemoryStream();
-        //    CreatePeopleListDocument(currentUser, visitorList, "Past Member").Save(stream, false);
-
-        //    HttpContext.Response.AddHeader("content-disposition", "attachment; filename=pastmemberlist.pdf");
-        //    return new FileStreamResult(stream, "application/pdf");
-        //}
 
         public FileStreamResult HomeGroupList(string id)
         {
@@ -99,11 +76,11 @@ namespace oikonomos.web.Controllers
                 Redirect("/Home/Index");
             }
 
-            int groupId = int.Parse(id);
-            List<PersonViewModel> peopleList = GroupDataAccessor.FetchPeopleInGroup(currentUser, groupId).ToList();
+            var groupId = int.Parse(id);
+            var peopleList = GroupDataAccessor.FetchPeopleInGroup(currentUser, groupId).ToList();
             
-            string hgName = GroupDataAccessor.FetchHomeGroupName(groupId);
-            MemoryStream stream = new MemoryStream();
+            var hgName = GroupDataAccessor.FetchHomeGroupName(groupId);
+            var stream = new MemoryStream();
             CreateHomeGroupListDocument(hgName, peopleList).Save(stream, false);
 
             HttpContext.Response.AddHeader("content-disposition", "attachment; filename=homegrouplist.pdf");
@@ -118,14 +95,13 @@ namespace oikonomos.web.Controllers
                 Redirect("/Home/Index");
             }
 
-            int groupId = int.Parse(id);
-            DateTime startDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-1);
-            DateTime endDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(1).AddDays(-1);
-            List<AttendanceEventViewModel> attendees = EventDataAccessor.FetchGroupAttendance(currentUser, groupId, startDate, endDate);
-            Dictionary<int, string> comments = EventDataAccessor.FetchGroupComments(currentUser, groupId);
-
-            string hgName = GroupDataAccessor.FetchHomeGroupName(groupId);
-            MemoryStream stream = new MemoryStream();
+            var groupId   = int.Parse(id);
+            var startDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-1);
+            var endDate   = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(1).AddDays(-1);
+            var attendees = EventDataAccessor.FetchGroupAttendance(currentUser, groupId, startDate, endDate);
+            var comments  = EventDataAccessor.FetchGroupComments(currentUser, groupId);
+            var hgName    = GroupDataAccessor.FetchHomeGroupName(groupId);
+            var stream    = new MemoryStream();
             CreateHomeGroupAttendanceDocument(hgName, attendees, comments).Save(stream, false);
 
             HttpContext.Response.AddHeader("content-disposition", "attachment; filename=homegroupattendance.pdf");
@@ -141,11 +117,11 @@ namespace oikonomos.web.Controllers
             }
             
             HttpContext.Response.AddHeader("content-disposition", "attachment; filename=churchdata.csv");
-            StreamWriter sw = new StreamWriter(new MemoryStream());
+            var sw = new StreamWriter(new MemoryStream());
             sw.WriteLine(@"Surname, Firstname, CellPhone, Email, HomePhone, WorkPhone, RoleName, Address1, Address2, Address3, Address4, Anniversary, DateOfBirth, Gender, Occupation, Skype, Twitter, Site, HeardAbout, Group");
 
-            List<PersonViewModel> list = PersonDataAccessor.FetchExtendedChurchList(currentUser);
-            foreach (PersonViewModel person in list)
+            var list = PersonDataAccessor.FetchExtendedChurchList(currentUser);
+            foreach (var person in list)
             {
                 sw.WriteLine(person.Surname + ", " + 
                     person.Firstname + ", " + 
