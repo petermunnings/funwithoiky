@@ -323,26 +323,22 @@ namespace oikonomos.data.DataAccessors
                                       });
 
                 if (endDate == null)
-                {
                     return (from ae in attendanceList
                             where ae.Date == startDate
                             select ae).ToList();
-                }
-                else
-                {
-                    return (from ae in attendanceList
-                            where ae.Date >= startDate
-                            && ae.Date <= endDate.Value
-                            select ae).ToList();
-                }
+
+                return (from ae in attendanceList
+                        where ae.Date >= startDate
+                              && ae.Date <= endDate.Value
+                        select ae).ToList();
             }
         }
 
         public static EventDisplayModel FetchEventsToDisplay(Person currentPerson)
         {
             //TODO there must be a better way to do this - on the database
-            EventDisplayModel events = new EventDisplayModel();
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            var events = new EventDisplayModel();
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 var upcomingChurchEvents = (from e in context.Events
                                             join c in context.Churches
@@ -381,114 +377,85 @@ namespace oikonomos.data.DataAccessors
                                                  Date = p.Anniversary.Value
                                              }).ToList();
 
-                //TODO - see if this can be done in Linq
-                foreach (EventListModel ub in upcomingBirthdays)
-                {
-                    if (ub.Date.Month == 2 && ub.Date.Day == 29)
-                    {
-                        if (DateTime.Today >= new DateTime(DateTime.Today.Year, 3, 1))
-                        {
-                            if (DateTime.IsLeapYear(DateTime.Now.Year + 1))
-                            {
-                                ub.Date = new DateTime(DateTime.Now.Year + 1, 2, 29);
-                            }
-                            else
-                            {
-                                ub.Date = new DateTime(DateTime.Now.Year + 1, 2, 28);
-                            }
-                        }
-                        else
-                        {
-                            if (DateTime.IsLeapYear(DateTime.Now.Year))
-                            {
-                                ub.Date = new DateTime(DateTime.Now.Year, 2, 29);
-                            }
-                            else
-                            {
-                                ub.Date = new DateTime(DateTime.Now.Year, 2, 28);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (DateTime.Today > new DateTime(DateTime.Today.Year, ub.Date.Month, ub.Date.Day))
-                        {
-                            ub.Date = new DateTime(DateTime.Today.Year + 1, ub.Date.Month, ub.Date.Day);
-                        }
-                        else
-                        {
-                            ub.Date = new DateTime(DateTime.Today.Year, ub.Date.Month, ub.Date.Day);
-                        }
-                    }
-                }
+                AddBirthdays(upcomingBirthdays);
+                AddAnniversaries(upcomingAnniversaries);
 
-                foreach (EventListModel ub in upcomingAnniversaries)
-                {
-                    if (DateTime.Today > new DateTime(DateTime.Today.Year, ub.Date.Month, ub.Date.Day))
-                    {
-                        ub.Date = new DateTime(DateTime.Today.Year + 1, ub.Date.Month, ub.Date.Day);
-                    }
-                    else
-                    {
-                        ub.Date = new DateTime(DateTime.Today.Year, ub.Date.Month, ub.Date.Day);
-                    }
-                }
-
-                List<EventListModel> upcomingEvents = new List<EventListModel>(upcomingChurchEvents);
+                var upcomingEvents = new List<EventListModel>(upcomingChurchEvents);
                 upcomingEvents.AddRange(upcomingBirthdays);
                 upcomingEvents.AddRange(upcomingAnniversaries);
 
-                //Sort and limit to 20
-
-                upcomingEvents.Sort(delegate(EventListModel e1, EventListModel e2)
-                {
-                    return e1.Date.CompareTo(e2.Date);
-                });
-
-                List<EventListModel> upcomingEventsLimited = new List<EventListModel>();
-                int counter = 0;
-                foreach (EventListModel upcomingEvent in upcomingEvents)
-                {
-                    if (counter < 20)
-                    {
-                        upcomingEventsLimited.Add(upcomingEvent);
-                        counter++;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-
+                events.UpcomingEvents = SortAndLimitTo20(upcomingEvents);
                 events.PastEvents = null;
-                events.UpcomingEvents = upcomingEventsLimited;
                 return events;
 
             }
         }
 
+        private static void AddAnniversaries(IEnumerable<EventListModel> upcomingAnniversaries)
+        {
+            foreach (var ub in upcomingAnniversaries)
+            {
+                ub.Date = DateTime.Today > new DateTime(DateTime.Today.Year, ub.Date.Month, ub.Date.Day)
+                              ? new DateTime(DateTime.Today.Year + 1, ub.Date.Month, ub.Date.Day)
+                              : new DateTime(DateTime.Today.Year, ub.Date.Month, ub.Date.Day);
+            }
+        }
+
+        private static void AddBirthdays(IEnumerable<EventListModel> upcomingBirthdays)
+        {
+            foreach (var ub in upcomingBirthdays)
+            {
+                if (ub.Date.Month == 2 && ub.Date.Day == 29)
+                {
+                    if (DateTime.Today >= new DateTime(DateTime.Today.Year, 3, 1))
+                        ub.Date = DateTime.IsLeapYear(DateTime.Now.Year + 1)
+                                      ? new DateTime(DateTime.Now.Year + 1, 2, 29)
+                                      : new DateTime(DateTime.Now.Year + 1, 2, 28);
+                    else
+                        ub.Date = DateTime.IsLeapYear(DateTime.Now.Year)
+                                      ? new DateTime(DateTime.Now.Year, 2, 29)
+                                      : new DateTime(DateTime.Now.Year, 2, 28);
+                }
+                else
+                    ub.Date = DateTime.Today > new DateTime(DateTime.Today.Year, ub.Date.Month, ub.Date.Day)
+                                  ? new DateTime(DateTime.Today.Year + 1, ub.Date.Month, ub.Date.Day)
+                                  : new DateTime(DateTime.Today.Year, ub.Date.Month, ub.Date.Day);
+            }
+        }
+
+        private static List<EventListModel> SortAndLimitTo20(List<EventListModel> upcomingEvents)
+        {
+            upcomingEvents.Sort((e1, e2) => e1.Date.CompareTo(e2.Date));
+
+            var upcomingEventsLimited = new List<EventListModel>();
+            int[] counter = {0};
+            foreach (var upcomingEvent in upcomingEvents.TakeWhile(upcomingEvent => counter[0] < 20))
+            {
+                upcomingEventsLimited.Add(upcomingEvent);
+                counter[0]++;
+            }
+            return upcomingEventsLimited;
+        }
+
         public static void SaveHomeGroupEvent(Person currentPerson, HomeGroupEventViewModel hgEvent)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                int didAttend = 0;
-                int didNotAttend = 0;
-                foreach (PersonEventViewModel personEvents in hgEvent.Events)
+                var didAttend = 0;
+                var didNotAttend = 0;
+                foreach (var personEvents in hgEvent.Events)
                 {
-                    Person person = PersonDataAccessor.FetchPerson(personEvents.PersonId);
-                    foreach (EventViewModel personEvent in personEvents.Events)
+                    var person = PersonDataAccessor.FetchPerson(personEvents.PersonId);
+                    foreach (var personEvent in personEvents.Events)
                     {
-                        
-                        Event pe = SavePersonEvent(context, personEvents, currentPerson, personEvent);
+                        var pe = SavePersonEvent(context, personEvents, currentPerson, personEvent);
                         CheckToSeeIfEventAlreadyExists(personEvents, context, personEvent, pe);
 
-                        if (person.HasPermission(Permissions.IncludeInGroupAttendanceStats))
-                        {
-                            if(personEvent.Name == EventNames.DidNotAttendGroup)
-                                didNotAttend++;
-                            if(personEvent.Name == EventNames.AttendedGroup)
-                                didAttend++;
-                        }
+                        if (!person.HasPermission(Permissions.IncludeInGroupAttendanceStats)) continue;
+                        if(personEvent.Name == EventNames.DidNotAttendGroup)
+                            didNotAttend++;
+                        if(personEvent.Name == EventNames.AttendedGroup)
+                            didAttend++;
                     }
                 }
 

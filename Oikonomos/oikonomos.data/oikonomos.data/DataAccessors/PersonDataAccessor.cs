@@ -916,7 +916,7 @@ namespace oikonomos.data.DataAccessors
             Role role = null;
             if (personChurch != null)
             {
-                role = personChurch.Role;
+                role = context.Roles.First(r=>r.RoleId==personChurch.RoleId);
             }
             else if(currentPerson.HasPermission(Permissions.SystemAdministrator))
             {

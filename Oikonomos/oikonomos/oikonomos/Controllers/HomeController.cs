@@ -538,13 +538,11 @@ namespace oikonomos.web.Controllers
         #region Private Methods
         private void GetReportViewBagValues(Person currentPerson)
         {
-            if (currentPerson.HasPermission(Permissions.ViewChurchContactDetails))
-                ViewBag.Title = "Church List";
-            else
-                ViewBag.Title = "Group List";
+            ViewBag.Title = currentPerson.HasPermission(Permissions.ViewChurchContactDetails) ? "List of Contacts" : "List of Contacts";
             
-            List<OptionalFieldViewModel> optionalFields = SettingsDataAccessor.FetchChurchOptionalFields(currentPerson.ChurchId);
-            foreach (OptionalFieldViewModel ct in optionalFields)
+            var optionalFields = SettingsDataAccessor.FetchChurchOptionalFields(currentPerson.ChurchId);
+            ViewBag.DisplayFacebook = false;
+            foreach (var ct in optionalFields)
             {
                 switch ((OptionalFields)ct.OptionalFieldId)
                 {
