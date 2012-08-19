@@ -30,16 +30,12 @@ DROP TABLE [dbo].[EventType]
 Update OptionalField set Name = 'Standard Comments'
 where OptionalFieldId = 11
 
-ALTER TABLE dbo.Person ADD
-	RoleId int NOT NULL CONSTRAINT DF_Person_RoleId DEFAULT 1
-	
-update p set p.roleId = pr.roleid
-from Person p
-join PersonRole pr
-on p.PersonId = pr.PersonId
 
-ALTER TABLE dbo.Person ADD CONSTRAINT
-	FK_Person_Role FOREIGN KEY
+ALTER TABLE dbo.PersonChurch ADD
+	RoleId int NOT NULL CONSTRAINT DF_PersonChurch_RoleId DEFAULT 1
+GO
+ALTER TABLE dbo.PersonChurch ADD CONSTRAINT
+	FK_PersonChurch_Role FOREIGN KEY
 	(
 	RoleId
 	) REFERENCES dbo.Role
@@ -47,7 +43,34 @@ ALTER TABLE dbo.Person ADD CONSTRAINT
 	RoleId
 	) ON UPDATE  NO ACTION 
 	 ON DELETE  NO ACTION 
-	 
+	
+GO
+
+update pc set roleid = pr.roleid
+from PersonChurch pc
+join PersonRole pr
+on pc.PersonId = pr.PersonId
+join [Role] r
+on pc.ChurchId = r.ChurchId
+and pr.RoleId = r.RoleId
+
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_FamilyChurch_Church]') AND parent_object_id = OBJECT_ID(N'[dbo].[FamilyChurch]'))
+ALTER TABLE [dbo].[FamilyChurch] DROP CONSTRAINT [FK_FamilyChurch_Church]
+GO
+
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_FamilyChurch_Family]') AND parent_object_id = OBJECT_ID(N'[dbo].[FamilyChurch]'))
+ALTER TABLE [dbo].[FamilyChurch] DROP CONSTRAINT [FK_FamilyChurch_Family]
+GO
+
+
+/****** Object:  Table [dbo].[FamilyChurch]    Script Date: 08/19/2012 19:47:40 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[FamilyChurch]') AND type in (N'U'))
+DROP TABLE [dbo].[FamilyChurch]
+GO
+
+
+
+
 IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_PersonRole_Person]') AND parent_object_id = OBJECT_ID(N'[dbo].[PersonRole]'))
 ALTER TABLE [dbo].[PersonRole] DROP CONSTRAINT [FK_PersonRole_Person]
 GO
@@ -70,8 +93,6 @@ END
 
 GO
 
-USE [oikonomos]
-GO
 
 /****** Object:  Table [dbo].[PersonRole]    Script Date: 08/05/2012 19:24:37 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[PersonRole]') AND type in (N'U'))
