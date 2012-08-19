@@ -698,7 +698,7 @@ namespace oikonomos.data.DataAccessors
 
         public static List<PersonListViewModel> FetchChurchList(Person currentPerson, bool search, string searchField, string searchString)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 var personList = FetchChurchList(currentPerson, search, searchField, searchString, context);
 
@@ -711,8 +711,8 @@ namespace oikonomos.data.DataAccessors
                             Firstname = p.Firstname,
                             Surname = p.Family.FamilyName,
                             HomePhone = p.Family.HomePhone,
-                            CellPhone = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).FirstOrDefault().Value,
-                            WorkPhone = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.WorkPhone).FirstOrDefault().Value,
+                            CellPhone = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).Value,
+                            WorkPhone = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.WorkPhone).Value,
                             Email = p.Email
                         }).ToList();
             }
@@ -891,30 +891,48 @@ namespace oikonomos.data.DataAccessors
             }
         }
 
-        private static void SetupPermissions(oikonomosEntities context, Person person)
+        private static void SetupPermissions(oikonomosEntities context, Person currentPerson)
         {
-            SetupPermissions(context, person, person.PersonChurches.First().Church);
+            SetupPermissions(context, currentPerson, currentPerson.PersonChurches.First().Church);
         }
 
-        private static void SetupPermissions(oikonomosEntities context, Person person, Church church)
+        private static void SetupPermissions(oikonomosEntities context, Person currentPerson, Church church)
         {
-            person.Permissions = (from pr in context.PersonChurches
+            var sysAdmin = currentPerson.Permissions!=null && currentPerson.HasPermission(Permissions.SystemAdministrator);
+            currentPerson.Permissions = (from pr in context.PersonChurches
                                   join r in context.Roles
                                     on pr.RoleId equals r.RoleId
                                   join permissions in context.PermissionRoles
                                     on r.RoleId equals permissions.RoleId
-                                  where pr.PersonId == person.PersonId
+                                  where pr.PersonId == currentPerson.PersonId
                                     && r.ChurchId == church.ChurchId
                                   select permissions.PermissionId)
                                   .ToList();
-
-            var surname = person.Family.FamilyName;
-            person.Church = church;
-            person.ChurchId = church.ChurchId;
-            person.RoleId = person.PersonChurches.First(pc => pc.ChurchId == person.ChurchId).RoleId;
-            person.Role = person.PersonChurches.First(pc => pc.ChurchId == person.ChurchId).Role;
-            var churchIds = (from p in person.PersonChurches select p.ChurchId).ToList();
-            person.Churches = context.Churches.Where(c => churchIds.Contains(c.ChurchId)).ToList();
+            
+            if(sysAdmin) currentPerson.Permissions.Add((int)Permissions.SystemAdministrator);
+            var surname = currentPerson.Family.FamilyName;
+            currentPerson.Church = church;
+            currentPerson.ChurchId = church.ChurchId;
+            var personChurch = currentPerson.PersonChurches.FirstOrDefault(pc => pc.ChurchId == currentPerson.ChurchId);
+            Role role = null;
+            if (personChurch != null)
+            {
+                role = personChurch.Role;
+            }
+            else if(currentPerson.HasPermission(Permissions.SystemAdministrator))
+            {
+                role = context.Roles.FirstOrDefault(r => r.ChurchId == church.ChurchId && r.Name.Contains("Administrator"));
+                if(role==null)
+                    throw new ApplicationException("Cannot set role for new church");
+            }
+            else
+            {
+                throw new ApplicationException("Cannot set role for new church");
+            }
+            currentPerson.RoleId = role.RoleId;
+            currentPerson.Role = role;
+            var churchIds = (from p in currentPerson.PersonChurches select p.ChurchId).ToList();
+            currentPerson.Churches = context.Churches.Where(c => churchIds.Contains(c.ChurchId)).ToList();
         }
 
         public static void SavePersonFacebookDetails(Person person, long facebookId, DateTime? birthday)
@@ -1036,7 +1054,7 @@ namespace oikonomos.data.DataAccessors
                currentPerson.HasPermission(Permissions.EditGroupPersonalDetails) ||
                currentPerson.HasPermission(Permissions.EditOwnDetails))
             {
-                using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+                using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
                 {
                     try
                     {
@@ -1048,57 +1066,52 @@ namespace oikonomos.data.DataAccessors
 
                         var person = (from p in context.People.Include("PersonOptionalField").Include("Family")
                                       where p.PersonId == personId
-                                      select new PersonViewModel
+                                      select p).FirstOrDefault();
+
+                        if(person==null)
+                            throw new ApplicationException("Invalid PersonId");
+
+                        SetupPermissions(context, person, currentPerson.Church);
+                        var personViewModel = new PersonViewModel
                                       {
-                                          PersonId          = p.PersonId,
-                                          FamilyId          = p.FamilyId,
-                                          Firstname         = p.Firstname,
-                                          Surname           = p.Family.FamilyName,
-                                          Email             = p.Email,
-                                          DateOfBirth_Value = p.DateOfBirth,
-                                          Anniversary_Value = p.Anniversary,
-                                          HomePhone         = p.Family.HomePhone,
-                                          CellPhone         = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).Value,
-                                          WorkPhone         = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.WorkPhone).Value,
-                                          Skype             = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Skype).Value,
-                                          Twitter           = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Twitter).Value,
-                                          FacebookId        = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Facebook).Value,
-                                          Occupation        = p.Occupation,
-                                          Gender            = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Gender).Value,
-                                          Address1          = p.Family.Address.Line1,
-                                          Address2          = p.Family.Address.Line2,
-                                          Address3          = p.Family.Address.Line3,
-                                          Address4          = p.Family.Address.Line4,
-                                          Lat               = p.Family.Address.Lat,
-                                          Lng               = p.Family.Address.Long,
-                                          HasUsername       = p.Username != null,
+                                          PersonId          = person.PersonId,
+                                          FamilyId          = person.FamilyId,
+                                          Firstname         = person.Firstname,
+                                          Surname           = person.Family.FamilyName,
+                                          Email             = person.Email,
+                                          DateOfBirth_Value = person.DateOfBirth,
+                                          Anniversary_Value = person.Anniversary,
+                                          HomePhone         = person.Family.HomePhone,
+                                          CellPhone         = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.CellPhone)==null ? string.Empty    : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).Value,
+                                          WorkPhone         = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.WorkPhone) == null ? string.Empty  : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int)OptionalFields.WorkPhone).Value,
+                                          Skype             = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Skype) == null ? string.Empty      : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int)OptionalFields.Skype).Value,
+                                          Twitter           = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Twitter) == null ? string.Empty    : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int)OptionalFields.Twitter).Value,
+                                          FacebookId        = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Facebook) == null ? string.Empty   : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int)OptionalFields.Facebook).Value,
+                                          Occupation        = person.Occupation,
+                                          Gender            = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Gender) == null ? string.Empty     : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int)OptionalFields.Gender).Value,
+                                          Address1          = person.Family.Address.Line1,
+                                          Address2          = person.Family.Address.Line2,
+                                          Address3          = person.Family.Address.Line3,
+                                          Address4          = person.Family.Address.Line4,
+                                          Lat               = person.Family.Address.Lat,
+                                          Lng               = person.Family.Address.Long,
+                                          HasUsername       = person.Username != null,
                                           FindFamily        = false,
                                           GroupId           = 0,
-                                          Site              = p.SiteId.HasValue ? p.Site.Name : "Select site...",
-                                          HeardAbout        = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.HeardAbout).Value
-                                      }).FirstOrDefault();
+                                          Site              = person.SiteId.HasValue ? person.Site.Name : "Select site...",
+                                          HeardAbout        = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.HeardAbout) == null ? string.Empty : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int)OptionalFields.HeardAbout).Value
+                                      };
 
-                        var role = (from r in context.Roles
-                                    join pr in context.PersonChurches
-                                      on r.RoleId equals pr.RoleId
-                                    where r.ChurchId == currentPerson.ChurchId
-                                    && pr.PersonId == personId
-                                    select r).First();
-                        person.RoleName = role == null ? string.Empty : role.Name;
-                        person.RoleId = role == null ? 0 : role.RoleId;
 
                         //If the person is only part of one group - then that's his groupid
                         if (context.PersonGroups.Count(pg => pg.PersonId == personId && pg.Group.ChurchId == currentPerson.ChurchId) == 1)
-                            person.GroupId = (from pg in context.PersonGroups where pg.PersonId == personId && pg.Group.ChurchId == currentPerson.ChurchId select pg.GroupId).FirstOrDefault();
-                        if (context.PersonGroups.Count(pg => pg.PersonId == personId && pg.Group.ChurchId == currentPerson.ChurchId) > 1)
-                            person.IsInMultipleGroups = true;
-                        else
-                            person.IsInMultipleGroups = false;
+                            personViewModel.GroupId = (from pg in context.PersonGroups where pg.PersonId == personId && pg.Group.ChurchId == currentPerson.ChurchId select pg.GroupId).FirstOrDefault();
+                        personViewModel.IsInMultipleGroups = context.PersonGroups.Count(pg => pg.PersonId == personId && pg.Group.ChurchId == currentPerson.ChurchId) > 1;
 
-                        person.FamilyMembers = FetchFamilyMembers(personId, familyId, context);
-                        person.SecurityRoles = Cache.SecurityRoles(context, currentPerson);
+                        personViewModel.FamilyMembers = FetchFamilyMembers(personId, familyId, context);
+                        personViewModel.SecurityRoles = Cache.SecurityRoles(context, currentPerson);
 
-                        return person;
+                        return personViewModel;
                     }
                     catch (Exception ex)
                     {
@@ -1603,7 +1616,7 @@ namespace oikonomos.data.DataAccessors
                 {
                     if (familyMember.Relationship != null)
                     {
-                        Relationships relationship = (Relationships)Enum.Parse(typeof(Relationships), familyMember.Relationship);
+                        var relationship = (Relationships)Enum.Parse(typeof(Relationships), familyMember.Relationship);
                         if (anniversaryHasChanged && (relationship == Relationships.Husband || relationship == Relationships.Wife))
                         {
                             var spouse = (from p in context.People
@@ -1629,9 +1642,7 @@ namespace oikonomos.data.DataAccessors
         {
             if (personToSave.Family.Address == null)
             {
-                personToSave.Family.Address = new Address();
-                personToSave.Family.Address.Created = DateTime.Now;
-                personToSave.Family.Address.Changed = DateTime.Now;
+                personToSave.Family.Address = new Address {Created = DateTime.Now, Changed = DateTime.Now};
             }
 
             if (personToSave.Family.Address.Line1 != person.Address1 ||
@@ -1640,10 +1651,10 @@ namespace oikonomos.data.DataAccessors
                 personToSave.Family.Address.Line4 != person.Address4)
                 personToSave.Family.Address.Changed = DateTime.Now;
 
-            personToSave.Family.Address.Line1 = person.Address1 == null ? string.Empty : person.Address1;
-            personToSave.Family.Address.Line2 = person.Address2 == null ? string.Empty : person.Address2;
-            personToSave.Family.Address.Line3 = person.Address3 == null ? string.Empty : person.Address3;
-            personToSave.Family.Address.Line4 = person.Address4 == null ? string.Empty : person.Address4;
+            personToSave.Family.Address.Line1 = person.Address1 ?? string.Empty;
+            personToSave.Family.Address.Line2 = person.Address2 ?? string.Empty;
+            personToSave.Family.Address.Line3 = person.Address3 ?? string.Empty;
+            personToSave.Family.Address.Line4 = person.Address4 ?? string.Empty;
             personToSave.Family.Address.Lat = person.Lat;
             personToSave.Family.Address.Long = person.Lng;
         }
@@ -1661,7 +1672,7 @@ namespace oikonomos.data.DataAccessors
 
         private static bool CheckSavePermissionPersonal(PersonViewModel person, Person currentPerson, oikonomosEntities context)
         {
-            bool canSave = false;
+            var canSave = false;
             if (person.PersonId > 0)
             {
                 var familyPerson = (from p in context.People
@@ -1676,20 +1687,20 @@ namespace oikonomos.data.DataAccessors
             else
             {
                 canSave = true;
-
             }
             return canSave;
         }
 
         private static bool CheckSavePermissionGroup(PersonViewModel person, Person currentPerson, oikonomosEntities context)
         {
-            bool canSave = false;
+            var canSave = false;
             if (person.PersonId > 0)
             {
                 var groupPerson = (from pg in context.PersonGroups
                                    join g in context.Groups
                                    on pg.GroupId equals g.GroupId
                                    where pg.PersonId == person.PersonId
+                                   && g.ChurchId == currentPerson.ChurchId
                                    && (g.LeaderId == currentPerson.PersonId || g.AdministratorId == currentPerson.PersonId)
                                    select pg).FirstOrDefault();
                 if (groupPerson != null)
@@ -1699,11 +1710,7 @@ namespace oikonomos.data.DataAccessors
             }
             else
             {
-                canSave = true;
-                if (!(person.RoleName == "Visitor" || person.RoleName == "Member"))
-                {
-                    person.RoleName = "Visitor";
-                }
+                canSave = currentPerson.HasPermission(Permissions.AddNewPerson);
             }
             return canSave;
         }
@@ -2083,31 +2090,30 @@ namespace oikonomos.data.DataAccessors
                                           where pr.PersonId == personId
                                           && pr.PersonRelatedToId == p.PersonId
                                           select pr.RelationshipId).FirstOrDefault(),
-                        FacebookId = p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.Facebook).FirstOrDefault() == null ? "" : p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.Facebook).FirstOrDefault().Value
+                        FacebookId = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Facebook) == null ? "" : p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Facebook).Value
                     }).ToList();
 
-            familyMembers.Sort(delegate(FamilyMemberViewModel e1, FamilyMemberViewModel e2)
-            {
-                return e1.RelationshipId.CompareTo(e2.RelationshipId);
-            });
+            familyMembers.Sort((e1, e2) => e1.RelationshipId.CompareTo(e2.RelationshipId));
 
             return familyMembers;
         }
 
         private static void UpdatePersonOptionalField(Person person, OptionalFields optionalField, string value)
         {
-            PersonOptionalField personOptionalField = person.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)optionalField).FirstOrDefault();
+            var personOptionalField = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)optionalField);
             if (personOptionalField == null)
             {
-                personOptionalField = new PersonOptionalField();
-                personOptionalField.OptionalFieldId = (int)optionalField;
-                personOptionalField.Created = DateTime.Now;
-                personOptionalField.Changed = DateTime.Now;
+                personOptionalField = new PersonOptionalField
+                                          {
+                                              OptionalFieldId = (int) optionalField,
+                                              Created = DateTime.Now,
+                                              Changed = DateTime.Now
+                                          };
                 person.PersonOptionalFields.Add(personOptionalField);
             }
-            if (personOptionalField.Value != (value == null ? string.Empty : value))
+            if (personOptionalField.Value != (value ?? string.Empty))
                 personOptionalField.Changed = DateTime.Now;
-            personOptionalField.Value = value==null?string.Empty:value;
+            personOptionalField.Value = value ?? string.Empty;
             
         }
 
@@ -2115,17 +2121,17 @@ namespace oikonomos.data.DataAccessors
         {
             string passwordHash = FormsAuthentication.HashPasswordForStoringInConfigFile(password, "sha1");
 
-            var person= (from p in context.People.Include("PersonChurches")
-                    join pr in context.PersonChurches
-                        on p.PersonId equals pr.PersonId
+            var person= (from p in context.People
+                    join pc in context.PersonChurches
+                        on p.PersonId equals pc.PersonId
                     join permissions in context.PermissionRoles
-                        on pr.RoleId equals permissions.RoleId
+                        on pc.RoleId equals permissions.RoleId
                     where p.Email == email
                         && p.PasswordHash == passwordHash
                         && permissions.PermissionId == (int)Permissions.Login
                     select p).FirstOrDefault();
             if (person == null)
-                return person;
+                return null;
 
             SetupPermissions(context, person);
             return person;

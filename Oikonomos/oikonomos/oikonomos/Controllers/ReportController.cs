@@ -1,26 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.IO;
-using PdfSharp.Pdf;
-using PdfSharp.Drawing;
 using oikonomos.web.Helpers;
 using oikonomos.data;
 using oikonomos.data.DataAccessors;
 using oikonomos.common.Models;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
-using MigraDoc.Rendering;
 using System.Text;
-using oikonomos.common;
 
 namespace oikonomos.web.Controllers
 {
     public class ReportController : Controller
     {
-        private static string[] Months={"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        private static readonly string[] Months={"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
         public FileStreamResult ChurchList(bool search, string searchField, string searchString)
         {
@@ -30,8 +25,8 @@ namespace oikonomos.web.Controllers
                 Redirect("/Home/Index");
             }
 
-            List<PersonListViewModel> churchList = PersonDataAccessor.FetchChurchList(currentUser, search, searchField, searchString);
-            MemoryStream stream = new MemoryStream();
+            var churchList = PersonDataAccessor.FetchChurchList(currentUser, search, searchField, searchString);
+            var stream = new MemoryStream();
             CreatePeopleListDocument(currentUser, churchList, "Member").Save(stream, false);
 
             HttpContext.Response.AddHeader("content-disposition", "attachment; filename=churchlist.pdf");
@@ -72,24 +67,6 @@ namespace oikonomos.web.Controllers
             return new FileStreamResult(stream, "application/pdf");
 
         }
-
-        
-
-        //public FileStreamResult PastMemberList()
-        //{
-        //    Person currentUser = SecurityHelper.CheckCurrentUser(Session, Response, ViewBag);
-        //    if (currentUser == null)
-        //    {
-        //        Redirect("/Home/Index");
-        //    }
-
-        //    List<PersonListViewModel> visitorList = PersonDataAccessor.FetchPeople(currentUser, (int)SecurityRoles.PastMember);
-        //    MemoryStream stream = new MemoryStream();
-        //    CreatePeopleListDocument(currentUser, visitorList, "Past Member").Save(stream, false);
-
-        //    HttpContext.Response.AddHeader("content-disposition", "attachment; filename=pastmemberlist.pdf");
-        //    return new FileStreamResult(stream, "application/pdf");
-        //}
 
         public FileStreamResult HomeGroupList(string id)
         {

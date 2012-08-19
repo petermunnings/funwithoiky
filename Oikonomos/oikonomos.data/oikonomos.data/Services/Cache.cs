@@ -19,20 +19,13 @@ namespace oikonomos.data.Services
 
         private static T FetchCacheValue<T>(string name)
         {
-            object returnValue = cache[name];
+            var returnValue = cache[name];
             if (returnValue == null)
-            {
                 return default(T);
-            }
 
             if (returnValue is T)
-            {
-                return (T)returnValue;
-            }
-            else
-            {
-                return default(T);
-            }
+                return (T) returnValue;
+            return default(T);
         }
 
         private static void SetCacheValue(string name, object value)

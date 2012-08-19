@@ -68,7 +68,7 @@ namespace oikonomos.common
         SystemAdministrator = 40,
         NotifyGroupLeaderOfVisit = 41,
         SendWelcomeLetter = 42,
-        AddMember = 43,
+        AddNewPerson = 43,
         EditGroups = 44,
         EditGroupLeader = 45,
         EditGroupAdministrator = 46,

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using oikonomos.common;
-using System.Text.RegularExpressions;
 
 namespace oikonomos.data
 {
@@ -11,7 +7,7 @@ namespace oikonomos.data
     {
         public bool HasPermission(Permissions permission)
         {
-            return Permissions.Contains((int)permission);
+            return Permissions.Contains((int)permission) || Permissions.Contains((int)common.Permissions.SystemAdministrator);
         }
 
         public bool HasValidEmail()
