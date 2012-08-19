@@ -35,17 +35,18 @@ namespace oikonomos.data.Services
         
         public static List<RoleViewModel> SecurityRoles(oikonomosEntities context, Person currentPerson)
         {
-            //TODO - not a good idea to cache these - gives everyone the same security role.
-            //       rethink this later
-            return (from r in context.Roles
-                    from canSetRole in r.CanSetRoles
-                    where r.ChurchId == currentPerson.ChurchId
-                          && canSetRole.RoleId == currentPerson.RoleId
-                    select new RoleViewModel()
-                               {
-                                   RoleId = r.RoleId,
-                                   Name = r.Name
-                               }).ToList();
+            List<RoleViewModel> roles;
+            if (currentPerson.HasPermission(common.Permissions.SystemAdministrator))
+                roles = (from r in context.Roles
+                         where r.ChurchId == currentPerson.ChurchId
+                         select new RoleViewModel {RoleId = r.RoleId, Name = r.Name}).ToList();
+            else
+                roles = (from r in context.Roles
+                         from canSetRole in r.CanSetRoles
+                         where r.ChurchId == currentPerson.ChurchId
+                               && canSetRole.RoleId == currentPerson.RoleId
+                         select new RoleViewModel {RoleId = r.RoleId, Name = r.Name }).ToList();
+            return roles;
 
         }
 

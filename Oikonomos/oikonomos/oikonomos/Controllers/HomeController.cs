@@ -251,55 +251,49 @@ namespace oikonomos.web.Controllers
                 ViewBag.ChurchAdminDisplayRoles = true;
             }
 
-            PersonViewModel p = new PersonViewModel();
+            var personViewModel = new PersonViewModel();
             if (personId.HasValue)
             {
-                p = PersonDataAccessor.FetchPersonViewModel(personId.Value, currentPerson);
-                if (p == null)
+                personViewModel = PersonDataAccessor.FetchPersonViewModel(personId.Value, currentPerson);
+                if (personViewModel == null)
                 {
-                    p = PersonDataAccessor.FetchPersonViewModel(currentPerson.PersonId, currentPerson);
+                    personViewModel = PersonDataAccessor.FetchPersonViewModel(currentPerson.PersonId, currentPerson);
                 }
                 else if (GroupId.HasValue)
                 {
-                    p.GroupId = GroupId.Value;
+                    personViewModel.GroupId = GroupId.Value;
                 }
             }
             else
             {
-                p = PersonDataAccessor.FetchPersonViewModel(currentPerson.PersonId, currentPerson);
+                personViewModel = PersonDataAccessor.FetchPersonViewModel(currentPerson.PersonId, currentPerson);
             }
 
             ViewBag.CanChangeRole = false;
-            foreach (var role in p.SecurityRoles)
+            foreach (var role in personViewModel.SecurityRoles.Where(role => role.RoleId == personViewModel.RoleId))
             {
-                if (role.RoleId == p.RoleId)
-                {
-                    ViewBag.CanChangeRole = true;
-                    break;
-                }
+                ViewBag.CanChangeRole = true;
+                break;
             }
 
             //Fetch Groups
             var groups = GroupDataAccessor.FetchHomeGroups(currentPerson.ChurchId, currentPerson);
             groups.Insert(0, new HomeGroupsViewModel() { GroupId = 0, GroupName = "Select a group..." });
-            var canChangeGroup = (p.GroupId == 0 && !p.IsInMultipleGroups);
-            if (!canChangeGroup && !p.IsInMultipleGroups)
+            var canChangeGroup = (personViewModel.GroupId == 0 && !personViewModel.IsInMultipleGroups);
+            if (!canChangeGroup && !personViewModel.IsInMultipleGroups)
             {
-                foreach (var group in groups)
+                if (groups.Any(g => g.GroupId == personViewModel.GroupId))
                 {
-                    if (group.GroupId == p.GroupId)
-                    {
-                        canChangeGroup = true;
-                        break;
-                    }
+                    canChangeGroup = true;
                 }
             }
             ViewBag.CanChangeGroup = canChangeGroup;
             ViewBag.Groups = groups;
 
             
-            List<OptionalFieldViewModel> optionalFields = SettingsDataAccessor.FetchChurchOptionalFields(currentPerson.ChurchId);
-            foreach (OptionalFieldViewModel ct in optionalFields)
+            var optionalFields = SettingsDataAccessor.FetchChurchOptionalFields(currentPerson.ChurchId);
+            ViewBag.DisplayFacebook = false;
+            foreach (var ct in optionalFields)
             {
                 switch ((OptionalFields)ct.OptionalFieldId)
                 {
@@ -346,16 +340,12 @@ namespace oikonomos.web.Controllers
                 }
             }
 
-            List<string> siteLookups = new List<string>();
-            siteLookups.Add("Select site...");
-            List<SiteSettingsViewModel> sites = ChurchDataAccessor.FetchSites(currentPerson);
+            var siteLookups = new List<string> {"Select site..."};
+            var sites = ChurchDataAccessor.FetchSites(currentPerson);
             if (sites.Count > 0)
             {
                 ViewBag.DisplaySites = "tableRow";
-                foreach (SiteSettingsViewModel site in sites)
-                {
-                    siteLookups.Add(site.SiteName);
-                }
+                siteLookups.AddRange(sites.Select(site => site.SiteName));
             }
             else
             {
@@ -364,34 +354,19 @@ namespace oikonomos.web.Controllers
 
             ViewBag.Sites = siteLookups;
 
-            return View(p);
+            return View(personViewModel);
         }
-
-        //public ActionResult Families()
-        //{
-        //    FamilyViewModel familyViewModel = new FamilyViewModel();
-        //    ViewBag.DisplayHomePhone = "table-row";
-        //    return View(familyViewModel);
-        //}
 
         public ActionResult Children()
         {
             Person currentPerson = SecurityHelper.CheckCurrentUser(Session, Response, ViewBag);
-            if (currentPerson == null)
-            {
-                return View("Login");
-            }
-            return View();
+            return currentPerson == null ? View("Login") : View();
         }
 
         public ActionResult Sites()
         {
             Person currentPerson = SecurityHelper.CheckCurrentUser(Session, Response, ViewBag);
-            if (currentPerson == null)
-            {
-                return View("Login");
-            } 
-            return View();
+            return currentPerson == null ? View("Login") : View();
         }
 
         public ActionResult ReportsMap()

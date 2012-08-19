@@ -190,7 +190,7 @@ namespace oikonomos.data.DataAccessors
 
                 if (people.Count == 1)
                 {
-                    var person = FetchPerson(people[0].PersonId, context);
+                    var person = FetchPerson(people[0].PersonId, context, null);
                     string password = RandomPasswordGenerator.Generate(RandomPasswordOptions.AlphaNumeric);
                     person.PasswordHash = FormsAuthentication.HashPasswordForStoringInConfigFile(password, "sha1");
                     context.SaveChanges();
@@ -218,7 +218,7 @@ namespace oikonomos.data.DataAccessors
                 return false;
             }
 
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 var church = (from c in context.Churches
                               where c.ChurchId == currentPerson.ChurchId
@@ -229,7 +229,7 @@ namespace oikonomos.data.DataAccessors
                     return false;
                 }
 
-                var personToUpdate = FetchPerson(personId, context);
+                var personToUpdate = FetchPerson(personId, context, currentPerson);
 
                 if (personToUpdate == null)
                 {
@@ -866,7 +866,7 @@ namespace oikonomos.data.DataAccessors
                 if (person == null)
                     return null;
 
-                SetupPermissions(context, person);
+                SetupPermissions(context, person, false);
                 return person;
             }
         }
@@ -886,19 +886,18 @@ namespace oikonomos.data.DataAccessors
                 if (person == null)
                     return null;
 
-                SetupPermissions(context, person);
+                SetupPermissions(context, person, false);
                 return person;
             }
         }
 
-        private static void SetupPermissions(oikonomosEntities context, Person currentPerson)
+        private static void SetupPermissions(oikonomosEntities context, Person currentPerson, bool sysAdmin)
         {
-            SetupPermissions(context, currentPerson, currentPerson.PersonChurches.First().Church);
+            SetupPermissions(context, currentPerson, currentPerson.PersonChurches.First().Church, sysAdmin);
         }
 
-        private static void SetupPermissions(oikonomosEntities context, Person currentPerson, Church church)
+        private static void SetupPermissions(oikonomosEntities context, Person currentPerson, Church church, bool sysAdmin)
         {
-            var sysAdmin = currentPerson.Permissions!=null && currentPerson.HasPermission(Permissions.SystemAdministrator);
             currentPerson.Permissions = (from pr in context.PersonChurches
                                   join r in context.Roles
                                     on pr.RoleId equals r.RoleId
@@ -908,8 +907,8 @@ namespace oikonomos.data.DataAccessors
                                     && r.ChurchId == church.ChurchId
                                   select permissions.PermissionId)
                                   .ToList();
-            
-            if(sysAdmin) currentPerson.Permissions.Add((int)Permissions.SystemAdministrator);
+
+            if (sysAdmin) currentPerson.Permissions.Add((int)Permissions.SystemAdministrator);
             var surname = currentPerson.Family.FamilyName;
             currentPerson.Church = church;
             currentPerson.ChurchId = church.ChurchId;
@@ -984,20 +983,22 @@ namespace oikonomos.data.DataAccessors
         {
             using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                return FetchPerson(personId, context);
+                return FetchPerson(personId, context, null);
             }
         }
 
-        private static Person FetchPerson(int personId, oikonomosEntities context)
+        private static Person FetchPerson(int personId, oikonomosEntities context, Person currentPerson)
         {
+            var sysAdmin = currentPerson!=null && currentPerson.Permissions!=null && currentPerson.HasPermission(Permissions.SystemAdministrator);
             var person = context.People.Include("PersonChurches.Role.PermissionRoles").First(p => p.PersonId == personId);
-            SetupPermissions(context, person);
+            SetupPermissions(context, person, sysAdmin);
+            
             return person;
         }
 
         public static List<Person> FetchPersonFromName(string fullname, string firstname, string surname, string email)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 var persons = (from p in context.People.Include("Family")
                                join f in context.Families
@@ -1009,7 +1010,7 @@ namespace oikonomos.data.DataAccessors
 
                 if (persons.Count == 0)
                 {
-                    string[] fullnames = fullname.Split(' ');
+                    var fullnames = fullname.Split(' ');
                     if (fullnames.Length > 2)
                     {
                         //Try and search for the person using the first two names in the full name
@@ -1041,7 +1042,7 @@ namespace oikonomos.data.DataAccessors
 
                 foreach (var person in persons)
                 {
-                    SetupPermissions(context, person);
+                    SetupPermissions(context, person, false);
                 }
 
                 return persons;
@@ -1064,14 +1065,12 @@ namespace oikonomos.data.DataAccessors
                                         where p.PersonId == personId
                                         select p.FamilyId).FirstOrDefault();
 
-                        var person = (from p in context.People.Include("PersonOptionalField").Include("Family")
-                                      where p.PersonId == personId
-                                      select p).FirstOrDefault();
+                        var person = FetchPerson(personId, context, currentPerson);
 
                         if(person==null)
                             throw new ApplicationException("Invalid PersonId");
 
-                        SetupPermissions(context, person, currentPerson.Church);
+                        //SetupPermissions(context, person, currentPerson.Church);
                         var personViewModel = new PersonViewModel
                                       {
                                           PersonId          = person.PersonId,
@@ -1099,14 +1098,12 @@ namespace oikonomos.data.DataAccessors
                                           FindFamily        = false,
                                           GroupId           = 0,
                                           Site              = person.SiteId.HasValue ? person.Site.Name : "Select site...",
-                                          HeardAbout        = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.HeardAbout) == null ? string.Empty : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int)OptionalFields.HeardAbout).Value
+                                          HeardAbout        = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.HeardAbout) == null ? string.Empty : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int)OptionalFields.HeardAbout).Value,
+                                          RoleId            = person.RoleId,
+                                          RoleName          = person.Role.Name
                                       };
 
-
-                        //If the person is only part of one group - then that's his groupid
-                        if (context.PersonGroups.Count(pg => pg.PersonId == personId && pg.Group.ChurchId == currentPerson.ChurchId) == 1)
-                            personViewModel.GroupId = (from pg in context.PersonGroups where pg.PersonId == personId && pg.Group.ChurchId == currentPerson.ChurchId select pg.GroupId).FirstOrDefault();
-                        personViewModel.IsInMultipleGroups = context.PersonGroups.Count(pg => pg.PersonId == personId && pg.Group.ChurchId == currentPerson.ChurchId) > 1;
+                        SetGroupId(personId, currentPerson, context, personViewModel);
 
                         personViewModel.FamilyMembers = FetchFamilyMembers(personId, familyId, context);
                         personViewModel.SecurityRoles = Cache.SecurityRoles(context, currentPerson);
@@ -1115,12 +1112,22 @@ namespace oikonomos.data.DataAccessors
                     }
                     catch (Exception ex)
                     {
-                        //Log ex
+                        Email.SendExceptionEmail(ex);
                         return null;
                     }
                 }
             }
             throw new Exception(ExceptionMessage.InvalidCredentials);
+        }
+
+        private static void SetGroupId(int personId, Person currentPerson, oikonomosEntities context, PersonViewModel personViewModel)
+        {
+            if (context.PersonGroups.Count(pg => pg.PersonId == personId && pg.Group.ChurchId == currentPerson.ChurchId) == 1)
+                personViewModel.GroupId = (from pg in context.PersonGroups
+                                           where pg.PersonId == personId && pg.Group.ChurchId == currentPerson.ChurchId
+                                           select pg.GroupId).FirstOrDefault();
+            personViewModel.IsInMultipleGroups =
+                context.PersonGroups.Count(pg => pg.PersonId == personId && pg.Group.ChurchId == currentPerson.ChurchId) > 1;
         }
 
         private static void CheckThatChurchIdsMatch(int personId, Person currentPerson, oikonomosEntities context)
@@ -1269,7 +1276,7 @@ namespace oikonomos.data.DataAccessors
                 SaveAddressInformation(person, personToSave);
                 UpdateRelationships(person, context, personToSave, anniversaryHasChanged);
                 context.SaveChanges();
-                personToSave = FetchPerson(personToSave.PersonId, context);
+                personToSave = FetchPerson(personToSave.PersonId, context, currentPerson);
                 
                 SendEmails(person, sendWelcomeEmail, church, personToSave);
                 EmailGroupLeader(person, currentPerson, context, church, personToSave, addedToNewGroup);
@@ -1444,7 +1451,7 @@ namespace oikonomos.data.DataAccessors
                 if (currentPerson.HasPermission(Permissions.SystemAdministrator))
                 {
                     var church = context.Churches.First(c => c.ChurchId == churchId);
-                    SetupPermissions(context, currentPerson, church);
+                    SetupPermissions(context, currentPerson, church, true);
                     return church;
                 }
                 return null;
@@ -1964,7 +1971,7 @@ namespace oikonomos.data.DataAccessors
                 {
                     AddPersonRelationship(familyMember.PersonId, person.PersonId, (int)oppositeRelationship, familyMemberToUpdate, context);
 
-                    var personToUpdate = FetchPerson(person.PersonId, context); 
+                    var personToUpdate = FetchPerson(person.PersonId, context, null); 
 
                     //What about the rest of the family
                     if (relationship == Relationships.Husband || relationship == Relationships.Wife)
@@ -2133,7 +2140,7 @@ namespace oikonomos.data.DataAccessors
             if (person == null)
                 return null;
 
-            SetupPermissions(context, person);
+            SetupPermissions(context, person, false);
             return person;
         }
 

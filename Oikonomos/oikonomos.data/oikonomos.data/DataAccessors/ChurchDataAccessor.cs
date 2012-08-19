@@ -337,20 +337,20 @@ namespace oikonomos.data.DataAccessors
 
         public static ChurchViewModel FetchChurch(int churchId)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 return (from c in context.Churches
                         where c.ChurchId == churchId
                         select new ChurchViewModel
                         {
-                            ChurchId = c.ChurchId,
-                            ChurchName = c.Name,
-                            SiteHeader = c.SiteHeader,
-                            SiteDescription = c.SiteDescription,
-                            BackgroundImage = c.BackgroundImage,
-                            UITheme = c.UITheme,
+                            ChurchId           = c.ChurchId,
+                            ChurchName         = c.Name,
+                            SiteHeader         = c.SiteHeader,
+                            SiteDescription    = c.SiteDescription,
+                            BackgroundImage    = c.BackgroundImage,
+                            UITheme            = c.UITheme,
                             GoogleSearchRegion = c.Province,
-                            ShowFacebookLogin = c.ChurchOptionalFields.Where<ChurchOptionalField>(co => co.OptionalFieldId == (int)OptionalFields.Facebook).FirstOrDefault().Visible
+                            ShowFacebookLogin  = c.ChurchOptionalFields.FirstOrDefault(co => co.OptionalFieldId == (int)OptionalFields.Facebook) != null && c.ChurchOptionalFields.FirstOrDefault(co => co.OptionalFieldId == (int)OptionalFields.Facebook).Visible
                         }).FirstOrDefault();
 
             }
