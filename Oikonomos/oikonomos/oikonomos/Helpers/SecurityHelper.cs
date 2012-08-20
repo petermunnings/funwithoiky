@@ -11,42 +11,42 @@ namespace oikonomos.web.Helpers
 {
     public static class SecurityHelper
     {
-        public static void CheckCurrentUser(long facebookId, Person currentUser, HttpSessionStateBase Session, HttpResponseBase Response, dynamic ViewBag)
+        public static void CheckCurrentUser(long facebookId, Person currentUser, HttpSessionStateBase session, HttpResponseBase response, dynamic viewBag)
         {
-            Session[SessionVariable.LoggedOnPerson] = currentUser;
-            Session[SessionVariable.Church] = ChurchDataAccessor.FetchChurch(currentUser.Church.Name);
+            session[SessionVariable.LoggedOnPerson] = currentUser;
+            session[SessionVariable.Church] = ChurchDataAccessor.FetchChurch(currentUser.Church.Name);
             FormsAuthentication.SetAuthCookie(facebookId.ToString(), false);
-            if (!CheckRoles(currentUser, Response, ViewBag))
+            if (!CheckRoles(currentUser, response, viewBag))
             {
-                ViewBag.Message = "You are not registered on oikonomos.  Please speak to your church administrator";
+                viewBag.Message = "You are not registered on oikonomos.  Please speak to your church administrator";
             }
         }
 
-        public static Person CheckCurrentUser(HttpSessionStateBase Session, HttpResponseBase Response, dynamic ViewBag)
+        public static Person CheckCurrentUser(HttpSessionStateBase session, HttpResponseBase response, dynamic viewBag)
         {
-            if (Session[SessionVariable.LoggedOnPerson] == null)
+            if (session[SessionVariable.LoggedOnPerson] == null)
             {
-                ViewBag.Message = "Please login below";
+                viewBag.Message = "Please login below";
                 return null;
             }
 
-            Person currentUser = (Person)Session[SessionVariable.LoggedOnPerson];
+            var currentUser = (Person)session[SessionVariable.LoggedOnPerson];
 
-            if (!CheckRoles(currentUser, Response, ViewBag))
+            if (!CheckRoles(currentUser, response, viewBag))
             {
-                ViewBag.Message = "Please login below";
+                viewBag.Message = "Please login below";
                 return null;
             }
             return currentUser;
 
         }
 
-        private static bool CheckRoles(Person currentUser, HttpResponseBase Response, dynamic ViewBag)
+        private static bool CheckRoles(Person currentUser, HttpResponseBase response, dynamic viewBag)
         {
-            ViewBag.CurrentUser = currentUser;
+            viewBag.CurrentUser = currentUser;
             
-            Response.Cookies["PersonId"].Value = currentUser.PersonId.ToString();
-            Response.Cookies["PersonId"].Expires = DateTime.Now.AddMonths(12);
+            response.Cookies["PersonId"].Value = currentUser.PersonId.ToString();
+            response.Cookies["PersonId"].Expires = DateTime.Now.AddMonths(12);
             return true;
         }
         

@@ -118,31 +118,31 @@ namespace oikonomos.web.Controllers
             }
             
             HttpContext.Response.AddHeader("content-disposition", "attachment; filename=churchdata.csv");
-            StreamWriter sw = new StreamWriter(new MemoryStream());
+            var sw = new StreamWriter(new MemoryStream());
             sw.WriteLine(@"Surname, Firstname, CellPhone, Email, HomePhone, WorkPhone, RoleName, Address1, Address2, Address3, Address4, Anniversary, DateOfBirth, Gender, Occupation, Skype, Twitter, Site, HeardAbout, Group");
 
-            List<PersonViewModel> list = PersonDataAccessor.FetchExtendedChurchList(currentUser);
-            foreach (PersonViewModel person in list)
+            var list = PersonDataAccessor.FetchExtendedChurchList(currentUser);
+            foreach (var person in list)
             {
                 sw.WriteLine(person.Surname + ", " + 
-                    person.Firstname + ", " + 
-                    person.CellPhone + ", " + 
-                    person.Email + ", " + 
-                    person.HomePhone + ", " + 
-                    person.WorkPhone + ", " + 
-                    person.RoleName + ", " + 
-                    person.Address1 + ", " + 
-                    person.Address2 + ", " +
-                    person.Address3 + ", " +
-                    person.Address4 + ", " +
-                    person.Anniversary + ", " +
-                    person.DateOfBirth + ", " +
-                    person.Gender + ", " +
-                    person.Occupation + ", " +
-                    person.Skype + ", " +
-                    person.Twitter + ", " +
-                    person.Site + ", " +
-                    person.HeardAbout + ", " +
+                    person.Firstname        + ", " + 
+                    person.CellPhone        + ", " + 
+                    person.Email            + ", " + 
+                    person.HomePhone        + ", " + 
+                    person.WorkPhone        + ", " + 
+                    person.RoleName         + ", " + 
+                    person.Address1         + ", " + 
+                    person.Address2         + ", " +
+                    person.Address3         + ", " +
+                    person.Address4         + ", " +
+                    person.Anniversary      + ", " +
+                    person.DateOfBirth      + ", " +
+                    person.Gender           + ", " +
+                    person.Occupation       + ", " +
+                    person.Skype            + ", " +
+                    person.Twitter          + ", " +
+                    person.Site             + ", " +
+                    person.HeardAbout       + ", " +
                     person.GroupName
                     );
             }

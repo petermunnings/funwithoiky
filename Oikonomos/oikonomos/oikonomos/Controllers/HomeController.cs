@@ -171,7 +171,7 @@ namespace oikonomos.web.Controllers
                     {
                         if (Request.Cookies["AuthenticatedViaFacebook"] != null)
                         {
-                            string val = Server.HtmlEncode(Request.Cookies["AuthenticatedViaFacebook"].Value);
+                            var val = Server.HtmlEncode(Request.Cookies["AuthenticatedViaFacebook"].Value);
                             if (val == "true")
                             {
                                 return RedirectToAction("Login", "Account");
@@ -180,18 +180,17 @@ namespace oikonomos.web.Controllers
                     }
                     return View();
                 }
-                else if (currentPerson.HasPermission(Permissions.Login))
+                
+                if (currentPerson.HasPermission(Permissions.Login))
                 {
-                    string fullName = currentPerson.Firstname + " " + currentPerson.Family.FamilyName;
+                    var fullName = currentPerson.Firstname + " " + currentPerson.Family.FamilyName;
                     ViewBag.Message = "Welcome " + fullName + " from " + currentPerson.Church.Name;
-                    EventDisplayModel eventDisplayModel = EventDataAccessor.FetchEventsToDisplay(currentPerson);
+                    var eventDisplayModel = EventDataAccessor.FetchEventsToDisplay(currentPerson);
                     return View("Index", eventDisplayModel);
                 }
-                else
-                {
-                    ViewBag.Message = "Invalid email or password";
-                    return View();
-                }
+                
+                ViewBag.Message = "Invalid email or password";
+                return View();
             }
             else
             {

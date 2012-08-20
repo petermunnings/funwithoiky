@@ -718,9 +718,9 @@ namespace oikonomos.data.DataAccessors
             }
         }
 
-        public static List<PersonViewModel> FetchExtendedChurchList(Person currentPerson)
+        public static IEnumerable<PersonViewModel> FetchExtendedChurchList(Person currentPerson)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 var personList = FetchExtendedChurchList(currentPerson, context);
                 if (personList == null)
@@ -753,7 +753,7 @@ namespace oikonomos.data.DataAccessors
                             Skype             = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Skype).Value,
                             Twitter           = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Twitter).Value,
                             RoleName          = p.PersonChurches.FirstOrDefault(pc=>pc.ChurchId==currentPerson.ChurchId).Role.Name,
-                            GroupName         = p.PersonGroups.Count > 1 ? "Multiple" : (p.PersonGroups.Count == 0 ? "None" : p.PersonGroups.FirstOrDefault().Group.Name)
+                            GroupName         = p.PersonGroups.Count(pg => pg.Group.ChurchId == currentPerson.ChurchId) > 1 ? "Multiple" : (p.PersonGroups.Count(pg => pg.Group.ChurchId == currentPerson.ChurchId) == 0 ? "None" : p.PersonGroups.FirstOrDefault(pg => pg.Group.ChurchId == currentPerson.ChurchId).Group.Name)
                         }).ToList();
             }
         }
@@ -774,7 +774,7 @@ namespace oikonomos.data.DataAccessors
         
         private static IQueryable<Person> FetchChurchList(Person currentPerson, bool search, string searchField, string searchString, oikonomosEntities context)
         {
-            bool showWholeChurchList = (currentPerson.HasPermission(Permissions.ViewChurchContactDetails));
+            var showWholeChurchList = (currentPerson.HasPermission(Permissions.ViewChurchContactDetails));
             if (!showWholeChurchList)
             {
                 showWholeChurchList = (from c in context.ChurchOptionalFields
@@ -1735,9 +1735,7 @@ namespace oikonomos.data.DataAccessors
             personToSave = new Person();
             if (person.PersonId != 0)
             {
-                personToSave = (from p in context.People
-                                where p.PersonId == person.PersonId
-                                select p).FirstOrDefault();
+                personToSave = FetchPerson(person.PersonId, context, currentPerson);
             }
             else
             {
