@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
 using System.Web.Mvc;
+using oikonomos.common.DTOs;
 using oikonomos.data.DataAccessors;
 using oikonomos.data;
 using oikonomos.common.Models;
@@ -9,11 +12,21 @@ using Facebook;
 using oikonomos.common;
 using System;
 using oikonomos.data.Services;
+using oikonomos.repositories;
+using oikonomos.services;
+using oikonomos.services.interfaces;
 
 namespace oikonomos.web.Controllers
 {
     public class AjaxController : Controller
     {
+        private readonly oikonomosEntities _context;
+
+        public AjaxController()
+        {
+            _context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString);
+        }
+        
         public JsonResult InitializeChurchSettingsViewModel()
         {
             return Json(new ChurchSettingsViewModel { UITheme = "start", SystemName = "Oiky", AddressType = "street_address", BulkSmsUsername = string.Empty, BulkSmsPassword = string.Empty }, JsonRequestBehavior.AllowGet);
@@ -70,6 +83,24 @@ namespace oikonomos.web.Controllers
                 message = ex.Message;
             }
             var response = new { Message = message };
+            return Json(response, JsonRequestBehavior.DenyGet);
+        }
+
+        public JsonResult SaveComments(int personId, IEnumerable<string> comments)
+        {
+            var sessionTimedOut = false;
+            if (Session[SessionVariable.LoggedOnPerson] == null)
+            {
+                sessionTimedOut = true;
+            }
+            else
+            {
+                ICommentService commentService = new CommentService(new CommentRepository(_context));
+                var newComments = comments.Select(comment => new CommentDto {AboutPersonId = personId, Comment = comment, CommentDate = DateTime.Now}).ToList();
+                commentService.SaveComments((Person)Session[SessionVariable.LoggedOnPerson], newComments);
+            }
+
+            var response = new { SessionTimeOut = sessionTimedOut };
             return Json(response, JsonRequestBehavior.DenyGet);
         }
 
@@ -175,15 +206,32 @@ namespace oikonomos.web.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public JsonResult FetchEventListForPerson(JqGridRequest request, int personId)
         {
-            JqGridData jqGridData = new JqGridData();
+            var jqGridData = new JqGridData();
             if (Session[SessionVariable.LoggedOnPerson] != null)
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 jqGridData = EventDataAccessor.FetchEventListJQGrid(currentPerson, personId, request);
             }
 
             return Json(jqGridData);
         }
+        
+        [AcceptVerbs(HttpVerbs.Post)]
+        public JsonResult FetchCommentListForPerson(JqGridRequest request, int personId)
+        {
+            var jqGridData = new JqGridData();
+            if (Session[SessionVariable.LoggedOnPerson] != null)
+            {
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                ICommentService commentService = new CommentService(new CommentRepository(_context));
+                IGridFormatter gridFormatter = new GridFormatter();
+                var comments = commentService.GetListOfComments(currentPerson, personId);
+                jqGridData = gridFormatter.FormatCommentsForGrid(comments, request);
+            }
+
+            return Json(jqGridData);
+        }
+        
 
         [AcceptVerbs(HttpVerbs.Post)]
         public JsonResult FetchGroupsForPerson(JqGridRequest request, int personId)
@@ -1469,8 +1517,8 @@ namespace oikonomos.web.Controllers
 
         public JsonResult SavePersonComment(int personId, string comment)
         {
-            bool sessionTimedOut = false;
-            string message = string.Empty;
+            var sessionTimedOut = false;
+            var message = string.Empty;
             if (Session[SessionVariable.LoggedOnPerson] == null)
             {
                 sessionTimedOut = true;
@@ -1478,11 +1526,26 @@ namespace oikonomos.web.Controllers
             }
             else
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 if (currentPerson.HasPermission(Permissions.AddComment))
                 {
-                    EventDataAccessor.SavePersonComment(personId, comment, currentPerson);
-                    message = "Comment Saved";
+                    ICommentService commentService = new CommentService(new CommentRepository(_context));
+                    try
+                    {
+                        commentService.SaveComment(currentPerson,
+                                                   new CommentDto
+                                                       {
+                                                           AboutPersonId = personId,
+                                                           Comment       = comment,
+                                                           CommentDate   = DateTime.Now
+                                                       });
+                        message = "Comment Saved";
+                    }
+                    catch (Exception ex)
+                    {
+                        Email.SendExceptionEmail(ex);
+                        message = "There was a problem saving your comment.  Our developers have been notified and will let you know when the problem has been fixed";
+                    }
                 }
                 else
                 {
@@ -1500,9 +1563,9 @@ namespace oikonomos.web.Controllers
 
         public JsonResult FetchPersonCommentHistory(int personId)
         {
-            bool sessionTimedOut = false;
-            string message = string.Empty;
-            List<EventListModel> comments = new List<EventListModel>();
+            var sessionTimedOut = false;
+            var message = string.Empty;
+            var comments = new List<CommentDto>();
             if (Session[SessionVariable.LoggedOnPerson] == null)
             {
                 sessionTimedOut = true;
@@ -1510,10 +1573,11 @@ namespace oikonomos.web.Controllers
             }
             else
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                if (currentPerson.HasPermission(Permissions.ViewGeneralComments) || currentPerson.HasPermission(Permissions.ViewPersonalComments))
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                if (currentPerson.HasPermission(Permissions.ViewComments))
                 {
-                    comments = EventDataAccessor.FetchCommentHistory(personId, currentPerson);
+                    ICommentService commentService = new CommentService(new CommentRepository(_context));
+                    comments = commentService.GetListOfComments(currentPerson, personId, 5).ToList();
                 }
                 else
                 {

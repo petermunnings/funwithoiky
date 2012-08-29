@@ -42,23 +42,25 @@ function FetchAttendance() {
 
 function PopulateAttendance() {
     var postData = { groupId: selectedGroupId };
-    var jqxhr = $.post("/Ajax/FetchPeopleInGroupForAttendance", $.postify(postData), function (data) {
+    $.post("/Ajax/FetchPeopleInGroupForAttendance", $.postify(postData), function (data) {
         $("#attendanceList").empty();
-        //$("#attendanceTemplate").empty();
         $("#attendanceTemplate")
                 .tmpl(data.People)
                 .appendTo("#attendanceList");
 
-        $(".addEvent").button();
+        $("#commentsList").empty();
+        $("#commentsTemplate")
+                .tmpl(data.People)
+                .appendTo("#commentsList");
+
         $(".addComment").button();
+        $(".viewComments").button();
         FetchAttendance();
         $("#ajax_loader").hide();
-    }).error(function (jqXHR, textStatus, errorThrown) {
+    }).error(function (jqXhr) {
         $("#ajax_loader").hide();
-        SendErrorEmail("Error calling FetchPeopleInGroupForAttendance", jqXHR.responseText);
+        SendErrorEmail("Error calling FetchPeopleInGroupForAttendance", jqXhr.responseText);
     });
-
-
 }
 
 function SaveHomeGroup() {
@@ -260,33 +262,26 @@ function SaveLeaveEvents(personId) {
     }
 }
 
-function SaveEvents() {
+function SaveComments() {
     $("#ajax_loader").show();
-    var postData = { PersonId: $("#hidden_eventPersonId").val(),
-        Events: []
+    var postData = { personId: $("#hidden_commentsPersonId").val(),
+        comments: []
     };
 
-    $.each($("#add_Event input:checked"), function (index, value) {
-        if (value.id == "checkbox_other" && $("#text_other").val()!="") {
-            postData.Events.push({ Name: $("#text_other").val(),
-                Date: $("#text_eventDate").val(),
-                GroupId: 0
-            });
-        }
-        else {
-            postData.Events.push({ Name: $(this).val(),
-                Date: $("#text_eventDate").val(),
-                GroupId: 0
-            });
-        }
+    $.each($("#add_Comment input:checked"), function () {
+        postData.comments.push($(this).val());
     });
 
-    if (postData.Events.length > 0) {
-        var jqxhr = $.post("/Ajax/SavePersonEvents", $.postify(postData), function (data) {
+    if ($("#comment_detail").val()!="") {
+        postData.comments.push($("#comment_detail").val());
+    }
+
+    if (postData.comments.length > 0) {
+        $.post("/Ajax/SaveComments", $.postify(postData), function (data) {
             $("#ajax_loader").hide();
-        }).error(function (jqXHR, textStatus, errorThrown) {
+        }).error(function (jqXhr) {
             $("#ajax_loader").hide();
-            SendErrorEmail("Error calling SavePersonEvents", jqXHR.responseText);
+            SendErrorEmail("Error calling SaveComments", jqXhr.responseText);
         });
     }
     else {
@@ -326,31 +321,6 @@ function SaveAttendance() {
         $("#ajax_loader_attendance").hide();
         SendErrorEmail("Error calling SaveHomeGroupEvent", jqXHR.responseText);
     });
-}
-
-function SaveComment() {
-        var postData = { personId: $("#hidden_commentPersonId").val(),
-                         comment: $("#comment_detail").val() };
-
-        var jqxhr = $.post("/Ajax/SavePersonComment", $.postify(postData), function (data) {
-            $("#ajax_loader").hide();
-            $("#responseMessage_text").html(data.Message);
-            $("#response_Message").dialog(
-            {
-            modal: true,
-            height: 200,
-            width: 500,
-            resizable: true,
-            buttons: {
-                "Close": function () {
-                    $(this).dialog("close");
-                }
-            }
-            });
-        }).error(function (jqXHR, textStatus, errorThrown) {
-            $("#ajax_loader").hide();
-            SendErrorEmail("Error calling SavePersonComment", jqXHR.responseText);
-        });
 }
 
 function FetchEmailList(selectedOnly) {
@@ -535,7 +505,7 @@ function ReloadPeopleGrid(id) {
     var ret = $("#jqgGroups").getRowData(selectedGroupId);
     $("#groupName").html(ret.GroupName);
     $("#jqgPeople").trigger("reloadGrid");
-    
+
 
     PopulateAttendance();
 }
@@ -786,39 +756,13 @@ $(document).ready(function () {
         }
     });
 
-    $("#table_peopleAttendance").delegate(".addEvent", "click", function () {
-        //Populate fields
-        $("#hidden_eventPersonId").val($.tmplItem(this).data.PersonId);
-        $("#add_Event input:checkbox").prop("checked", false);
-
-        $("#add_Event").dialog(
-        {
-            modal: true,
-            height: 450,
-            width: 425,
-            resizable: false,
-            buttons: {
-                "Save": function () {
-                    $("#ajax_loader").show();
-                    SaveEvents();
-                    $(this).dialog("close");
-                },
-                Cancel: function () {
-                    $(this).dialog("close");
-                }
-            }
-        });
-    });
-
-    $("#table_peopleAttendance").delegate(".addComment", "click", function () {
-        //Populate fields
+    $("#table_comments").delegate(".addComment", "click", function () {
         $("#previous_commentsList").empty();
-        $("#hidden_commentPersonId").val($.tmplItem(this).data.PersonId);
+        $("#hidden_commentsPersonId").val($.tmplItem(this).data.PersonId);
+        $("#add_Comment input:checkbox").prop("checked", false);
         $("#comment_detail").val("");
-        $("#ajax_loader_comment").show();
         var postData = { personId: $.tmplItem(this).data.PersonId };
-
-        var jqxhr = $.post("/Ajax/FetchPersonCommentHistory", $.postify(postData), function (data) {
+        $.post("/Ajax/FetchPersonCommentHistory", $.postify(postData), function (data) {
             if (data.Comments.length == 0) {
                 $("#previous_comments").hide();
             }
@@ -834,51 +778,26 @@ $(document).ready(function () {
         $("#add_Comment").dialog(
         {
             modal: true,
-            height: 500,
-            width: 500,
+            height: 720,
+            width: 600,
             resizable: false,
             buttons: {
                 "Save": function () {
                     $("#ajax_loader").show();
-                    SaveComment();
+                    SaveComments();
                     $(this).dialog("close");
                 },
                 Cancel: function () {
                     $(this).dialog("close");
                 }
             }
-        })
+        });
     });
+
 
     $("#button_saveAttendance").click(function () {
         SaveAttendance();
     });
-
-    //    $("#button_addPersonAttendance").click(function () {
-    //        //Populate fields
-    //        $("#hidden_personId").val("0");
-    //        $("#text_personName").val("");
-
-    //        $("#add_Person").dialog(
-    //        {
-    //            modal: true,
-    //            height: 150,
-    //            width: 440,
-    //            resizable: false,
-    //            buttons: {
-    //                "Add Person": function () {
-    //                    $("#ajax_loader").show();
-    //                    rowId = 0;
-    //                    AddPersonToGroup($("#hidden_personId").val(), selectedGroupId);
-    //                    $(this).dialog("close");
-    //                },
-    //                Cancel: function () {
-    //                    $(this).dialog("close");
-    //                }
-    //            }
-    //        });
-    //    });
-
 
     $("#button_printList").click(function () {
         window.location = "/Report/HomeGroupList/" + selectedGroupId;
@@ -971,7 +890,7 @@ $(document).ready(function () {
     });
 
     $("#button_sendEmail").click(function () {
-        FetchEmailList($('input[name=radio_selected]:checked').val()=="selected");
+        FetchEmailList($('input[name=radio_selected]:checked').val() == "selected");
     });
 
     $("#button_sendSms").click(function () {

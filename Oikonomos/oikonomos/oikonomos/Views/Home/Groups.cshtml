@@ -11,7 +11,7 @@
 }
 
 <script id="attendanceTemplate" type="text/x-jquery-tmpl">
-     <div class="tableRow">
+    <div class="tableRow">
         <div style="display:table-cell;width:20px">&nbsp;</div>
         <div style="display:table-cell; text-align:left;width:240px" class="selectPerson">
             ${FullName}
@@ -25,24 +25,24 @@
             <input class="checkbox_didNotAttended" type="radio" checked name="radio${PersonId}"> 
         </div>
 
-        <div style="display:table-cell; text-align:center;width:120px">
-            <button id="addEvent" class="addEvent">Add Event</button>
+        <div style="display:table-cell;width:20px">&nbsp;</div>
+    </div>
+</script>
+
+<script id="commentsTemplate" type="text/x-jquery-tmpl">
+    <div class="tableRow">
+        <div style="display:table-cell;width:20px">&nbsp;</div>
+        <div style="display:table-cell; text-align:left;width:240px" class="selectPerson">
+            ${FullName}
         </div>
 
         <div style="display:table-cell; text-align:center;width:140px">
-            <button id="addComment" class="addComment">Add Comment</button>
+            <button id="addComment" class="addComment">Add</button>
         </div>
 
         <div style="display:table-cell;width:20px">&nbsp;</div>
     </div>
 </script>
-
-<script id="eventTypeTemplate" type="text/x-jquery-tmpl">
-    <div class="tableRow">
-        <div style="display:table-cell"><input type="checkbox" id="checkbox_${EventTypeId}" class="checkbox_standardComment" value="${StandardComment}" /><label for="checkbox_${StandardCommentId}">${StandardComment}</label></div>
-    </div>
-</script>
-
 
 <div id="tabs" style="text-align:left">
     <ul>
@@ -51,7 +51,8 @@
         <li><a href="#tabs-homegroup">Groups</a></li>
         }
         <li><a href="#tabs-myHomegroup"><span id="groupName">@Model.GroupName</span></a></li>
-        <li><a href="#tabs-myHomegroupAttendance"><span id="groupNameAttendance">Attendance/Events</span></a></li>
+        <li><a href="#tabs-myHomegroupAttendance"><span id="groupNameAttendance">Attendance</span></a></li>
+        <li><a href="#tabs-comments"><span id="groupComments">Comments</span></a></li>
     </ul>
 
     @if (Model.ShowList)
@@ -139,8 +140,6 @@
                             <div style="display:table-cell; vertical-align:middle;width:240px">Fullname</div>
                             <div style="display:table-cell; vertical-align:middle; text-align:center;width:75px">Attended</div>
                             <div style="display:table-cell; vertical-align:middle; text-align:center;width:120px">Did not Attend</div>
-                            <div style="display:table-cell; vertical-align:middle; text-align:center;width:120px">Add Event</div>
-                            <div style="display:table-cell; vertical-align:middle; text-align:center;width:140px">Add Comment</div>
                             <div style="display:table-cell;width:20px" class="ui-corner-right">&nbsp;</div>
                         </div>
                         <div style="display:table-row-group" id="attendanceList">
@@ -150,6 +149,25 @@
             </div>
         </div>  
     </div>
+
+    <div id="tabs-comments">
+        <div class="ui-widget">
+
+            <div>
+                <div id="table_comments" style="display:table" class="ui-widget-content ui-corner-all">
+                    <div style="display:table-row; height:30px" class="ui-widget-header ui-corner-all">
+                        <div style="display:table-cell;width:20px" class="ui-corner-left">&nbsp;</div>
+                        <div style="display:table-cell; vertical-align:middle;width:240px">Fullname</div>
+                        <div style="display:table-cell; vertical-align:middle; text-align:center;width:120px">Add Comment</div>
+                        <div style="display:table-cell;width:20px" class="ui-corner-right">&nbsp;</div>
+                    </div>
+                    <div style="display:table-row-group" id="commentsList">
+                    </div>
+                </div>
+            </div>  
+        </div>
+    </div>  
+
 </div>
 
 <script type="text/javascript">
@@ -257,35 +275,36 @@
     </div>
 </div>
 
-<div id="add_Event" style="display:none;" title="Add Event">  
-    <div style="width:400px; display:table">
-        <div class="tableRow" style="height:10px">
-            <div style="display:table-cell">&nbsp;<input type="hidden" id="hidden_eventPersonId" /></div>
-        </div>
-        @Html.CheckBoxList("eventsList",          
-                   x => x.StandardComments,           
-                   x => x.StandardComment,        
-                   x => x.StandardComment,
-                   null,
-                   null,
-                   new HtmlListInfo(HtmlTag.vertical_columns, 1),
-                   null)
-        <div style="display:table-row">
-            <div style="display:table-cell"><input type="checkbox" id="checkbox_other" class="checkbox_eventType" /><input type="text" id="text_other" class="ui-corner-all" /></div>
-        </div>
-    </div>
-</div>
-
-
 <script id="previousCommentsTemplate" type="text/x-jquery-tmpl">
-     <li>${DateDisplay} ${Description}</li>
+     <li>${DisplayDate} ${Comment}</li>
 </script>
 
 <div id="add_Comment" style="display:none;" title="Add Comment"> 
     <table border="0px" cellpadding="5px" cellspacing="5px">
+        @if (Model.StandardComments.Count > 0)
+        {
+            <tr>
+                <td>Pick a standard comment:</td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.CheckBoxList("commentsList",
+                                     x => x.StandardComments,
+                                     x => x.StandardComment,
+                                     x => x.StandardComment,
+                                     null,
+                                     null,
+                                     new HtmlListInfo(HtmlTag.vertical_columns, 1),
+                                     null)  
+
+                </td>
+            </tr>
+            <tr>
+                <td>Or enter your own comments</td>
+            </tr>
+        }
         <tr>
-            <td>Comment<input type="hidden" id="hidden_commentPersonId" /><br />
-            <textarea id="comment_detail" rows="15" cols="55"></textarea></td>
+            <td><textarea id="comment_detail" rows="12" cols="70"></textarea><input type="hidden" id="hidden_commentsPersonId" /></td>
         </tr>
         <tr id="previous_comments">
             <td>Previous Comments<img id="ajax_loader_comment" src="/Content/images/ajax-loader.gif" alt="loading.." style="display:none" /><br />

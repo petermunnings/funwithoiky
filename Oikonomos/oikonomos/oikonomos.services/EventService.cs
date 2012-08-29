@@ -29,5 +29,10 @@ namespace oikonomos.services
         {
             return _eventRepository.GetListOfCompletedEvents(personId);
         }
+
+        public EventDto GetEvent(int eventId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

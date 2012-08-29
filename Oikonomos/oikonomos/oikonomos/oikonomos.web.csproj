@@ -560,6 +560,22 @@
       <Project>{54B0FB5D-AFBE-448A-ABD9-A0FBF75433D9}</Project>
       <Name>oikonomos.common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\oikonomos.repositories.interfaces\oikonomos.repositories.interfaces.csproj">
+      <Project>{FE1C517D-4E67-403F-BF8D-0709A78DD900}</Project>
+      <Name>oikonomos.repositories.interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\oikonomos.repositories\oikonomos.repositories.csproj">
+      <Project>{19DA1C75-7E17-4DE5-9956-8B4BD1A9C248}</Project>
+      <Name>oikonomos.repositories</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\oikonomos.services.interfaces\oikonomos.services.interfaces.csproj">
+      <Project>{BB21F4DD-E8C9-4969-B6EB-27B35CC1AF10}</Project>
+      <Name>oikonomos.services.interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\oikonomos.services\oikonomos.services.csproj">
+      <Project>{7939F5A9-5DDF-4481-8C7F-980B1622FB69}</Project>
+      <Name>oikonomos.services</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\Login.cshtml" />

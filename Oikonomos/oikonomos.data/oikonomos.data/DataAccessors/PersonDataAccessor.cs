@@ -40,7 +40,7 @@ namespace oikonomos.data.DataAccessors
                 foreach (PersonGroupModel pg in groups)
                 {
                     string groupIdAsString = pg.GroupId.ToString();
-                    DateTime lastDateAttended = (from e in context.Events
+                    DateTime lastDateAttended = (from e in context.OldEvents
                                             where e.Reference == personId
                                               && e.Value == groupIdAsString
                                             orderby e.EventDate descending
@@ -334,45 +334,24 @@ namespace oikonomos.data.DataAccessors
                 {
                     case "Firstname":
                         {
-                            if (request.sord.ToLower() == "asc")
-                            {
-                                people = people.OrderBy(p => p.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            else
-                            {
-                                people = people.OrderByDescending(p => p.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
+                            people = request.sord.ToLower() == "asc" ? people.OrderBy(p => p.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows) : people.OrderByDescending(p => p.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows);
                             break;
                         }
                     case "Surname":
                         {
-                            if (request.sord.ToLower() == "asc")
-                            {
-                                people = people.OrderBy(p => p.Family.FamilyName).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            else
-                            {
-                                people = people.OrderByDescending(p => p.Family.FamilyName).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
+                            people = request.sord.ToLower() == "asc" ? people.OrderBy(p => p.Family.FamilyName).Skip((request.page - 1) * request.rows).Take(request.rows) : people.OrderByDescending(p => p.Family.FamilyName).Skip((request.page - 1) * request.rows).Take(request.rows);
                             break;
                         }
                     case "Email":
                         {
-                            if (request.sord.ToLower() == "asc")
-                            {
-                                people = people.OrderBy(p => p.Email).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            else
-                            {
-                                people = people.OrderByDescending(p => p.Email).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
+                            people = request.sord.ToLower() == "asc" ? people.OrderBy(p => p.Email).Skip((request.page - 1) * request.rows).Take(request.rows) : people.OrderByDescending(p => p.Email).Skip((request.page - 1) * request.rows).Take(request.rows);
                             break;
                         }
                 }
 
-                JqGridData membersGridData = new JqGridData()
+                var membersGridData = new JqGridData()
                 {
-                    total = (int)Math.Ceiling((float)totalRecords / (float)request.rows),
+                    total = (int)Math.Ceiling((float)totalRecords / request.rows),
                     page = request.page,
                     records = totalRecords,
                     rows = (from p in people.AsEnumerable()
@@ -418,19 +397,19 @@ namespace oikonomos.data.DataAccessors
 
         public static JqGridData FetchPeopleJQGrid(Person currentPerson, JqGridRequest request, int roleId)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 var people = (from p in context.People.Include("Family").Include("PersonGroups")
-                              from c in p.PersonChurches
-                              where c.ChurchId == currentPerson.ChurchId
-                                && (c.RoleId == roleId)
+                              from pc in p.PersonChurches
+                              where pc.ChurchId == currentPerson.ChurchId
+                                && (pc.RoleId == roleId)
                               select p);
 
                 if (request._search)
                 {
-                    foreach (JqGridFilterRule rule in request.filters.rules)
+                    foreach (var rule in request.filters.rules)
                     {
-                        string ruleData = rule.data;
+                        var ruleData = rule.data;
                         //If we use rule.data throughout we get some strange errors in the SQL that Linq generates
                         switch (rule.field)
                         {
@@ -465,7 +444,7 @@ namespace oikonomos.data.DataAccessors
                                     DateTime dStart;
                                     if (DateTime.TryParse(ruleData, out dStart))
                                     {
-                                        DateTime dEnd = dStart.AddDays(1);
+                                        var dEnd = dStart.AddDays(1);
                                         people = (from p in people
                                                   where p.Created >= dStart && p.Created < dEnd
                                                   select p);
@@ -512,105 +491,44 @@ namespace oikonomos.data.DataAccessors
                 {
                     case "Firstname":
                         {
-                            if (request.sord.ToLower() == "asc")
-                            {
-                                people = people.OrderBy(p => p.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            else
-                            {
-                                people = people.OrderByDescending(p => p.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
+                            people = request.sord.ToLower() == "asc" ? people.OrderBy(p => p.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows) : people.OrderByDescending(p => p.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows);
                             break;
                         }
                     case "Surname":
                         {
-                            if (request.sord.ToLower() == "asc")
-                            {
-                                people = people.OrderBy(p => p.Family.FamilyName).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            else
-                            {
-                                people = people.OrderByDescending(p => p.Family.FamilyName).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
+                            people = request.sord.ToLower() == "asc" ? people.OrderBy(p => p.Family.FamilyName).Skip((request.page - 1) * request.rows).Take(request.rows) : people.OrderByDescending(p => p.Family.FamilyName).Skip((request.page - 1) * request.rows).Take(request.rows);
                             break;
                         }
                     case "Date":
                         {
-                            if (request.sord.ToLower() == "asc")
-                            {
-                                people = people.OrderBy(p => p.Created).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            else
-                            {
-                                people = people.OrderByDescending(p => p.Created).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
+                            people = request.sord.ToLower() == "asc" ? people.OrderBy(p => p.Created).Skip((request.page - 1) * request.rows).Take(request.rows) : people.OrderByDescending(p => p.Created).Skip((request.page - 1) * request.rows).Take(request.rows);
                             break;
                         }
                     case "Group":
                         {
-                            if (request.sord.ToLower() == "asc")
-                            {
-                                people = people.OrderBy(p => p.PersonGroups.FirstOrDefault().Group.Name).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            else
-                            {
-                                people = people.OrderByDescending(p => p.PersonGroups.FirstOrDefault().Group.Name).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
+                            people = request.sord.ToLower() == "asc" ? people.OrderBy(p => p.PersonGroups.FirstOrDefault().Group.Name).Skip((request.page - 1) * request.rows).Take(request.rows) : people.OrderByDescending(p => p.PersonGroups.FirstOrDefault().Group.Name).Skip((request.page - 1) * request.rows).Take(request.rows);
                             break;
                         }
                     case "Site":
                         {
-                            if (request.sord.ToLower() == "asc")
-                            {
-                                people = people.OrderBy(p => p.Site.Name).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            else
-                            {
-                                people = people.OrderByDescending(p => p.Site.Name).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
+                            people = request.sord.ToLower() == "asc" ? people.OrderBy(p => p.Site.Name).Skip((request.page - 1) * request.rows).Take(request.rows) : people.OrderByDescending(p => p.Site.Name).Skip((request.page - 1) * request.rows).Take(request.rows);
                             break;
                         }
                     case "HomePhone":
                         {
-                            if (request.sord.ToLower() == "asc")
-                            {
-                                people = people.OrderBy(p => p.Family.HomePhone).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            else
-                            {
-                                people = people.OrderByDescending(p => p.Family.HomePhone).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            break;
-                        }
-                    case "CellPhone":
-                        {
-                            //if (request.sord.ToLower() == "asc")
-                            //{
-                            //    people = people.OrderBy(p => p.Site.Name).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            //}
-                            //else
-                            //{
-                            //    people = people.OrderByDescending(p => p.Site.Name).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            //}
+                            people = request.sord.ToLower() == "asc" ? people.OrderBy(p => p.Family.HomePhone).Skip((request.page - 1) * request.rows).Take(request.rows) : people.OrderByDescending(p => p.Family.HomePhone).Skip((request.page - 1) * request.rows).Take(request.rows);
                             break;
                         }
                     case "Email":
                         {
-                            if (request.sord.ToLower() == "asc")
-                            {
-                                people = people.OrderBy(p => p.Email).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            else
-                            {
-                                people = people.OrderByDescending(p => p.Email).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
+                            people = request.sord.ToLower() == "asc" ? people.OrderBy(p => p.Email).Skip((request.page - 1) * request.rows).Take(request.rows) : people.OrderByDescending(p => p.Email).Skip((request.page - 1) * request.rows).Take(request.rows);
                             break;
                         }
                 }
 
-                JqGridData peopleGridData = new JqGridData()
+                var peopleGridData = new JqGridData()
                     {
-                        total = (int)Math.Ceiling((float)totalRecords / (float)request.rows),
+                        total = (int)Math.Ceiling((float)totalRecords / request.rows),
                         page = request.page,
                         records = totalRecords,
                         rows = (from p in people.AsEnumerable()
@@ -622,10 +540,10 @@ namespace oikonomos.data.DataAccessors
                                                         p.Firstname,
                                                         p.Family.FamilyName,
                                                         p.Family.HomePhone,
-                                                        p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).FirstOrDefault()==null?"":p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).FirstOrDefault().Value,
+                                                        p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.CellPhone)==null?"":p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).Value,
                                                         p.Email,
                                                         p.Created.ToString("dd MMM yyyy"),
-                                                        p.PersonGroups.Count > 1 ? "Multiple" : (p.PersonGroups.Count==0 ? "None" : p.PersonGroups.FirstOrDefault().Group.Name),
+                                                        p.PersonGroups.Count > 1 ? "Multiple" : (p.PersonGroups.Count==0 ? "None" : p.PersonGroups.First().Group.Name),
                                                         p.Site== null ? string.Empty : p.Site.Name
                                     }
                                 }).ToArray()
@@ -1325,6 +1243,16 @@ namespace oikonomos.data.DataAccessors
                 context.DeleteObject(addressToDelete);
             }
 
+            //Delete comments related to this person
+            var comments = (from c in context.Comments
+                                 where c.AboutPersonId == personId
+                                 select c);
+
+            foreach (var comment in comments)
+            {
+                context.DeleteObject(comment);
+            }
+
             //Remove all the relationships
             var relationships = (from pr in context.PersonRelationships
                                  where pr.PersonId == personId
@@ -1376,6 +1304,9 @@ namespace oikonomos.data.DataAccessors
 
                 context.DeleteObject(familyToDelete);
             }
+
+
+
         }
 
         private static bool RemovePersonFromChurchSpecificTables(int personId, Person currentPerson, oikonomosEntities context)
@@ -1383,19 +1314,19 @@ namespace oikonomos.data.DataAccessors
             const int tableId = (int)Tables.Person;
 
             //If this person has created or changed any events - change to the person deleting them
-            foreach (var createdEvent in context.Events.Where(e => e.CreatedByPersonId == personId))
+            foreach (var createdEvent in context.OldEvents.Where(e => e.CreatedByPersonId == personId))
                 createdEvent.CreatedByPersonId = currentPerson.PersonId;
 
-            foreach (var changedEvent in context.Events.Where(e => e.ChangedByPersonId == personId))
+            foreach (var changedEvent in context.OldEvents.Where(e => e.ChangedByPersonId == personId))
                 changedEvent.ChangedByPersonId = currentPerson.PersonId;
 
-            var events = (from e in context.Events
+            var events = (from e in context.OldEvents
                           where e.Reference == personId
                           && e.TableId == tableId
                           && e.ChurchId == currentPerson.ChurchId
                           select e);
 
-            foreach (Event eventToDelete in events)
+            foreach (var eventToDelete in events)
             {
                 context.DeleteObject(eventToDelete);
             }

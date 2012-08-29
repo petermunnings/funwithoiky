@@ -9,5 +9,6 @@ namespace oikonomos.services.interfaces
         void UpdateEvent(EventDto eventDto);
 
         IEnumerable<EventDto> GetListOfCompletedEvents(int personId);
+        EventDto GetEvent(int eventId);
     }
 }

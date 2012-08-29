@@ -37,6 +37,16 @@ namespace oikonomos.data.DataAccessors
         {
             using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
+                var shouldReturnAnyStandardComments =
+                    context.ChurchOptionalFields.Where(
+                        c =>
+                        c.ChurchId == currentPerson.ChurchId &&
+                        c.OptionalFieldId == (int) OptionalFields.HomeGroupEvents)
+                        .Select(c=>c.Visible)
+                        .FirstOrDefault();
+                if(shouldReturnAnyStandardComments==false)
+                    return new List<StandardCommentViewModel>();
+                
                 return (from e in context.StandardComments
                         where e.ChurchId == currentPerson.ChurchId
                         select new StandardCommentViewModel
@@ -392,7 +402,7 @@ namespace oikonomos.data.DataAccessors
                         newChurchRole.Changed = DateTime.Now;
                         newChurchRole.Name = currentRole.Name;
                         newChurchRole.DisplayName = currentRole.DisplayName;
-                        newChurchRole.Church = newChurch;
+                        newChurchRole.ChurchId = newChurch.ChurchId;
 
                         foreach (var permission in currentRole.PermissionRoles)
                         {

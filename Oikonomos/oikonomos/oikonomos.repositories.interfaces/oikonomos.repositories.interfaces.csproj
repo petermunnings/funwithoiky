@@ -47,7 +47,6 @@
   <ItemGroup>
     <Compile Include="ICommentRepository.cs" />
     <Compile Include="IEventRepository.cs" />
-    <Compile Include="IEventTypeRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

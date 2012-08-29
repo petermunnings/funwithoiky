@@ -47,13 +47,17 @@
   <ItemGroup>
     <Compile Include="CommentTests.cs" />
     <Compile Include="EventTests.cs" />
-    <Compile Include="EventTypeTests.cs" />
+    <Compile Include="GridFormatterTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\oikonomos.data\oikonomos.data\oikonomos.data.csproj">
       <Project>{42B40471-19BB-4727-9973-924745733AFD}</Project>
       <Name>oikonomos.data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lib.Web.Mvc\Lib.Web.Mvc.csproj">
+      <Project>{1332384E-DDEF-4B55-81E8-F6F0B0C779DC}</Project>
+      <Name>Lib.Web.Mvc</Name>
     </ProjectReference>
     <ProjectReference Include="..\oikonomos.common\oikonomos.common.csproj">
       <Project>{54B0FB5D-AFBE-448A-ABD9-A0FBF75433D9}</Project>

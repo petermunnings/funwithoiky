@@ -71,10 +71,17 @@
                 }
                 </a></li>
 
-        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewPersonalComments) || ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewGeneralComments))
+        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewComments))
         {
-        <li><a href="#tabs-2">Events and Comments</a></li>
-        <li><a href="#tabs-3">Groups</a></li>
+        <li><a href="#tabs-2">Comments</a></li>
+        }
+        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewEvents))
+        {
+        <li><a href="#tabs-3">Events</a></li>
+        }
+        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewPersonGroups))
+        {   
+        <li><a href="#tabs-4">Groups</a></li>
         }       
     </ul>
     <div id="tabs-1">
@@ -260,7 +267,7 @@
                             <div style="text-align:right; display:table-cell">&nbsp;</div>
                             <div style="text-align:left; display:table-cell">@Html.DropDownListFor(model => model.GroupId, new SelectList(ViewBag.Groups, "GroupId", "GroupName"), new { @class = "ui-corner-all" })</div>
                             </div>
-                            if (!ViewBag.CanChangeGroup)
+                                 if (!ViewBag.CanChangeGroup)
                                  {
                                      <script type="text/javascript">
                                          $("#row_groupDropDown").hide();
@@ -342,17 +349,26 @@
             </div>
         </div>
     </div>
-        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewGeneralComments) || ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewPersonalComments))
+        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewComments))
         {
     <div id="tabs-2">
-        <table id="jqgEventList" cellpadding="0" cellspacing="0" style="width:330px"></table>
-        <div id="jqgpEventList" style="text-align:center;"></div>
+        <table id="jqgCommentList" cellpadding="0" cellspacing="0" style="width: 330px"></table>
+        <div id="jqgpCommentList" style="text-align: center;"></div>
     </div>
+        }
+        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewComments))
+        {
     <div id="tabs-3">
+        <table id="jqgEventList" cellpadding="0" cellspacing="0" style="width: 330px"></table>
+        <div id="jqgpEventList" style="text-align: center;"></div>
+    </div>
+        }        
+        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewPersonGroups))
+        {
+    <div id="tabs-4">
         <table id="jqgGroups" cellpadding="0" cellspacing="0"></table>
         <div id="jqgpGroups" style="text-align:center;"></div>
-    </div>        
-            
+    </div>          
         }
 </div>
 

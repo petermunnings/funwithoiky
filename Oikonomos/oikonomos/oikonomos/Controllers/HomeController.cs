@@ -537,7 +537,7 @@ namespace oikonomos.web.Controllers
         #region Private Methods
         private void GetReportViewBagValues(Person currentPerson)
         {
-            ViewBag.Title = currentPerson.HasPermission(Permissions.ViewChurchContactDetails) ? "List of Contacts" : "List of Contacts";
+            ViewBag.Title = currentPerson.HasPermission(Permissions.ViewChurchContactDetails) ? "List of People" : "List of People";
             
             var optionalFields = SettingsDataAccessor.FetchChurchOptionalFields(currentPerson.ChurchId);
             ViewBag.DisplayFacebook = false;

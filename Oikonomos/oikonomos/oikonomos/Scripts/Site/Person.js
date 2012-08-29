@@ -25,10 +25,7 @@ function ClearForm() {
 
 function PopulatePerson(person) {
     $("#hidden_personId").val(person.PersonId);
-    $("#jqgEventList").jqGrid("setGridParam", { "postData": { personId: person.PersonId} });
-    $("#jqgEventList").trigger("reloadGrid");
-    $("#jqgGroups").jqGrid("setGridParam", { "postData": { personId: person.PersonId} });
-    $("#jqgGroups").trigger("reloadGrid");
+
     $("#hidden_familyId").val(person.FamilyId);
     $("#hidden_groupId").val(person.GroupId);
     $("#hidden_roleId").val(person.RoleId);
@@ -101,6 +98,13 @@ function PopulatePerson(person) {
         $("#row_image").hide();
         $("#img_person").prop("src", " ");
     }
+
+    $("#jqgEventList").jqGrid("setGridParam", { "postData": { personId: person.PersonId} });
+    $("#jqgEventList").trigger("reloadGrid");
+    $("#jqgCommentList").jqGrid("setGridParam", { "postData": { personId: person.PersonId} });
+    $("#jqgCommentList").trigger("reloadGrid");
+    $("#jqgGroups").jqGrid("setGridParam", { "postData": { personId: person.PersonId} });
+    $("#jqgGroups").trigger("reloadGrid");
 }
 
 function FetchPersonData(personId) {
@@ -589,6 +593,28 @@ $(document).ready(function () {
         width: 'auto',
         height: 'auto'
     }).navGrid('#jqgpEventList', { edit: false, add: false, del: false, search: false });
+
+
+    $('#jqgCommentList').jqGrid({
+        url: '/Ajax/FetchCommentListForPerson/',
+        datatype: 'json',
+        mtype: 'POST',
+        postData: { personId: $("#hidden_personId").val() },
+        colNames: ['CommentId', 'Date', 'Comment', 'Created By'],
+        colModel: [
+                    { name: 'CommentId', index: 'PersonId', hidden: true, search: false },
+                    { name: 'Date', index: 'Date', align: 'left', width: 100, search: true, cellattr: function (rowId, tv, rawObject, cm, rdata) { return 'style="vertical-align:top"' } },
+                    { name: 'Comment', index: 'Comment', align: 'left', width: 427, search: true, cellattr: function (rowId, tv, rawObject, cm, rdata) { return 'style="white-space: normal;' } },
+                    { name: 'CreatedBy', index: 'CreatedBy', align: 'left', width: 120, search: true, cellattr: function (rowId, tv, rawObject, cm, rdata) { return 'style="vertical-align:top"' } }
+                  ],
+        pager: $('#jqgpCommentList'),
+        rowNum: 20,
+        sortname: 'Date',
+        sortorder: 'desc',
+        viewrecords: true,
+        width: 'auto',
+        height: 'auto'
+    }).navGrid('#jqgpCommentList', { edit: false, add: false, del: false, search: false });
 
     $('#jqgGroups').jqGrid({
         url: '/Ajax/FetchGroupsForPerson/',

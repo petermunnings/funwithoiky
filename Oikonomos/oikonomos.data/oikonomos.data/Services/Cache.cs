@@ -42,7 +42,7 @@ namespace oikonomos.data.Services
                          select new RoleViewModel {RoleId = r.RoleId, Name = r.Name}).ToList();
             else
                 roles = (from r in context.Roles
-                         from canSetRole in r.CanSetRoles
+                         from canSetRole in r.CanBeSetByRoles
                          where r.ChurchId == currentPerson.ChurchId
                                && canSetRole.RoleId == currentPerson.RoleId
                          select new RoleViewModel {RoleId = r.RoleId, Name = r.Name }).ToList();

@@ -17,12 +17,12 @@ namespace oikonomos.data.DataAccessors
             using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 int visibilityLevel = 2;
-                if (currentPerson.HasPermission(Permissions.ViewPersonalComments))
+                if (currentPerson.HasPermission(Permissions.ViewComments))
                 {
                     visibilityLevel = 1;
                 }
 
-                var events = (from e in context.Events
+                var events = (from e in context.OldEvents
                               where e.Reference == personId
                                   && e.TableId == (int)Tables.Person
                                   && e.EventVisibilityId >= visibilityLevel
@@ -103,11 +103,11 @@ namespace oikonomos.data.DataAccessors
 
                 int churchId = currentPerson.ChurchId;
 
-                var predicate = PredicateBuilder.True<Event>();
-                var datePredicate = PredicateBuilder.True<Event>();
-                var descriptionPredicate = PredicateBuilder.False<Event>();
+                var predicate = PredicateBuilder.True<OldEvent>();
+                var datePredicate = PredicateBuilder.True<OldEvent>();
+                var descriptionPredicate = PredicateBuilder.False<OldEvent>();
 
-                var events = (from e in context.Events
+                var events = (from e in context.OldEvents
                               select e);
                 
                 datePredicate = datePredicate.And(e => e.TableId == (int)Tables.Person
@@ -142,7 +142,7 @@ namespace oikonomos.data.DataAccessors
                     }
                 }
 
-                events = context.Events.AsExpandable().Where(predicate);
+                events = context.OldEvents.AsExpandable().Where(predicate);
 
                 int totalRecords = events.Count();
 
@@ -186,9 +186,9 @@ namespace oikonomos.data.DataAccessors
                         }
                 }
 
-                JqGridData eventsGridData = new JqGridData()
+                var eventsGridData = new JqGridData()
                 {
-                    total = (int)Math.Ceiling((float)totalRecords / (float)request.rows),
+                    total = (int)Math.Ceiling(totalRecords / (float)request.rows),
                     page = request.page,
                     records = totalRecords,
                     rows = (from e in events.AsEnumerable()
@@ -225,7 +225,7 @@ namespace oikonomos.data.DataAccessors
         {
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                Event commentEvent = new Event();
+                OldEvent commentEvent = new OldEvent();
                 commentEvent.Description = EventNames.Comment;
                 commentEvent.Comments = comment;
                 commentEvent.EventVisibilityId = (int)EventVisibilities.GroupAdministrators;
@@ -238,7 +238,7 @@ namespace oikonomos.data.DataAccessors
                 commentEvent.Reference = personId;
                 commentEvent.ChurchId = currentPerson.ChurchId;
 
-                context.AddToEvents(commentEvent);
+                context.AddToOldEvents(commentEvent);
 
                 context.SaveChanges();
             }
@@ -248,7 +248,7 @@ namespace oikonomos.data.DataAccessors
         {
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                return (from e in context.Events
+                return (from e in context.OldEvents
                         where e.TableId == (int)Tables.Person
                         && e.Reference == personId
                         && e.CreatedByPersonId == currentPerson.PersonId
@@ -265,14 +265,35 @@ namespace oikonomos.data.DataAccessors
 
         public static Dictionary<int, string> FetchGroupComments(Person currentPerson, int groupId)
         {
-            Dictionary<int, string> comments = new Dictionary<int, string>();
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            var comments = new Dictionary<int, string>();
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                ObjectResult<FetchComments_Result> results = context.FetchComments(groupId);
-                foreach (FetchComments_Result result in results)
+                var includedRoles = context
+                    .PermissionRoles
+                    .Where(pr => pr.PermissionId == (int) Permissions.IncludeInGroupAttendanceStats)
+                    .Select(pr => pr.RoleId)
+                    .ToList();
+
+                var peopleInGroup = (from pg in context.PersonGroups
+                                     join pc in context.PersonChurches
+                                         on pg.PersonId equals pc.PersonId
+                                     where pg.GroupId == groupId
+                                           && includedRoles.Contains(pc.RoleId)
+                                           && pc.ChurchId == currentPerson.ChurchId
+                                     select pg.PersonId);
+
+                foreach(var personId in peopleInGroup)
                 {
-                    comments.Add(result.Reference, result.Comments);
+                    var mostRecentComment = context
+                        .Comments
+                        .Where(c => c.AboutPersonId == personId)
+                        .OrderBy(c => c.CommentDate)
+                        .Select(c=>c)
+                        .FirstOrDefault();
+                    if(mostRecentComment!=null)
+                        comments.Add(mostRecentComment.AboutPersonId, mostRecentComment.Comment1);
                 }
+
                 return comments;
             }
         }
@@ -301,7 +322,7 @@ namespace oikonomos.data.DataAccessors
 
                 var groupIdString = groupId.ToString();
                 var attendanceList = (from pg in context.PersonGroups
-                                      join e in context.Events
+                                      join e in context.OldEvents
                                          on pg.PersonId equals e.Reference 
                                       join pc in context.PersonChurches
                                          on pg.PersonId equals pc.PersonId
@@ -319,7 +340,7 @@ namespace oikonomos.data.DataAccessors
                                           Attended  = e.Description.StartsWith(EventNames.AttendedGroup),
                                           Date      = e.EventDate,
                                           RoleId    = pc.RoleId,
-                                          Role      = pc.Role.Name
+                                          Role      = pc.Role.DisplayName
                                       });
 
                 if (endDate == null)
@@ -340,7 +361,7 @@ namespace oikonomos.data.DataAccessors
             var events = new EventDisplayModel();
             using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                var upcomingChurchEvents = (from e in context.Events
+                var upcomingChurchEvents = (from e in context.OldEvents
                                             join c in context.Churches
                                                 on e.Reference equals c.ChurchId
                                             where e.EventDate >= DateTime.Today
@@ -477,7 +498,7 @@ namespace oikonomos.data.DataAccessors
                     {
                         if (personEvent.Date == DateTime.MinValue)
                             personEvent.Date = DateTime.Now;
-                        Event pe = SavePersonEvent(context, personEvents, currentPerson, personEvent);
+                        var pe = SavePersonEvent(context, personEvents, currentPerson, personEvent);
                         CheckToSeeIfEventAlreadyExists(personEvents, context, personEvent, pe);
                     }
 
@@ -487,19 +508,21 @@ namespace oikonomos.data.DataAccessors
         }
 
         #region Private Methods
-        private static Event SavePersonEvent(oikonomosEntities context, PersonEventViewModel personEvents, Person currentPerson, EventViewModel personEvent)
+        private static OldEvent SavePersonEvent(oikonomosEntities context, PersonEventViewModel personEvents, Person currentPerson, EventViewModel personEvent)
         {
-            Event pe = new Event();
-            pe.Created = DateTime.Now;
-            pe.CreatedByPersonId = currentPerson.PersonId;
-            pe.Changed = DateTime.Now;
-            pe.ChangedByPersonId = currentPerson.PersonId;
-            pe.Description = personEvent.Name;
-            pe.TableId = (int)Tables.Person;
-            pe.EventVisibilityId = (int)EventVisibilities.GroupAdministrators;
-            pe.Reference = personEvents.PersonId;
-            pe.EventDate = personEvent.Date;
-            pe.ChurchId = currentPerson.ChurchId;
+            var pe = new OldEvent
+                         {
+                             Created = DateTime.Now,
+                             CreatedByPersonId = currentPerson.PersonId,
+                             Changed = DateTime.Now,
+                             ChangedByPersonId = currentPerson.PersonId,
+                             Description = personEvent.Name,
+                             TableId = (int) Tables.Person,
+                             EventVisibilityId = (int) EventVisibilities.GroupAdministrators,
+                             Reference = personEvents.PersonId,
+                             EventDate = personEvent.Date,
+                             ChurchId = currentPerson.ChurchId
+                         };
             if (personEvent.GroupId != 0)
             {
                 pe.Value = personEvent.GroupId.ToString();
@@ -516,12 +539,12 @@ namespace oikonomos.data.DataAccessors
             return pe;
         }
 
-        private static void CheckToSeeIfEventAlreadyExists(PersonEventViewModel personEvents, oikonomosEntities context, EventViewModel personEvent, Event pe)
+        private static void CheckToSeeIfEventAlreadyExists(PersonEventViewModel personEvents, oikonomosEntities context, EventViewModel personEvent, OldEvent pe)
         {
             string groupId = personEvent.GroupId.ToString();
             //Check to see if this event already exists
-            Event duplicateEvent = null;
-            var check = (from e in context.Events
+            OldEvent duplicateEvent = null;
+            var check = (from e in context.OldEvents
                          where e.TableId == (int)Tables.Person
                          && e.Reference == personEvents.PersonId
                          && e.EventDate == personEvent.Date
@@ -541,13 +564,13 @@ namespace oikonomos.data.DataAccessors
 
             if (duplicateEvent == null)
             {
-                context.Events.AddObject(pe);
+                context.OldEvents.AddObject(pe);
             }
 
             if (personEvent.Name == EventNames.AttendedGroup)
             {
                 //Remove a "did not attend event on the same date"
-                var atCheck = (from e in context.Events
+                var atCheck = (from e in context.OldEvents
                                where e.TableId == (int)Tables.Person
                                && e.Reference == personEvents.PersonId
                                && e.EventDate == personEvent.Date
@@ -574,7 +597,7 @@ namespace oikonomos.data.DataAccessors
             if (personEvent.Name == EventNames.DidNotAttendGroup)
             {
                 //Remove an "attended" event on the same date
-                var atCheck = (from e in context.Events
+                var atCheck = (from e in context.OldEvents
                                where e.TableId == (int)Tables.Person
                                && e.Reference == personEvents.PersonId
                                && e.EventDate == personEvent.Date
@@ -601,13 +624,13 @@ namespace oikonomos.data.DataAccessors
 
         private static void AddAttendanceEvents(HomeGroupEventViewModel hgEvent, oikonomosEntities context, int eventValue, string eventName, Person currentPerson)
         {
-            Event groupEvent = new Event();
+            OldEvent groupEvent = new OldEvent();
             groupEvent.Created = DateTime.Now;
             groupEvent.CreatedByPersonId = currentPerson.PersonId;
             groupEvent.ChurchId = currentPerson.ChurchId;
 
             //Check to see if it is not already in the database
-            var groupCheck = (from e in context.Events
+            var groupCheck = (from e in context.OldEvents
                               where e.TableId == (int)Tables.Group
                               && e.Reference == hgEvent.GroupId
                               && e.EventDate == hgEvent.EventDate
@@ -620,7 +643,7 @@ namespace oikonomos.data.DataAccessors
             }
             else
             {
-                context.Events.AddObject(groupEvent);
+                context.OldEvents.AddObject(groupEvent);
             }
 
             groupEvent.TableId = (int)Tables.Group;

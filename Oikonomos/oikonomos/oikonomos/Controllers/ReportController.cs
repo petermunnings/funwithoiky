@@ -344,10 +344,12 @@ namespace oikonomos.web.Controllers
                         }
                         cell = row.Cells[1];
                         cell.AddParagraph(AdjustIfTooWideToFitIn(cell, attendanceEvent.Firstname, tm));
-                        string comment = (from c in comments where c.Key==attendanceEvent.PersonId select c.Value).FirstOrDefault();
-                        if (comment != null && comment != string.Empty)
-                        {
                         cell = row.Cells[totalColumns - 1];
+                        cell.AddParagraph(AdjustIfTooWideToFitIn(cell, attendanceEvent.Role, tm));
+                        var comment = (from c in comments where c.Key==attendanceEvent.PersonId select c.Value).FirstOrDefault();
+                        if (!string.IsNullOrEmpty(comment))
+                        {
+                        cell = row.Cells[totalColumns];
                         cell.AddParagraph(AdjustIfTooWideToFitIn(cell, comment, tm));
                         }
                     }

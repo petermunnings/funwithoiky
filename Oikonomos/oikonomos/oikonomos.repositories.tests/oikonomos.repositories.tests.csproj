@@ -32,6 +32,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.framework, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
+    <Reference Include="Rhino.Mocks">
+      <HintPath>..\External\Rhino.Mocks.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -44,8 +47,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommentTests.cs" />
-    <Compile Include="EventTypeTests.cs" />
+    <Compile Include="EventTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\oikonomos.data\oikonomos.data\oikonomos.data.csproj">
@@ -63,6 +67,14 @@
     <ProjectReference Include="..\oikonomos.repositories\oikonomos.repositories.csproj">
       <Project>{19DA1C75-7E17-4DE5-9956-8B4BD1A9C248}</Project>
       <Name>oikonomos.repositories</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\oikonomos.services.interfaces\oikonomos.services.interfaces.csproj">
+      <Project>{BB21F4DD-E8C9-4969-B6EB-27B35CC1AF10}</Project>
+      <Name>oikonomos.services.interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\oikonomos.services\oikonomos.services.csproj">
+      <Project>{7939F5A9-5DDF-4481-8C7F-980B1622FB69}</Project>
+      <Name>oikonomos.services</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
