@@ -8,6 +8,7 @@ namespace oikonomos.common.Models
 {
     public class PersonViewModel
     {
+        public string WindowsLiveId { get; set; }
         public int PersonId { get; set; }
         public int FamilyId { get; set; }
         public string Firstname { get; set; }

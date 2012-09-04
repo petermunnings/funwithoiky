@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using oikonomos.data;
 using oikonomos.common;
 using System.Configuration;
 using oikonomos.common.Models;
-using System.Data.Objects.DataClasses;
 using System.Web.Security;
-using System.Threading.Tasks;
-using System.Net.Mail;
 using oikonomos.data.Services;
 using Lib.Web.Mvc.JQuery.JqGrid;
 
@@ -19,7 +14,7 @@ namespace oikonomos.data.DataAccessors
     {
         public static JqGridData FetchGroupsForPersonJQGrid(Person currentPerson, int personId, JqGridRequest request)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 IEnumerable<PersonGroupModel> groups = (from g in context.Groups
                                                  join pg in context.PersonGroups
@@ -636,6 +631,42 @@ namespace oikonomos.data.DataAccessors
             }
         }
 
+        public static IEnumerable<PersonViewModel> FetchChurchListForTablet(Person currentPerson)
+        {
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            {
+                var personList = FetchChurchList(currentPerson, false, string.Empty, string.Empty, context);
+                return (from p in personList
+                        orderby p.Family.FamilyName, p.PersonId
+                        select new PersonViewModel
+                        {
+                            PersonId          = p.PersonId,
+                            FamilyId          = p.FamilyId,
+                            Firstname         = p.Firstname,
+                            Surname           = p.Family.FamilyName,
+                            HomePhone         = p.Family.HomePhone,
+                            CellPhone         = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).Value,
+                            WorkPhone         = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.WorkPhone).Value,
+                            Email             = p.Email,
+                            Address1          = p.Family.Address.Line1,
+                            Address2          = p.Family.Address.Line2,
+                            Address3          = p.Family.Address.Line3,
+                            Address4          = p.Family.Address.Line4,
+                            Anniversary_Value = p.Anniversary,
+                            DateOfBirth_Value = p.DateOfBirth,
+                            Gender            = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Gender).Value,
+                            HeardAbout        = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.HeardAbout).Value,
+                            FacebookId        = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Facebook).Value,
+                            Occupation        = p.Occupation,
+                            Site              = p.Site.Name,
+                            Skype             = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Skype).Value,
+                            Twitter           = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Twitter).Value,
+                            RoleName          = p.PersonChurches.FirstOrDefault(pc => pc.ChurchId == currentPerson.ChurchId).Role.DisplayName,
+                            GroupName         = p.PersonGroups.Count(pg => pg.Group.ChurchId == currentPerson.ChurchId) > 1 ? "Multiple" : (p.PersonGroups.Count(pg => pg.Group.ChurchId == currentPerson.ChurchId) == 0 ? "None" : p.PersonGroups.FirstOrDefault(pg => pg.Group.ChurchId == currentPerson.ChurchId).Group.Name)
+                        }).ToList();
+            }
+        }
+
         public static IEnumerable<PersonViewModel> FetchExtendedChurchList(Person currentPerson)
         {
             using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
@@ -666,6 +697,7 @@ namespace oikonomos.data.DataAccessors
                             DateOfBirth_Value = p.DateOfBirth,
                             Gender            = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Gender).Value,
                             HeardAbout        = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.HeardAbout).Value,
+                            FacebookId        = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Facebook).Value,
                             Occupation        = p.Occupation,
                             Site              = p.Site.Name,
                             Skype             = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Skype).Value,
@@ -779,6 +811,26 @@ namespace oikonomos.data.DataAccessors
             {
                 var person = (from p in context.People.Include("PersonChurches")
                               where p.PublicId == publicId
+                              select p).FirstOrDefault();
+
+                if (person == null)
+                    return null;
+
+                SetupPermissions(context, person, false);
+                return person;
+            }
+        }
+
+
+        public static Person FetchPersonFromWindowsLiveId(string liveId)
+        {
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            {
+                var person = (from p in context.People
+                              join po in context.PersonOptionalFields
+                                on p.PersonId equals po.PersonId
+                              where po.OptionalFieldId == (int)OptionalFields.WindowsLive
+                                && po.Value == liveId
                               select p).FirstOrDefault();
 
                 if (person == null)
@@ -1162,6 +1214,23 @@ namespace oikonomos.data.DataAccessors
             }
         }
 
+        public static void SavePersonToSampleChurch(string firstname, string surname, string liveId, string cellPhone, string email, int roleId )
+        {
+            var newPerson = new PersonViewModel
+            {
+                Firstname = firstname,
+                Surname = surname,
+                WindowsLiveId = liveId,
+                CellPhone = cellPhone,
+                Email = email,
+                RoleId = roleId
+            };
+
+            var currentPerson = FetchPerson(1);
+            currentPerson.ChurchId = 6;
+            SavePerson(newPerson, currentPerson);
+        }
+
         public static int SavePerson(PersonViewModel person, Person currentPerson)
         {
             using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
@@ -1192,16 +1261,44 @@ namespace oikonomos.data.DataAccessors
                 bool addedToNewGroup = AddPersonToGroup(person, currentPerson, context, personToSave);
                 SaveContactInformation(person, personToSave);
                 SaveAddressInformation(person, personToSave);
+                
                 UpdateRelationships(person, context, personToSave, anniversaryHasChanged);
                 context.SaveChanges();
                 personToSave = FetchPerson(personToSave.PersonId, context, currentPerson);
-                
+                SaveWindowsLiveId(person, personToSave, context);
                 SendEmails(person, sendWelcomeEmail, church, personToSave);
                 EmailGroupLeader(person, currentPerson, context, church, personToSave, addedToNewGroup);
 
                 context.SaveChanges();
 
                 return personToSave.PersonId;
+            }
+        }
+
+        private static void SaveWindowsLiveId(PersonViewModel person, Person personToSave, oikonomosEntities context)
+        {
+            if (string.IsNullOrEmpty(person.WindowsLiveId)) return;
+            var windowsLiveId = context.PersonOptionalFields.FirstOrDefault(p =>p.OptionalFieldId == (int) OptionalFields.WindowsLive && p.PersonId == personToSave.PersonId);
+            if(windowsLiveId==null)
+            {
+                windowsLiveId = new PersonOptionalField
+                                    {
+                                        Changed = DateTime.Now,
+                                        Created = DateTime.Now,
+                                        OptionalFieldId = (int) OptionalFields.WindowsLive,
+                                        PersonId = personToSave.PersonId,
+                                        Value = person.WindowsLiveId
+                                    };
+                context.AddToPersonOptionalFields(windowsLiveId);
+                context.SaveChanges();
+            }
+            else
+            {
+                if(windowsLiveId.Value!=person.WindowsLiveId)
+                {
+                    windowsLiveId.Value = person.WindowsLiveId;
+                    context.SaveChanges();
+                }
             }
         }
 
