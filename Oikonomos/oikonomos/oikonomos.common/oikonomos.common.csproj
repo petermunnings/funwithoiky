@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="DTOs\CommentDto.cs" />
     <Compile Include="DTOs\EventDto.cs" />
+    <Compile Include="DTOs\PersonEventDto.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Models\AdminReportsViewModel.cs" />
     <Compile Include="Models\AttendanceEventViewModel.cs" />

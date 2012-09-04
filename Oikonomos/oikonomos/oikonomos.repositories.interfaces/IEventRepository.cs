@@ -9,5 +9,6 @@ namespace oikonomos.repositories.interfaces
         EventDto              GetItem(int eventId);
         void                  DeleteItem(int eventId);
         int                   SaveItem(EventDto eventDto);
+        IEnumerable<EventDto> GetListOfEventsForGroup(int churchId);
     }
 }

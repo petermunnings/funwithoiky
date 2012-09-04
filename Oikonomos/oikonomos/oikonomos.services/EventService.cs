@@ -30,6 +30,11 @@ namespace oikonomos.services
             return _eventRepository.GetListOfCompletedEvents(personId);
         }
 
+        public IEnumerable<EventDto> GetListEventsForGroup(int churchId)
+        {
+            return _eventRepository.GetListOfEventsForGroup(churchId);
+        }
+
         public EventDto GetEvent(int eventId)
         {
             throw new NotImplementedException();

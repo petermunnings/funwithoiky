@@ -2,13 +2,34 @@
 var rowId = 0;
 var selectedGroupId = 0;
 
+var PopulateEvents = function () {
+    var postData = { groupId: selectedGroupId };
+    $.post("/api/GroupEvents", $.postify(postData), function (data) {
+        $("#eventsList").empty();
+        $("#eventsTemplate")
+                .tmpl(data)
+                .appendTo("#eventsList");
+
+        $("#ajax_loader").hide();
+    }).error(function (jqXhr) {
+        $("#ajax_loader").hide();
+        SendErrorEmail("Error calling /api/GroupEvents", jqXhr.responseText);
+    });
+};
+
+var PopulateTabs = function () {
+    PopulateAttendance();
+    PopulateEvents();
+};
+
+
 function UpdateAttendance(tableSelector, data) {
     //Go through the data and populate the attendance
     $(tableSelector).each(function (index) {
         personId = $.tmplItem(this).data.PersonId;
         var row = this;
         var found = false;
-        $.each(data.Attendance, function (index) {
+        $.each(data.Attendance, function () {
             if (this.PersonId == personId) {
                 found = true;
                 if (this.Attended) {
@@ -500,14 +521,14 @@ function SetupPeopleGrid() {
 }
 
 function ReloadPeopleGrid(id) {
+    
     selectedGroupId = id;
     $('#jqgGroups').jqGrid('setSelection', selectedGroupId);
     var ret = $("#jqgGroups").getRowData(selectedGroupId);
     $("#groupName").html(ret.GroupName);
     $("#jqgPeople").trigger("reloadGrid");
 
-
-    PopulateAttendance();
+    PopulateTabs();
 }
 
 function AddGroup() {
@@ -671,7 +692,7 @@ $(document).ready(function () {
 
         $('#jqgGroups').jqGrid('filterToolbar', { stringResult: true, searchOnEnter: false });
     } else {
-        PopulateAttendance();
+        PopulateTabs();
     }
 
     $("#ajax_loader").hide();

@@ -42,6 +42,20 @@ namespace oikonomos.repositories
             return newEvent.EventId;
         }
 
+        IEnumerable<EventDto> IEventRepository.GetListOfEventsForGroup(int churchId)
+        {
+            return _context
+                .Events
+                .Where(e => e.ShowInGroupScreen && e.ChurchId == churchId)
+                .OrderBy(e => e.EventOrder)
+                .Select(e => new EventDto
+                                 {
+                                     Name = e.Name,
+                                     ChurchId = churchId,
+                                     EventId = e.EventId
+                                 });
+        }
+
         void IEventRepository.DeleteItem(int eventId)
         {
             var eventToDelete = _context.Events.FirstOrDefault(e => e.EventId == eventId);

@@ -53,6 +53,7 @@
         <li><a href="#tabs-myHomegroup"><span id="groupName">@Model.GroupName</span></a></li>
         <li><a href="#tabs-myHomegroupAttendance"><span id="groupNameAttendance">Attendance</span></a></li>
         <li><a href="#tabs-comments"><span id="groupComments">Comments</span></a></li>
+        <li><a href="#tabs-events"><span id="groupEvents">Events</span></a></li>
     </ul>
 
     @if (Model.ShowList)
@@ -168,6 +169,26 @@
         </div>
     </div>  
 
+    <div id="tabs-events">
+        <div class="ui-widget">
+
+            <div>
+                <div id="table_events" style="display:table" class="ui-widget-content ui-corner-all">
+                    <div style="display:table-row; height:30px" class="ui-widget-header ui-corner-all">
+                        <div style="display:table-cell;width:20px" class="ui-corner-left">&nbsp;</div>
+                        <div style="display:table-cell; vertical-align:middle;width:240px">Fullname</div>
+                        @foreach(var eventDto in Model.GroupEvents)
+                        {
+                        <div style="display:table-cell; vertical-align:middle;width:240px">@eventDto.Name</div>
+                        }
+                        <div style="display:table-cell;width:20px" class="ui-corner-right">&nbsp;</div>
+                    </div>
+                    <div style="display:table-row-group" id="eventsList">
+                    </div>
+                </div>
+            </div>  
+        </div>
+    </div> 
 </div>
 
 <script type="text/javascript">
@@ -281,7 +302,7 @@
 
 <div id="add_Comment" style="display:none;" title="Add Comment"> 
     <table border="0px" cellpadding="5px" cellspacing="5px">
-        @if (Model.StandardComments.Count > 0)
+        @if (Model.StandardComments.Any())
         {
             <tr>
                 <td>Pick a standard comment:</td>

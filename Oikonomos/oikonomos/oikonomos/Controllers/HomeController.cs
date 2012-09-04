@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using oikonomos.data;
 using System.Data.SqlClient;
 using System.Configuration;
 using System.Data;
-using System.Web.Security;
 using oikonomos.common;
 using oikonomos.data.DataAccessors;
 using oikonomos.common.Models;
 using System.Net.Mail;
-using System.Text;
-using Facebook.Web;
+using oikonomos.repositories;
+using oikonomos.services;
+using oikonomos.services.interfaces;
 using oikonomos.web.Helpers;
 using oikonomos.web.Models.Groups;
 
@@ -22,6 +21,14 @@ namespace oikonomos.web.Controllers
 {
     public class HomeController : Controller
     {
+        private IEventService _eventService;
+        
+        public HomeController()
+        {
+            var context   = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString);
+            _eventService = new EventService(new EventRepository(context));
+        }
+
         public ActionResult Settings()
         {
             Person currentPerson = SecurityHelper.CheckCurrentUser(Session, Response, ViewBag);
@@ -103,6 +110,7 @@ namespace oikonomos.web.Controllers
 
             viewModel.SecurityRoles = PermissionDataAccessor.FetchRoles(currentPerson);
             viewModel.RoleId = viewModel.SecurityRoles.First().RoleId;
+            viewModel.GroupEvents = _eventService.GetListEventsForGroup(currentPerson.ChurchId);
 
             if (currentPerson.HasPermission(Permissions.EditAllGroups))
             {

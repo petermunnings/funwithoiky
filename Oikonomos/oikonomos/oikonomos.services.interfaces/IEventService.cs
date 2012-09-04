@@ -7,8 +7,8 @@ namespace oikonomos.services.interfaces
     {
         int  CreateEvent(EventDto eventDto);
         void UpdateEvent(EventDto eventDto);
-
         IEnumerable<EventDto> GetListOfCompletedEvents(int personId);
+        IEnumerable<EventDto> GetListEventsForGroup(int churchId);
         EventDto GetEvent(int eventId);
     }
 }
