@@ -66,15 +66,6 @@ function PopulatePerson(person) {
     }
 
     $("#GroupId").val(person.GroupId);
-    if (person.IsInMultipleGroups == true) {
-        $("#row_groupDropDown").hide();
-    } else {
-        if ($('#GroupId option[value=' + person.GroupId + ']').length == 0) {
-            $("#row_groupDropDown").hide();
-        } else {
-            $("#row_groupDropDown").show();
-        }
-    }
 
     $("#Site").val(person.Site);
     $("#text_heardAbout").val(person.HeardAbout);
@@ -353,7 +344,7 @@ PageAlert = {
 }
 
 var pageIsDirty = false;
-$(document).ready(function () {
+$(document).ready(function() {
 
     FetchFamilyMembers();
 
@@ -363,20 +354,20 @@ $(document).ready(function () {
     $("#text_cellPhone").mask("(999) 9999999");
     $("#text_workPhone").mask("(999) 9999999");
 
-    $("input").change(function () {
+    $("input").change(function() {
         pageIsDirty = true;
     });
 
-    $("select").change(function () {
+    $("select").change(function() {
         pageIsDirty = true;
     });
 
-    $("#family_members").delegate("select", "change", function () {
+    $("#family_members").delegate("select", "change", function() {
         pageIsDirty = true;
     });
 
-    $("#button_addPerson").click(function () {
-        PageAlert.UnsavedChanges().then(function () {
+    $("#button_addPerson").click(function() {
+        PageAlert.UnsavedChanges().then(function() {
             $("#span_message").hide();
             ClearForm()
             $("#family_members").empty();
@@ -384,19 +375,19 @@ $(document).ready(function () {
         });
     });
 
-    $("#button_addFamilyMember").click(function () {
-        PageAlert.UnsavedChanges().then(function () {
+    $("#button_addFamilyMember").click(function() {
+        PageAlert.UnsavedChanges().then(function() {
             AddFamilyMember();
         });
     });
 
-    $("#button_addFamilyMember2").click(function () {
-        PageAlert.UnsavedChanges().then(function () {
+    $("#button_addFamilyMember2").click(function() {
+        PageAlert.UnsavedChanges().then(function() {
             AddFamilyMember();
         });
     });
 
-    $("#family_members").delegate(".selectPerson", "mouseover mouseout", function (event) {
+    $("#family_members").delegate(".selectPerson", "mouseover mouseout", function(event) {
         if (event.type == 'mouseover') {
             $(this).css("cursor", "pointer");
             $(this).parent().addClass("ui-state-hover");
@@ -406,39 +397,39 @@ $(document).ready(function () {
         }
     });
 
-    $("#family_members").delegate(".select_relationship", "change", function (event) {
+    $("#family_members").delegate(".select_relationship", "change", function(event) {
         UpdateFamilyMemberRelationship($.tmplItem(this).data.PersonId, $(this).val());
     });
 
-    $("#family_members").delegate(".selectPerson", "click", function () {
+    $("#family_members").delegate(".selectPerson", "click", function() {
         var personId = $.tmplItem(this).data.PersonId;
-        PageAlert.UnsavedChanges().then(function () {
+        PageAlert.UnsavedChanges().then(function() {
             $("#span_message").hide();
             $("#text_personSearch").val('');
             FetchPersonData(personId);
         });
     });
 
-    $("#text_personSearch").focus(function () {
-        PageAlert.UnsavedChanges().then(function () {
+    $("#text_personSearch").focus(function() {
+        PageAlert.UnsavedChanges().then(function() {
             //Don't have to do anything
         });
     });
 
-    $("#button_search").click(function () {
+    $("#button_search").click(function() {
         if ($("#text_personSearch").val().length > 0) {
-            PageAlert.UnsavedChanges().then(function () {
+            PageAlert.UnsavedChanges().then(function() {
                 pageIsDirty = false;
                 $("#ajax_personSearch").show();
                 var postData = { term: $("#text_personSearch").val() };
 
-                var jqxhr = $.post("/Ajax/PersonAutoComplete", $.postify(postData), function (data) {
+                var jqxhr = $.post("/Ajax/PersonAutoComplete", $.postify(postData), function(data) {
                     $("#ajax_personSearch").hide();
                     if (data.length > 0) {
                         $("#hidden_personId").val(data[0] ? data[0].id : "0");
                         FetchPersonData($("#hidden_personId").val());
                     }
-                }).error(function (jqXHR, textStatus, errorThrown) {
+                }).error(function(jqXHR, textStatus, errorThrown) {
                     $("#ajax_familySearch").hide();
                     SendErrorEmail("Error calling PersonAutoComplete", jqXHR.responseText);
                 });
@@ -447,7 +438,7 @@ $(document).ready(function () {
     });
 
     $("#text_personSearch").autocomplete({
-        source: function (request, response) {
+        source: function(request, response) {
             //At this point - need to make sure that alert doesn't fire
             pageIsDirty = false;
             $("#span_message").hide();
@@ -456,18 +447,17 @@ $(document).ready(function () {
             $("#family_members").empty();
             var postData = { term: request.term };
 
-            var jqxhr = $.post("/Ajax/PersonAutoComplete", $.postify(postData), function (data) {
+            var jqxhr = $.post("/Ajax/PersonAutoComplete", $.postify(postData), function(data) {
                 $("#ajax_personSearch").hide();
                 response(data);
-            }).error(function (jqXHR, textStatus, errorThrown) {
+            }).error(function(jqXHR, textStatus, errorThrown) {
                 $("#ajax_familySearch").hide();
                 SendErrorEmail("Error calling PersonAutoComplete", jqXHR.responseText);
             });
-        }
-        ,
+        },
         minLength: 1,
-        select: function (event, ui) {
-            PageAlert.UnsavedChanges().then(function () {
+        select: function(event, ui) {
+            PageAlert.UnsavedChanges().then(function() {
                 $("#hidden_personId").val(ui.item ? ui.item.id : "0");
                 FetchPersonData($("#hidden_personId").val());
             });
@@ -488,12 +478,12 @@ $(document).ready(function () {
         yearRange: '-120:+0'
     });
 
-    $("#button_savePerson").click(function () {
+    $("#button_savePerson").click(function() {
         $("#span_message").hide();
         SavePerson(true);
     });
 
-    $("#button_deletePerson").click(function () {
+    $("#button_deletePerson").click(function() {
         if ($("#hidden_personId").val() != "0") {
             $("#div_warningDelete").dialog('open');
         }
@@ -506,70 +496,67 @@ $(document).ready(function () {
         width: 280,
         resizable: false,
         buttons: {
-
-            "Yes": function () {
+            "Yes": function() {
                 $(this).dialog('close');
                 DeletePerson();
             },
-            "No": function () {
+            "No": function() {
                 $(this).dialog('close');
             }
         }
     });
 
-    $("#text_address1").keypress(function () {
+    $("#text_address1").keypress(function() {
         $("#hidden_addressChosen").val("");
     });
 
     $("#text_address1").autocomplete({
-        source: function (request, response) {
+        source: function(request, response) {
             $("#ajax_gpsCoordinates").show();
             var address = $("#text_address1").val().replace(/ /g, "+") + ", " + $("#hidden_googleSearchRegion").val();
-            Google.searchAddress(address).then(function (data) {
+            Google.searchAddress(address).then(function(data) {
                 $("#ajax_gpsCoordinates").hide();
                 response(data);
             });
-        }
-        ,
+        },
         minLength: 4,
-        select: function (event, ui) {
+        select: function(event, ui) {
             AddressSelected(ui.item.id, 2, '', false);
         },
-        open: function () {
+        open: function() {
             $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
         },
-        close: function () {
+        close: function() {
             $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
         }
     });
 
     $("#text_address2").autocomplete({
-        source: function (request, response) {
+        source: function(request, response) {
             if ($("#hidden_addressChosen").val() == "selected") {
                 response("");
                 return;
             }
             $("#ajax_gpsCoordinates2").show();
             var address = $("#text_address2").val().replace(/ /g, "+") + ", " + $("#hidden_googleSearchRegion").val();
-            Google.searchAddress(address).then(function (data) {
+            Google.searchAddress(address).then(function(data) {
                 $("#ajax_gpsCoordinates2").hide();
                 response(data);
             });
-        }
-        ,
+        },
         minLength: 4,
-        select: function (event, ui) {
+        select: function(event, ui) {
             AddressSelected(ui.item.id, 3, '', false);
         },
-        open: function () {
+        open: function() {
             $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
         },
-        close: function () {
+        close: function() {
             $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
         }
     });
 
-    $("#button_sendWelcomeMail").click(function () {
+    $("#button_sendWelcomeMail").click(function() {
         SendWelcomeMail();
     });
 
@@ -580,11 +567,11 @@ $(document).ready(function () {
         postData: { personId: $("#hidden_personId").val() },
         colNames: ['PersonId', 'Date', 'Event', 'Created By'],
         colModel: [
-                    { name: 'PersonId', index: 'PersonId', hidden: true, search: false },
-                    { name: 'Date', index: 'Date', align: 'left', width: 100, search: true, cellattr: function (rowId, tv, rawObject, cm, rdata) { return 'style="vertical-align:top"' } },
-                    { name: 'Event', index: 'Event', align: 'left', width: 427, search: true, cellattr: function (rowId, tv, rawObject, cm, rdata) { return 'style="white-space: normal;' } },
-                    { name: 'CreatedBy', index: 'CreatedBy', align: 'left', width: 120, search: true, cellattr: function (rowId, tv, rawObject, cm, rdata) { return 'style="vertical-align:top"' } }
-                  ],
+            { name: 'PersonId', index: 'PersonId', hidden: true, search: false },
+            { name: 'Date', index: 'Date', align: 'left', width: 100, search: true, cellattr: function(rowId, tv, rawObject, cm, rdata) { return 'style="vertical-align:top"' } },
+            { name: 'Event', index: 'Event', align: 'left', width: 427, search: true, cellattr: function(rowId, tv, rawObject, cm, rdata) { return 'style="white-space: normal;' } },
+            { name: 'CreatedBy', index: 'CreatedBy', align: 'left', width: 120, search: true, cellattr: function(rowId, tv, rawObject, cm, rdata) { return 'style="vertical-align:top"' } }
+        ],
         pager: $('#jqgpEventList'),
         rowNum: 20,
         sortname: 'Date',
@@ -602,11 +589,11 @@ $(document).ready(function () {
         postData: { personId: $("#hidden_personId").val() },
         colNames: ['CommentId', 'Date', 'Comment', 'Created By'],
         colModel: [
-                    { name: 'CommentId', index: 'PersonId', hidden: true, search: false },
-                    { name: 'Date', index: 'Date', align: 'left', width: 100, search: true, cellattr: function (rowId, tv, rawObject, cm, rdata) { return 'style="vertical-align:top"' } },
-                    { name: 'Comment', index: 'Comment', align: 'left', width: 427, search: true, cellattr: function (rowId, tv, rawObject, cm, rdata) { return 'style="white-space: normal;' } },
-                    { name: 'CreatedBy', index: 'CreatedBy', align: 'left', width: 120, search: true, cellattr: function (rowId, tv, rawObject, cm, rdata) { return 'style="vertical-align:top"' } }
-                  ],
+            { name: 'CommentId', index: 'PersonId', hidden: true, search: false },
+            { name: 'Date', index: 'Date', align: 'left', width: 100, search: true, cellattr: function(rowId, tv, rawObject, cm, rdata) { return 'style="vertical-align:top"' } },
+            { name: 'Comment', index: 'Comment', align: 'left', width: 437, search: true, cellattr: function(rowId, tv, rawObject, cm, rdata) { return 'style="white-space: normal"' } },
+            { name: 'CreatedBy', index: 'CreatedBy', align: 'left', width: 120, search: true, cellattr: function(rowId, tv, rawObject, cm, rdata) { return 'style="vertical-align:top"' } }
+        ],
         pager: $('#jqgpCommentList'),
         rowNum: 20,
         sortname: 'Date',
@@ -621,15 +608,16 @@ $(document).ready(function () {
         datatype: 'json',
         mtype: 'POST',
         postData: { personId: $("#hidden_personId").val() },
-        colNames: ['GroupId', 'Name', 'Type', 'Last Attended', 'Leader', 'Administrator'],
+        colNames: ['GroupId', 'Name', 'Type', 'Last Attended', 'Leader', 'Administrator', 'Primary'],
         colModel: [
-                    { name: 'GroupId', index: 'GroupId', hidden: true, search: false },
-                    { name: 'Name', index: 'Name', align: 'left', width: 200, search: true },
-                    { name: 'Type', index: 'Type', align: 'left', width: 120, search: true },
-                    { name: 'LastAttended', index: 'LastAttended', align: 'left', width: 100, search: true },
-                    { name: 'Leader', index: 'Leader', align: 'left', width: 120, search: true },
-                    { name: 'Administrator', index: 'Administrator', align: 'left', width: 120, search: true}
-                  ],
+            { name: 'GroupId', index: 'GroupId', hidden: true, search: false },
+            { name: 'Name', index: 'Name', align: 'left', width: 160, search: true },
+            { name: 'Type', index: 'Type', align: 'left', width: 120, search: true },
+            { name: 'LastAttended', index: 'LastAttended', align: 'left', width: 100, search: true },
+            { name: 'Leader', index: 'Leader', align: 'left', width: 150, search: true },
+            { name: 'Administrator', index: 'Administrator', align: 'left', width: 150, search: true },
+            { name: 'PrimaryGroup', index: 'PrimaryGroup', align: 'left', width: 60, search: false }
+        ],
         pager: $('#jqgpGroups'),
         rowNum: 20,
         sortname: 'Name',
@@ -637,11 +625,37 @@ $(document).ready(function () {
         viewrecords: true,
         width: 'auto',
         height: 'auto',
-        ondblClickRow: function (rowid, iRow, iCol, e) {
+        ondblClickRow: function(rowid, iRow, iCol, e) {
             window.location = "/Home/Homegroups?groupId=" + rowid;
         }
     }).navGrid('#jqgpGroups', { edit: false, add: false, del: false, search: false });
-})
+
+    $("#saveComment_button").click(function() {
+        var postData = {
+            personId: $("#hidden_personId").val(),
+            comments: []
+        };
+        
+        if ($("#comment_detail").val() != "") {
+            postData.comments.push($("#comment_detail").val());
+        }
+
+        if (postData.comments.length > 0) {
+            $.post("/Ajax/SaveComments", $.postify(postData), function (data) {
+                $("#comment_detail").val("");
+                $("#jqgCommentList").trigger("reloadGrid");
+            }).error(function (jqXhr) {
+
+                SendErrorEmail("Error calling SaveComments", jqXhr.responseText);
+            });
+        }
+    });
+
+    $("#cancelComment_button").click(function () {
+        $("#comment_detail").val("");
+    });
+
+});
 
 
 

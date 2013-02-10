@@ -1,0 +1,396 @@
+﻿@model oikonomos.common.Models.PersonViewModel
+
+<script src="@oikonomos.web.Helpers.JavascriptHelper.Content("~/Scripts/Site/Person.js")" type="text/javascript"></script>
+<script src="@oikonomos.web.Helpers.JavascriptHelper.Content("~/Scripts/Site/AddressLookup.js")" type="text/javascript"></script>
+<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false&region=ZA"></script>
+
+@{
+    ViewBag.Title = "Person";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script id="familyMemberTemplate" type="text/x-jquery-tmpl">
+    <div class="tableRow">
+        <div style="display:table-cell; width:20px; text-align:right; vertical-align:middle">&nbsp;</div>
+        <div style="display:table-cell; width:40px; text-align:right; vertical-align:middle">
+        @if (ViewBag.DisplayFacebook)
+        {
+            <text>
+           
+            {{if FacebookId != ''}}
+                <img src="https://graph.facebook.com/${FacebookId}/picture"/> 
+            {{/if}}
+            &nbsp; 
+            </text>
+            
+        }
+        else
+        {
+            <text>&nbsp;</text>
+        }
+        </div>
+        <div style="display:table-cell; width:100px; text-align:left; vertical-align:middle" class="selectPerson">
+            ${FamilyMember}&nbsp;is&nbsp;${Person}'s&nbsp;
+        </div>
+        <div style="display:table-cell; width:80px; vertical-align:middle">
+                <select class="select_relationship ui-corner-all">
+                    <option {{if Relationship==''}}selected="selected"{{/if}}>Select...</option>
+                    <option {{if Relationship=='Husband'}}selected="selected"{{/if}}>Husband</option>
+                    <option {{if Relationship=='Wife'}}selected="selected"{{/if}}>Wife</option>
+                    <option {{if Relationship=='Son'}}selected="selected"{{/if}}>Son</option>
+                    <option {{if Relationship=='Daughter'}}selected="selected"{{/if}}>Daughter</option>
+                    <option {{if Relationship=='Father'}}selected="selected"{{/if}}>Father</option>
+                    <option {{if Relationship=='Mother'}}selected="selected"{{/if}}>Mother</option>
+                    <option {{if Relationship=='Brother'}}selected="selected"{{/if}}>Brother</option>
+                    <option {{if Relationship=='Sister'}}selected="selected"{{/if}}>Sister</option>
+                    <option {{if Relationship=='Grandmother'}}selected="selected"{{/if}}>Grandmother</option>
+                    <option {{if Relationship=='Grandfather'}}selected="selected"{{/if}}>Grandfather</option>
+                    <option {{if Relationship=='Grandson'}}selected="selected"{{/if}}>Grandson</option>
+                    <option {{if Relationship=='Granddaughter'}}selected="selected"{{/if}}>Granddaughter</option>
+                </select>
+        </div>
+        <div style="display:table-cell; width:10px; vertical-align:middle" align="center">
+            &nbsp;
+        </div>
+    </div>
+</script>
+
+<div id="tabs">
+    <ul>
+      <li><a href="#tabs-1">
+                @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditChurchPersonalDetails))
+                {
+                    <text>Edit People</text>           
+                } 
+                else if(ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditGroupPersonalDetails))
+                {
+                    <text>Edit People in Group</text> 
+                }
+                else
+                {
+                    <text>Edit my Family's Details</text>
+                }
+                </a></li>
+
+        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewComments))
+        {
+        <li><a href="#tabs-2">Comments</a></li>
+        }
+        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewEvents))
+        {
+        <li><a href="#tabs-3">Events</a></li>
+        }
+        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewPersonGroups))
+        {   
+        <li><a href="#tabs-4">Groups</a></li>
+        }       
+    </ul>
+    <div id="tabs-1">
+        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditChurchPersonalDetails) || ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditGroupPersonalDetails))
+        {
+        <div style="text-align:left; display: table; height:50px; vertical-align:top" class="ui-widget">
+            <div class="tableRow">
+                <div style="text-align:right; display:table-cell">
+                    <img class="button" id="button_addPerson" src="/Content/images/add_24.png" title="Add a new person" alt="" />
+                    <img class="button" id="button_addFamilyMember" src="/Content/images/add_family_24.png" title="Add a new family member" alt="" />   
+                    <input id="text_personSearch" type="text" style="width:250px" class="ui-corner-all" />
+                    <img class="button" id="button_search" src="/Content/images/search_24.png" title="Search for an existing person" alt="" />     
+                </div>
+            </div>
+            <div class="tableRow">
+                <div style="text-align:right; display:table-cell">&nbsp;
+                </div>
+            </div>
+        </div>
+        }
+        <div style="text-align:left; display: table" class="ui-widget">
+            <div class="tableRow">
+                <div style="display:table-cell; width:400px">
+                    <div id="personDetails" style="display:table" class="ui-corner-bottom ui-widget-content">
+                        <div style="display:table-row; height:40px" class="ui-widget-header">
+                            <div id="div_personDetails" style="text-align:right; display:table-cell; vertical-align:middle">Person</div>
+                            <div style="text-align:right; display:table-cell; vertical-align:middle">&nbsp;</div>
+                            <div style="text-align:left; display:table-cell; vertical-align:middle">Details</div>
+                        </div>
+                        <div style="display:table-row-group">
+                            <div class="tableRow">
+                                <div style="text-align:right; display:table-cell; width:160px">&nbsp;</div>
+                                <div style="text-align:right; display:table-cell; width:10px">&nbsp;</div>
+                                <div style="text-align:left; display:table-cell; width:230px">&nbsp;</div>
+                            </div>
+
+                            @if (ViewBag.DisplayFacebook)
+                            {
+                                <div class="tableRow" id="row_image" @if (Model.FacebookId == "" || Model.FacebookId == null)
+                                                                     {<text>style="display:none;"</text>} >
+                                    <div style="text-align:right; display:table-cell; width:160px">&nbsp;</div>
+                                    <div style="text-align:right; display:table-cell; width:10px">&nbsp;</div>
+                                    <div style="text-align:left; display:table-cell; width:230px"><img id="img_person" src="https://graph.facebook.com/@(Model.FacebookId)/picture"/></div>
+                                </div>
+                            }
+                            
+                            <div class="tableRow">
+                                <div style="text-align:right; display:table-cell">Firstname</div>
+                                <div style="text-align:right; display:table-cell">&nbsp;</div>
+                                <div style="text-align:left; display:table-cell">
+                                    <input id="text_firstname" type="text" value="@Model.Firstname" class="ui-corner-all" />
+                                    <img id="warning_firstname" alt="warning" src="/Content/images/warning.png" style="display:none" />
+                                </div>
+                            </div>
+
+                            <div class="tableRow">
+                                <div style="text-align:right; display:table-cell">Surname</div>
+                                <div style="text-align:right; display:table-cell">&nbsp;</div>
+                                <div style="text-align:left; display:table-cell">
+                                    <input id="text_surname" type="text" value="@Model.Surname" class="ui-corner-all" />
+                                    <img id="warning_surname" alt="warning" src="/Content/images/warning.png" style="display:none" />
+                                </div>
+                            </div>
+        
+                            <div class="tableRow">
+                                <div style="text-align:right; display:table-cell">Email</div>
+                                <div style="text-align:right; display:table-cell">&nbsp;</div>
+                                <div style="text-align:left; display:table-cell"><input id="text_email" type="text" value="@Model.Email" class="ui-corner-all" /></div>
+                            </div>
+
+                            <div class="tableRow">
+                            <div style="text-align:right; display:table-cell">Home Phone&nbsp;</div>
+                            <div style="text-align:right; display:table-cell"></div>
+                            <div style="text-align:left; display:table-cell"><input id="text_homePhone" type="text" value="@Model.HomePhone" class="ui-corner-all" /></div>
+                            </div>
+
+                            <div class="@ViewBag.DisplayCellPhone">
+                            <div style="text-align:right; display:table-cell">Cell Phone&nbsp;</div>
+                            <div style="text-align:right; display:table-cell"></div>
+                            <div style="text-align:left; display:table-cell"><input id="text_cellPhone" type="text" value="@Model.CellPhone" class="ui-corner-all" /></div>
+                            </div>
+
+                            <div class="@ViewBag.DisplayWorkPhone">
+                            <div style="text-align:right; display:table-cell">Work Phone</div>
+                            <div style="text-align:right; display:table-cell">&nbsp;</div>
+                            <div style="text-align:left; display:table-cell"><input id="text_workPhone" type="text" value="@Model.WorkPhone" class="ui-corner-all" /></div>
+                            </div>
+
+                            <div class="tableRow">
+                            <div style="text-align:right; display:table-cell">Date of Birth</div>
+                            <div style="text-align:right; display:table-cell">&nbsp;</div>
+                            <div style="text-align:left; display:table-cell"><input id="text_dateOfBirth" type="text" value="@Model.DateOfBirth" class="ui-corner-all"/></div>
+                            </div>
+                        
+                            <div class="tableRow">
+                            <div style="text-align:right; display:table-cell">Anniversary</div>
+                            <div style="text-align:right; display:table-cell">&nbsp;</div>
+                            <div style="text-align:left; display:table-cell"><input id="text_anniversary" type="text" value="@Model.Anniversary" class="ui-corner-all"/></div>
+                            </div>
+
+                            <div class="@ViewBag.DisplaySkype">
+                            <div style="text-align:right; display:table-cell">Skype&nbsp;</div>
+                            <div style="text-align:right; display:table-cell">&nbsp;</div>
+                            <div style="text-align:left; display:table-cell"><input id="text_skype" type="text" value="@Model.Skype" class="ui-corner-all"/></div>
+                            </div>
+
+                            <div class="@ViewBag.DisplayTwitter">
+                            <div style="text-align:right; display:table-cell">Twitter</div>
+                            <div style="text-align:right; display:table-cell">&nbsp;</div>
+                            <div style="text-align:left; display:table-cell"><input id="text_twitter" type="text" value="@Model.Twitter" class="ui-corner-all"/></div>
+                            </div>
+                        
+                            <div class="@ViewBag.DisplayOccupation">
+                            <div style="text-align:right; display:table-cell">Occupation</div>
+                            <div style="text-align:right; display:table-cell">&nbsp;</div>
+                            <div style="text-align:left; display:table-cell"><input id="text_occupation" type="text" value="@Model.Occupation" class="ui-corner-all"/></div>
+                            </div>
+
+                            @if (ViewBag.DisplayGender)
+                            {
+                            <div class="tableRow">
+                                <div style="text-align:right; display:table-cell">Gender</div>
+                                <div style="text-align:right; display:table-cell">&nbsp;</div>
+                                <div style="text-align:left; display:table-cell">
+                                    @Html.RadioButtonFor(m => m.Gender, "Male") Male 
+                                    @Html.RadioButtonFor(m => m.Gender, "Female") Female 
+                                </div>
+                            </div>
+                            }
+                
+                            <div class="tableRow">
+                            <div style="text-align:right; display:table-cell">Address</div>
+                            <div style="text-align:right; display:table-cell">&nbsp;</div>
+                            <div style="text-align:left; display:table-cell"><input id="text_address1" type="text" value="@Model.Address1" class="ui-corner-all" />
+                            <img id="ajax_gpsCoordinates" alt="loading" src="/Content/images/ajax-loader.gif" style="display:none" /></div>
+                            </div>
+
+                            <div class="tableRow">
+                            <div style="text-align:right; display:table-cell">&nbsp;</div>
+                            <div style="text-align:right; display:table-cell">&nbsp;</div>
+                            <div style="text-align:left; display:table-cell"><input id="text_address2" type="text" value="@Model.Address2" class="ui-corner-all" /></div>
+                            <img id="ajax_gpsCoordinates2" alt="loading" src="/Content/images/ajax-loader.gif" style="display:none" />
+                            </div>
+
+                            <div class="tableRow">
+                            <div style="text-align:right; display:table-cell">&nbsp;</div>
+                            <div style="text-align:right; display:table-cell">&nbsp;</div>
+                            <div style="text-align:left; display:table-cell"><input id="text_address3" type="text" value="@Model.Address3" class="ui-corner-all" /></div>
+                            </div>
+    
+                            <div class="tableRow">
+                            <div style="text-align:right; display:table-cell">&nbsp;</div>
+                            <div style="text-align:right; display:table-cell">&nbsp;</div>
+                            <div style="text-align:left; display:table-cell">
+                                <input id="text_address4" type="text" value="@Model.Address4" class="ui-corner-all" />
+                                <input id="hidden_lat" type="hidden" value="@Model.Lat" />
+                                <input id="hidden_lng" type="hidden" value="@Model.Lng" />
+                                <input id="hidden_addressType" type="hidden" value="@Model.AddressType" />
+                                <input id="hidden_addressChosen" type="hidden"/>
+                            </div>
+                            </div>
+
+                             @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.AllocateSecurityRole))
+                             {
+                            <div id="row_roleDropDown" class="tableRow">
+                            <div style="text-align:right; display:table-cell">Role</div>
+                            <div style="text-align:right; display:table-cell">&nbsp;</div>
+                            <div style="text-align:left; display:table-cell">@Html.DropDownListFor(model => model.RoleId, new SelectList(Model.SecurityRoles, "RoleId", "Name"), new { @class = "ui-corner-all" })</div>
+                            </div>
+                                 
+                                 if (!ViewBag.CanChangeRole)
+                                 {
+                                     <script type="text/javascript">
+                                             $("#row_roleDropDown").hide();
+                                     </script>
+                                 }
+                             }
+                            
+                             @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.AllocateToGroup))
+                             {
+                            <div id="row_groupDropDown" class="tableRow">
+                            <div style="text-align:right; display:table-cell">Group</div>
+                            <div style="text-align:right; display:table-cell">&nbsp;</div>
+                            <div style="text-align:left; display:table-cell">@Html.DropDownListFor(model => model.GroupId, new SelectList(ViewBag.Groups, "GroupId", "GroupName"), new { @class = "ui-corner-all" })</div>
+                            </div>
+                                 if (!ViewBag.CanChangeGroup)
+                                 {
+                                     <script type="text/javascript">
+                                         $("#row_groupDropDown").hide();
+                                     </script>
+                                 }
+
+                             }
+
+                            <div class="@ViewBag.DisplaySites">
+                            <div style="text-align:right; display:table-cell">Site normally attend</div>
+                            <div style="text-align:right; display:table-cell">&nbsp;</div>
+                            <div style="text-align:left; display:table-cell">@Html.DropDownListFor(model => model.Site, new SelectList(ViewBag.Sites), new { @class = "ui-corner-all" })</div>
+                            </div>
+                            
+                            <div class="@ViewBag.DisplayHeardAbout">
+                            <div style="text-align:right; display:table-cell">Where did you hear about the church?</div>
+                            <div style="text-align:right; display:table-cell"></div>
+                            <div style="text-align:left; display:table-cell"><input id="text_heardAbout" type="text" value="@Model.HeardAbout" class="ui-corner-all" /></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div style="display:table-cell; width:340px" class="ui-corner-bottom ui-widget-content">
+                    <div id="familyMembers" style="display:table; width:340px">
+                        <div style="display:table-row; height:40px; vertical-align:middle" class="ui-widget-header">
+                            <div style="text-align:right; display:table-cell; vertical-align:middle">&nbsp;</div>
+                            <div style="text-align:right; display:table-cell; vertical-align:middle">&nbsp;</div>
+                            <div style="text-align:right; display:table-cell; vertical-align:middle">Other&nbsp;Family</div>
+                            <div style="text-align:left; display:table-cell; vertical-align:middle">&nbsp;Members</div>
+                            <div style="text-align:left; display:table-cell; vertical-align:middle">&nbsp;</div>
+                        </div>
+                        
+                        <div style="display:table-row; height:25px">
+                            <div style="text-align:right; display:table-cell; vertical-align:middle">&nbsp;</div>
+                            <div style="text-align:right; display:table-cell">&nbsp;</div>
+                            <div style="text-align:right; display:table-cell">&nbsp;</div>
+                            <div style="text-align:left; display:table-cell">&nbsp;</div>
+                            <div style="text-align:left; display:table-cell">&nbsp;</div>
+                        </div>
+
+                        <div id="family_members" style="display:table-row-group">
+
+                        </div>
+                      
+                        <div style="display:table-row; height:25px">
+                            <div style="text-align:right; display:table-cell; vertical-align:middle">&nbsp;</div>
+                            <div style="text-align:right; display:table-cell">&nbsp;</div>
+                            <div style="text-align:right; display:table-cell">&nbsp;</div>
+                            <div style="text-align:left; display:table-cell">&nbsp;</div>
+                            <div style="text-align:left; display:table-cell">&nbsp;</div>
+                        </div>
+                    </div>            
+                </div>
+            </div>
+
+             <div style="text-align:left; display: table" class="ui-widget">       
+                <div class="tableRow">
+                    <div style="text-align:right; display:table-cell; width:160px">
+                    </div>
+                    <div style="text-align:left; display:table-cell">
+                        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditOwnDetails))
+                        {
+                        <img class="button" id="button_addFamilyMember2" src="/Content/images/add_family_24.png" title="Add a new family member" alt="Add a new family member" /> 
+                        }
+                        <img class="button" id="button_savePerson" alt="save" src="/Content/images/save_24.png"  title="Save person"/>
+                        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.DeletePerson))
+                        {                    
+                            <img class="button" id="button_deletePerson" alt="delete" src="/Content/images/delete_24.png" title="Delete person" />
+                        }
+                        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.SendWelcomeLetter))
+                        {     
+                            <img class="button" style="display:none" id="button_sendWelcomeMail" alt="Send Welcome email and password" src="/Content/images/email_24.png" title="Send Username and password" />
+                        }
+                        <img id="ajax_personSearch" alt="loading" src="/Content/images/ajax-loader.gif" style="display:none" />
+                        <span id="span_message" style="display: none;"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewComments))
+        {
+    <div id="tabs-2">
+        <table id="jqgCommentList" cellpadding="0" cellspacing="0" style="width: 330px"></table>
+        <div id="jqgpCommentList" style="text-align: center;"></div>
+    </div>
+        }
+        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewComments))
+        {
+    <div id="tabs-3">
+        <table id="jqgEventList" cellpadding="0" cellspacing="0" style="width: 330px"></table>
+        <div id="jqgpEventList" style="text-align: center;"></div>
+    </div>
+        }        
+        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewPersonGroups))
+        {
+    <div id="tabs-4">
+        <table id="jqgGroups" cellpadding="0" cellspacing="0"></table>
+        <div id="jqgpGroups" style="text-align:center;"></div>
+    </div>          
+        }
+</div>
+
+<script type="text/javascript">
+    $("#tabs").tabs();
+</script>
+
+<div id="div_warningDelete" style="display: none;" title="Delete Confirmation">
+	<div style="text-align:center; width:100%">
+	    Are you sure you wish to delete this person?  This action cannot be undone
+	</div>
+</div>
+
+<div id="div_warningUnsavedChanges" style="display: none;" title="Unsaved changes">
+	<div style="text-align:center; width:100%">
+	    There are unsaved changes on the current person.  Do you wish to save them?
+	</div>
+</div>
+
+<input id="hidden_personId" value="@(Model.PersonId == null ? 0 : Model.PersonId)" type="hidden" />
+<input id="hidden_familyId" value="@(Model.FamilyId == null ? 0 : Model.FamilyId)" type="hidden" />
+<input id="hidden_groupId" value="@(Model.GroupId == null ? 0 : Model.GroupId)" type="hidden" />
+<input id="hidden_roleId" value="@(Model.RoleId == null ? 0 : Model.RoleId)" type="hidden" />
+
+

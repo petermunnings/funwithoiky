@@ -69,9 +69,9 @@ namespace oikonomos.common.Models
         public int RoleId { get; set; }
         public string RoleName { get; set; }
 
-        public List<RoleViewModel> SecurityRoles { get; set; }
+        public IEnumerable<RoleViewModel> SecurityRoles { get; set; }
 
-        public List<FamilyMemberViewModel> FamilyMembers { get; set; }
+        public IEnumerable<FamilyMemberViewModel> FamilyMembers { get; set; }
     }
 
     public class FamilyMemberViewModel

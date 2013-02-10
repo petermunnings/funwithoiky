@@ -4,6 +4,10 @@ using System.Net;
 using System.Web.Http;
 using oikonomos.common.Models;
 using oikonomos.data.DataAccessors;
+using oikonomos.repositories;
+using oikonomos.repositories.interfaces;
+using oikonomos.services;
+using oikonomos.services.interfaces;
 using oikonomos.web.Helpers;
 using oikonomos.web.Models.Api;
 
@@ -11,7 +15,18 @@ namespace oikonomos.web.ApiControllers
 {
     public class TabletClientItemsController : ApiController
     {
+        private readonly IPersonRepository _personRepository;
+        private readonly IPersonService _personService;
         private const string ClientSecret = "LWunfzibyFCzKqnFmnrEgUs6zHrglVZS";
+
+        public TabletClientItemsController()
+        {
+            var permissionRepository = new PermissionRepository();
+            var churchRepository = new ChurchRepository();
+            _personRepository = new PersonRepository(permissionRepository, churchRepository);
+            _personService = new PersonService(_personRepository, new PersonGroupRepository(), permissionRepository, new PersonRoleRepository(), new PersonOptionalFieldRepository(), new RelationshipRepository(_personRepository), new ChurchMatcherRepository(), new GroupRepository(), new FamilyRepository(), new EmailService(new PasswordService(_personRepository, churchRepository, new UsernamePasswordRepository(permissionRepository)), new GroupRepository()),
+                    new AddressRepository());
+        }
 
         public IEnumerable<Item> Get()
         {
@@ -37,7 +52,7 @@ namespace oikonomos.web.ApiControllers
             var group3 = new Group { key = "3myDetails", title = "My Details", subtitle = "Update my own details", description = "Click here update personal details", backgroundImage = "images/MyDetails.png" };
 
             var liveId = Request.Headers.GetValues("liveId").FirstOrDefault();
-            var currentPerson = PersonDataAccessor.FetchPersonFromWindowsLiveId(liveId);
+            var currentPerson = _personRepository.FetchPersonFromWindowsLiveId(liveId);
             if(currentPerson==null)
             {
                 return new[] {
@@ -50,7 +65,7 @@ namespace oikonomos.web.ApiControllers
 
             if(currentPerson.ChurchId==6) //Sample church people
             {
-                var currentPersonVm = PersonDataAccessor.FetchPersonViewModel(currentPerson.PersonId, currentPerson);
+                var currentPersonVm = _personService.FetchPersonViewModel(currentPerson.PersonId, currentPerson);
                 items.Add(GetSamplePerson("Joe Bloggs", group1));
                 items.Add(GetSamplePerson("John Doe", group1));
                 CreatePersonItem(currentPersonVm, items, group1);
@@ -73,7 +88,7 @@ namespace oikonomos.web.ApiControllers
             items.Add(GetSampleEvent("Launch of Windows 8", "26th October 2012", "event2.jpg", "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?", group2));
             items.Add(GetSampleEvent("Another Great Event", "Make sure you do not miss out", "event3.jpg", "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.", group2));
                 
-            var currentPersonViewModel = PersonDataAccessor.FetchPersonViewModel(currentPerson.PersonId, currentPerson);
+            var currentPersonViewModel = _personService.FetchPersonViewModel(currentPerson.PersonId, currentPerson);
             CreatePersonItem(currentPersonViewModel, items, group3);
             return items;
         }

@@ -1,9 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Web.Http;
-using oikonomos.common.Models;
+using oikonomos.data;
 using oikonomos.data.DataAccessors;
+using oikonomos.repositories;
+using oikonomos.repositories.interfaces;
+using oikonomos.services;
+using oikonomos.services.interfaces;
 using oikonomos.web.Helpers;
 
 namespace oikonomos.web.ApiControllers
@@ -19,6 +24,29 @@ namespace oikonomos.web.ApiControllers
     
     public class PersonController : ApiController
     {
+        private readonly IPersonService _personService;
+        private readonly IPersonRepository _personRepository;
+
+        public PersonController()
+        {
+            var permissionRepository = new PermissionRepository();
+            var churchRepository = new ChurchRepository();
+            _personRepository = new PersonRepository(permissionRepository, churchRepository);
+            _personService = new PersonService(
+                _personRepository,
+                new PersonGroupRepository(),
+                permissionRepository,
+                new PersonRoleRepository(),
+                new PersonOptionalFieldRepository(),
+                new RelationshipRepository(_personRepository),
+                new ChurchMatcherRepository(), 
+                new GroupRepository(), 
+                new FamilyRepository(),
+                new EmailService(new PasswordService(_personRepository, churchRepository, new UsernamePasswordRepository(permissionRepository)), new GroupRepository()),
+                    new AddressRepository()
+                );
+        }
+
         private const string ClientSecret = "LWunfzibyFCzKqnFmnrEgUs6zHrglVZS";
         
         public Person Get(string id)
@@ -33,17 +61,17 @@ namespace oikonomos.web.ApiControllers
             var d = new Dictionary<int, string> { { 0, ClientSecret } };
             try
             {
-                var myJWT = new JsonWebToken(authenticationToken, d);
+                var myJwt = new JsonWebToken(authenticationToken, d);
             }
             catch
             {
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);
             }
             
-            var person = PersonDataAccessor.FetchPersonFromWindowsLiveId(id);
+            var person = _personRepository.FetchPersonFromWindowsLiveId(id);
             if(person!=null)
             {
-                var pvm = PersonDataAccessor.FetchPersonViewModel(person.PersonId, person);
+                var pvm = _personService.FetchPersonViewModel(person.PersonId, person);
                 return new Person { liveId = id, firstname = pvm.Firstname, surname = pvm.Surname, cellPhone = pvm.CellPhone, email = pvm.Email };
             }
 
@@ -70,20 +98,20 @@ namespace oikonomos.web.ApiControllers
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);
             }
             
-            var person = PersonDataAccessor.FetchPersonFromWindowsLiveId(value.liveId);
+            var person = _personRepository.FetchPersonFromWindowsLiveId(value.liveId);
             if (person != null)
             {
-                var pvm       = PersonDataAccessor.FetchPersonViewModel(person.PersonId, person);
+                var pvm       = _personService.FetchPersonViewModel(person.PersonId, person);
                 pvm.Firstname = value.firstname;
                 pvm.Surname   = value.surname;
                 pvm.CellPhone = value.cellPhone;
                 pvm.Email     = value.email;
                 pvm.WindowsLiveId = value.liveId;
 
-                PersonDataAccessor.SavePerson(pvm, person);
+                _personService.Save(pvm, person);
             }
 
-            PersonDataAccessor.SavePersonToSampleChurch(value.firstname, value.surname, value.liveId, value.cellPhone, value.email, 47);
+            _personService.SavePersonToSampleChurch(value.firstname, value.surname, value.liveId, value.cellPhone, value.email, 47);
 
         }
     }

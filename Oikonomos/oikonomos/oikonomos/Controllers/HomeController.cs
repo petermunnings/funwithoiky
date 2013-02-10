@@ -11,6 +11,7 @@ using oikonomos.data.DataAccessors;
 using oikonomos.common.Models;
 using System.Net.Mail;
 using oikonomos.repositories;
+using oikonomos.repositories.interfaces;
 using oikonomos.services;
 using oikonomos.services.interfaces;
 using oikonomos.web.Helpers;
@@ -21,12 +22,35 @@ namespace oikonomos.web.Controllers
 {
     public class HomeController : Controller
     {
-        private IEventService _eventService;
-        
+        private readonly IEventService _eventService;
+        private readonly IPersonGroupRepository _personGroupRepository;
+        private readonly IPersonRepository _personRepository;
+        private readonly IPersonService _personService;
+        private readonly IUsernamePasswordRepository _usernamePasswordRepository;
+
         public HomeController()
         {
-            var context   = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString);
-            _eventService = new EventService(new EventRepository(context));
+            _eventService = new EventService(new EventRepository());
+            _personGroupRepository = new PersonGroupRepository();
+            var churchRepository = new ChurchRepository();          
+            var permissionRepository = new PermissionRepository();
+            _personRepository = new PersonRepository(permissionRepository, churchRepository);
+            _usernamePasswordRepository = new UsernamePasswordRepository(permissionRepository);
+  
+            _personService = new PersonService(
+                _personRepository,
+                new PersonGroupRepository(),
+                permissionRepository,
+                new PersonRoleRepository(),
+                new PersonOptionalFieldRepository(),
+                new RelationshipRepository(_personRepository),
+                new ChurchMatcherRepository(),
+                new GroupRepository(),
+                new FamilyRepository(),
+                new EmailService(new PasswordService(_personRepository, churchRepository, _usernamePasswordRepository), new GroupRepository()),
+                    new AddressRepository()
+                );
+            
         }
 
         public ActionResult Settings()
@@ -37,7 +61,7 @@ namespace oikonomos.web.Controllers
                 return View("Login");
             }
 
-            SettingsViewModel settings = new SettingsViewModel();
+            var settings = new SettingsViewModel();
             ViewBag.GroupId = 0;
             if(currentPerson.HasPermission(common.Permissions.EditSettings))
             {
@@ -161,7 +185,7 @@ namespace oikonomos.web.Controllers
                 {
                     if (id != null)
                     {
-                        Person person = PersonDataAccessor.FetchPersonFromPublicId(id);
+                        Person person = _personRepository.FetchPersonFromPublicId(id);
                         if (person != null)
                         {
                             ViewBag.Message = "Welcome " + person.Firstname + " please login";
@@ -202,7 +226,7 @@ namespace oikonomos.web.Controllers
             }
             else
             {
-                Person currentPerson = PersonDataAccessor.Login(email, password, ref message);
+                Person currentPerson = _usernamePasswordRepository.Login(email, password, out message);
                 ViewBag.Message = message;
                 if (currentPerson == null)
                 {
@@ -235,7 +259,7 @@ namespace oikonomos.web.Controllers
 
         private EventDisplayModel GetEventDisplayModel(Person currentPerson)
         {
-            ChurchViewModel churchViewModel = (ChurchViewModel)Session[SessionVariable.Church];
+            var churchViewModel = (ChurchViewModel)Session[SessionVariable.Church];
             ViewBag.Message = "Welcome " + currentPerson.Firstname + " " + currentPerson.Family.FamilyName + " from " + churchViewModel.ChurchName;
 
             EventDisplayModel eventDisplayModel = EventDataAccessor.FetchEventsToDisplay(currentPerson);
@@ -258,13 +282,13 @@ namespace oikonomos.web.Controllers
                 ViewBag.ChurchAdminDisplayRoles = true;
             }
 
-            var personViewModel = new PersonViewModel();
+            PersonViewModel personViewModel;
             if (personId.HasValue)
             {
-                personViewModel = PersonDataAccessor.FetchPersonViewModel(personId.Value, currentPerson);
+                personViewModel = _personService.FetchPersonViewModel(personId.Value, currentPerson);
                 if (personViewModel == null)
                 {
-                    personViewModel = PersonDataAccessor.FetchPersonViewModel(currentPerson.PersonId, currentPerson);
+                    personViewModel = _personService.FetchPersonViewModel(currentPerson.PersonId, currentPerson);
                 }
                 else if (GroupId.HasValue)
                 {
@@ -273,7 +297,7 @@ namespace oikonomos.web.Controllers
             }
             else
             {
-                personViewModel = PersonDataAccessor.FetchPersonViewModel(currentPerson.PersonId, currentPerson);
+                personViewModel = _personService.FetchPersonViewModel(currentPerson.PersonId, currentPerson);
             }
 
             ViewBag.CanChangeRole = false;
@@ -284,18 +308,34 @@ namespace oikonomos.web.Controllers
             }
 
             //Fetch Groups
-            var groups = GroupDataAccessor.FetchHomeGroups(currentPerson.ChurchId, currentPerson);
-            groups.Insert(0, new HomeGroupsViewModel() { GroupId = 0, GroupName = "Select a group..." });
-            var canChangeGroup = (personViewModel.GroupId == 0 && !personViewModel.IsInMultipleGroups);
-            if (!canChangeGroup && !personViewModel.IsInMultipleGroups)
+            if (personViewModel.IsInMultipleGroups)
             {
-                if (groups.Any(g => g.GroupId == personViewModel.GroupId))
-                {
-                    canChangeGroup = true;
-                }
+                var personInGroupId = personId.HasValue ? personId.Value : currentPerson.PersonId;
+                var groups = GroupDataAccessor.FetchGroupsPersonIsIn(currentPerson.ChurchId, personInGroupId);
+                var primaryGroup = _personGroupRepository.GetPrimaryGroup(personInGroupId, currentPerson);
+                if(primaryGroup!=null)
+                    personViewModel.GroupId = primaryGroup.GroupId;
+                if (primaryGroup == null && groups != null && groups.Any())
+                    personViewModel.GroupId = groups.First().GroupId;
+                ViewBag.Groups = groups;
+                ViewBag.CanChangeGroup = true;
             }
-            ViewBag.CanChangeGroup = canChangeGroup;
-            ViewBag.Groups = groups;
+            else
+            {
+                var groups = GroupDataAccessor.FetchHomeGroups(currentPerson.ChurchId, currentPerson);
+                groups.Insert(0, new HomeGroupsViewModel() { GroupId = 0, GroupName = "Select a group..." });
+                var canChangeGroup = (personViewModel.GroupId == 0 && !personViewModel.IsInMultipleGroups);
+                if (!canChangeGroup && !personViewModel.IsInMultipleGroups)
+                {
+                    if (groups.Any(g => g.GroupId == personViewModel.GroupId))
+                    {
+                        canChangeGroup = true;
+                    }
+                }
+                ViewBag.CanChangeGroup = canChangeGroup;
+                ViewBag.Groups = groups;
+            }
+
 
             
             var optionalFields = SettingsDataAccessor.FetchChurchOptionalFields(currentPerson.ChurchId);

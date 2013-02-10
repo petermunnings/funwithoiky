@@ -38,6 +38,7 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -45,9 +46,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddressRepository.cs" />
+    <Compile Include="ChurchMatcherRepository.cs" />
+    <Compile Include="ChurchRepository.cs" />
     <Compile Include="CommentRepository.cs" />
+    <Compile Include="CurrentContext.cs" />
     <Compile Include="EventRepository.cs" />
+    <Compile Include="FamilyRepository.cs" />
+    <Compile Include="GroupEventRepository.cs" />
+    <Compile Include="GroupRepository.cs" />
+    <Compile Include="PermissionRepository.cs" />
+    <Compile Include="PersonGroupRepository.cs" />
+    <Compile Include="PersonOptionalFieldRepository.cs" />
+    <Compile Include="PersonRepository.cs" />
+    <Compile Include="PersonRoleRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RelationshipRepository.cs" />
+    <Compile Include="RepositoryBase.cs" />
+    <Compile Include="UsernamePasswordRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\oikonomos.data\oikonomos.data\oikonomos.data.csproj">

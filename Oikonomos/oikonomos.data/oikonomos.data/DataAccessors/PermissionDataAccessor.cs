@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Lib.Web.Mvc.JQuery.JqGrid;
 using System.Configuration;
 using oikonomos.data.Services;
@@ -10,7 +9,7 @@ using oikonomos.common;
 
 namespace oikonomos.data.DataAccessors
 {
-    public class PermissionDataAccessor
+    public static class PermissionDataAccessor
     {
         
         public static int FetchDefaultRoleId(Person currentPerson)

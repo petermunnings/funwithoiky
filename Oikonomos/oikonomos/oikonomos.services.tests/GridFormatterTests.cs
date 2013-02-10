@@ -58,7 +58,7 @@ namespace oikonomos.services.tests
 
             var result = gridFormatter.FormatCommentsForGrid(comments, request);
 
-            Assert.That(result.rows[0].cell[0], Is.EqualTo("01 Apr 2012"));
+            Assert.That(result.rows[0].cell[1], Is.EqualTo("01 Apr 2012"));
         }
          
     }

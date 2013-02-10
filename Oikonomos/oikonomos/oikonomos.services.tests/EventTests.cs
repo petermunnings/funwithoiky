@@ -3,6 +3,7 @@ using System.Linq;
 using NUnit.Framework;
 using Rhino.Mocks;
 using oikonomos.common.DTOs;
+using oikonomos.data;
 using oikonomos.repositories.interfaces;
 using oikonomos.services.interfaces;
 
@@ -12,18 +13,18 @@ namespace oikonomos.services.tests
     public class EventTests
     {
         [Test]
-        public void CanGetListOfEventsThatHaveBeenAttended()
+        public void CanGetListOfPersonEventsForAGroup()
         {
             var eventRepository = MockRepository.GenerateStub<IEventRepository>();
-            var eventList = new List<EventDto> {new EventDto(), new EventDto(), new EventDto()};
-
+            var eventList = new List<PersonEventDto> { new PersonEventDto(), new PersonEventDto(), new PersonEventDto() };
+            var currentPerson = new Person {Permissions = new List<int> {57}};
             eventRepository
-                .Expect(e => e.GetListOfCompletedEvents(1))
+                .Expect(e => e.GetPersonEventsForGroup(1, currentPerson))
                 .Return(eventList);
 
             IEventService eventService = new EventService(eventRepository);
 
-            var sut = eventService.GetListOfCompletedEvents(1);
+            var sut = eventService.GetPersonEventsForGroup(1, currentPerson);
 
             Assert.That(sut.Count(), Is.EqualTo(3));
 

@@ -45,8 +45,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IAddressRepository.cs" />
+    <Compile Include="IChurchMatcherRepository.cs" />
+    <Compile Include="IChurchRepository.cs" />
     <Compile Include="ICommentRepository.cs" />
     <Compile Include="IEventRepository.cs" />
+    <Compile Include="IFamilyRepository.cs" />
+    <Compile Include="IGroupEventRepository.cs" />
+    <Compile Include="IGroupRepository.cs" />
+    <Compile Include="IUsernamePasswordRepository.cs" />
+    <Compile Include="IPermissionRepository.cs" />
+    <Compile Include="IPersonGroupRepository.cs" />
+    <Compile Include="IPersonOptionalFieldRepository.cs" />
+    <Compile Include="IPersonRepository.cs" />
+    <Compile Include="IPersonRoleRepository.cs" />
+    <Compile Include="IRelationshipRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

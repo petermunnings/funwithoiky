@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using Facebook.Web;
 using Facebook;
 using System.Web.Security;
 using oikonomos.data;
@@ -11,22 +8,36 @@ using oikonomos.data.DataAccessors;
 using oikonomos.common.Models;
 using oikonomos.common;
 using System.Configuration;
+using oikonomos.repositories;
+using oikonomos.repositories.interfaces;
 using oikonomos.web.Helpers;
 
 namespace oikonomos.web.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly IPersonRepository _personRepository;
+        private readonly IUsernamePasswordRepository _usernamePasswordRepository;
+
+        public AccountController()
+        {
+            var permissionRepository = new PermissionRepository();
+            _personRepository = new PersonRepository(permissionRepository, new ChurchRepository());
+            _usernamePasswordRepository = new UsernamePasswordRepository(permissionRepository);
+        }
 
         public ActionResult Login(string id, string returnUrl)
         {
             if (id != null)
             {
-                Session["PersonTryingToLogin"] = PersonDataAccessor.FetchPersonFromPublicId(id);
+                Session["PersonTryingToLogin"] = _personRepository.FetchPersonFromPublicId(id);
             }
 
-            var oAuthClient = new FacebookOAuthClient(FacebookApplication.Current);
-            oAuthClient.RedirectUri = new Uri(ConfigurationManager.AppSettings["RedirectUrl"]);
+            var oAuthClient = new FacebookOAuthClient(FacebookApplication.Current)
+                {
+                    RedirectUri = new Uri(ConfigurationManager.AppSettings["RedirectUrl"])
+                };
+
             var loginUri = oAuthClient.GetLoginUrl(new Dictionary<string, object> { { "state", returnUrl } });
             return Redirect(loginUri.AbsoluteUri + "&scope=user_birthday,email");
         }
@@ -49,7 +60,7 @@ namespace oikonomos.web.Controllers
                     GetFacebookDetails(accessToken, out me, out facebookId, out birthdate);
 
                     //Check for the id in the database
-                    Person currentUser = PersonDataAccessor.FetchPersonFromFacebookId(facebookId);
+                    Person currentUser = _personRepository.FetchPersonFromFacebookId(facebookId);
                     if (currentUser != null)
                     {
                         SecurityHelper.CheckCurrentUser(facebookId, currentUser, Session, Response, ViewBag);
@@ -64,7 +75,7 @@ namespace oikonomos.web.Controllers
                         }
                         else
                         {
-                            List<Person> people = PersonDataAccessor.FetchPersonFromName(me.name, me.first_name, me.last_name, me.email);
+                            List<Person> people = _personRepository.FetchPersonFromName(me.name, me.first_name, me.last_name, me.email);
                             if (people.Count == 1)
                             {
                                 //For now we assume its the right person
@@ -103,7 +114,7 @@ namespace oikonomos.web.Controllers
 
         private void GetFacebookDetails(string accessToken, out dynamic me, out long facebookId, out DateTime? birthdate)
         {
-            FacebookClient fbClient = new FacebookClient(accessToken);
+            var fbClient = new FacebookClient(accessToken);
             Session["FacebookClient"] = fbClient;
             me = fbClient.Get("me?fields=id,name,first_name,last_name,birthday,email");
             facebookId = Convert.ToInt64(me.id);
@@ -150,7 +161,7 @@ namespace oikonomos.web.Controllers
         public ActionResult ValidateFacebookLogin(string email, string password)
         {
             string message = string.Empty;
-            Person currentPerson = PersonDataAccessor.Login(email, password, ref message);
+            Person currentPerson = _usernamePasswordRepository.Login(email, password, out message);
             ViewBag.Message = message;
             if (currentPerson == null)
             {

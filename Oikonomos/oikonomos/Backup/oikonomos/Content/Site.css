@@ -1,0 +1,45 @@
+body
+{
+    font-size: 80%;
+    font-family: Verdana, Tahoma, Arial, "Helvetica Neue", Helvetica, Sans-Serif;
+    color: #111111;
+    background-attachment: fixed;
+    background-repeat:repeat-x;
+    background-position:top;
+}
+
+.tooltip {
+	display:none;
+	background:transparent url(/Content/images/tooltip.png);
+	font-size:12px;
+	height:34px;
+	width:102px;
+	padding:18px;
+	color:#000;	
+	text-align:center;
+}
+
+.tooltip_big {
+	display:none;
+	background:transparent url(/Content/images/tooltip_big.png);
+	font-size:12px;
+	height:64px;
+	width:162px;
+	padding:18px;
+	color:#000;	
+	text-align:center;
+}
+input[type="text"] { height: 20px; }
+input[type="password"] { height: 20px; }
+
+.displayNone
+{
+    display: none;
+}
+
+.tableRow
+{
+    display:table-row;
+    height:30px;
+}
+

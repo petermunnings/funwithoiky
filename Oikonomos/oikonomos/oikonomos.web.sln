@@ -1,6 +1,19 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DCC0CD39-8DCF-47BA-940E-3A1EDA6774D6}"
+	ProjectSection(SolutionItems) = preProject
+		Local.testsettings = Local.testsettings
+		oikonomos.web.vsmdi = oikonomos.web.vsmdi
+		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{F089C386-BAB8-4272-9D72-12FDB3585A8F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{AC50BB4F-638B-4ACC-9E53-35FFAED495CE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repositories", "Repositories", "{0B58F68F-8814-465F-81EA-22023181F830}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "oikonomos.web", "oikonomos\oikonomos.web.csproj", "{5FBD2698-019B-430B-82F2-12CD056E6C60}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "oikonomos.data", "..\oikonomos.data\oikonomos.data\oikonomos.data.csproj", "{42B40471-19BB-4727-9973-924745733AFD}"
@@ -9,24 +22,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "oikonomos.common", "oikonom
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Web.Mvc", "Lib.Web.Mvc\Lib.Web.Mvc.csproj", "{1332384E-DDEF-4B55-81E8-F6F0B0C779DC}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DCC0CD39-8DCF-47BA-940E-3A1EDA6774D6}"
-	ProjectSection(SolutionItems) = preProject
-		Local.testsettings = Local.testsettings
-		oikonomos.web.vsmdi = oikonomos.web.vsmdi
-		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "oikonomos.services.interfaces", "oikonomos.services.interfaces\oikonomos.services.interfaces.csproj", "{BB21F4DD-E8C9-4969-B6EB-27B35CC1AF10}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{F089C386-BAB8-4272-9D72-12FDB3585A8F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "oikonomos.services", "oikonomos.services\oikonomos.services.csproj", "{7939F5A9-5DDF-4481-8C7F-980B1622FB69}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{AC50BB4F-638B-4ACC-9E53-35FFAED495CE}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "oikonomos.services.tests", "oikonomos.services.tests\oikonomos.services.tests.csproj", "{F6A99C43-0867-469F-8552-724E5D6CBAC8}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repositories", "Repositories", "{0B58F68F-8814-465F-81EA-22023181F830}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "oikonomos.repositories.interfaces", "oikonomos.repositories.interfaces\oikonomos.repositories.interfaces.csproj", "{FE1C517D-4E67-403F-BF8D-0709A78DD900}"
 EndProject
@@ -88,12 +88,12 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{42B40471-19BB-4727-9973-924745733AFD} = {0B58F68F-8814-465F-81EA-22023181F830}
-		{FE1C517D-4E67-403F-BF8D-0709A78DD900} = {0B58F68F-8814-465F-81EA-22023181F830}
-		{19DA1C75-7E17-4DE5-9956-8B4BD1A9C248} = {0B58F68F-8814-465F-81EA-22023181F830}
 		{BB21F4DD-E8C9-4969-B6EB-27B35CC1AF10} = {F089C386-BAB8-4272-9D72-12FDB3585A8F}
 		{7939F5A9-5DDF-4481-8C7F-980B1622FB69} = {F089C386-BAB8-4272-9D72-12FDB3585A8F}
 		{F6A99C43-0867-469F-8552-724E5D6CBAC8} = {AC50BB4F-638B-4ACC-9E53-35FFAED495CE}
 		{F3D322E8-95D3-408A-B4E8-911D92D5AEED} = {AC50BB4F-638B-4ACC-9E53-35FFAED495CE}
+		{42B40471-19BB-4727-9973-924745733AFD} = {0B58F68F-8814-465F-81EA-22023181F830}
+		{FE1C517D-4E67-403F-BF8D-0709A78DD900} = {0B58F68F-8814-465F-81EA-22023181F830}
+		{19DA1C75-7E17-4DE5-9956-8B4BD1A9C248} = {0B58F68F-8814-465F-81EA-22023181F830}
 	EndGlobalSection
 EndGlobal

@@ -458,36 +458,6 @@ namespace oikonomos.data.DataAccessors
             return upcomingEventsLimited;
         }
 
-        public static void SaveHomeGroupEvent(Person currentPerson, HomeGroupEventViewModel hgEvent)
-        {
-            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
-            {
-                var didAttend = 0;
-                var didNotAttend = 0;
-                foreach (var personEvents in hgEvent.Events)
-                {
-                    var person = PersonDataAccessor.FetchPerson(personEvents.PersonId);
-                    foreach (var personEvent in personEvents.Events)
-                    {
-                        var pe = SavePersonEvent(context, personEvents, currentPerson, personEvent);
-                        CheckToSeeIfEventAlreadyExists(personEvents, context, personEvent, pe);
-
-                        if (!person.HasPermission(Permissions.IncludeInGroupAttendanceStats)) continue;
-                        if(personEvent.Name == EventNames.DidNotAttendGroup)
-                            didNotAttend++;
-                        if(personEvent.Name == EventNames.AttendedGroup)
-                            didAttend++;
-                    }
-                }
-
-                //Add the attended and did not attend group events
-                AddAttendanceEvents(hgEvent, context, didAttend, "Members attended", currentPerson);
-                AddAttendanceEvents(hgEvent, context, didNotAttend, "Members did not attend", currentPerson);
-
-                context.SaveChanges();
-            }
-        }
-
         public static void SavePersonEvents(PersonEventViewModel personEvents, Person currentPerson)
         {
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
@@ -508,7 +478,8 @@ namespace oikonomos.data.DataAccessors
         }
 
         #region Private Methods
-        private static OldEvent SavePersonEvent(oikonomosEntities context, PersonEventViewModel personEvents, Person currentPerson, EventViewModel personEvent)
+
+        public static OldEvent SavePersonEvent(oikonomosEntities context, PersonEventViewModel personEvents, Person currentPerson, EventViewModel personEvent)
         {
             var pe = new OldEvent
                          {
@@ -539,7 +510,7 @@ namespace oikonomos.data.DataAccessors
             return pe;
         }
 
-        private static void CheckToSeeIfEventAlreadyExists(PersonEventViewModel personEvents, oikonomosEntities context, EventViewModel personEvent, OldEvent pe)
+        public static void CheckToSeeIfEventAlreadyExists(PersonEventViewModel personEvents, oikonomosEntities context, EventViewModel personEvent, OldEvent pe)
         {
             string groupId = personEvent.GroupId.ToString();
             //Check to see if this event already exists
@@ -622,7 +593,7 @@ namespace oikonomos.data.DataAccessors
             }
         }
 
-        private static void AddAttendanceEvents(HomeGroupEventViewModel hgEvent, oikonomosEntities context, int eventValue, string eventName, Person currentPerson)
+        public static void AddAttendanceEvents(HomeGroupEventViewModel hgEvent, oikonomosEntities context, int eventValue, string eventName, Person currentPerson)
         {
             OldEvent groupEvent = new OldEvent();
             groupEvent.Created = DateTime.Now;

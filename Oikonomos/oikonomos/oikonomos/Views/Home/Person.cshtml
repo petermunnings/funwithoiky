@@ -263,7 +263,7 @@
                              @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.AllocateToGroup))
                              {
                             <div id="row_groupDropDown" class="tableRow">
-                            <div style="text-align:right; display:table-cell">Group</div>
+                            <div style="text-align:right; display:table-cell">Primary Group</div>
                             <div style="text-align:right; display:table-cell">&nbsp;</div>
                             <div style="text-align:left; display:table-cell">@Html.DropDownListFor(model => model.GroupId, new SelectList(ViewBag.Groups, "GroupId", "GroupName"), new { @class = "ui-corner-all" })</div>
                             </div>
@@ -352,8 +352,25 @@
         @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewComments))
         {
     <div id="tabs-2">
-        <table id="jqgCommentList" cellpadding="0" cellspacing="0" style="width: 330px"></table>
-        <div id="jqgpCommentList" style="text-align: center;"></div>
+        <div class="ui-widget">
+            @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.AddComment))
+            {
+
+                <div style="text-align: left" class="ui-widget-header">Add a Comment</div>
+                <div class="ui-widget-content" style="text-align: left">
+                    <br /><br /><textarea id="comment_detail" rows="6" cols="80"></textarea><br /><br />
+                    <button id="saveComment_button">Save comment</button>
+                    &nbsp;<button id="cancelComment_button">Cancel</button>
+                    <br /><br />
+                </div>
+            }
+            <div style="text-align: left" class="ui-widget-header">Previous Comments</div>
+            <div class="ui-widget-content">
+                <br />
+                <table id="jqgCommentList" cellpadding="0" cellspacing="0"></table>
+                <div id="jqgpCommentList" style="text-align: center;"></div>
+            </div>
+        </div>
     </div>
         }
         @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewComments))

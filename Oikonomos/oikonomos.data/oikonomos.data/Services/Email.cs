@@ -39,26 +39,25 @@ namespace oikonomos.data.Services
             return "Emails queued for sending";
         }
       
-        public static string SendWelcomeEmail(string firstname,
+        public static void SendWelcomeEmail(
+            string firstname,
             string surname,
             Church church,
             string email,
             string password,
+            Guid publicId,
             bool isVisitor,
             bool includeUsernamePassword)
         {
-            Guid guid = Guid.NewGuid();
-
             Task.Factory.StartNew(() => SendWelcomeEmailAsync(firstname,
                                                   surname,
                                                   church,
                                                   email,
                                                   password,
-                                                  guid.ToString(),
+                                                  publicId.ToString(),
                                                   isVisitor,
                                                   includeUsernamePassword));
 
-            return guid.ToString();
 
         }
 

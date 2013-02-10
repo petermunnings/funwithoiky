@@ -34,6 +34,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -42,9 +43,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommentService.cs" />
+    <Compile Include="EmailService.cs" />
     <Compile Include="EventService.cs" />
     <Compile Include="GridFormatter.cs" />
+    <Compile Include="PasswordService.cs" />
+    <Compile Include="PersonService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SystemAdministratorService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\oikonomos.data\oikonomos.data\oikonomos.data.csproj">
@@ -62,6 +67,10 @@
     <ProjectReference Include="..\oikonomos.repositories.interfaces\oikonomos.repositories.interfaces.csproj">
       <Project>{FE1C517D-4E67-403F-BF8D-0709A78DD900}</Project>
       <Name>oikonomos.repositories.interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\oikonomos.repositories\oikonomos.repositories.csproj">
+      <Project>{19DA1C75-7E17-4DE5-9956-8B4BD1A9C248}</Project>
+      <Name>oikonomos.repositories</Name>
     </ProjectReference>
     <ProjectReference Include="..\oikonomos.services.interfaces\oikonomos.services.interfaces.csproj">
       <Project>{BB21F4DD-E8C9-4969-B6EB-27B35CC1AF10}</Project>

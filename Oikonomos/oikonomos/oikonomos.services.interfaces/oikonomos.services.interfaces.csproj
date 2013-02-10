@@ -42,8 +42,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ICommentService.cs" />
+    <Compile Include="IEmailService.cs" />
     <Compile Include="IEventService.cs" />
     <Compile Include="IGridFormatter.cs" />
+    <Compile Include="IPasswordService.cs" />
+    <Compile Include="IPersonService.cs" />
+    <Compile Include="ISystemAdministratorService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

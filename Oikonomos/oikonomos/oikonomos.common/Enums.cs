@@ -82,7 +82,8 @@ namespace oikonomos.common
         SendVisitorWelcomeLetter      = 53,
         EditEmailTemplates            = 54,
         ViewHelp                      = 55,
-        ViewPersonGroups              = 56
+        ViewPersonGroups              = 56,
+        ViewDiscipleship101           = 57
     }
 
     public enum Relationships

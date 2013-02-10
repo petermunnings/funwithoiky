@@ -856,6 +856,39 @@ namespace oikonomos.data.DataAccessors
             }
         }
 
+        public static IEnumerable<HomeGroupsViewModel> FetchGroupsPersonIsIn(int churchId, int personId)
+        {
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            {
+                var groups = (from g in context.PersonGroups
+                              where g.Group.ChurchId == churchId
+                                    && g.PersonId == personId
+                              orderby g.Group.Name
+                              select g.Group);
+
+                return (from g in groups
+                        select new HomeGroupsViewModel
+                        {
+                            GroupId = g.GroupId,
+                            GroupName = g.Name,
+                            LeaderName = g.Leader.Firstname + " " + g.Leader.Family.FamilyName,
+                            LeaderId = g.LeaderId.HasValue ? g.LeaderId.Value : 0,
+                            AdministratorName = g.Administrator == null ? string.Empty : g.Administrator.Firstname + " " + g.Administrator.Family.FamilyName,
+                            AdministratorId = g.AdministratorId.HasValue ? g.AdministratorId.Value : 0,
+                            AddressId = g.AddressId.HasValue ? g.AddressId.Value : 0,
+                            Address1 = g.Address.Line1,
+                            Address2 = g.Address.Line2,
+                            Address3 = g.Address.Line3,
+                            Address4 = g.Address.Line4,
+                            AddressType = g.Address.AddressType,
+                            Lat = g.Address != null ? g.Address.Lat : 0,
+                            Lng = g.Address != null ? g.Address.Long : 0,
+                            GroupClassificationId = g.GroupClassificationId.HasValue ? g.GroupClassificationId.Value : 0,
+                            SuburbId = g.AddressId == null ? 0 : (g.Address.ChurchSuburbId == null ? 0 : (int)g.Address.ChurchSuburbId)
+                        }).ToList();
+            }
+        }
+        
         public static List<HomeGroupsViewModel> FetchHomeGroups(int churchId, Person person)
         {
             using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))

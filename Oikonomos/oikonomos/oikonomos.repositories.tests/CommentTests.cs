@@ -19,7 +19,9 @@ namespace oikonomos.repositories.tests
             foreach(var commentToDelete in commentsToDelete)
                 Context.DeleteObject(commentToDelete);
 
-            ICommentRepository commentsRepo = new CommentRepository(Context);
+            Context.SaveChanges();
+
+            ICommentRepository commentsRepo = new CommentRepository();
             var currentPerson = new Person {PersonId = personId, RoleId = roleId};
 
             const string testComment = "Test Comment";
@@ -48,7 +50,7 @@ namespace oikonomos.repositories.tests
             foreach (var commentToDelete in commentsToDelete)
                 Context.DeleteObject(commentToDelete);
 
-            ICommentRepository commentsRepo = new CommentRepository(Context);
+            ICommentRepository commentsRepo = new CommentRepository();
             var currentPerson = new Person { PersonId = personId, RoleId = roleId };
 
             const string testComment = "Test Comment";

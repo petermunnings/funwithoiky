@@ -1,39 +1,34 @@
 ﻿using System.Collections.Generic;
+using System.Configuration;
 using System.Web.Http;
 using oikonomos.common.DTOs;
+using oikonomos.data;
+using oikonomos.repositories;
+using oikonomos.services;
+using oikonomos.services.interfaces;
 
 namespace oikonomos.web.ApiControllers
 {
     public class GroupEventsController : ApiController
     {
-        // GET api/<controller>
-        public IEnumerable<PersonEventDto> Get()
+        private readonly oikonomosEntities _context;
+        
+        public GroupEventsController()
         {
-            return new List<PersonEventDto>{ new PersonEventDto{PersonId=1, FullName = "Peter Munnings", CompletedEvents = new Dictionary<int, bool>{{4,true},{5,true},{6,false},{7,true}} }};
+            _context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString);
         }
 
-        // GET api/<controller>/5
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<controller>
         public IEnumerable<PersonEventDto> Post([FromBody]int groupId)
         {
-            return new List<PersonEventDto> { new PersonEventDto { PersonId = 1, FullName = "Peter Munnings", CompletedEvents = new Dictionary<int, bool> { { 4, true }, { 5, true }, { 6, false }, { 7, true } } } };
+            IEventService eventService = new EventService(new EventRepository());
+            return new List<PersonEventDto>();
         }
 
-        // PUT api/<controller>/5
-        public void Put(int id, [FromBody]string value)
+        public IEnumerable<PersonEventDto> Get(string id)
         {
-            var c = "test";
-        }
-
-        // DELETE api/<controller>/5
-        public void Delete(int id)
-        {
-            var c = "test";
+            var groupId = int.Parse(id);
+            IEventService eventService = new EventService(new EventRepository());
+            return new List<PersonEventDto>();
         }
     }
 }

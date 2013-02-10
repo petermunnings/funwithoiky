@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using oikonomos.common.DTOs;
+using oikonomos.data;
 using oikonomos.repositories.interfaces;
 using oikonomos.services.interfaces;
 
@@ -25,12 +26,12 @@ namespace oikonomos.services
             throw new NotImplementedException();
         }
 
-        public IEnumerable<EventDto> GetListOfCompletedEvents(int personId)
+        IEnumerable<PersonEventDto> IEventService.GetListOfCompletedEvents(int personId)
         {
-            return _eventRepository.GetListOfCompletedEvents(personId);
+            return new List<PersonEventDto>();
         }
 
-        public IEnumerable<EventDto> GetListEventsForGroup(int churchId)
+        IEnumerable<EventDto> IEventService.GetListEventsForGroup(int churchId)
         {
             return _eventRepository.GetListOfEventsForGroup(churchId);
         }
@@ -38,6 +39,16 @@ namespace oikonomos.services
         public EventDto GetEvent(int eventId)
         {
             throw new NotImplementedException();
+        }
+
+        public IEnumerable<PersonEventDto> GetPersonEventsForGroup(int groupId, Person currentPerson)
+        {
+            return _eventRepository.GetPersonEventsForGroup(groupId, currentPerson);
+        }
+
+        public void UpdatePersonEvent(int personId, int eventId, bool completed, Person currentPerson)
+        {
+            _eventRepository.UpdatePersonEvent(personId, eventId, completed, currentPerson);
         }
     }
 }

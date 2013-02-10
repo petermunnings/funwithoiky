@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Web.Mvc;
 using oikonomos.common.DTOs;
@@ -13,6 +12,7 @@ using oikonomos.common;
 using System;
 using oikonomos.data.Services;
 using oikonomos.repositories;
+using oikonomos.repositories.interfaces;
 using oikonomos.services;
 using oikonomos.services.interfaces;
 
@@ -20,13 +20,40 @@ namespace oikonomos.web.Controllers
 {
     public class AjaxController : Controller
     {
-        private readonly oikonomosEntities _context;
+        private readonly IPersonService _personService;
+        private readonly IGroupEventRepository _groupEventRepository;
+        private readonly IPasswordService _passwordService;
+        private readonly IFamilyRepository _familyRepository;
+        private readonly ISystemAdministratorService _systemAdministratorService;
+        private readonly IUsernamePasswordRepository _usernamePasswordRepository;
 
         public AjaxController()
         {
-            _context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString);
+            var permissionRepository = new PermissionRepository();
+            var churchRepository = new ChurchRepository();            
+            var personRepository = new PersonRepository(permissionRepository, churchRepository);
+            _familyRepository = new FamilyRepository();
+            _usernamePasswordRepository = new UsernamePasswordRepository(permissionRepository);
+            _passwordService = new PasswordService(personRepository, churchRepository, _usernamePasswordRepository);
+            _personService = new PersonService(
+                personRepository,
+                new PersonGroupRepository(),
+                permissionRepository,
+                new PersonRoleRepository(),
+                new PersonOptionalFieldRepository(),
+                new RelationshipRepository(personRepository),
+                new ChurchMatcherRepository(), 
+                new GroupRepository(),
+                _familyRepository,
+                new EmailService(_passwordService, new GroupRepository()),
+                    new AddressRepository()
+                );
+
+            _groupEventRepository = new GroupEventRepository(personRepository);
+            
+            _systemAdministratorService  = new SystemAdministratorService(churchRepository, permissionRepository);
         }
-        
+
         public JsonResult InitializeChurchSettingsViewModel()
         {
             return Json(new ChurchSettingsViewModel { UITheme = "start", SystemName = "Oiky", AddressType = "street_address", BulkSmsUsername = string.Empty, BulkSmsPassword = string.Empty }, JsonRequestBehavior.AllowGet);
@@ -34,18 +61,11 @@ namespace oikonomos.web.Controllers
         
         public JsonResult PersonAutoComplete(string term)
         {
-            AutoCompleteViewModel[] data = new AutoCompleteViewModel[0];
+            var data = new AutoCompleteViewModel[0];
             if (Session[SessionVariable.LoggedOnPerson] != null)
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                if (Request.UrlReferrer.PathAndQuery == "/Home/Groups")
-                {
-                    data = PersonDataAccessor.FetchPersonAutoComplete(term, currentPerson, true);
-                }
-                else
-                {
-                    data = PersonDataAccessor.FetchPersonAutoComplete(term, currentPerson, false);
-                }
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                data = PersonDataAccessor.FetchPersonAutoComplete(term, currentPerson, Request.UrlReferrer.PathAndQuery == "/Home/Groups");
             }
 
             return Json(data, JsonRequestBehavior.AllowGet);
@@ -53,10 +73,10 @@ namespace oikonomos.web.Controllers
 
         public JsonResult FamilyAutoComplete(string term)
         {
-            AutoCompleteViewModel[] data = new AutoCompleteViewModel[0];
+            var data = new AutoCompleteViewModel[0];
             if (Session[SessionVariable.LoggedOnPerson] != null)
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 data = PersonDataAccessor.FetchFamilyAutoComplete(term, currentPerson.ChurchId);
             }
 
@@ -65,18 +85,11 @@ namespace oikonomos.web.Controllers
 
         public JsonResult ResetPassword(string emailAddress)
         {
-            string message = string.Empty;
+            string message;
 
             try
             {
-                if (Utils.ValidEmailAddress(emailAddress))
-                {
-                    message = PersonDataAccessor.ResetPassword(emailAddress);
-                }
-                else
-                {
-                    message = "Invalid email address";
-                }
+                message = Utils.ValidEmailAddress(emailAddress) ? _passwordService.ResetPassword(emailAddress) : "Invalid email address";
             }
             catch (Exception ex)
             {
@@ -95,7 +108,7 @@ namespace oikonomos.web.Controllers
             }
             else
             {
-                ICommentService commentService = new CommentService(new CommentRepository(_context));
+                ICommentService commentService = new CommentService(new CommentRepository());
                 var newComments = comments.Select(comment => new CommentDto {AboutPersonId = personId, Comment = comment, CommentDate = DateTime.Now}).ToList();
                 commentService.SaveComments((Person)Session[SessionVariable.LoggedOnPerson], newComments);
             }
@@ -130,8 +143,8 @@ namespace oikonomos.web.Controllers
             }
             else
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                personId = PersonDataAccessor.SavePerson(person, currentPerson);
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                personId = _personService.Save(person, currentPerson);
             }
 
             var response = new { PersonId = personId, SessionTimeOut = sessionTimedOut };
@@ -167,17 +180,17 @@ namespace oikonomos.web.Controllers
 
         public JsonResult SendEmailAndPassword(int personId)
         {
-            bool sessionTimedOut = false;
-            bool emailSent = false;
-            string message = string.Empty;
+            var sessionTimedOut = false;
+            var emailSent = false;
+            var message = string.Empty;
             if (Session[SessionVariable.LoggedOnPerson] == null)
             {
                 sessionTimedOut = true;
             }
             else
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                emailSent=PersonDataAccessor.SendEmailAndPassword(currentPerson, personId, ref message);
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                emailSent=_passwordService.SendEmailAndPassword(currentPerson, personId, out message);
             }
 
             var response = new
@@ -192,10 +205,10 @@ namespace oikonomos.web.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public JsonResult FetchChurchList(JqGridRequest request)
         {
-            JqGridData jqGridData = new JqGridData();
+            var jqGridData = new JqGridData();
             if (Session[SessionVariable.LoggedOnPerson] != null)
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 jqGridData = PersonDataAccessor.FetchChurchListJQGrid(currentPerson, request);
             }
 
@@ -223,7 +236,7 @@ namespace oikonomos.web.Controllers
             if (Session[SessionVariable.LoggedOnPerson] != null)
             {
                 var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                ICommentService commentService = new CommentService(new CommentRepository(_context));
+                ICommentService commentService = new CommentService(new CommentRepository());
                 IGridFormatter gridFormatter = new GridFormatter();
                 var comments = commentService.GetListOfComments(currentPerson, personId);
                 jqGridData = gridFormatter.FormatCommentsForGrid(comments, request);
@@ -275,11 +288,11 @@ namespace oikonomos.web.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public JsonResult FetchPeopleInGroupForAttendance(int groupId)
         {
-            List<PersonViewModel> people = new List<PersonViewModel>();
+            IEnumerable<PersonViewModel> people = new List<PersonViewModel>();
             if (Session[SessionVariable.LoggedOnPerson] != null)
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                people = (List<PersonViewModel>)GroupDataAccessor.FetchPeopleInGroup(currentPerson, groupId);
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                people = GroupDataAccessor.FetchPeopleInGroup(currentPerson, groupId);
             }
 
             return Json(new { People = people });
@@ -342,7 +355,7 @@ namespace oikonomos.web.Controllers
         {
             if (Session[SessionVariable.LoggedOnPerson] != null)
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 SelectNewChurch(churchId, currentPerson);
             }
 
@@ -354,7 +367,7 @@ namespace oikonomos.web.Controllers
         {
             if (Session[SessionVariable.LoggedOnPerson] != null)
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 if (currentPerson.HasPermission(Permissions.Login))
                 {
                     SelectNewChurch(churchId, currentPerson);
@@ -369,11 +382,11 @@ namespace oikonomos.web.Controllers
         {
             try
             {
-                JqGridData jqGridData = new JqGridData();
+                var jqGridData = new JqGridData();
                 if (Session[SessionVariable.LoggedOnPerson] != null)
                 {
-                    Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                    if (currentPerson.HasPermission(common.Permissions.EditAllGroups) || currentPerson.HasPermission(Permissions.EditOwnGroups))
+                    var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                    if (currentPerson.HasPermission(Permissions.EditAllGroups) || currentPerson.HasPermission(Permissions.EditOwnGroups))
                     {
                         jqGridData = GroupDataAccessor.FetchHomeGroupsJQGrid(currentPerson, request);
                     }
@@ -742,19 +755,19 @@ namespace oikonomos.web.Controllers
 
         public JsonResult AddPersonToFamily(int familyId, int personId)
         {
-            List<FamilyMemberViewModel> familyMembers = new List<FamilyMemberViewModel>();
-            bool sessionTimedOut = false;
+            var familyMembers = new List<FamilyMemberViewModel>();
+            var sessionTimedOut = false;
             if (Session[SessionVariable.LoggedOnPerson] == null)
             {
                 sessionTimedOut = true;
             }
             else
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 //TODO Check for User Roles
                 if (personId > 0 && familyId > 0)
                 {
-                    familyMembers = PersonDataAccessor.AddPersonToFamily(familyId, personId);
+                    familyMembers = _familyRepository.AddPersonToFamily(familyId, personId).ToList();
                 }
             }
 
@@ -943,7 +956,7 @@ namespace oikonomos.web.Controllers
             }
             else
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 attendance = EventDataAccessor.FetchGroupAttendance(currentPerson, groupId, date);
             }
 
@@ -957,17 +970,17 @@ namespace oikonomos.web.Controllers
 
         public JsonResult SaveHomeGroupEvent(HomeGroupEventViewModel hgEvent)
         {
-            string message = string.Empty;
-            bool sessionTimedOut = false;
+            var message = string.Empty;
+            var sessionTimedOut = false;
             if (Session[SessionVariable.LoggedOnPerson] == null)
             {
                 sessionTimedOut = true;
             }
             else
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
 
-                EventDataAccessor.SaveHomeGroupEvent(currentPerson, hgEvent);
+                _groupEventRepository.Save(currentPerson, hgEvent);
             }
 
             var response = new
@@ -983,31 +996,31 @@ namespace oikonomos.web.Controllers
         {
             var response = new
             {
-                FamilyMembers = PersonDataAccessor.FetchFamilyMembers(personId, familyId)
+                FamilyMembers = _familyRepository.FetchFamilyMembers(personId, familyId)
             };
             return Json(response, JsonRequestBehavior.DenyGet);
         }
 
         public JsonResult FetchPerson(int personId)
         {
-            PersonViewModel personViewModel = new PersonViewModel();
-            bool sessionTimedOut = false;
+            var personViewModel = new PersonViewModel();
+            var sessionTimedOut = false;
             if (Session[SessionVariable.LoggedOnPerson] == null)
             {
                 sessionTimedOut = true;
             }
             else
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 if (personId > 0)
                 {
-                    personViewModel = PersonDataAccessor.FetchPersonViewModel(personId, currentPerson);
+                    personViewModel = _personService.FetchPersonViewModel(personId, currentPerson);
 
                     if (personViewModel != null && personViewModel.FacebookId == null && personId != currentPerson.PersonId)
                     {
                         if (Session["FacebookClient"] != null)
                         {
-                            FacebookClient client = (FacebookClient)Session["FacebookClient"];
+                            var client = (FacebookClient)Session["FacebookClient"];
                             //Search for facebook Id
                             Task.Factory.StartNew(() => SearchForFacebookId(personId, personViewModel.Firstname, personViewModel.Surname, client));
                         }
@@ -1204,16 +1217,16 @@ namespace oikonomos.web.Controllers
 
         public JsonResult ChangePassword(string currentPassword, string newPassword)
         {
-            bool sessionTimedOut = false;
-            string message = string.Empty;
+            var sessionTimedOut = false;
+            var message = string.Empty;
             if (Session[SessionVariable.LoggedOnPerson] == null)
             {
                 sessionTimedOut = true;
             }
             else
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                message=PersonDataAccessor.ChangePassword(currentPerson.PersonId, currentPassword, newPassword);
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                message=_usernamePasswordRepository.ChangePassword(currentPerson.PersonId, currentPassword, newPassword);
             }
 
             var response = new
@@ -1529,7 +1542,7 @@ namespace oikonomos.web.Controllers
                 var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 if (currentPerson.HasPermission(Permissions.AddComment))
                 {
-                    ICommentService commentService = new CommentService(new CommentRepository(_context));
+                    ICommentService commentService = new CommentService(new CommentRepository());
                     try
                     {
                         commentService.SaveComment(currentPerson,
@@ -1576,7 +1589,7 @@ namespace oikonomos.web.Controllers
                 var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 if (currentPerson.HasPermission(Permissions.ViewComments))
                 {
-                    ICommentService commentService = new CommentService(new CommentRepository(_context));
+                    ICommentService commentService = new CommentService(new CommentRepository());
                     comments = commentService.GetListOfComments(currentPerson, personId, 5).ToList();
                 }
                 else
@@ -1663,7 +1676,7 @@ namespace oikonomos.web.Controllers
 
         private void SelectNewChurch(int churchId, Person currentPerson)
         {
-            var newChurch = PersonDataAccessor.SelectNewChurch(currentPerson, churchId);
+            var newChurch = _systemAdministratorService.SetNewChurch(currentPerson, churchId);
             if (newChurch != null)
             {
                 currentPerson.ChurchId = newChurch.ChurchId;

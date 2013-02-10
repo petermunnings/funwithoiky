@@ -1,0 +1,60 @@
+﻿@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="@oikonomos.web.Helpers.JavascriptHelper.Content("~/Scripts/Site/Login.js")" type="text/javascript"></script>
+<p>&nbsp;</p>
+@using (Ajax.BeginForm("Login", "Home", null))
+{
+    <table class="ui-widget-header">
+        <tr style="height:30px">
+            <td id="td_message" style="width:402px; text-align:center">@ViewBag.Message</td>
+        </tr>
+    </table>
+    <table class="ui-widget-content">
+        <tr style="height:30px">
+            <td colspan="2">&nbsp;</td>
+        </tr>
+        <tr style="height:30px">
+            <td style="width:120px; text-align:center">Email:</td>
+            <td style="width:278px; text-align:left">@Html.TextBox("email", "", new { style = "width:250px",  @class="ui-corner-all" })</td>
+        </tr>
+        <tr style="height:30px">
+            <td style="width:120px; text-align:center">Password:</td>
+            <td style="width:278px; text-align:left">@Html.Password("password", "", new { style = "width:250px",  @class="ui-corner-all" })</td>
+        </tr>
+        <tr style="height:30px">
+            <td style="width:120px; text-align:center">&nbsp;</td>
+            <td style="width:278px; text-align:left">
+                <input type="submit" value="Submit"/>&nbsp;<button id="forgotPassword">Forgot my password</button>
+                @if (Session[oikonomos.common.SessionVariable.Church] == null ? true : ((oikonomos.common.Models.ChurchViewModel)Session[oikonomos.common.SessionVariable.Church]).ShowFacebookLogin)
+                {
+                    <br /><br />
+                    <img id="facebook_login" src="/Content/images/facebooklogin.png" alt="facebook login" title="Login using your facebook account.  It's easier and you don't have to remember additional passwords"/>
+                }
+            </td>
+        </tr>
+        <tr style="height:30px">
+            <td style="width:120px; text-align:center">&nbsp;</td>
+            <td style="width:278px; text-align:center">&nbsp;</td>
+        </tr>
+    </table>
+}
+
+@if (Session[oikonomos.common.SessionVariable.Church] == null ? true : ((oikonomos.common.Models.ChurchViewModel)Session[oikonomos.common.SessionVariable.Church]).ShowFacebookLogin)
+{
+    <script type="text/javascript">
+        $("#facebook_login").live('mouseover mouseout', function (event) {
+            if (event.type == 'mouseover') {
+                $(this).css("cursor", "pointer");
+            } else {
+                $(this).css("cursor", "default");
+            }
+        });
+
+        $("#facebook_login").tooltip({ position: "center right", opacity: 1, tipClass: "tooltip_big" });
+        $("#facebook_login").click(function () {
+            window.location = ("/Account/Login/@ViewBag.PublicId");
+        });
+    </script>
+}

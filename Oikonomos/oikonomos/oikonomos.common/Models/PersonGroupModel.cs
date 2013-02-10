@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace oikonomos.common.Models
+﻿namespace oikonomos.common.Models
 {
     public class PersonGroupModel
     {
@@ -14,5 +9,6 @@ namespace oikonomos.common.Models
         public string LastAttended { get; set; }
         public string Leader { get; set; }
         public string Administrator { get; set; }
+        public bool PrimaryGroup { get; set; }
     }
 }

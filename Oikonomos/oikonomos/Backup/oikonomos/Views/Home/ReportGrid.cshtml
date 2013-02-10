@@ -1,0 +1,117 @@
+﻿<script src="@oikonomos.web.Helpers.JavascriptHelper.Content("~/Scripts/Site/ReportGrid.js")" type="text/javascript"></script>
+<script src="@oikonomos.web.Helpers.JavascriptHelper.Content("~/Scripts/Site/Reports.js")" type="text/javascript"></script>
+
+<div style="text-align:left; vertical-align:middle" class="ui-widget-content">
+    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="searchText" class="ui-corner-all" />&nbsp;
+    <button id="searchButton">Search</button>&nbsp;
+    <button id="clearButton">Clear</button><br /><br />&nbsp;
+    @if (ViewBag.DislayWholeChurch)
+    {
+    <button id="onlyMyHomeGroup">My Group</button><text>&nbsp;</text>
+    }
+    <button id="button_viewChurchList">View as PDF</button>&nbsp;
+    @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EmailChurch))
+    {
+    <button id="button_sendEmail">Send Email</button><text>&nbsp;</text>
+    }
+    @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.SmsChurch))
+    {  
+    <button id="button_sendSms">Send Sms</button>
+    }
+    <br />&nbsp;
+</div>
+
+<table id="jqgChurchList" cellpadding="0" cellspacing="0" style="width:800px"></table>
+<div id="jqgpChurchList" style="text-align:center;"></div>
+
+<div id="display_person" style="display:none; text-align:left" title="Person Details">  
+    <div id="personDetails" style="display:table; width:400px">
+        
+        @if (ViewBag.DisplayFacebook)
+        {
+            <div class="tableRow" id="row_image">
+                <div style="text-align:right; display:table-cell">&nbsp;</div>
+                <div style="text-align:left; display:table-cell"><img id="img_person" src="https://graph.facebook.com/facebookId/picture" alt="loading picture..."/></div>
+            </div>
+        }
+        
+        <div class="tableRow">
+        <div style="text-align:right; display:table-cell; width:150px">Firstname&nbsp;</div>
+            <div style="text-align:left; display:table-cell"><span id="span_firstname"></span></div>
+        </div>
+
+        <div class="tableRow">
+            <div style="text-align:right; display:table-cell">Surname&nbsp;</div>
+            <div style="text-align:left; display:table-cell"><span id="span_surname"></span></div>
+        </div>
+        
+        <div class="tableRow">
+            <div style="text-align:right; display:table-cell">Email&nbsp;</div>
+            <div style="text-align:left; display:table-cell"><span id="span_email"></span></div>
+        </div>
+
+        <div class="tableRow">
+        <div style="text-align:right; display:table-cell">Home Phone&nbsp;</div>
+        <div style="text-align:left; display:table-cell"><span id="span_homePhone"></span></div>
+        </div>
+
+        <div class="@ViewBag.DisplayCellPhone">
+        <div style="text-align:right; display:table-cell">Cell Phone&nbsp;</div>
+        <div style="text-align:left; display:table-cell"><span id="span_cellPhone"></span></div>
+        </div>
+
+        <div class="@ViewBag.DisplayWorkPhone">
+        <div style="text-align:right; display:table-cell">Work Phone&nbsp;</div>
+        <div style="text-align:left; display:table-cell"><span id="span_workPhone"></span></div>
+        </div>
+
+        <div id="row_dateOfBirth" class="tableRow">
+        <div style="text-align:right; display:table-cell">Date of Birth&nbsp;</div>
+        <div style="text-align:left; display:table-cell"><span id="span_dateOfBirth"></span></div>
+        </div>
+                        
+        <div id="row_anniversary" class="tableRow">
+        <div style="text-align:right; display:table-cell">Anniversary&nbsp;</div>
+        <div style="text-align:left; display:table-cell"><span id="span_anniversary"></span></div>
+        </div>
+
+        <div class="@ViewBag.DisplaySkype">
+        <div style="text-align:right; display:table-cell">Skype&nbsp;</div>
+        <div style="text-align:left; display:table-cell"><span id="span_skype"></span></div>
+        </div>
+
+        <div class="@ViewBag.DisplayTwitter">
+        <div style="text-align:right; display:table-cell">Twitter&nbsp;</div>
+        <div style="text-align:left; display:table-cell"><span id="span_twitter"></span></div>
+        </div>
+                        
+        <div class="@ViewBag.DisplayOccupation">
+        <div style="text-align:right; display:table-cell">Occupation&nbsp;</div>
+        <div style="text-align:left; display:table-cell"><span id="span_occupation"></span></div>
+        </div>
+                
+        <div class="tableRow">
+        <div style="text-align:right; display:table-cell">Address&nbsp;</div>
+        <div style="text-align:left; display:table-cell"><span id="span_address1"></span></div>
+        </div>
+
+        <div class="tableRow">
+        <div style="text-align:right; display:table-cell">&nbsp;</div>
+        <div style="text-align:left; display:table-cell"><span id="span_address2"></span></div>
+        </div>
+
+        <div class="tableRow">
+        <div style="text-align:right; display:table-cell">&nbsp;</div>
+        <div style="text-align:left; display:table-cell"><span id="span_address3"></span></div>
+        </div>
+    
+        <div class="tableRow">
+        <div style="text-align:right; display:table-cell">&nbsp;</div>
+        <div style="text-align:left; display:table-cell"><span id="span_address4"></span></div>
+        </div>
+
+    </div>
+
+</div>
+
+

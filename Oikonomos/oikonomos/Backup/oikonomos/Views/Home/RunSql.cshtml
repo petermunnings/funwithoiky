@@ -1,0 +1,45 @@
+﻿@model oikonomos.common.Models.TableGenerationModel
+
+@{
+    ViewBag.Title = "RunSql";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>RunSql</h2>
+@using (Ajax.BeginForm("RunSql", "Home", null))
+{
+    @Model.Message<br />
+    if (!Model.IsAuthenticated)
+    {
+        @Html.TextBoxFor(model => model.UserName)<br />
+        @Html.PasswordFor(model => model.Password)<br />
+    }
+    @Html.DropDownListFor(model => model.CommandType, Model.CommandTypeOptions)<br />
+    @Html.TextAreaFor(model => model.Sql, 10, 100, null)<br />
+    @Html.HiddenFor(model => model.IsAuthenticated)
+    <input type="submit" value="submit" />   
+    
+    <p>Results</p>
+    <table border="1px" class="ui-widget">
+
+    @{
+         if(Model.Results!=null){
+            foreach(System.Data.DataRow dr in Model.Results.Rows)
+            {
+                <tr>
+                @for(int i=0; i<Model.Results.Columns.Count; i++)
+                {
+                    <td>@dr[i].ToString()</td>
+                }   
+                </tr>  
+            }    
+         }
+     } 
+
+             
+    </table>
+    
+}
+
+
+

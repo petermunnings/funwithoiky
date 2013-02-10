@@ -7,13 +7,10 @@ using oikonomos.repositories.interfaces;
 
 namespace oikonomos.repositories
 {
-    public class CommentRepository : ICommentRepository
+    public class CommentRepository : RepositoryBase, ICommentRepository
     {
-        private readonly oikonomosEntities _context;
-
-        public CommentRepository(oikonomosEntities context)
+        public CommentRepository()
         {
-            _context = context;
             Mapper.CreateMap<Comment, CommentDto>()
                 .ForMember(dest=>dest.Comment, opt=>opt.MapFrom(src=>src.Comment1))
                 .ForMember(dest => dest.CreatedByPerson, opt=>opt.MapFrom(src=>src.Person1.Fullname));
@@ -23,7 +20,7 @@ namespace oikonomos.repositories
 
         IEnumerable<CommentDto> ICommentRepository.GetListOfComments(Person currentPerson, int personId)
         {
-            var comments = (from c in _context.Comments
+            var comments = (from c in Context.Comments
                             from r in c.Role.CanBeReadByRoles
                             where c.AboutPersonId == personId
                             && r.RoleId == currentPerson.RoleId
@@ -37,8 +34,8 @@ namespace oikonomos.repositories
             Mapper.Map(newCommentDto, newComment);
             newComment.MadeByPersonId = currentPerson.PersonId;
             newComment.MadeByRoleId   = currentPerson.RoleId;
-            _context.AddToComments(newComment);
-            _context.SaveChanges();
+            Context.AddToComments(newComment);
+            Context.SaveChanges();
             return newComment.CommentId;
         }
     }

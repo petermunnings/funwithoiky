@@ -13,7 +13,7 @@ namespace oikonomos.repositories.tests
         [Test]
         public void CanGetCreatedItem()
         {
-            IEventRepository eventRepository = new EventRepository(Context);
+            IEventRepository eventRepository = new EventRepository();
             const string testName            = "Test Event";
             
             var newEventDto = new EventDto

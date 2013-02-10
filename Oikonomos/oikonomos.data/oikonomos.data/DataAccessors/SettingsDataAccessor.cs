@@ -433,18 +433,23 @@ namespace oikonomos.data.DataAccessors
 
                     context.SaveChanges();
 
+                    var personAddress = new Address {Created = DateTime.Now, Changed = DateTime.Now, Line1 = string.Empty, Line2=string.Empty, Line3=string.Empty, Line4 = string.Empty};
+                    context.AddToAddresses(personAddress);
+
                     var churchAdministrator              = new Person();
                     context.AddToPeople(churchAdministrator);
                     churchAdministrator.Created          = DateTime.Now;
                     churchAdministrator.Changed          = DateTime.Now;
                     churchAdministrator.Firstname        = churchSettings.ContactFirstname;
                     churchAdministrator.Church           = newChurch;
+                    churchAdministrator.Email            = churchSettings.OfficeEmail;
                     var churchAdministratorFamily        = new Family();
                     context.AddToFamilies(churchAdministratorFamily);
                     churchAdministratorFamily.FamilyName = churchSettings.ContactSurname;
                     churchAdministratorFamily.Created    = DateTime.Now;
                     churchAdministratorFamily.Changed    = DateTime.Now;
                     churchAdministrator.Family           = churchAdministratorFamily;
+                    churchAdministrator.Family.Address   = personAddress;
 
                     context.SaveChanges();
 
@@ -464,6 +469,17 @@ namespace oikonomos.data.DataAccessors
                         newCo.OptionalFieldId = co.OptionalFieldId;
                         newCo.Visible = co.Visible;
                     }
+
+                    context.SaveChanges();
+
+                    var personChurch = new PersonChurch
+                        {
+                            Church = newChurch,
+                            Person = churchAdministrator,
+                            RoleId = churchAdministrator.RoleId
+                        };
+
+                    context.PersonChurches.AddObject(personChurch);
 
                     context.SaveChanges();
                 }
