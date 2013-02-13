@@ -59,15 +59,15 @@
       <li><a href="#tabs-1">
                 @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditChurchPersonalDetails))
                 {
-                    <text>Edit People</text>           
+                    <text>Personal details</text>           
                 } 
                 else if(ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditGroupPersonalDetails))
                 {
-                    <text>Edit People in Group</text> 
+                    <text>Personal details</text> 
                 }
                 else
                 {
-                    <text>Edit my Family's Details</text>
+                    <text>My Family's Details</text>
                 }
                 </a></li>
 
@@ -265,15 +265,8 @@
                             <div id="row_groupDropDown" class="tableRow">
                             <div style="text-align:right; display:table-cell">Primary Group</div>
                             <div style="text-align:right; display:table-cell">&nbsp;</div>
-                            <div style="text-align:left; display:table-cell">@Html.DropDownListFor(model => model.GroupId, new SelectList(ViewBag.Groups, "GroupId", "GroupName"), new { @class = "ui-corner-all" })</div>
+                            <div style="text-align:left; display:table-cell"><span id="group_Name">@Model.GroupName</span>&nbsp;<small><button class="button" title="Edit groups" id="edit_Groups">...</button></small></div>
                             </div>
-                                 if (!ViewBag.CanChangeGroup)
-                                 {
-                                     <script type="text/javascript">
-                                         $("#row_groupDropDown").hide();
-                                     </script>
-                                 }
-
                              }
 
                             <div class="@ViewBag.DisplaySites">
@@ -283,10 +276,12 @@
                             </div>
                             
                             <div class="@ViewBag.DisplayHeardAbout">
-                            <div style="text-align:right; display:table-cell">Where did you hear about the church?</div>
-                            <div style="text-align:right; display:table-cell"></div>
-                            <div style="text-align:left; display:table-cell"><input id="text_heardAbout" type="text" value="@Model.HeardAbout" class="ui-corner-all" /></div>
+                                <div style="text-align:right; display:table-cell">Where did you hear about the church?</div>
+                                <div style="text-align:right; display:table-cell"></div>
+                                <div style="text-align:left; display:table-cell"><input id="text_heardAbout" type="text" value="@Model.HeardAbout" class="ui-corner-all" /></div>
                             </div>
+                            
+                            <div class="tableRow">&nbsp;</div>
                         </div>
                     </div>
                 </div>
@@ -400,8 +395,34 @@
 </div>
 
 <div id="div_warningUnsavedChanges" style="display: none;" title="Unsaved changes">
-	<div style="text-align:center; width:100%">
-	    There are unsaved changes on the current person.  Do you wish to save them?
+    <div style="text-align:center; width:100%">
+        There are unsaved changes on the current person.  Do you wish to save them?
+    </div>
+</div>
+
+<div id="div_editGroups" style="display: none;" title="Edit Groups">
+	<div style="width:100%">
+	    <div style="width:50%; float:left;">
+	        <table id="jqgGroupsPersonIsIn" cellpadding="0" cellspacing="0"></table>
+            <div id="jqgpGroupsPersonIsIn" style="text-align:center;"></div>
+	    </div>
+	    <div style="width:10%; float:left;">
+	        <table>
+	            <thead>
+	                <tr>
+	                    <td>&nbsp;</td>
+	                </tr>
+	            </thead>
+	            <tbody>
+	                <tr><td><button class="button" title="Add person to group" id="addToGroup"><</button></td></tr>
+                    <tr><td><button class="button" title="Remove person from group" id="removeFromGroup">></button></td></tr>
+	            </tbody>
+	        </table>
+	    </div>
+        <div style="width:40%; float:left;">
+	        <table id="jqgGroupsPersonIsNotIn" cellpadding="0" cellspacing="0"></table>
+            <div id="jqgpGroupsPersonIsNotIn" style="text-align:center;"></div>
+	    </div>
 	</div>
 </div>
 

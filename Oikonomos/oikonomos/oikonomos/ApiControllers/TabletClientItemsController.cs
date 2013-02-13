@@ -24,7 +24,7 @@ namespace oikonomos.web.ApiControllers
             var permissionRepository = new PermissionRepository();
             var churchRepository = new ChurchRepository();
             _personRepository = new PersonRepository(permissionRepository, churchRepository);
-            _personService = new PersonService(_personRepository, new PersonGroupRepository(), permissionRepository, new PersonRoleRepository(), new PersonOptionalFieldRepository(), new RelationshipRepository(_personRepository), new ChurchMatcherRepository(), new GroupRepository(), new FamilyRepository(), new EmailService(new PasswordService(_personRepository, churchRepository, new UsernamePasswordRepository(permissionRepository)), new GroupRepository()),
+            _personService = new PersonService(_personRepository, new PersonGroupRepository(_personRepository), permissionRepository, new PersonRoleRepository(), new PersonOptionalFieldRepository(), new RelationshipRepository(_personRepository), new ChurchMatcherRepository(), new GroupRepository(), new FamilyRepository(), new EmailService(new PasswordService(_personRepository, churchRepository, new UsernamePasswordRepository(permissionRepository)), new GroupRepository()),
                     new AddressRepository());
         }
 

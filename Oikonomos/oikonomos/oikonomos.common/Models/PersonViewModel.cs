@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Text.RegularExpressions;
 
 namespace oikonomos.common.Models
 {
@@ -72,6 +69,8 @@ namespace oikonomos.common.Models
         public IEnumerable<RoleViewModel> SecurityRoles { get; set; }
 
         public IEnumerable<FamilyMemberViewModel> FamilyMembers { get; set; }
+
+        public IEnumerable<PersonGroupViewModel> PersonGroups { get; set; }
     }
 
     public class FamilyMemberViewModel

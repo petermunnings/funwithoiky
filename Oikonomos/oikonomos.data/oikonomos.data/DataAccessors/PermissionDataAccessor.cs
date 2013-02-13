@@ -56,7 +56,7 @@ namespace oikonomos.data.DataAccessors
         {
             if (!currentPerson.HasPermission(Permissions.EditPermissions))
                 return;
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 var permissionRoles = (from p in context.PermissionRoles
                                        where p.RoleId == roleId
@@ -77,7 +77,7 @@ namespace oikonomos.data.DataAccessors
 
         public static JqGridData FetchPermissionsForRoleJQGrid(Person currentPerson, JqGridRequest request, int roleId)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 var permissions = (from p in context.Permissions
                               join pr in context.PermissionRoles
@@ -93,7 +93,7 @@ namespace oikonomos.data.DataAccessors
                     permissions = permissions.Where(p => p.IsVisible == true);
                 }
 
-                int totalRecords = permissions.Count();
+                var totalRecords = permissions.Count();
 
                 switch (request.sidx)
                 {

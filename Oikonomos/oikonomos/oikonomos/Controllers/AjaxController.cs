@@ -26,6 +26,8 @@ namespace oikonomos.web.Controllers
         private readonly IFamilyRepository _familyRepository;
         private readonly ISystemAdministratorService _systemAdministratorService;
         private readonly IUsernamePasswordRepository _usernamePasswordRepository;
+        private readonly IPersonGroupService _personGroupService;
+        private readonly IPersonGroupRepository _personGroupRepository;
 
         public AjaxController()
         {
@@ -35,9 +37,11 @@ namespace oikonomos.web.Controllers
             _familyRepository = new FamilyRepository();
             _usernamePasswordRepository = new UsernamePasswordRepository(permissionRepository);
             _passwordService = new PasswordService(personRepository, churchRepository, _usernamePasswordRepository);
+            var personGroupRepository = new PersonGroupRepository(personRepository);
+            _personGroupRepository = personGroupRepository;
             _personService = new PersonService(
                 personRepository,
-                new PersonGroupRepository(),
+                _personGroupRepository,
                 permissionRepository,
                 new PersonRoleRepository(),
                 new PersonOptionalFieldRepository(),
@@ -50,8 +54,8 @@ namespace oikonomos.web.Controllers
                 );
 
             _groupEventRepository = new GroupEventRepository(personRepository);
-            
             _systemAdministratorService  = new SystemAdministratorService(churchRepository, permissionRepository);
+            _personGroupService = new PersonGroupService(_personGroupRepository);
         }
 
         public JsonResult InitializeChurchSettingsViewModel()
@@ -245,14 +249,39 @@ namespace oikonomos.web.Controllers
             return Json(jqGridData);
         }
         
+        [AcceptVerbs(HttpVerbs.Post)]
+        public JsonResult FetchGroupsPersonIsIn(JqGridRequest request, int personId)
+        {
+            var jqGridData = new JqGridData();
+            if (Session[SessionVariable.LoggedOnPerson] != null)
+            {
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                jqGridData = _personGroupService.FetchGroupsPersonIsInJQGrid(currentPerson, personId, request);
+            }
+
+            return Json(jqGridData);
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public JsonResult FetchGroupsPersonIsNotIn(JqGridRequest request, int personId)
+        {
+            var jqGridData = new JqGridData();
+            if (Session[SessionVariable.LoggedOnPerson] != null)
+            {
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                jqGridData = _personGroupService.FetchGroupsPersonIsNotInJQGrid(currentPerson, personId, request);
+            }
+
+            return Json(jqGridData);
+        }
 
         [AcceptVerbs(HttpVerbs.Post)]
         public JsonResult FetchGroupsForPerson(JqGridRequest request, int personId)
         {
-            JqGridData jqGridData = new JqGridData();
+            var jqGridData = new JqGridData();
             if (Session[SessionVariable.LoggedOnPerson] != null)
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 jqGridData = PersonDataAccessor.FetchGroupsForPersonJQGrid(currentPerson, personId, request);
             }
 
@@ -779,23 +808,19 @@ namespace oikonomos.web.Controllers
             return Json(response, JsonRequestBehavior.DenyGet);
         }
 
-
         public JsonResult AddPersonToGroup(int groupId, int personId)
         {
-            List<PersonViewModel> people = new List<PersonViewModel>();
-
-            bool sessionTimedOut = false;
+            var sessionTimedOut = false;
             if (Session[SessionVariable.LoggedOnPerson] == null)
             {
                 sessionTimedOut = true;
             }
             else
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                //TODO Check for User Roles
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 if(personId>0 && groupId>0)
                 {
-                    GroupDataAccessor.AddPersonToGroup(groupId, personId);
+                    _personGroupRepository.AddPersonToGroup(currentPerson, personId, groupId);
                 }
             }
 
@@ -808,20 +833,40 @@ namespace oikonomos.web.Controllers
 
         public JsonResult RemovePersonFromGroup(int groupId, int personId)
         {
-            List<PersonViewModel> people = new List<PersonViewModel>();
-
-            bool sessionTimedOut = false;
+            var sessionTimedOut = false;
             if (Session[SessionVariable.LoggedOnPerson] == null)
             {
                 sessionTimedOut = true;
             }
             else
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                //TODO Check for User Roles
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 if (personId > 0 && groupId > 0)
                 {
-                    GroupDataAccessor.RemovePersonFromGroup(currentPerson, groupId, personId);
+                    _personGroupRepository.RemovePersonFromGroup(currentPerson, personId, groupId);
+                }
+            }
+
+            var response = new
+            {
+                SessionTimeOut = sessionTimedOut
+            };
+            return Json(response, JsonRequestBehavior.DenyGet);
+        }
+
+        public JsonResult SetPrimaryGroup(int groupId, int personId)
+        {
+            var sessionTimedOut = false;
+            if (Session[SessionVariable.LoggedOnPerson] == null)
+            {
+                sessionTimedOut = true;
+            }
+            else
+            {
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                if (personId > 0 && groupId > 0)
+                {
+                    _personGroupRepository.SavePrimaryGroup(personId, groupId, currentPerson);
                 }
             }
 

@@ -986,15 +986,5 @@ namespace oikonomos.data.DataAccessors
             var person = context.People.First(p => p.PersonId == personId);
             return person.PersonChurches.Count == 0;
         }
-
-        #region Private Methods
-
-        public static void SavePersonGroup(Person personToSave, int groupId)
-        {
-            var pg = new PersonGroup {GroupId = groupId, Created = DateTime.Now, Changed = DateTime.Now, Joined = DateTime.Now};
-            personToSave.PersonGroups.Add(pg);
-        }
-
-        #endregion Private Methods
     }
 }

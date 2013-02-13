@@ -23,6 +23,7 @@ namespace oikonomos.repositories
                             select pg.Group).FirstOrDefault();
 
             personViewModel.GroupId = group == null ? 0 : group.GroupId;
+            personViewModel.GroupName = group == null ? "None" : group.Name;
 
             personViewModel.IsInMultipleGroups = Context.PersonGroups.Count(pg => pg.PersonId == personId && pg.Group.ChurchId == currentPerson.ChurchId) > 1;
         }

@@ -6,6 +6,7 @@ function ClearForm() {
     $("#hidden_personId").val("0");
     $("#hidden_familyId").val("0");
     $("#hidden_groupId").val("0");
+    $("#group_Name").text("None");
     $("#hidden_lat").val("0");
     $("#hidden_lng").val("0"); 
     var genderRadio = $('input:radio[name=Gender]');
@@ -20,7 +21,7 @@ function ClearForm() {
     $("#Site").val("Select site...");
     $("#row_image").hide();
     $("#img_person").prop("src", " ");
-    $("#GroupId").val("0");
+    $("#GroupId").val("0"); 
     }
 
 function PopulatePerson(person) {
@@ -28,6 +29,7 @@ function PopulatePerson(person) {
 
     $("#hidden_familyId").val(person.FamilyId);
     $("#hidden_groupId").val(person.GroupId);
+    $("#group_Name").text(person.GroupName);
     $("#hidden_roleId").val(person.RoleId);
     $("#text_firstname").val(person.Firstname);
     $("#warning_firstname").hide();
@@ -90,12 +92,26 @@ function PopulatePerson(person) {
         $("#img_person").prop("src", " ");
     }
 
-    $("#jqgEventList").jqGrid("setGridParam", { "postData": { personId: person.PersonId} });
-    $("#jqgEventList").trigger("reloadGrid");
-    $("#jqgCommentList").jqGrid("setGridParam", { "postData": { personId: person.PersonId} });
-    $("#jqgCommentList").trigger("reloadGrid");
-    $("#jqgGroups").jqGrid("setGridParam", { "postData": { personId: person.PersonId} });
+    try {
+        $("#jqgEventList").jqGrid("setGridParam", { "postData": { personId: person.PersonId } });
+        $("#jqgEventList").trigger("reloadGrid");
+        $("#jqgCommentList").jqGrid("setGridParam", { "postData": { personId: person.PersonId } });
+        $("#jqgCommentList").trigger("reloadGrid");
+        ReloadGroups(person.PersonId);
+    }
+    catch(err) {
+        SendErrorEmail("Error updating jqgrids", err);
+        
+    }
+}
+
+function ReloadGroups(personId) {
+    $("#jqgGroups").jqGrid("setGridParam", { "postData": { personId: personId } });
     $("#jqgGroups").trigger("reloadGrid");
+    $("#jqgGroupsPersonIsIn").jqGrid("setGridParam", { "postData": { personId: personId } });
+    $("#jqgGroupsPersonIsIn").trigger("reloadGrid");
+    $("#jqgGroupsPersonIsNotIn").jqGrid("setGridParam", { "postData": { personId: personId } });
+    $("#jqgGroupsPersonIsNotIn").trigger("reloadGrid");
 }
 
 function FetchPersonData(personId) {
@@ -190,7 +206,8 @@ function SavePerson(refreshAfterSave) {
 
     var jqxhr = $.post("/Ajax/SavePerson", $.postify(postData), function (data) {
         if (data.PersonId == 0) {
-            ShowErrorMessage("Cannot save person", "There was a problem saving the person");
+            var errMessage = "There was a problem saving the person";
+            ShowErrorMessage("Cannot save person", errMessage);
         }
         else {
             $("#hidden_personId").val(data.PersonId + "");
@@ -312,7 +329,7 @@ function SendWelcomeMail() {
 }
 
 PageAlert = {
-    UnsavedChanges: function () {
+    UnsavedChanges: function() {
         var dfr = $.Deferred();
         if (pageIsDirty && $("#text_surname").val() != '' && $("#text_firstname").val() != '') {
             $("#div_warningUnsavedChanges").dialog({
@@ -322,25 +339,37 @@ PageAlert = {
                 width: 280,
                 resizable: false,
                 buttons: {
-                    "Yes": function () {
+                    "Yes": function() {
                         $(this).dialog('close');
                         SavePerson(false);
                         dfr.resolve();
                     },
-                    "No": function () {
+                    "No": function() {
                         $(this).dialog('close');
                         pageIsDirty = false;
                         dfr.resolve();
                     }
                 }
             });
-        }
-        else {
+        } else {
             dfr.resolve();
         }
 
         return dfr.promise();
     }
+};
+
+function SetPrimaryGroup(groupId) {
+    var postData = {
+        groupId: groupId,
+        personId: $("#hidden_personId").val()
+    };
+
+    var jqxhr = $.post("/Ajax/SetPrimaryGroup", $.postify(postData), function (data) {
+        ReloadGroups($("#hidden_personId").val());
+    })
+    .error(function (jqXHR, textStatus, errorThrown) { SendErrorEmail("Error calling SetPrimaryGroup", jqXHR.responseText); });
+
 }
 
 var pageIsDirty = false;
@@ -483,7 +512,28 @@ $(document).ready(function() {
         SavePerson(true);
     });
 
-    $("#button_deletePerson").click(function() {
+    $("#edit_Groups").click(function() {
+        if ($("#hidden_personId").val() == "0") {
+            ShowErrorMessage("Cannot edit groups", "Please save person before editing groups");
+            return;
+        }
+        $("#div_editGroups").dialog('open');
+    });
+
+    $("#div_editGroups").dialog({
+        autoOpen: false,
+        modal: true,
+        height: 600,
+        width: 700,
+        resizable: false,
+        buttons: {
+            "Done": function () {
+                $(this).dialog('close');
+            }
+        }
+    });
+
+    $("#button_deletePerson").click(function () {
         if ($("#hidden_personId").val() != "0") {
             $("#div_warningDelete").dialog('open');
         }
@@ -629,15 +679,71 @@ $(document).ready(function() {
             window.location = "/Home/Homegroups?groupId=" + rowid;
         }
     }).navGrid('#jqgpGroups', { edit: false, add: false, del: false, search: false });
+    
+    $('#jqgGroupsPersonIsIn').jqGrid({
+        url: '/Ajax/FetchGroupsPersonIsIn/',
+        datatype: 'json',
+        mtype: 'POST',
+        postData: { personId: $("#hidden_personId").val() },
+        colNames: ['GroupId', 'Groups Person Is In', 'Primary'],
+        colModel: [
+            { name: 'GroupId', index: 'GroupId', hidden: true, search: false },
+            { name: 'GroupName', index: 'GroupName', align: 'left', width: 160, search: true },
+            { name: 'PrimaryGroup', index: 'PrimaryGroup', align: 'left', width: 60, search: false }
+        ],
+        pager: $('#jqgpGroupsPersonIsIn'),
+        rowNum: 20,
+        sortname: 'Name',
+        sortorder: 'asc',
+        viewrecords: true,
+        width: 'auto',
+        height: 'auto',
+        ondblClickRow: function (rowid, iRow, iCol, e) {
+            SetPrimaryGroup(rowid);
+        }
+    }).navGrid('#jqgpGroupsPersonIsIn', { edit: false, add: false, del: false, search: false })
+        .navButtonAdd('#jqgpGroupsPersonIsIn', {
+            caption: "",
+            title: "Set selected group as primary care group",
+            buttonicon: "ui-icon-home",
+            onClickButton: function () {
+                SetPrimaryGroup($('#jqgGroupsPersonIsIn').jqGrid('getGridParam', 'selrow'));
+            },
+            position: "first"
+        });
+    
+    $('#jqgGroupsPersonIsNotIn').jqGrid({
+        url: '/Ajax/FetchGroupsPersonIsNotIn/',
+        datatype: 'json',
+        mtype: 'POST',
+        postData: { personId: $("#hidden_personId").val() },
+        colNames: ['GroupId', 'Groups Person Is Not In'],
+        colModel: [
+            { name: 'GroupId', index: 'GroupId', hidden: true, search: false },
+            { name: 'GroupName', index: 'GroupName', align: 'left', width: 160, search: true }
+        ],
+        pager: $('#jqgpGroupsPersonIsNotIn'),
+        rowNum: 20,
+        sortname: 'Name',
+        sortorder: 'asc',
+        viewrecords: true,
+        width: 'auto',
+        height: 'auto'
+    }).navGrid('#jqgpGroupsPersonIsNotIn', { edit: false, add: false, del: false, search: false });
 
     $("#saveComment_button").click(function() {
         var postData = {
             personId: $("#hidden_personId").val(),
             comments: []
         };
-        
+
         if ($("#comment_detail").val() != "") {
             postData.comments.push($("#comment_detail").val());
+        }
+        
+        if ($("#hidden_personId").val() == "0") {
+            ShowErrorMessage("Cannot save comment", "Please save person before adding comments");
+            return;
         }
 
         if (postData.comments.length > 0) {
@@ -649,6 +755,44 @@ $(document).ready(function() {
                 SendErrorEmail("Error calling SaveComments", jqXhr.responseText);
             });
         }
+    });
+
+    $("#addToGroup").click(function() {
+        var selr = $('#jqgGroupsPersonIsNotIn').jqGrid('getGridParam', 'selrow');
+        if (selr == null) {
+            ShowErrorMessage("No group selected", "Please select a group to add the person to");
+            return;
+        }
+        
+        var postData = {
+            groupId: selr,
+            personId: $("#hidden_personId").val()
+        };
+
+        $.post("/Ajax/AddPersonToGroup", $.postify(postData), function (data) {
+            ReloadGroups($("#hidden_personId").val());
+        }).error(function (jqXHR, textStatus, errorThrown) {
+            SendErrorEmail("Error calling Add To Group", jqXHR.responseText);
+        });
+    });
+    
+    $("#removeFromGroup").click(function () {
+        var selr = $('#jqgGroupsPersonIsIn').jqGrid('getGridParam', 'selrow');
+        if (selr == null) {
+            ShowErrorMessage("No group selected", "Please select a group to remove the person from");
+            return;
+        }
+
+        var postData = {
+            groupId: selr,
+            personId: $("#hidden_personId").val()
+        };
+
+        $.post("/Ajax/RemovePersonFromGroup", $.postify(postData), function (data) {
+            ReloadGroups($("#hidden_personId").val());
+        }).error(function (jqXHR, textStatus, errorThrown) {
+            SendErrorEmail("Error calling Remove from Group", jqXHR.responseText);
+        });
     });
 
     $("#cancelComment_button").click(function () {

@@ -34,7 +34,7 @@ namespace oikonomos.web.ApiControllers
             _personRepository = new PersonRepository(permissionRepository, churchRepository);
             _personService = new PersonService(
                 _personRepository,
-                new PersonGroupRepository(),
+                new PersonGroupRepository(_personRepository),
                 permissionRepository,
                 new PersonRoleRepository(),
                 new PersonOptionalFieldRepository(),

@@ -574,52 +574,6 @@ namespace oikonomos.data.DataAccessors
             }
         }
 
-        public static void RemovePersonFromGroup(Person currentPerson, int groupId, int personId)
-        {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
-            {
-                if (currentPerson.HasPermission(Permissions.RemovePersonFromGroup))
-                {
-                    //Fetch the record
-                    var personToRemove = (from pg in context.PersonGroups
-                                          where pg.PersonId == personId
-                                          && pg.GroupId == groupId
-                                          select pg).FirstOrDefault();
-                    if (personToRemove != null)
-                    {
-                        //Remove them
-                        context.PersonGroups.DeleteObject(personToRemove);
-                        context.SaveChanges();
-                    }
-                }
-            }
-        }
-
-        public static void AddPersonToGroup(int groupId, int personId)
-        {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
-            {
-                //First check to see if they are not already there
-                var check = (from pg in context.PersonGroups
-                             where pg.PersonId == personId
-                             && pg.GroupId == groupId
-                             select pg).FirstOrDefault();
-                if (check == null)
-                {
-                    //Add them
-                    PersonGroup personGroup = new PersonGroup();
-                    context.PersonGroups.AddObject(personGroup);
-                    personGroup.Created = DateTime.Now;
-                    personGroup.Changed = DateTime.Now;
-                    personGroup.PersonId = personId;
-                    personGroup.GroupId = groupId;
-                    personGroup.Joined = DateTime.Now;
-
-                    context.SaveChanges();
-                }
-            }
-        }
-
         public static List<string> FetchGroupLeaderAddresses(Person currentPerson, bool search, JqGridFilters filters, bool includeMembers)
         {
             List<string> addresses = new List<string>();

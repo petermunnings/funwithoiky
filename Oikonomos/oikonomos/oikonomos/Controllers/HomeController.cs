@@ -30,16 +30,16 @@ namespace oikonomos.web.Controllers
 
         public HomeController()
         {
-            _eventService = new EventService(new EventRepository());
-            _personGroupRepository = new PersonGroupRepository();
-            var churchRepository = new ChurchRepository();          
             var permissionRepository = new PermissionRepository();
+            var churchRepository = new ChurchRepository();
             _personRepository = new PersonRepository(permissionRepository, churchRepository);
+            _eventService = new EventService(new EventRepository());
+            _personGroupRepository = new PersonGroupRepository(_personRepository);
             _usernamePasswordRepository = new UsernamePasswordRepository(permissionRepository);
   
             _personService = new PersonService(
                 _personRepository,
-                new PersonGroupRepository(),
+                new PersonGroupRepository(_personRepository),
                 permissionRepository,
                 new PersonRoleRepository(),
                 new PersonOptionalFieldRepository(),
@@ -308,35 +308,10 @@ namespace oikonomos.web.Controllers
             }
 
             //Fetch Groups
-            if (personViewModel.IsInMultipleGroups)
-            {
-                var personInGroupId = personId.HasValue ? personId.Value : currentPerson.PersonId;
-                var groups = GroupDataAccessor.FetchGroupsPersonIsIn(currentPerson.ChurchId, personInGroupId);
-                var primaryGroup = _personGroupRepository.GetPrimaryGroup(personInGroupId, currentPerson);
-                if(primaryGroup!=null)
-                    personViewModel.GroupId = primaryGroup.GroupId;
-                if (primaryGroup == null && groups != null && groups.Any())
-                    personViewModel.GroupId = groups.First().GroupId;
-                ViewBag.Groups = groups;
-                ViewBag.CanChangeGroup = true;
-            }
-            else
-            {
-                var groups = GroupDataAccessor.FetchHomeGroups(currentPerson.ChurchId, currentPerson);
-                groups.Insert(0, new HomeGroupsViewModel() { GroupId = 0, GroupName = "Select a group..." });
-                var canChangeGroup = (personViewModel.GroupId == 0 && !personViewModel.IsInMultipleGroups);
-                if (!canChangeGroup && !personViewModel.IsInMultipleGroups)
-                {
-                    if (groups.Any(g => g.GroupId == personViewModel.GroupId))
-                    {
-                        canChangeGroup = true;
-                    }
-                }
-                ViewBag.CanChangeGroup = canChangeGroup;
-                ViewBag.Groups = groups;
-            }
-
-
+            personViewModel.PersonGroups = _personGroupRepository.GetPersonGroupViewModels(personViewModel.PersonId, currentPerson);
+            var primaryGroup = !personViewModel.PersonGroups.Any() ? null : personViewModel.PersonGroups.FirstOrDefault(pg => pg.IsPrimaryGroup);
+            personViewModel.GroupId = primaryGroup == null ? 0 : primaryGroup.GroupId;
+            personViewModel.GroupName = primaryGroup == null ? "None" : primaryGroup.GroupName;
             
             var optionalFields = SettingsDataAccessor.FetchChurchOptionalFields(currentPerson.ChurchId);
             ViewBag.DisplayFacebook = false;

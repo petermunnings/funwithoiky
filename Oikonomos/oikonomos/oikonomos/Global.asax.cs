@@ -3,6 +3,7 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
+using oikonomos.repositories;
 
 
 namespace oikonomos.web
@@ -61,5 +62,11 @@ namespace oikonomos.web
                 Response.Redirect("https://" + Request.ServerVariables["HTTP_HOST"] + HttpContext.Current.Request.RawUrl);
             }
         }
+
+        protected void Session_End(Object sender, EventArgs e)
+        {
+            CurrentContext.EndSession(Session.SessionID);
+        }
+
     }
 }

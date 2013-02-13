@@ -16,7 +16,7 @@ namespace oikonomos.repositories.tests
             var personRepository = new PersonRepository(permissionRepository, churchRepository);
             var personService = new PersonService(
                 personRepository,
-                new PersonGroupRepository(),
+                new PersonGroupRepository(personRepository),
                 permissionRepository,
                 new PersonRoleRepository(),
                 new PersonOptionalFieldRepository(),

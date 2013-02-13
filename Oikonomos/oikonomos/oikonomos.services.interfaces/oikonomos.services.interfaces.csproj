@@ -46,6 +46,7 @@
     <Compile Include="IEventService.cs" />
     <Compile Include="IGridFormatter.cs" />
     <Compile Include="IPasswordService.cs" />
+    <Compile Include="IPersonGroupService.cs" />
     <Compile Include="IPersonService.cs" />
     <Compile Include="ISystemAdministratorService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
