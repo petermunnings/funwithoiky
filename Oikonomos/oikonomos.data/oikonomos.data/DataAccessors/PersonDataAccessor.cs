@@ -603,10 +603,10 @@ namespace oikonomos.data.DataAccessors
                             CellPhone         = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).Value,
                             WorkPhone         = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.WorkPhone).Value,
                             Email             = p.Email,
-                            Address1          = p.Family.Address.Line1,
-                            Address2          = p.Family.Address.Line2,
-                            Address3          = p.Family.Address.Line3,
-                            Address4          = p.Family.Address.Line4,
+                            Address1          = p.Family.Address.Line1.Replace(",", string.Empty),
+                            Address2          = p.Family.Address.Line2.Replace(",", string.Empty),
+                            Address3          = p.Family.Address.Line3.Replace(",", string.Empty),
+                            Address4          = p.Family.Address.Line4.Replace(",", string.Empty),
                             Anniversary_Value = p.Anniversary,
                             DateOfBirth_Value = p.DateOfBirth,
                             Gender            = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Gender).Value,
@@ -617,7 +617,11 @@ namespace oikonomos.data.DataAccessors
                             Skype             = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Skype).Value,
                             Twitter           = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Twitter).Value,
                             RoleName          = p.PersonChurches.FirstOrDefault(pc=>pc.ChurchId==currentPerson.ChurchId).Role.Name,
-                            GroupName         = p.PersonGroups.Count(pg => pg.Group.ChurchId == currentPerson.ChurchId) > 1 ? "Multiple" : (p.PersonGroups.Count(pg => pg.Group.ChurchId == currentPerson.ChurchId) == 0 ? "None" : p.PersonGroups.FirstOrDefault(pg => pg.Group.ChurchId == currentPerson.ChurchId).Group.Name)
+                            GroupName         = p.PersonGroups.Count(pg => pg.Group.ChurchId == currentPerson.ChurchId) == 0 ? 
+                                                "None" : 
+                                                p.PersonGroups.FirstOrDefault(pg => pg.Group.ChurchId == currentPerson.ChurchId && pg.PrimaryGroup).Group == null ? 
+                                                p.PersonGroups.FirstOrDefault(pg => pg.Group.ChurchId == currentPerson.ChurchId).Group.Name : 
+                                                p.PersonGroups.FirstOrDefault(pg => pg.Group.ChurchId == currentPerson.ChurchId && pg.PrimaryGroup).Group.Name
                         }).ToList();
             }
         }

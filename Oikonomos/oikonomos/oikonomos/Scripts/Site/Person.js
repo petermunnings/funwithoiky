@@ -700,6 +700,21 @@ $(document).ready(function() {
         height: 'auto',
         ondblClickRow: function (rowid, iRow, iCol, e) {
             SetPrimaryGroup(rowid);
+        },
+        loadComplete: function(data) {
+            var rowIds = $("#jqgGroupsPersonIsIn").getDataIDs();
+            if (rowIds.length == 0) {
+                $("#group_Name").text("None");
+                $("#hidden_groupId").val(0);
+            } else {
+                for (var rowId = 0; rowId < rowIds.length; rowa++) {
+                    var rowData = $("#jqgGroupsPersonIsIn").getRowData(rowIds[rowId]);
+                    if (rowData.PrimaryGroup == "True") {
+                        $("#group_Name").text(rowData.GroupName);
+                        $("#hidden_groupId").val(rowIds[rowId]);
+                    }
+                }
+            }
         }
     }).navGrid('#jqgpGroupsPersonIsIn', { edit: false, add: false, del: false, search: false })
         .navButtonAdd('#jqgpGroupsPersonIsIn', {
