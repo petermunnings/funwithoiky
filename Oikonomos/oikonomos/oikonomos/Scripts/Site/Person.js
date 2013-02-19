@@ -523,7 +523,7 @@ $(document).ready(function() {
     $("#div_editGroups").dialog({
         autoOpen: false,
         modal: true,
-        height: 600,
+        height: 640,
         width: 700,
         resizable: false,
         buttons: {
@@ -707,7 +707,7 @@ $(document).ready(function() {
                 $("#group_Name").text("None");
                 $("#hidden_groupId").val(0);
             } else {
-                for (var rowId = 0; rowId < rowIds.length; rowa++) {
+                for (var rowId = 0; rowId < rowIds.length; rowId++) {
                     var rowData = $("#jqgGroupsPersonIsIn").getRowData(rowIds[rowId]);
                     if (rowData.PrimaryGroup == "True") {
                         $("#group_Name").text(rowData.GroupName);
@@ -735,7 +735,7 @@ $(document).ready(function() {
         colNames: ['GroupId', 'Groups Person Is Not In'],
         colModel: [
             { name: 'GroupId', index: 'GroupId', hidden: true, search: false },
-            { name: 'GroupName', index: 'GroupName', align: 'left', width: 160, search: true }
+            { name: 'GroupName', index: 'GroupName', align: 'left', width: 260, search: true }
         ],
         pager: $('#jqgpGroupsPersonIsNotIn'),
         rowNum: 20,
