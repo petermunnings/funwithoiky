@@ -5617,6 +5617,30 @@ namespace oikonomos.data
         private global::System.Int32 _MessageId;
         partial void OnMessageIdChanging(global::System.Int32 value);
         partial void OnMessageIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String StatusMessage
+        {
+            get
+            {
+                return _StatusMessage;
+            }
+            set
+            {
+                OnStatusMessageChanging(value);
+                ReportPropertyChanging("StatusMessage");
+                _StatusMessage = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("StatusMessage");
+                OnStatusMessageChanged();
+            }
+        }
+        private global::System.String _StatusMessage;
+        partial void OnStatusMessageChanging(global::System.String value);
+        partial void OnStatusMessageChanged();
 
         #endregion
 

@@ -101,14 +101,8 @@ $(document).ready(function () {
     ko.applyBindings(new ChurchViewModel());
 
     $(".tinymce").tinymce({
-        // Location of TinyMCE script
-        script_url: '/Helpers/TinyMCE/jscripts/tiny_mce/tiny_mce.js',
-
-        // General options
         theme: "advanced",
         plugins: "autolink,lists,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,advlist",
-
-        // Theme options
         theme_advanced_buttons1: "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,styleselect,formatselect,fontselect,fontsizeselect",
         theme_advanced_buttons2: "cut,copy,paste,pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,image,|,insertdate,inserttime,preview,|,forecolor,backcolor",
         theme_advanced_buttons3: "tablecontrols,|,hr,removeformat,visualaid,|,sub,sup,|,charmap,emotions,iespell,media,advhr,|,print,|,ltr,rtl,|,fullscreen",
@@ -117,14 +111,7 @@ $(document).ready(function () {
         theme_advanced_statusbar_location: "bottom",
         theme_advanced_resizing: false,
 
-        // Example content CSS (should be your site CSS)
-        content_css: '/Helpers/TinyMCE/css/content.css',
-
-        // Drop lists for link/image/media/template dialogs
-        template_external_list_url: '/Helpers/TinyMCE/lists/template_list.js',
-        external_link_list_url: '/Helpers/TinyMCE/lists/link_list.js',
-        external_image_list_url: '/Helpers/TinyMCE/lists/image_list.js',
-        media_external_list_url: '/Helpers/TinyMCE/lists/media_list.js'
+        content_css: '/Content/site.css',
     });
 
 

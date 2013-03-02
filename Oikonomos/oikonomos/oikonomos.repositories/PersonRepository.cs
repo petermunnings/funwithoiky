@@ -280,9 +280,10 @@ namespace oikonomos.repositories
             return persons;
         }
 
-        public int FetchPersonIdFromEmailAddress(string fromAddress)
+        public IEnumerable<int> FetchPersonIdsFromEmailAddress(string emailAddress, int churchId)
         {
-            throw new NotImplementedException();
+            var peopleInChurch = Context.PersonChurches.Where(p => p.ChurchId == churchId);
+            return peopleInChurch.Where(p => p.Person.Email == emailAddress).Select(p => p.PersonId);
         }
     }
 }

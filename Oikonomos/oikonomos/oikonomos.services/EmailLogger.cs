@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using oikonomos.repositories.interfaces;
@@ -17,21 +18,35 @@ namespace oikonomos.services
             _personRepository = personRepository;
         }
 
-        public void LogSuccess(MailMessage mailMessage, int fromPersonId)
+        public void LogSuccess(MailMessage mailMessage, int fromPersonId, int churchId)
         {
             var toPeopleIds = new List<int>();
-            AddPersonIds(mailMessage.To, toPeopleIds);
-            AddPersonIds(mailMessage.CC, toPeopleIds);
+            AddPersonIds(mailMessage.To, toPeopleIds, churchId);
+            AddPersonIds(mailMessage.CC, toPeopleIds, churchId);
 
             _messageRepository.SaveMessage(fromPersonId, toPeopleIds, mailMessage.Subject, mailMessage.Body, "Email", "Success");
 
         }
 
-        private void AddPersonIds(IEnumerable<MailAddress> addressCollection, List<int> toPeopleIds)
+        public void LogError(MailMessage mailMessage, int fromPersonId, Exception exception, int churchId)
         {
-            foreach (var toPersonId in addressCollection.Select(toPerson => _personRepository.FetchPersonIdFromEmailAddress(toPerson.Address)).Where(toPersonId => !toPeopleIds.Contains(toPersonId)))
+            var toPeopleIds = new List<int>();
+            AddPersonIds(mailMessage.To, toPeopleIds, churchId);
+            AddPersonIds(mailMessage.CC, toPeopleIds, churchId);
+
+            _messageRepository.SaveMessage(fromPersonId, toPeopleIds, mailMessage.Subject, mailMessage.Body, "Email", "Failure", exception.Message);
+
+        }
+
+        private void AddPersonIds(IEnumerable<MailAddress> addressCollection, List<int> toPeopleIds, int churchId)
+        {
+            foreach (var address in addressCollection)
             {
-                toPeopleIds.Add(toPersonId);
+                var personIds = _personRepository.FetchPersonIdsFromEmailAddress(address.Address, churchId);
+                foreach (var id in personIds.Where(id => !toPeopleIds.Contains(id)))
+                {
+                    toPeopleIds.Add(id);
+                }
             }
         }
     }

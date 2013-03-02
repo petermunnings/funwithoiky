@@ -10,22 +10,28 @@ namespace oikonomos.repositories
     {
         public void SaveMessage(int fromPersonId, IEnumerable<int> toPeopleIds, string subject, string body, string messageType, string messageStatus)
         {
+            SaveMessage(fromPersonId, toPeopleIds, subject, body, messageType, messageStatus, string.Empty);
+        }
+
+        public void SaveMessage(int fromPersonId, IEnumerable<int> toPeopleIds, string subject, string body, string messageType, string messageStatus, string errorMessage)
+        {
             var message = new Message
-                {
-                    Body = body,
-                    Subject = subject,
-                    MessageFrom = fromPersonId,
-                    MessageType = messageType
-                };
+            {
+                Body = body,
+                Subject = subject,
+                MessageFrom = fromPersonId,
+                MessageType = messageType
+            };
             Context.AddToMessages(message);
 
             foreach (var messageRecepient in toPeopleIds.Select(personId => new MessageRecepient
-                {
-                    MessageSent = DateTime.Now,
-                    MessageTo = personId,
-                    Message = message,
-                    Status = messageStatus
-                }))
+            {
+                MessageSent = DateTime.Now,
+                MessageTo = personId,
+                Message = message,
+                Status = messageStatus,
+                StatusMessage = errorMessage
+            }))
             {
                 Context.AddToMessageRecepients(messageRecepient);
             }

@@ -19,7 +19,6 @@ namespace oikonomos.repositories.interfaces
         Person FetchPersonFromWindowsLiveId(string liveId);
         Person FetchPersonFromFacebookId(long facebookId);
         IEnumerable<Person> FetchPersonFromName(string fullname, string firstname, string surname, string email);
-
-        int FetchPersonIdFromEmailAddress(string fromAddress);
+        IEnumerable<int> FetchPersonIdsFromEmailAddress(string emailAddress, int churchId);
     }
 }

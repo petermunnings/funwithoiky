@@ -49,6 +49,7 @@
     <Compile Include="IChurchMatcherRepository.cs" />
     <Compile Include="IChurchRepository.cs" />
     <Compile Include="ICommentRepository.cs" />
+    <Compile Include="IEmailContentRepository.cs" />
     <Compile Include="IEventRepository.cs" />
     <Compile Include="IFamilyRepository.cs" />
     <Compile Include="IGroupEventRepository.cs" />

@@ -129,7 +129,7 @@ namespace oikonomos.services
                 }
                 catch (Exception ex)
                 {
-                    Email.SendExceptionEmail(ex);
+                    _emailService.SendExceptionEmail(ex);
                     return null;
                 }
             }
@@ -165,7 +165,7 @@ namespace oikonomos.services
             _relationshipRepository.UpdateRelationships(person, personToSave, anniversaryHasChanged);
             personToSave = _personRepository.FetchPerson(personToSave.PersonId, currentPerson);
             _personRepository.SaveWindowsLiveId(person, personToSave);
-            _emailService.SendEmails(person, sendWelcomeEmail, church, personToSave);
+            _emailService.SendEmails(person, sendWelcomeEmail, church, personToSave, currentPerson);
             _emailService.EmailGroupLeader(person, currentPerson, church, personToSave, addedToNewGroup);
 
             return personToSave.PersonId;

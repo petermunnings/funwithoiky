@@ -28,6 +28,7 @@ namespace oikonomos.web.Controllers
         private readonly IUsernamePasswordRepository _usernamePasswordRepository;
         private readonly IPersonGroupService _personGroupService;
         private readonly IPersonGroupRepository _personGroupRepository;
+        private readonly IEmailService _emailService;
 
         public AjaxController()
         {
@@ -36,9 +37,21 @@ namespace oikonomos.web.Controllers
             var personRepository = new PersonRepository(permissionRepository, churchRepository);
             _familyRepository = new FamilyRepository();
             _usernamePasswordRepository = new UsernamePasswordRepository(permissionRepository);
-            _passwordService = new PasswordService(personRepository, churchRepository, _usernamePasswordRepository);
             var personGroupRepository = new PersonGroupRepository(personRepository);
             _personGroupRepository = personGroupRepository;
+            var groupRepository = new GroupRepository();
+            var emailSender = new EmailSender(new EmailLogger(new MessageRepository(), personRepository));
+            var emailContentService = new EmailContentService(new EmailContentRepository());
+            _emailService = new EmailService(
+                _usernamePasswordRepository,
+                personRepository,
+                groupRepository,
+                emailSender,
+                emailContentService
+                );
+
+            _passwordService = new PasswordService(personRepository, churchRepository, _usernamePasswordRepository, _emailService);
+
             _personService = new PersonService(
                 personRepository,
                 _personGroupRepository,
@@ -47,15 +60,16 @@ namespace oikonomos.web.Controllers
                 new PersonOptionalFieldRepository(),
                 new RelationshipRepository(personRepository),
                 new ChurchMatcherRepository(), 
-                new GroupRepository(),
+                groupRepository,
                 _familyRepository,
-                new EmailService(_passwordService, new GroupRepository()),
-                    new AddressRepository()
+                _emailService,
+                new AddressRepository()
                 );
 
             _groupEventRepository = new GroupEventRepository(personRepository);
             _systemAdministratorService  = new SystemAdministratorService(churchRepository, permissionRepository);
             _personGroupService = new PersonGroupService(_personGroupRepository);
+            
         }
 
         public JsonResult InitializeChurchSettingsViewModel()
@@ -194,7 +208,7 @@ namespace oikonomos.web.Controllers
             else
             {
                 var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                emailSent=_passwordService.SendEmailAndPassword(currentPerson, personId, out message);
+                emailSent=_emailService.SendEmailAndPassword(currentPerson, personId, out message);
             }
 
             var response = new
@@ -427,7 +441,7 @@ namespace oikonomos.web.Controllers
             {
                 try
                 {
-                    Email.SendExceptionEmail(ex);
+                    _emailService.SendExceptionEmail(ex);
                 }
                 catch { }
                 return Json(null);
@@ -450,7 +464,7 @@ namespace oikonomos.web.Controllers
 
                 message += " is trying to access FetchHomeGroupList";
 
-                Email.SendSystemEmail("Javascript file not updated", message);
+                _emailService.SendSystemEmail("Javascript file not updated", message);
 
                 return Json(jqGridData);
             }
@@ -458,7 +472,7 @@ namespace oikonomos.web.Controllers
             {
                 try
                 {
-                    Email.SendExceptionEmail(ex);
+                    _emailService.SendExceptionEmail(ex);
                 }
                 catch { }
                 return Json(null);
@@ -747,9 +761,11 @@ namespace oikonomos.web.Controllers
             }
             catch (Exception ex)
             {
-                Email.SendExceptionEmail(ex);
-                var comments = new List<StandardCommentViewModel>();
-                comments.Add(new StandardCommentViewModel {StandardCommentId = 0, StandardComment = "Error saving comment"});
+                _emailService.SendExceptionEmail(ex);
+                var comments = new List<StandardCommentViewModel>
+                    {
+                        new StandardCommentViewModel {StandardCommentId = 0, StandardComment = "Error saving comment"}
+                    };
                 var response = new
                 {
                     SessionTimeOut = false,
@@ -1411,6 +1427,7 @@ namespace oikonomos.web.Controllers
             return Json(response, JsonRequestBehavior.DenyGet);
         }
 
+        [ValidateInput(false)]
         public JsonResult SendGroupEmail(string subject, string body)
         {
             if (Session[SessionVariable.EmailAddresses] == null)
@@ -1424,9 +1441,9 @@ namespace oikonomos.web.Controllers
                 return Json(errorResponse, JsonRequestBehavior.DenyGet);
             }
 
-            List<string> addressList = (List<string>)Session[SessionVariable.EmailAddresses];
-            bool sessionTimedOut = false;
-            string message = string.Empty;
+            var addressList = (List<string>)Session[SessionVariable.EmailAddresses];
+            var sessionTimedOut = false;
+            var message = string.Empty;
             if (Session[SessionVariable.LoggedOnPerson] == null)
             {
                 sessionTimedOut = true;
@@ -1434,15 +1451,8 @@ namespace oikonomos.web.Controllers
             }
             else
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                if (currentPerson.HasPermission(Permissions.EmailGroupMembers))
-                {
-                    message = Email.SendGroupEmail(addressList, subject, body, currentPerson);
-                }
-                else
-                {
-                    message = ExceptionMessage.InvalidCredentials;
-                }
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                message = currentPerson.HasPermission(Permissions.EmailGroupMembers) ? _emailService.SendGroupEmail(addressList, subject, body, currentPerson) : ExceptionMessage.InvalidCredentials;
             }
 
             Session[SessionVariable.EmailAddresses] = null;
@@ -1467,9 +1477,9 @@ namespace oikonomos.web.Controllers
                 return Json(errorResponse, JsonRequestBehavior.DenyGet);
             }
 
-            List<string> chellPhoneNoList = (List<string>)Session[SessionVariable.CellPhoneNos];
-            bool sessionTimedOut = false;
-            string responseMessage = string.Empty;
+            var chellPhoneNoList = (List<string>)Session[SessionVariable.CellPhoneNos];
+            var sessionTimedOut = false;
+            var responseMessage = string.Empty;
             if (Session[SessionVariable.LoggedOnPerson] == null)
             {
                 sessionTimedOut = true;
@@ -1477,7 +1487,7 @@ namespace oikonomos.web.Controllers
             }
             else
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 if (currentPerson.HasPermission(Permissions.SmsGroupMembers))
                 {
                     string username = string.Empty;
@@ -1601,7 +1611,7 @@ namespace oikonomos.web.Controllers
                     }
                     catch (Exception ex)
                     {
-                        Email.SendExceptionEmail(ex);
+                        _emailService.SendExceptionEmail(ex);
                         message = "There was a problem saving your comment.  Our developers have been notified and will let you know when the problem has been fixed";
                     }
                 }

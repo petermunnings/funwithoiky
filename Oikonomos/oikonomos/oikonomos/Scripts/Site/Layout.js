@@ -33,7 +33,7 @@ function ShowErrorMessage(title, message) {
 }
 
 function SendEmail() {
-    if ($("#email_body").val() == "") {
+    if ($("#email_bodyWithFormatting").val() == "") {
         ShowErrorMessage("No email to send", "Email message is empty");
         return false;
     }
@@ -44,7 +44,7 @@ function SendEmail() {
     }
 
     var postData = { subject: $("#email_subject").val(),
-        body: $("#email_body").val()
+        body: $("#email_bodyWithFormatting").val()
     };
 
     var jqxhr = $.post("/Ajax/SendGroupEmail", $.postify(postData), function (data) {
@@ -126,6 +126,18 @@ function SetSmsList(noNos) {
 }
 
 function OpenEmailDialog() {
+    $("#email_bodyWithFormatting").tinymce({
+        theme : "advanced",
+        theme_advanced_buttons1: "bold,italic,underline, strikethrough, separator,justifyleft, justifycenter,justifyright,  justifyfull, separator,forecolor,backcolor,separator, bullist,numlist,separator,outdent,indent,separator,undo,redo",
+        theme_advanced_buttons2: "fontselect,fontsizeselect,formatselect",
+        theme_advanced_buttons3: "",
+        theme_advanced_buttons4: "",
+        theme_advanced_toolbar_location : "top",
+        theme_advanced_toolbar_align : "left",
+        content_css: '/Content/site.css',
+    });
+
+
     $("#ajax_loader_sendEmail").show();
     $("#email_subject").val("");
     $("#email_body").val("");
@@ -133,8 +145,8 @@ function OpenEmailDialog() {
         {
             dialogClass: 'email_dialog',
             modal: true,
-            height: 600,
-            width: 750,
+            height: 730,
+            width: 800,
             buttons: {
                 Cancel: function () {
                     $("#email_subject").val("");
@@ -249,4 +261,6 @@ $(document).ready(function () {
     $("#button_sysAdmin").click(function () {
         window.location = "/Home/SysAdmin";
     });
+
+    
 })

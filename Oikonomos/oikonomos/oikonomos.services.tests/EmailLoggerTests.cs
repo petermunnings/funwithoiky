@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Mail;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -10,18 +11,37 @@ namespace oikonomos.services.tests
     [TestFixture]
     public class EmailLoggerTests
     {
-        [Test]
-        public void GivenAnEmailMessage_WhenItIsSendSuccesfully_ThenTheMessageShouldBeLoggedAsSuccesful()
+        private IEmailLogger _emailLogger;
+        private IMessageRepository _messageRepository;
+        private MailMessage _mailMessage;
+
+        [SetUp]
+        public void GivenAnEmailMessage()
         {
-            var messageRepository = MockRepository.GenerateMock<IMessageRepository>();
-            var personRepository  = MockRepository.GenerateStub<IPersonRepository>();
-            personRepository.Stub(p => p.FetchPersonIdFromEmailAddress("test@test.com")).Return(2);
-            IEmailLogger emailLogger = new EmailLogger(messageRepository, personRepository);
-            var mailMessage = new MailMessage("test@test.com", "test@test.com", "subject", "body");
-            emailLogger.LogSuccess(mailMessage, 1);
+            _messageRepository = MockRepository.GenerateMock<IMessageRepository>();
+            var personRepository = MockRepository.GenerateStub<IPersonRepository>();
+            personRepository.Stub(p => p.FetchPersonIdsFromEmailAddress("test@test.com", 1)).Return(new[]{2});
+            _emailLogger = new EmailLogger(_messageRepository, personRepository);
+            _mailMessage = new MailMessage("test@test.com", "test@test.com", "subject", "body");
+        }
+
+    [Test]
+        public void WhenItIsSendSuccesfully_ThenTheMessageShouldBeLoggedAsSuccesful()
+        {
+            _emailLogger.LogSuccess(_mailMessage, 1, 1);
 
             var fromIds = new List<int> {2};
-            messageRepository.AssertWasCalled(m=>m.SaveMessage(1, fromIds, "subject", "body", "Email", "Success"));
+            _messageRepository.AssertWasCalled(m=>m.SaveMessage(1, fromIds, "subject", "body", "Email", "Success"));
+        }
+
+        [Test]
+        public void WhenItIsFails_ThenTheMessageShouldBeLoggedAsFailed()
+        {
+            var applicationException = new ApplicationException("Test exception");
+            _emailLogger.LogError(_mailMessage, 1, applicationException, 1);
+
+            var fromIds = new List<int> { 2 };
+            _messageRepository.AssertWasCalled(m => m.SaveMessage(1, fromIds, "subject", "body", "Email", "Failure", "Test exception"));
         }
          
     }

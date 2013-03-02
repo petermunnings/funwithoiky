@@ -5,5 +5,6 @@ namespace oikonomos.repositories.interfaces
     public interface IMessageRepository
     {
         void SaveMessage(int fromPersonId, IEnumerable<int> toPeopleIds, string subject, string body, string messageType, string messageStatus);
+        void SaveMessage(int fromPersonId, IEnumerable<int> toPeopleIds, string subject, string body, string messageType, string messageStatus, string errorMessage);
     }
 }

@@ -36,7 +36,17 @@ namespace oikonomos.web.Controllers
             _eventService = new EventService(new EventRepository());
             _personGroupRepository = new PersonGroupRepository(_personRepository);
             _usernamePasswordRepository = new UsernamePasswordRepository(permissionRepository);
-  
+            var groupRepository = new GroupRepository();
+            var emailSender = new EmailSender(new EmailLogger(new MessageRepository(), _personRepository));
+            var emailContentService = new EmailContentService(new EmailContentRepository());
+            var emailService = new EmailService(
+                _usernamePasswordRepository,
+                _personRepository,
+                groupRepository,
+                emailSender,
+                emailContentService
+                );
+
             _personService = new PersonService(
                 _personRepository,
                 new PersonGroupRepository(_personRepository),
@@ -47,8 +57,8 @@ namespace oikonomos.web.Controllers
                 new ChurchMatcherRepository(),
                 new GroupRepository(),
                 new FamilyRepository(),
-                new EmailService(new PasswordService(_personRepository, churchRepository, _usernamePasswordRepository), new GroupRepository()),
-                    new AddressRepository()
+                emailService,
+                new AddressRepository()
                 );
             
         }

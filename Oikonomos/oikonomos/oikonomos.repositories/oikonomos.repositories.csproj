@@ -51,6 +51,7 @@
     <Compile Include="ChurchRepository.cs" />
     <Compile Include="CommentRepository.cs" />
     <Compile Include="CurrentContext.cs" />
+    <Compile Include="EmailContentRepository.cs" />
     <Compile Include="EventRepository.cs" />
     <Compile Include="FamilyRepository.cs" />
     <Compile Include="GroupEventRepository.cs" />

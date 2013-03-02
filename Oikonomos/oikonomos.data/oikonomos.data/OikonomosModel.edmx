@@ -459,7 +459,8 @@
           <Property Name="MessageId" Type="int" Nullable="false" />
           <Property Name="MessageTo" Type="int" Nullable="false" />
           <Property Name="MessageSent" Type="datetime" Nullable="false" />
-          <Property Name="Status" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="Status" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="StatusMessage" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="OldEvent">
           <Key>
@@ -2461,9 +2462,10 @@
           <Property Type="Int32" Name="MessageTo" Nullable="false" />
           <Property Type="DateTime" Name="MessageSent" Nullable="false" Precision="3" />
           <NavigationProperty Name="Person" Relationship="oikonomosModel.FK_MessageRecepient_Person" FromRole="MessageRecepient" ToRole="Person" />
-          <Property Type="String" Name="Status" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Status" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="MessageId" Nullable="false" />
           <NavigationProperty Name="Message" Relationship="oikonomosModel.FK_MessageRecepient_Message" FromRole="MessageRecepient" ToRole="Message" />
+          <Property Type="String" Name="StatusMessage" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_Message_Person">
           <End Type="oikonomosModel.Person" Role="Person" Multiplicity="1" />
@@ -3115,6 +3117,7 @@
           <EntitySetMapping Name="MessageRecepients">
             <EntityTypeMapping TypeName="oikonomosModel.MessageRecepient">
               <MappingFragment StoreEntitySet="MessageRecepient">
+                <ScalarProperty Name="StatusMessage" ColumnName="StatusMessage" />
                 <ScalarProperty Name="MessageId" ColumnName="MessageId" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="MessageSent" ColumnName="MessageSent" />

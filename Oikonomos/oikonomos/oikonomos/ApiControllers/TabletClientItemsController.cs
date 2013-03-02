@@ -24,8 +24,31 @@ namespace oikonomos.web.ApiControllers
             var permissionRepository = new PermissionRepository();
             var churchRepository = new ChurchRepository();
             _personRepository = new PersonRepository(permissionRepository, churchRepository);
-            _personService = new PersonService(_personRepository, new PersonGroupRepository(_personRepository), permissionRepository, new PersonRoleRepository(), new PersonOptionalFieldRepository(), new RelationshipRepository(_personRepository), new ChurchMatcherRepository(), new GroupRepository(), new FamilyRepository(), new EmailService(new PasswordService(_personRepository, churchRepository, new UsernamePasswordRepository(permissionRepository)), new GroupRepository()),
-                    new AddressRepository());
+            var personGroupRepository = new PersonGroupRepository(_personRepository);
+            var relationshipRepository = new RelationshipRepository(_personRepository);
+            var usernamePasswordRepository = new UsernamePasswordRepository(permissionRepository);
+            var emailSender = new EmailSender(new EmailLogger(new MessageRepository(), _personRepository));
+            var groupRepository = new GroupRepository();
+            var emailContentService = new EmailContentService(new EmailContentRepository());
+            var emailService = new EmailService(
+                usernamePasswordRepository,
+                _personRepository,
+                groupRepository,
+                emailSender,
+                emailContentService
+                );
+
+            _personService = new PersonService(_personRepository, 
+                personGroupRepository, 
+                permissionRepository, 
+                new PersonRoleRepository(), 
+                new PersonOptionalFieldRepository(), 
+                relationshipRepository, 
+                new ChurchMatcherRepository(), 
+                new GroupRepository(), 
+                new FamilyRepository(), 
+                emailService,
+                new AddressRepository());
         }
 
         public IEnumerable<Item> Get()
