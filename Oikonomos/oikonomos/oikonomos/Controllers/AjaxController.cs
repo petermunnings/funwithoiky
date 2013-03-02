@@ -303,6 +303,20 @@ namespace oikonomos.web.Controllers
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
+        public JsonResult FetchMessagesForPerson(JqGridRequest request, int personId)
+        {
+            var jqGridData = new JqGridData();
+            if (Session[SessionVariable.LoggedOnPerson] != null)
+            {
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                jqGridData = PersonDataAccessor.FetchMessagesForPersonJQGrid(currentPerson, personId, request);
+            }
+
+            return Json(jqGridData);
+        }
+        
+
+        [AcceptVerbs(HttpVerbs.Post)]
         public JsonResult FetchEventList(JqGridRequest request, DateTime fromDate, DateTime toDate)
         {
             JqGridData jqGridData = new JqGridData();

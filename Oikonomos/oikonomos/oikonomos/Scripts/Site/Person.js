@@ -98,6 +98,7 @@ function PopulatePerson(person) {
         $("#jqgCommentList").jqGrid("setGridParam", { "postData": { personId: person.PersonId } });
         $("#jqgCommentList").trigger("reloadGrid");
         ReloadGroups(person.PersonId);
+        ReloadMessages(person.PersonId);
     }
     catch(err) {
         SendErrorEmail("Error updating jqgrids", err);
@@ -112,6 +113,11 @@ function ReloadGroups(personId) {
     $("#jqgGroupsPersonIsIn").trigger("reloadGrid");
     $("#jqgGroupsPersonIsNotIn").jqGrid("setGridParam", { "postData": { personId: personId } });
     $("#jqgGroupsPersonIsNotIn").trigger("reloadGrid");
+}
+
+function ReloadMessages(personId) {
+    $("#jqgMessages").jqGrid("setGridParam", { "postData": { personId: personId } });
+    $("#jqgMessages").trigger("reloadGrid");
 }
 
 function FetchPersonData(personId) {
@@ -745,6 +751,29 @@ $(document).ready(function() {
         width: 'auto',
         height: 'auto'
     }).navGrid('#jqgpGroupsPersonIsNotIn', { edit: false, add: false, del: false, search: false });
+
+    $('#jqgMessages').jqGrid({
+        url: '/Ajax/FetchMessagesForPerson/',
+        datatype: 'json',
+        mtype: 'POST',
+        postData: { personId: $("#hidden_personId").val() },
+        colNames: ['MessageId', 'Subject', 'Sent', 'Status', 'Type', 'Sent By'],
+        colModel: [
+            { name: 'MessageId', index: 'MessageId', hidden: true, search: false },
+            { name: 'Subject', index: 'Subject', align: 'left', width: 300, search: true },
+            { name: 'Sent', index: 'Sent', align: 'left', width: 90, search: true },
+            { name: 'Status', index: 'Status', align: 'left', width: 90, search: true },
+            { name: 'MessageType', index: 'MessageType', align: 'left', width: 80, search: true },
+            { name: 'SentBy', index: 'SentBy', align: 'left', width: 150, search: true }
+        ],
+        pager: $('#jqgpMessages'),
+        rowNum: 20,
+        sortname: 'Sent',
+        sortorder: 'desc',
+        viewrecords: true,
+        width: 'auto',
+        height: 'auto'
+    }).navGrid('#jqgpMessages', { edit: false, add: false, del: false, search: false });
 
     $("#saveComment_button").click(function() {
         var postData = {

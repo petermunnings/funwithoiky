@@ -4,7 +4,6 @@ using System.Linq;
 using oikonomos.common;
 using System.Configuration;
 using oikonomos.common.Models;
-using System.Web.Security;
 using oikonomos.data.Services;
 using Lib.Web.Mvc.JQuery.JqGrid;
 
@@ -12,6 +11,154 @@ namespace oikonomos.data.DataAccessors
 {
     public static class PersonDataAccessor
     {
+        public static JqGridData FetchMessagesForPersonJQGrid(Person currentPerson, int personId, JqGridRequest request)
+        {
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            {
+                IEnumerable<PersonMessageModel> messages = (from m in context.Messages
+                                                        join mr in context.MessageRecepients
+                                                          on m.MessageId equals mr.MessageId
+                                                        join pc in context.PersonChurches
+                                                            on mr.MessageTo equals pc.PersonId
+                                                        where pc.PersonId == personId
+                                                        && pc.ChurchId == currentPerson.ChurchId
+                                                          select new PersonMessageModel
+                                                        {
+                                                            PersonId = pc.PersonId,
+                                                            MessageId = mr.MessageRecepientId,
+                                                            Subject = m.Subject,
+                                                            Body = m.Body,
+                                                            Sent = mr.MessageSent,
+                                                            MessageType = m.MessageType,
+                                                            Status = mr.Status,
+                                                            StatusDetail = mr.StatusMessage,
+                                                            SentBy = m.Person.Firstname + " " + m.Person.Family.FamilyName
+                                                        })
+                                                 .ToList();
+
+                int totalRecords = messages.Count();
+
+                switch (request.sidx)
+                {
+                    case "Subject":
+                        {
+                            if (request.sord.ToLower() == "asc")
+                            {
+                                messages = messages.OrderBy(g => g.Subject)
+                                    .Skip((request.page - 1) * request.rows)
+                                    .Take(request.rows)
+                                    .ToList();
+                            }
+                            else
+                            {
+                                messages = messages
+                                    .OrderByDescending(g => g.Subject)
+                                    .Skip((request.page - 1) * request.rows)
+                                    .Take(request.rows)
+                                    .ToList();
+                            }
+                            break;
+                        }
+                    case "Sent":
+                        {
+                            if (request.sord.ToLower() == "asc")
+                            {
+                                messages = messages.OrderBy(g => g.Sent)
+                                    .Skip((request.page - 1) * request.rows)
+                                    .Take(request.rows)
+                                    .ToList();
+                            }
+                            else
+                            {
+                                messages = messages
+                                    .OrderByDescending(g => g.Sent)
+                                    .Skip((request.page - 1) * request.rows)
+                                    .Take(request.rows)
+                                    .ToList();
+                            }
+                            break;
+                        }
+                    case "Status":
+                        {
+                            if (request.sord.ToLower() == "asc")
+                            {
+                                messages = messages.OrderBy(g => g.Status)
+                                    .Skip((request.page - 1) * request.rows)
+                                    .Take(request.rows)
+                                    .ToList();
+                            }
+                            else
+                            {
+                                messages = messages
+                                    .OrderByDescending(g => g.Status)
+                                    .Skip((request.page - 1) * request.rows)
+                                    .Take(request.rows)
+                                    .ToList();
+                            }
+                            break;
+                        }
+                    case "MessageType":
+                        {
+                            if (request.sord.ToLower() == "asc")
+                            {
+                                messages = messages.OrderBy(g => g.MessageType)
+                                    .Skip((request.page - 1) * request.rows)
+                                    .Take(request.rows)
+                                    .ToList();
+                            }
+                            else
+                            {
+                                messages = messages
+                                    .OrderByDescending(g => g.MessageType)
+                                    .Skip((request.page - 1) * request.rows)
+                                    .Take(request.rows)
+                                    .ToList();
+                            }
+                            break;
+                        }
+                    case "SentBy":
+                        {
+                            if (request.sord.ToLower() == "asc")
+                            {
+                                messages = messages.OrderBy(g => g.SentBy)
+                                    .Skip((request.page - 1) * request.rows)
+                                    .Take(request.rows)
+                                    .ToList();
+                            }
+                            else
+                            {
+                                messages = messages
+                                    .OrderByDescending(g => g.SentBy)
+                                    .Skip((request.page - 1) * request.rows)
+                                    .Take(request.rows)
+                                    .ToList();
+                            }
+                            break;
+                        }
+                }
+
+                var messagesGridData = new JqGridData()
+                {
+                    total = (int)Math.Ceiling((float)totalRecords / (float)request.rows),
+                    page = request.page,
+                    records = totalRecords,
+                    rows = (from g in messages
+                            select new JqGridRow()
+                            {
+                                id = g.MessageId.ToString(),
+                                cell = new string[] {
+                                                    g.MessageId.ToString(),
+                                                    g.Subject,
+                                                    g.Sent.ToString("yyyy/MM/dd"),
+                                                    g.Status,
+                                                    g.MessageType,
+                                                    g.SentBy
+                                }
+                            }).ToArray()
+                };
+                return messagesGridData;
+            }
+        }
 
         public static JqGridData FetchGroupsForPersonJQGrid(Person currentPerson, int personId, JqGridRequest request)
         {

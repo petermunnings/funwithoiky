@@ -53,6 +53,7 @@
     <Compile Include="Models\EmailTemplateViewModel.cs" />
     <Compile Include="Models\GridSetupViewModel.cs" />
     <Compile Include="Models\PersonGroupViewModel.cs" />
+    <Compile Include="Models\PersonMessageModel.cs" />
     <Compile Include="Models\StandardCommentViewModel.cs" />
     <Compile Include="Models\GroupClassificationViewModel.cs" />
     <Compile Include="Models\HomeGroupEventViewModel.cs" />

@@ -82,7 +82,11 @@
         @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewPersonGroups))
         {   
         <li><a href="#tabs-4">Groups</a></li>
-        }       
+        }     
+        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewMessages))
+        {   
+        <li><a href="#tabs-5">Messages</a></li>
+        }   
     </ul>
     <div id="tabs-1">
         @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditChurchPersonalDetails) || ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditGroupPersonalDetails))
@@ -380,6 +384,13 @@
     <div id="tabs-4">
         <table id="jqgGroups" cellpadding="0" cellspacing="0"></table>
         <div id="jqgpGroups" style="text-align:center;"></div>
+    </div>          
+        }
+        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewMessages))
+        {
+    <div id="tabs-5">
+        <table id="jqgMessages" cellpadding="0" cellspacing="0"></table>
+        <div id="jqgpMessages" style="text-align:center;"></div>
     </div>          
         }
 </div>
