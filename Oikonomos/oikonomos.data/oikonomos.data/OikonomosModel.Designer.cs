@@ -54,8 +54,13 @@ using System.Xml.Serialization;
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_Comment_AboutPerson", "Person", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Person), "Comment", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.Comment), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_Comment_MadeByPerson", "Person", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Person), "Comment", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.Comment), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_Comment_Role", "Role", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Role), "Comment", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.Comment), true)]
+[assembly: EdmRelationshipAttribute("oikonomosModel", "FK_PersonEvent_Event", "Event", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Event), "PersonEvent", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.PersonEvent), true)]
+[assembly: EdmRelationshipAttribute("oikonomosModel", "FK_PersonEvent_Person", "Person", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Person), "PersonEvent", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.PersonEvent), true)]
+[assembly: EdmRelationshipAttribute("oikonomosModel", "FK_Message_Person", "Person", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Person), "Message", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.Message), true)]
+[assembly: EdmRelationshipAttribute("oikonomosModel", "FK_MessageRecepient_Person", "Person", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Person), "MessageRecepient", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.MessageRecepient), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_Church_Address", "Address", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(oikonomos.data.Address), "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.Church), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_Church_Status", "Status", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Status), "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.Church), true)]
+[assembly: EdmRelationshipAttribute("oikonomosModel", "FK_ChurchEmailTemplate_Church", "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Church), "ChurchEmailTemplate", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.ChurchEmailTemplate), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_ChurchOptionalField_Church", "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Church), "ChurchOptionalField", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.ChurchOptionalField), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_ChurchSmsProvider_Church", "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Church), "ChurchSmsProvider", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.ChurchSmsProvider), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_ChurchSuburb_Church", "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Church), "ChurchSuburb", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.ChurchSuburb), true)]
@@ -66,9 +71,7 @@ using System.Xml.Serialization;
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_PersonChurch_Church", "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Church), "PersonChurch", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.PersonChurch), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_Site_Church", "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Church), "Site", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.Site), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_StandardComment_Church", "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Church), "StandardComment", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.StandardComment), true)]
-[assembly: EdmRelationshipAttribute("oikonomosModel", "FK_ChurchEmailTemplate_Church", "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Church), "ChurchEmailTemplate", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.ChurchEmailTemplate), true)]
-[assembly: EdmRelationshipAttribute("oikonomosModel", "FK_PersonEvent_Event", "Event", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Event), "PersonEvent", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.PersonEvent), true)]
-[assembly: EdmRelationshipAttribute("oikonomosModel", "FK_PersonEvent_Person", "Person", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Person), "PersonEvent", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.PersonEvent), true)]
+[assembly: EdmRelationshipAttribute("oikonomosModel", "FK_MessageRecepient_Message", "Message", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Message), "MessageRecepient", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.MessageRecepient), true)]
 
 #endregion
 
@@ -603,22 +606,6 @@ namespace oikonomos.data
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        public ObjectSet<Church> Churches
-        {
-            get
-            {
-                if ((_Churches == null))
-                {
-                    _Churches = base.CreateObjectSet<Church>("Churches");
-                }
-                return _Churches;
-            }
-        }
-        private ObjectSet<Church> _Churches;
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
         public ObjectSet<PersonEvent> PersonEvents
         {
             get
@@ -631,6 +618,54 @@ namespace oikonomos.data
             }
         }
         private ObjectSet<PersonEvent> _PersonEvents;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<Message> Messages
+        {
+            get
+            {
+                if ((_Messages == null))
+                {
+                    _Messages = base.CreateObjectSet<Message>("Messages");
+                }
+                return _Messages;
+            }
+        }
+        private ObjectSet<Message> _Messages;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<MessageRecepient> MessageRecepients
+        {
+            get
+            {
+                if ((_MessageRecepients == null))
+                {
+                    _MessageRecepients = base.CreateObjectSet<MessageRecepient>("MessageRecepients");
+                }
+                return _MessageRecepients;
+            }
+        }
+        private ObjectSet<MessageRecepient> _MessageRecepients;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<Church> Churches
+        {
+            get
+            {
+                if ((_Churches == null))
+                {
+                    _Churches = base.CreateObjectSet<Church>("Churches");
+                }
+                return _Churches;
+            }
+        }
+        private ObjectSet<Church> _Churches;
 
         #endregion
 
@@ -877,19 +912,35 @@ namespace oikonomos.data
         }
     
         /// <summary>
-        /// Deprecated Method for adding a new object to the Churches EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
-        /// </summary>
-        public void AddToChurches(Church church)
-        {
-            base.AddObject("Churches", church);
-        }
-    
-        /// <summary>
         /// Deprecated Method for adding a new object to the PersonEvents EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
         public void AddToPersonEvents(PersonEvent personEvent)
         {
             base.AddObject("PersonEvents", personEvent);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the Messages EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToMessages(Message message)
+        {
+            base.AddObject("Messages", message);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the MessageRecepients EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToMessageRecepients(MessageRecepient messageRecepient)
+        {
+            base.AddObject("MessageRecepients", messageRecepient);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the Churches EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToChurches(Church church)
+        {
+            base.AddObject("Churches", church);
         }
 
         #endregion
@@ -1946,6 +1997,28 @@ namespace oikonomos.data
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_ChurchEmailTemplate_Church", "ChurchEmailTemplate")]
+        public EntityCollection<ChurchEmailTemplate> ChurchEmailTemplates
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<ChurchEmailTemplate>("oikonomosModel.FK_ChurchEmailTemplate_Church", "ChurchEmailTemplate");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<ChurchEmailTemplate>("oikonomosModel.FK_ChurchEmailTemplate_Church", "ChurchEmailTemplate", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
         [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_ChurchOptionalField_Church", "ChurchOptionalField")]
         public EntityCollection<ChurchOptionalField> ChurchOptionalFields
         {
@@ -2156,28 +2229,6 @@ namespace oikonomos.data
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<StandardComment>("oikonomosModel.FK_StandardComment_Church", "StandardComment", value);
-                }
-            }
-        }
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [XmlIgnoreAttribute()]
-        [SoapIgnoreAttribute()]
-        [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_ChurchEmailTemplate_Church", "ChurchEmailTemplate")]
-        public EntityCollection<ChurchEmailTemplate> ChurchEmailTemplates
-        {
-            get
-            {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<ChurchEmailTemplate>("oikonomosModel.FK_ChurchEmailTemplate_Church", "ChurchEmailTemplate");
-            }
-            set
-            {
-                if ((value != null))
-                {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<ChurchEmailTemplate>("oikonomosModel.FK_ChurchEmailTemplate_Church", "ChurchEmailTemplate", value);
                 }
             }
         }
@@ -3741,6 +3792,28 @@ namespace oikonomos.data
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_PersonEvent_Event", "PersonEvent")]
+        public EntityCollection<PersonEvent> PersonEvents
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<PersonEvent>("oikonomosModel.FK_PersonEvent_Event", "PersonEvent");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<PersonEvent>("oikonomosModel.FK_PersonEvent_Event", "PersonEvent", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
         [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_Event_Church1", "Church")]
         public Church Church
         {
@@ -3769,28 +3842,6 @@ namespace oikonomos.data
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Church>("oikonomosModel.FK_Event_Church1", "Church", value);
-                }
-            }
-        }
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [XmlIgnoreAttribute()]
-        [SoapIgnoreAttribute()]
-        [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_PersonEvent_Event", "PersonEvent")]
-        public EntityCollection<PersonEvent> PersonEvents
-        {
-            get
-            {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<PersonEvent>("oikonomosModel.FK_PersonEvent_Event", "PersonEvent");
-            }
-            set
-            {
-                if ((value != null))
-                {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<PersonEvent>("oikonomosModel.FK_PersonEvent_Event", "PersonEvent", value);
                 }
             }
         }
@@ -5180,6 +5231,470 @@ namespace oikonomos.data
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<GroupClassification>("oikonomosModel.FK_GroupClassification_GroupType", "GroupClassification", value);
+                }
+            }
+        }
+
+        #endregion
+
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="oikonomosModel", Name="Message")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class Message : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new Message object.
+        /// </summary>
+        /// <param name="messageId">Initial value of the MessageId property.</param>
+        /// <param name="subject">Initial value of the Subject property.</param>
+        /// <param name="messageFrom">Initial value of the MessageFrom property.</param>
+        /// <param name="messageType">Initial value of the MessageType property.</param>
+        public static Message CreateMessage(global::System.Int32 messageId, global::System.String subject, global::System.Int32 messageFrom, global::System.String messageType)
+        {
+            Message message = new Message();
+            message.MessageId = messageId;
+            message.Subject = subject;
+            message.MessageFrom = messageFrom;
+            message.MessageType = messageType;
+            return message;
+        }
+
+        #endregion
+
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 MessageId
+        {
+            get
+            {
+                return _MessageId;
+            }
+            set
+            {
+                if (_MessageId != value)
+                {
+                    OnMessageIdChanging(value);
+                    ReportPropertyChanging("MessageId");
+                    _MessageId = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("MessageId");
+                    OnMessageIdChanged();
+                }
+            }
+        }
+        private global::System.Int32 _MessageId;
+        partial void OnMessageIdChanging(global::System.Int32 value);
+        partial void OnMessageIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Subject
+        {
+            get
+            {
+                return _Subject;
+            }
+            set
+            {
+                OnSubjectChanging(value);
+                ReportPropertyChanging("Subject");
+                _Subject = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Subject");
+                OnSubjectChanged();
+            }
+        }
+        private global::System.String _Subject;
+        partial void OnSubjectChanging(global::System.String value);
+        partial void OnSubjectChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String Body
+        {
+            get
+            {
+                return _Body;
+            }
+            set
+            {
+                OnBodyChanging(value);
+                ReportPropertyChanging("Body");
+                _Body = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("Body");
+                OnBodyChanged();
+            }
+        }
+        private global::System.String _Body;
+        partial void OnBodyChanging(global::System.String value);
+        partial void OnBodyChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 MessageFrom
+        {
+            get
+            {
+                return _MessageFrom;
+            }
+            set
+            {
+                OnMessageFromChanging(value);
+                ReportPropertyChanging("MessageFrom");
+                _MessageFrom = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("MessageFrom");
+                OnMessageFromChanged();
+            }
+        }
+        private global::System.Int32 _MessageFrom;
+        partial void OnMessageFromChanging(global::System.Int32 value);
+        partial void OnMessageFromChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String MessageType
+        {
+            get
+            {
+                return _MessageType;
+            }
+            set
+            {
+                OnMessageTypeChanging(value);
+                ReportPropertyChanging("MessageType");
+                _MessageType = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("MessageType");
+                OnMessageTypeChanged();
+            }
+        }
+        private global::System.String _MessageType;
+        partial void OnMessageTypeChanging(global::System.String value);
+        partial void OnMessageTypeChanged();
+
+        #endregion
+
+    
+        #region Navigation Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_Message_Person", "Person")]
+        public Person Person
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Person>("oikonomosModel.FK_Message_Person", "Person").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Person>("oikonomosModel.FK_Message_Person", "Person").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<Person> PersonReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Person>("oikonomosModel.FK_Message_Person", "Person");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Person>("oikonomosModel.FK_Message_Person", "Person", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_MessageRecepient_Message", "MessageRecepient")]
+        public EntityCollection<MessageRecepient> MessageRecepients
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<MessageRecepient>("oikonomosModel.FK_MessageRecepient_Message", "MessageRecepient");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<MessageRecepient>("oikonomosModel.FK_MessageRecepient_Message", "MessageRecepient", value);
+                }
+            }
+        }
+
+        #endregion
+
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="oikonomosModel", Name="MessageRecepient")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class MessageRecepient : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new MessageRecepient object.
+        /// </summary>
+        /// <param name="messageRecepientId">Initial value of the MessageRecepientId property.</param>
+        /// <param name="messageTo">Initial value of the MessageTo property.</param>
+        /// <param name="messageSent">Initial value of the MessageSent property.</param>
+        /// <param name="status">Initial value of the Status property.</param>
+        /// <param name="messageId">Initial value of the MessageId property.</param>
+        public static MessageRecepient CreateMessageRecepient(global::System.Int32 messageRecepientId, global::System.Int32 messageTo, global::System.DateTime messageSent, global::System.String status, global::System.Int32 messageId)
+        {
+            MessageRecepient messageRecepient = new MessageRecepient();
+            messageRecepient.MessageRecepientId = messageRecepientId;
+            messageRecepient.MessageTo = messageTo;
+            messageRecepient.MessageSent = messageSent;
+            messageRecepient.Status = status;
+            messageRecepient.MessageId = messageId;
+            return messageRecepient;
+        }
+
+        #endregion
+
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 MessageRecepientId
+        {
+            get
+            {
+                return _MessageRecepientId;
+            }
+            set
+            {
+                if (_MessageRecepientId != value)
+                {
+                    OnMessageRecepientIdChanging(value);
+                    ReportPropertyChanging("MessageRecepientId");
+                    _MessageRecepientId = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("MessageRecepientId");
+                    OnMessageRecepientIdChanged();
+                }
+            }
+        }
+        private global::System.Int32 _MessageRecepientId;
+        partial void OnMessageRecepientIdChanging(global::System.Int32 value);
+        partial void OnMessageRecepientIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 MessageTo
+        {
+            get
+            {
+                return _MessageTo;
+            }
+            set
+            {
+                OnMessageToChanging(value);
+                ReportPropertyChanging("MessageTo");
+                _MessageTo = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("MessageTo");
+                OnMessageToChanged();
+            }
+        }
+        private global::System.Int32 _MessageTo;
+        partial void OnMessageToChanging(global::System.Int32 value);
+        partial void OnMessageToChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime MessageSent
+        {
+            get
+            {
+                return _MessageSent;
+            }
+            set
+            {
+                OnMessageSentChanging(value);
+                ReportPropertyChanging("MessageSent");
+                _MessageSent = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("MessageSent");
+                OnMessageSentChanged();
+            }
+        }
+        private global::System.DateTime _MessageSent;
+        partial void OnMessageSentChanging(global::System.DateTime value);
+        partial void OnMessageSentChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Status
+        {
+            get
+            {
+                return _Status;
+            }
+            set
+            {
+                OnStatusChanging(value);
+                ReportPropertyChanging("Status");
+                _Status = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Status");
+                OnStatusChanged();
+            }
+        }
+        private global::System.String _Status;
+        partial void OnStatusChanging(global::System.String value);
+        partial void OnStatusChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 MessageId
+        {
+            get
+            {
+                return _MessageId;
+            }
+            set
+            {
+                OnMessageIdChanging(value);
+                ReportPropertyChanging("MessageId");
+                _MessageId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("MessageId");
+                OnMessageIdChanged();
+            }
+        }
+        private global::System.Int32 _MessageId;
+        partial void OnMessageIdChanging(global::System.Int32 value);
+        partial void OnMessageIdChanged();
+
+        #endregion
+
+    
+        #region Navigation Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_MessageRecepient_Person", "Person")]
+        public Person Person
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Person>("oikonomosModel.FK_MessageRecepient_Person", "Person").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Person>("oikonomosModel.FK_MessageRecepient_Person", "Person").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<Person> PersonReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Person>("oikonomosModel.FK_MessageRecepient_Person", "Person");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Person>("oikonomosModel.FK_MessageRecepient_Person", "Person", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_MessageRecepient_Message", "Message")]
+        public Message Message
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Message>("oikonomosModel.FK_MessageRecepient_Message", "Message").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Message>("oikonomosModel.FK_MessageRecepient_Message", "Message").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<Message> MessageReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Message>("oikonomosModel.FK_MessageRecepient_Message", "Message");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Message>("oikonomosModel.FK_MessageRecepient_Message", "Message", value);
                 }
             }
         }
@@ -7184,6 +7699,50 @@ namespace oikonomos.data
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<PersonEvent>("oikonomosModel.FK_PersonEvent_Person", "PersonEvent", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_Message_Person", "Message")]
+        public EntityCollection<Message> Messages
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Message>("oikonomosModel.FK_Message_Person", "Message");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Message>("oikonomosModel.FK_Message_Person", "Message", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_MessageRecepient_Person", "MessageRecepient")]
+        public EntityCollection<MessageRecepient> MessageRecepients
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<MessageRecepient>("oikonomosModel.FK_MessageRecepient_Person", "MessageRecepient");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<MessageRecepient>("oikonomosModel.FK_MessageRecepient_Person", "MessageRecepient", value);
                 }
             }
         }

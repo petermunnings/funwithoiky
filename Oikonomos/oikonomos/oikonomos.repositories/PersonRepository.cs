@@ -279,5 +279,10 @@ namespace oikonomos.repositories
 
             return persons;
         }
+
+        public int FetchPersonIdFromEmailAddress(string fromAddress)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

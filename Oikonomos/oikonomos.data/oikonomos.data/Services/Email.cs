@@ -11,6 +11,7 @@ namespace oikonomos.data.Services
 {
     public class Email
     {
+       
         public static void SendExceptionEmail(Exception ex)
         {
             Task.Factory.StartNew(() => SendExceptionEmailAsync(ex));
@@ -78,19 +79,20 @@ namespace oikonomos.data.Services
 
         }
 
-        private static void SendEmails(List<string> addresses, string subject, string body, Person currentPerson, string disclaimer)
+        private static void SendEmails(IEnumerable<string> addresses, string subject, string body, Person currentPerson, string disclaimer)
         {
-            foreach (string address in addresses)
+            foreach (var address in addresses)
             {
                 try
                 {
-                    using (MailMessage mailMessage = new MailMessage())
+                    using (var mailMessage = new MailMessage())
                     {
                         mailMessage.Subject = subject;
                         mailMessage.Body = body + disclaimer + currentPerson.Firstname + " " + currentPerson.Family.FamilyName + " (" + currentPerson.Email + ")";
                         mailMessage.IsBodyHtml = false;
                         mailMessage.To.Add(address);
                         SendEmail(mailMessage, currentPerson.Church.EmailLogin, currentPerson.Church.EmailPassword, currentPerson.Fullname + " on behalf of " + currentPerson.Church.Name);
+
                     }
                 }
                 catch (Exception ex)
@@ -111,7 +113,7 @@ namespace oikonomos.data.Services
         {
             try
             {
-                using (MailMessage message = new MailMessage())
+                using (var message = new MailMessage())
                 {
                     message.Subject = "Welcome to " + church.SiteHeader;
                     message.Body = GetWelcomeLetterBodyFromDataBase(
@@ -155,7 +157,7 @@ namespace oikonomos.data.Services
         {
             try
             {
-                using (MailMessage message = new MailMessage())
+                using (var message = new MailMessage())
                 {
                     message.Subject = "Your password has been reset on " + systemName;
                     message.Body = GetResetPasswordBody(firstname,
@@ -184,7 +186,7 @@ namespace oikonomos.data.Services
         {
             message.From = new MailAddress(username, displayName);
 
-            using (SmtpClient client = new SmtpClient("mail.oikonomos.co.za"))
+            using (var client = new SmtpClient("mail.oikonomos.co.za"))
             {
                 client.Credentials = new System.Net.NetworkCredential(username, password);
                 client.Send(message);

@@ -15,11 +15,11 @@ namespace oikonomos.repositories.tests
         {
             const int personId   = 1;
             const int roleId     = 4;
-            var commentsToDelete = Context.Comments.Where(c => c.AboutPersonId == personId).ToList();
+            var commentsToDelete = _context.Comments.Where(c => c.AboutPersonId == personId).ToList();
             foreach(var commentToDelete in commentsToDelete)
-                Context.DeleteObject(commentToDelete);
+                _context.DeleteObject(commentToDelete);
 
-            Context.SaveChanges();
+            _context.SaveChanges();
 
             ICommentRepository commentsRepo = new CommentRepository();
             var currentPerson = new Person {PersonId = personId, RoleId = roleId};
@@ -46,9 +46,9 @@ namespace oikonomos.repositories.tests
             
             const int personId = 1;
             const int roleId = 1;
-            var commentsToDelete = Context.Comments.Where(c => c.AboutPersonId == personId).ToList();
+            var commentsToDelete = _context.Comments.Where(c => c.AboutPersonId == personId).ToList();
             foreach (var commentToDelete in commentsToDelete)
-                Context.DeleteObject(commentToDelete);
+                _context.DeleteObject(commentToDelete);
 
             ICommentRepository commentsRepo = new CommentRepository();
             var currentPerson = new Person { PersonId = personId, RoleId = roleId };

@@ -16,7 +16,7 @@ namespace oikonomos.repositories
             {
                 if (instances == null)
                     instances = new Dictionary<string, oikonomosEntities>();
-                var key = HttpContext.Current.Session.SessionID;
+                var key = HttpContext.Current==null ? "Test" : HttpContext.Current.Session.SessionID;
                 if (!instances.ContainsKey(key))
                     instances.Add(key,new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString));
                 return instances[key];

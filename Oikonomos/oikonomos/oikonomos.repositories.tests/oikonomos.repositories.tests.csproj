@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="CommentTests.cs" />
     <Compile Include="EventTests.cs" />
+    <Compile Include="MessageRepositoryTests.cs" />
     <Compile Include="PersonDataAccessorTests.cs" />
     <Compile Include="PersonGroupTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

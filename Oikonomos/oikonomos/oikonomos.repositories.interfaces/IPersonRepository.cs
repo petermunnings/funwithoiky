@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Mail;
 using oikonomos.common.Models;
 using oikonomos.data;
 
@@ -19,5 +20,6 @@ namespace oikonomos.repositories.interfaces
         Person FetchPersonFromFacebookId(long facebookId);
         IEnumerable<Person> FetchPersonFromName(string fullname, string firstname, string surname, string email);
 
+        int FetchPersonIdFromEmailAddress(string fromAddress);
     }
 }

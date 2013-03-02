@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ICommentService.cs" />
+    <Compile Include="IEmailLogger.cs" />
     <Compile Include="IEmailService.cs" />
     <Compile Include="IEventService.cs" />
     <Compile Include="IGridFormatter.cs" />

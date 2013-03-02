@@ -10,7 +10,7 @@ namespace oikonomos.repositories.tests
         [Test]
         public void CanSavePersonToSampleChurch()
         {
-            var noPeopleInSampleChurch = Context.PersonChurches.Count(pc => pc.ChurchId == 6);
+            var noPeopleInSampleChurch = _context.PersonChurches.Count(pc => pc.ChurchId == 6);
             var permissionRepository = new PermissionRepository();
             var churchRepository = new ChurchRepository();
             var personRepository = new PersonRepository(permissionRepository, churchRepository);
@@ -29,7 +29,7 @@ namespace oikonomos.repositories.tests
                 );
             personService.SavePersonToSampleChurch("test1", "test1", "liveId1", "", "", 47);
 
-            var updatedNoPeopleInSampleChurch = Context.PersonChurches.Count(pc => pc.ChurchId == 6);
+            var updatedNoPeopleInSampleChurch = _context.PersonChurches.Count(pc => pc.ChurchId == 6);
             Assert.That(updatedNoPeopleInSampleChurch, Is.EqualTo(noPeopleInSampleChurch + 1));
 
         }

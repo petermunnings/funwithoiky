@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommentService.cs" />
+    <Compile Include="EmailLogger.cs" />
     <Compile Include="EmailService.cs" />
     <Compile Include="EventService.cs" />
     <Compile Include="GridFormatter.cs" />
