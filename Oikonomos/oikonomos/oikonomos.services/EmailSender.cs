@@ -17,20 +17,25 @@ namespace oikonomos.services
 
         public void SendEmail(string subject, string body, string displayFrom, IEnumerable<string> emailAddressTo, string login, string password, int personIdFrom, int churchId)
         {
-            foreach (var emailTo in emailAddressTo)
+
+            using (var message = new MailMessage())
             {
-                using (var message = new MailMessage(login, emailTo, subject, body))
+                try
                 {
-                    try
+                    message.From = new MailAddress(login);
+                    message.Subject = subject;
+                    message.Body = body;
+                    message.IsBodyHtml = true;
+                    foreach (var emailTo in emailAddressTo)
                     {
-                        message.IsBodyHtml = true;
-                        SendEmail(message, login, password, displayFrom);
-                        _emailLogger.LogSuccess(message, personIdFrom, churchId);
+                        message.To.Add(emailTo); 
                     }
-                    catch (Exception e)
-                    {
-                        _emailLogger.LogError(message, 1, e, churchId);
-                    }
+                    SendEmail(message, login, password, displayFrom);
+                    _emailLogger.LogSuccess(message, body, personIdFrom, churchId);
+                }
+                catch (Exception e)
+                {
+                    _emailLogger.LogError(message, body, 1, e, churchId);
                 }
             }
         }
@@ -51,7 +56,7 @@ namespace oikonomos.services
                 }
                 catch (Exception e)
                 {
-                    _emailLogger.LogError(message, 1, e, 1);
+                    _emailLogger.LogError(message, "Exception from website", 1, e, 1);
                 }
             }
         }
@@ -73,7 +78,7 @@ namespace oikonomos.services
                 }
                 catch (Exception e)
                 {
-                    _emailLogger.LogError(message, 1, e, 1);
+                    _emailLogger.LogError(message, HttpUtility.HtmlDecode(body), 1, e, 1);
                 }
             }
         }
@@ -85,8 +90,18 @@ namespace oikonomos.services
             using (var client = new SmtpClient("mail.oikonomos.co.za"))
             {
                 client.Credentials = new System.Net.NetworkCredential(username, password);
+                AddDisclaimer(message, displayName);
                 client.Send(message);
             }
+        }
+
+        private static void AddDisclaimer(MailMessage message, string displayName)
+        {
+            message.Body = "<body style='font-family:Verdana'>" + message.Body;
+            var disclaimer = "<p>&nbsp;</p><hr />";
+            disclaimer += string.Format("<p style='font-size:9px'>Please do not reply to this email.  This email was sent by {0}</p>", displayName);
+            message.Body += disclaimer;
+            message.Body += "</body>";
         }
     }
 }

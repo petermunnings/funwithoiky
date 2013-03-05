@@ -29,6 +29,7 @@ namespace oikonomos.web.Controllers
         private readonly IPersonGroupService _personGroupService;
         private readonly IPersonGroupRepository _personGroupRepository;
         private readonly IEmailService _emailService;
+        private MessageRecepientRepository _messageRecepientRepository;
 
         public AjaxController()
         {
@@ -69,7 +70,8 @@ namespace oikonomos.web.Controllers
             _groupEventRepository = new GroupEventRepository(personRepository);
             _systemAdministratorService  = new SystemAdministratorService(churchRepository, permissionRepository);
             _personGroupService = new PersonGroupService(_personGroupRepository);
-            
+            _messageRecepientRepository = new MessageRecepientRepository();
+
         }
 
         public JsonResult InitializeChurchSettingsViewModel()
@@ -1410,11 +1412,11 @@ namespace oikonomos.web.Controllers
             return Json(response, JsonRequestBehavior.DenyGet);
         }
 
-        public JsonResult FetchGroupEmails(int groupId, List<int> selectedIds, bool selectedOnly)
+
+        public JsonResult SetEmailAddressesFromPersonId(int personId)
         {
-            bool sessionTimedOut = false;
-            string message = string.Empty;
-            List<string> addresses = new List<string>();
+            var sessionTimedOut = false;
+            var message = string.Empty;
             if (Session[SessionVariable.LoggedOnPerson] == null)
             {
                 sessionTimedOut = true;
@@ -1422,7 +1424,62 @@ namespace oikonomos.web.Controllers
             }
             else
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                var person = _personService.FetchPersonViewModel(personId, (Person)Session[SessionVariable.LoggedOnPerson]);
+                if (person == null || string.IsNullOrEmpty(person.Email))
+                    message = "Could not find recepient email address";
+                else
+                    Session[SessionVariable.EmailAddresses] = new List<string> { person.Email };
+            }
+
+            var response = new
+            {
+                SessionTimeOut = sessionTimedOut,
+                Message = message
+            };
+            return Json(response, JsonRequestBehavior.DenyGet);
+        }
+
+        public JsonResult SetEmailAddressesFromMessageRecepientId(int messageRecepientId)
+        {
+            var sessionTimedOut = false;
+            var message = string.Empty;
+            MessageRecepientViewModel messageRecepientViewModel = null;
+            if (Session[SessionVariable.LoggedOnPerson] == null)
+            {
+                sessionTimedOut = true;
+                message = ExceptionMessage.SessionTimedOut;
+            }
+            else
+            {
+                messageRecepientViewModel = _messageRecepientRepository.FetchMessageRecepient(messageRecepientId);
+                if (messageRecepientViewModel == null)
+                    message = "Could not find recepient email address";
+                else
+                    Session[SessionVariable.EmailAddresses] = new List<string> { messageRecepientViewModel.MessageToEmail };
+            }
+
+            var response = new
+            {
+                SessionTimeOut = sessionTimedOut,
+                Message = message,
+                Subject = messageRecepientViewModel == null ? string.Empty : messageRecepientViewModel.Subject,
+                Body = messageRecepientViewModel == null ? string.Empty : messageRecepientViewModel.Body
+            };
+            return Json(response, JsonRequestBehavior.DenyGet);
+        }
+        
+        public JsonResult FetchGroupEmails(int groupId, List<int> selectedIds, bool selectedOnly)
+        {
+            var sessionTimedOut = false;
+            var message = string.Empty;
+            if (Session[SessionVariable.LoggedOnPerson] == null)
+            {
+                sessionTimedOut = true;
+                message = ExceptionMessage.SessionTimedOut;
+            }
+            else
+            {
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 if (currentPerson.HasPermission(Permissions.EmailGroupMembers))
                 {
                     Session[SessionVariable.EmailAddresses] = GroupDataAccessor.FetchGroupAddresses(currentPerson, groupId, selectedIds, selectedOnly);

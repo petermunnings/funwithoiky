@@ -378,9 +378,35 @@ function SetPrimaryGroup(groupId) {
 
 }
 
+var ViewMessage = function(rowid) {
+    OpenEmailDialog();
+    var postData = { messageRecepientId: rowid };
+    $.post("/Ajax/SetEmailAddressesFromMessageRecepientId", $.postify(postData), function (data) {
+        if (data.Message == "") {
+            SetupEmailDialog(data.Subject, data.Body);
+        }
+        else {
+            ShowErrorMessage("Error opening message", data.Message);
+        }
+    });
+};
+
+var CreateNewMessage = function(personId) {
+    OpenEmailDialog();
+    var postData = { personId: personId };
+    $.post("/Ajax/SetEmailAddressesFromPersonId", $.postify(postData), function (data) {
+        if (data.Message == "") {
+            SetupEmailDialog();
+        }
+        else {
+            ShowErrorMessage("Error opening message", data.Message);
+        }
+    });
+};
+
 var pageIsDirty = false;
 $(document).ready(function() {
-
+    
     FetchFamilyMembers();
 
     //Set up masks
@@ -772,7 +798,10 @@ $(document).ready(function() {
         sortorder: 'desc',
         viewrecords: true,
         width: 'auto',
-        height: 'auto'
+        height: 'auto',
+        ondblClickRow: function (rowid, iRow, iCol, e) {
+            ViewMessage(rowid);
+        },
     }).navGrid('#jqgpMessages', { edit: false, add: false, del: false, search: false });
 
     $("#saveComment_button").click(function() {
@@ -842,6 +871,11 @@ $(document).ready(function() {
     $("#cancelComment_button").click(function () {
         $("#comment_detail").val("");
     });
+
+    $("#email_sendNew").button({ icons: { primary: "ui-icon-mail-closed" } })
+        .click(function () {
+            CreateNewMessage($("#hidden_personId").val());
+        });
 
 });
 

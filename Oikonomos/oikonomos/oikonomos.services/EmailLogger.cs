@@ -18,27 +18,27 @@ namespace oikonomos.services
             _personRepository = personRepository;
         }
 
-        public void LogSuccess(MailMessage mailMessage, int fromPersonId, int churchId)
+        public void LogSuccess(MailMessage mailMessage, string body, int fromPersonId, int churchId)
         {
             var toPeopleIds = new List<int>();
             AddPersonIds(mailMessage.To, toPeopleIds, churchId);
             AddPersonIds(mailMessage.CC, toPeopleIds, churchId);
 
-            _messageRepository.SaveMessage(fromPersonId, toPeopleIds, mailMessage.Subject, mailMessage.Body, "Email", "Success");
+            _messageRepository.SaveMessage(fromPersonId, toPeopleIds, mailMessage.Subject, body, "Email", "Success");
 
         }
 
-        public void LogError(MailMessage mailMessage, int fromPersonId, Exception exception, int churchId)
+        public void LogError(MailMessage mailMessage, string body, int fromPersonId, Exception exception, int churchId)
         {
             var toPeopleIds = new List<int>();
             AddPersonIds(mailMessage.To, toPeopleIds, churchId);
             AddPersonIds(mailMessage.CC, toPeopleIds, churchId);
 
-            _messageRepository.SaveMessage(fromPersonId, toPeopleIds, mailMessage.Subject, mailMessage.Body, "Email", "Failure", exception.Message);
+            _messageRepository.SaveMessage(fromPersonId, toPeopleIds, mailMessage.Subject, body, "Email", "Failure", exception.Message);
 
         }
 
-        private void AddPersonIds(IEnumerable<MailAddress> addressCollection, List<int> toPeopleIds, int churchId)
+        private void AddPersonIds(IEnumerable<MailAddress> addressCollection, ICollection<int> toPeopleIds, int churchId)
         {
             foreach (var address in addressCollection)
             {

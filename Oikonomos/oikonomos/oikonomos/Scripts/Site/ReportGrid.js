@@ -172,7 +172,7 @@ $(document).ready(function () {
         OpenEmailDialog();
         var jqxhr = $.post("/Ajax/FetchChurchEmailAddresses", $.postify(postData), function (data) {
             if (data.Message == "") {
-                SetEmailList();
+                SetupEmailDialog();
             }
             else {
                 $("#responseMessage_text").html(data.Message);

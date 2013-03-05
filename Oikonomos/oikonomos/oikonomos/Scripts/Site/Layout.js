@@ -108,12 +108,19 @@ function getDialogButton(dialog_selector, button_name) {
     return null; 
 }
 
-function SetEmailList() {
+function SetupEmailDialog(subject, body) {
     $("#ajax_loader_sendEmail").hide();
-    var button = getDialogButton( '.email_dialog', 'Submit' );
-    if (button) {
-        button.prop('disabled', false).removeClass('ui-state-disabled');
+    var sendButton = getDialogButton( '.email_dialog', 'Send' );
+    if (sendButton) {
+        sendButton.button("enable");
+        sendButton.button("option", "icons", { primary: "ui-icon-mail-closed" });
     }
+    var cancelButton = getDialogButton('.email_dialog', 'Cancel');
+    if (cancelButton) {
+        cancelButton.button("option", "icons", { primary: "ui-icon-close" });
+    }
+    $("#email_subject").val(subject);
+    $("#email_bodyWithFormatting").val(body);
 }
 
 function SetSmsList(noNos) {
@@ -126,48 +133,14 @@ function SetSmsList(noNos) {
 }
 
 function OpenEmailDialog() {
-    $("#email_bodyWithFormatting").tinymce({
-        theme : "advanced",
-        theme_advanced_buttons1: "bold,italic,underline, strikethrough, separator,justifyleft, justifycenter,justifyright,  justifyfull, separator,forecolor,backcolor,separator, bullist,numlist,separator,outdent,indent,separator,undo,redo",
-        theme_advanced_buttons2: "fontselect,fontsizeselect,formatselect",
-        theme_advanced_buttons3: "",
-        theme_advanced_buttons4: "",
-        theme_advanced_toolbar_location : "top",
-        theme_advanced_toolbar_align : "left",
-        content_css: '/Content/site.css',
-    });
-
 
     $("#ajax_loader_sendEmail").show();
     $("#email_subject").val("");
-    $("#email_body").val("");
-    $("#send_Email").dialog(
-        {
-            dialogClass: 'email_dialog',
-            modal: true,
-            height: 730,
-            width: 800,
-            buttons: {
-                Cancel: function () {
-                    $("#email_subject").val("");
-                    $("#email_body").val("");
-                    $(this).dialog('close');
-                },
-                Submit: function () {
-                    if (SendEmail() == true) {
-                        $("#email_subject").val("");
-                        $("#email_body").val("");
-                        $(this).dialog('close');
-                    }
-                }
-            }
-        });
-            
-    // now programmatically get the submit button and disable it
-    var button = getDialogButton( '.email_dialog', 'Submit' );
-    if ( button ){  
-        button.prop('disabled', true).addClass('ui-state-disabled');
-    }
+    $("#email_bodyWithFormatting").val("");
+    $("#send_Email").slideDown(200);
+    $("#mainContent").slideUp(200);
+
+
 }
 
 function OpenSmsDialog() {
@@ -262,5 +235,32 @@ $(document).ready(function () {
         window.location = "/Home/SysAdmin";
     });
 
+    $("#email_bodyWithFormatting").tinymce({
+        theme: "advanced",
+        theme_advanced_buttons1: "bold,italic,underline, strikethrough, separator,justifyleft, justifycenter,justifyright,  justifyfull, separator,forecolor,backcolor,separator, bullist,numlist,separator,outdent,indent,separator,undo,redo",
+        theme_advanced_buttons2: "fontselect,fontsizeselect,formatselect",
+        theme_advanced_buttons3: "",
+        theme_advanced_buttons4: "",
+        theme_advanced_toolbar_location: "top",
+        theme_advanced_toolbar_align: "left",
+        content_css: '/Content/site.css',
+    });
+
+    $("#email_cancel").button({ icons: { primary: "ui-icon-close" } })
+        .click(function(event) {
+            $("#send_Email").slideUp();
+            $("#mainContent").slideDown();
+        });
     
+    $("#email_send").button({ icons: { primary: "ui-icon-mail-closed" } })
+    .click(function (event) {
+        if (SendEmail() == true) {
+            $("#email_subject").val("");
+            $("#email_bodyWithFormatting").val("");
+            $("#send_Email").slideUp();
+            $("#mainContent").slideDown();
+        }
+    });
+
+
 })

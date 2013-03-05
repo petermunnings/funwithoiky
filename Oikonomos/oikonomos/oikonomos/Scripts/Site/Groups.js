@@ -351,7 +351,7 @@ function FetchEmailList(selectedOnly) {
     OpenEmailDialog();
     var jqxhr = $.post("/Ajax/FetchGroupEmails", $.postify(postData), function (data) {
         if (data.Message == "") {
-            SetEmailList();
+            SetupEmailDialog();
         }
         else {
             $("#responseMessage_text").html(data.Message);

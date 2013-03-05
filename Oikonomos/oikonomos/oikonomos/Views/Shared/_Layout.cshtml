@@ -88,6 +88,35 @@
 }
 
 <div style="width: 100%" >
+    <div id="send_Email" title="Send Email" class="ui-widget" style="display:none; margin: 0 auto; text-align:center; width:800px">
+        <div class="ui-widget">
+            <div class="ui-widget-content ui-corner-all">
+                <table border="0px" cellpadding="5px" cellspacing="5px">
+                    <tr>
+                        <td style="width:150px">Subject</td>
+                        <td style="width:650px"><input type="text" id="email_subject" style="width:640px" /></td>
+                    </tr>
+                    <tr>
+                        <td style="vertical-align:top">Message&nbsp;</td>
+                        <td>
+                            <textarea id="email_bodyWithFormatting" name="email_bodyWithFormatting" rows="30" cols="100" style="width:640px; height: 350px">
+		                    </textarea>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td style="text-align:left">
+                            <button id="email_send" class="ui-state-active">Send</button>&nbsp;
+                            <button id="email_cancel">Cancel</button>
+                            <img id="ajax_loader_sendEmail" src="/Content/images/ajax-loader.gif" alt="loading.." style="display:none" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    
     <div id="mainContent" class="ui-widget" style="margin: 0 auto; text-align:center; width:800px">
         @RenderBody() 
     </div>
@@ -110,34 +139,6 @@
     <div id="responseMessage_text">
     </div>
 </div>
-
-<div id="send_Email" style="display:none" title="Send Email">
-    <div class="ui-widget">
-        <div class="ui-widget-content ui-corner-all">
-            <table border="0px" cellpadding="5px" cellspacing="5px">
-                <tr>
-                    <td>Subject</td>
-                    <td><input type="text" id="email_subject" style="width:514px" /></td>
-                </tr>
-                <tr>
-                    <td style="vertical-align:top">Message&nbsp;</td>
-                    <td>
-                        <textarea id="email_bodyWithFormatting" name="email_bodyWithFormatting" rows="30" cols="80">
-		                </textarea>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>&nbsp;</td>
-                    <td>
-                        <img id="ajax_loader_sendEmail" src="/Content/images/ajax-loader.gif" alt="loading.." style="display:none" />
-                    </td>
-                </tr>
-            </table>
-        </div>
-    </div>
-</div>
-
 
 <div id="send_Sms" style="display:none" title="Send Sms">
     <div class="ui-widget">

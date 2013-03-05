@@ -28,7 +28,7 @@ namespace oikonomos.services.tests
     [Test]
         public void WhenItIsSendSuccesfully_ThenTheMessageShouldBeLoggedAsSuccesful()
         {
-            _emailLogger.LogSuccess(_mailMessage, 1, 1);
+            _emailLogger.LogSuccess(_mailMessage, "body", 1, 1);
 
             var fromIds = new List<int> {2};
             _messageRepository.AssertWasCalled(m=>m.SaveMessage(1, fromIds, "subject", "body", "Email", "Success"));
@@ -38,7 +38,7 @@ namespace oikonomos.services.tests
         public void WhenItIsFails_ThenTheMessageShouldBeLoggedAsFailed()
         {
             var applicationException = new ApplicationException("Test exception");
-            _emailLogger.LogError(_mailMessage, 1, applicationException, 1);
+            _emailLogger.LogError(_mailMessage, "body", 1, applicationException, 1);
 
             var fromIds = new List<int> { 2 };
             _messageRepository.AssertWasCalled(m => m.SaveMessage(1, fromIds, "subject", "body", "Email", "Failure", "Test exception"));

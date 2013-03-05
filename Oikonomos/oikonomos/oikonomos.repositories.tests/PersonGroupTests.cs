@@ -19,18 +19,18 @@ namespace oikonomos.repositories.tests
         public void CanUpdatePrimaryGroup()
         {
             IPersonGroupRepository personGroupRepository = new PersonGroupRepository(new PersonRepository(new PermissionRepository(), new ChurchRepository()));
-            personGroupRepository.SavePrimaryGroup(46,8, _currentPerson);
-            var primaryGroup = personGroupRepository.GetPrimaryGroup(46, _currentPerson);
-            Assert.That(primaryGroup.GroupId, Is.EqualTo(8));
+            personGroupRepository.SavePrimaryGroup(4,2, _currentPerson);
+            var primaryGroup = personGroupRepository.GetPrimaryGroup(4, _currentPerson);
+            Assert.That(primaryGroup.GroupId, Is.EqualTo(2));
         }
 
         [Test]
         public void IfGroupIdDoesntExistUpdatePrimaryGroupDoesNothing()
         {
             IPersonGroupRepository personGroupRepository = new PersonGroupRepository(new PersonRepository(new PermissionRepository(), new ChurchRepository()));
-            personGroupRepository.SavePrimaryGroup(46, 1, _currentPerson);
-            var primaryGroup = personGroupRepository.GetPrimaryGroup(46, _currentPerson);
-            Assert.That(primaryGroup.GroupId, Is.EqualTo(8));
+            personGroupRepository.SavePrimaryGroup(4, 1, _currentPerson);
+            var primaryGroup = personGroupRepository.GetPrimaryGroup(4, _currentPerson);
+            Assert.That(primaryGroup.GroupId, Is.EqualTo(2));
         }
 
         [Test]

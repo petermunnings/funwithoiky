@@ -26,7 +26,7 @@ function FetchEmailList() {
     OpenEmailDialog();
     var jqxhr = $.post("/Ajax/FetchGroupLeaderEmails", $.postify(postData), function (data) {
         if (data.Message == "") {
-            SetEmailList();
+            SetupEmailDialog();
         }
         else {
             $("#responseMessage_text").html(data.Message);

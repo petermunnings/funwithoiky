@@ -54,6 +54,7 @@
     <Compile Include="IFamilyRepository.cs" />
     <Compile Include="IGroupEventRepository.cs" />
     <Compile Include="IGroupRepository.cs" />
+    <Compile Include="IMessageRecepientRepository.cs" />
     <Compile Include="IMessageRepository.cs" />
     <Compile Include="IUsernamePasswordRepository.cs" />
     <Compile Include="IPermissionRepository.cs" />

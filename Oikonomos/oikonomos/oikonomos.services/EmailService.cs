@@ -78,12 +78,6 @@ namespace oikonomos.services
 
         public string SendGroupEmail(IEnumerable<string> addresses, string subject, string body, Person currentPerson)
         {
-            body = "<body style='font-family:Verdana'>" + body;
-            var disclaimer = "<p>&nbsp;</p><hr />";
-            disclaimer += string.Format("<p style='font-size:9px'>Please do not reply to this email.  This email was sent from {0} by <a href='mailto:{1}'>{2}</a></p>", currentPerson.Church.SiteHeader, currentPerson.Email, currentPerson.Fullname);
-            body += disclaimer;
-            body = body + "</body>";
-            
             Task.Factory.StartNew(() => _emailSender.SendEmail(subject, body, currentPerson.Fullname, addresses, currentPerson.Church.EmailLogin, currentPerson.Church.EmailPassword, currentPerson.PersonId, currentPerson.Church.ChurchId));
             return "Emails queued for sending";
         }
