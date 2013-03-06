@@ -978,49 +978,63 @@ namespace oikonomos.data.DataAccessors
 
         private static void DeletePerson(int personId, oikonomosEntities context, Person currentPerson)
         {
-            //Check to see if this address is being used
-            var address = (from p in context.People
-                           join f in context.Families
-                            on p.FamilyId equals f.FamilyId
-                           join a in context.Addresses
-                            on f.AddressId equals a.AddressId
-                           where p.PersonId != personId
-                           select p).ToList();
+            DeleteAddressIfNotBeingUsed(personId, context);
+            DeleteCommentsAboutPerson(personId, context);
+            UpdateCommentsMadeByThisPerson(personId, context, currentPerson);
+            DeleteRelationships(personId, context);
+            DeleteOptionalFields(personId, context);
+            DeleteMessages(personId, context);
 
-            if (address.Count == 0)
+            var person = (from p in context.People
+                          where p.PersonId == personId
+                          select p).FirstOrDefault();
+
+            var familyMembers = (from p in context.People
+                                 where p.PersonId != personId
+                                 && p.FamilyId == person.FamilyId
+                                 select p).ToList();
+
+            context.DeleteObject(person);
+
+            if (familyMembers.Count != 0) return;
+            var familyToDelete = (from f in context.Families
+                                  join p in context.People
+                                      on f.FamilyId equals p.FamilyId
+                                  where p.PersonId == personId
+                                  select f).FirstOrDefault();
+
+            context.DeleteObject(familyToDelete);
+        }
+
+        private static void DeleteMessages(int personId, oikonomosEntities context)
+        {
+            var messageRecepients = context.MessageRecepients.Where(m => m.MessageTo == personId);
+            foreach (var messageRecepient in messageRecepients)
             {
-                var addressToDelete = (from a in context.Addresses
-                                       join f in context.Families
-                                        on a.AddressId equals f.AddressId
-                                       join p in context.People
-                                        on f.FamilyId equals p.FamilyId
-                                       where p.PersonId == personId
-                                       select a).FirstOrDefault();
-
-                context.DeleteObject(addressToDelete);
+                var message = context.Messages.FirstOrDefault(m=>m.MessageId == messageRecepient.MessageId);
+                context.DeleteObject(messageRecepient);
+                if (message == null) continue;
+                var remainingMessageRecepients = message.MessageRecepients.Count();
+                if (remainingMessageRecepients == 0)
+                    context.DeleteObject(message);
             }
+        }
 
-            //Delete comments related to this person
-            var comments = (from c in context.Comments
-                                 where c.AboutPersonId == personId
-                                 select c);
+        private static void DeleteOptionalFields(int personId, oikonomosEntities context)
+        {
+            var optionalFields = (from pc in context.PersonOptionalFields
+                                  where pc.PersonId == personId
+                                  select pc);
 
-            foreach (var comment in comments)
+            foreach (PersonOptionalField optionalField in optionalFields)
             {
-                context.DeleteObject(comment);
+                context.DeleteObject(optionalField);
             }
+        }
 
-            //Update comments made by this person
-            var commentsMadeByThisPerson = (from c in context.Comments
-                                            where c.MadeByPersonId == personId
-                                            select c);
-
-            foreach (var comment in commentsMadeByThisPerson)
-            {
-                comment.MadeByPersonId = currentPerson.PersonId;
-            }
-
-            //Remove all the relationships
+        private static void DeleteRelationships(int personId, oikonomosEntities context)
+        {
+//Remove all the relationships
             var relationships = (from pr in context.PersonRelationships
                                  where pr.PersonId == personId
                                  select pr);
@@ -1038,38 +1052,52 @@ namespace oikonomos.data.DataAccessors
             {
                 context.DeleteObject(rel);
             }
+        }
 
+        private static void DeleteAddressIfNotBeingUsed(int personId, oikonomosEntities context)
+        {
+//Check to see if this address is being used
+            var address = (from p in context.People
+                           join f in context.Families
+                               on p.FamilyId equals f.FamilyId
+                           join a in context.Addresses
+                               on f.AddressId equals a.AddressId
+                           where p.PersonId != personId
+                           select p).ToList();
 
-            var optionalFields = (from pc in context.PersonOptionalFields
-                                  where pc.PersonId == personId
-                                  select pc);
-
-            foreach (PersonOptionalField optionalField in optionalFields)
+            if (address.Count == 0)
             {
-                context.DeleteObject(optionalField);
+                var addressToDelete = (from a in context.Addresses
+                                       join f in context.Families
+                                           on a.AddressId equals f.AddressId
+                                       join p in context.People
+                                           on f.FamilyId equals p.FamilyId
+                                       where p.PersonId == personId
+                                       select a).FirstOrDefault();
+
+                context.DeleteObject(addressToDelete);
             }
+        }
 
-            var person = (from p in context.People
-                          where p.PersonId == personId
-                          select p).FirstOrDefault();
+        private static void UpdateCommentsMadeByThisPerson(int personId, oikonomosEntities context, Person currentPerson)
+        {
+//Update comments made by this person
+            var commentsMadeByThisPerson = (from c in context.Comments
+                                            where c.MadeByPersonId == personId
+                                            select c);
 
-            //Check to see if they were the last one in their family
-            var familyMembers = (from p in context.People
-                                 where p.PersonId != personId
-                                 && p.FamilyId == person.FamilyId
-                                 select p).ToList();
-
-            context.DeleteObject(person);
-
-            if (familyMembers.Count == 0)
+            foreach (var comment in commentsMadeByThisPerson)
             {
-                var familyToDelete = (from f in context.Families
-                                      join p in context.People
-                                        on f.FamilyId equals p.FamilyId
-                                      where p.PersonId == personId
-                                      select f).FirstOrDefault();
+                comment.MadeByPersonId = currentPerson.PersonId;
+            }
+        }
 
-                context.DeleteObject(familyToDelete);
+        private static void DeleteCommentsAboutPerson(int personId, oikonomosEntities context)
+        {
+            var comments = context.Comments.Where(c => c.AboutPersonId == personId);
+            foreach (var comment in comments)
+            {
+                context.DeleteObject(comment);
             }
         }
 
