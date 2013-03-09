@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Data.EntityClient;
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
 using NUnit.Framework;
 
 namespace oikonomos.repositories.tests
@@ -28,7 +26,8 @@ namespace oikonomos.repositories.tests
         public void GivenAMessage_WhenSaveMessage_ThenMessageShouldBeSaved()
         {
             var messageRepository = new MessageRepository();
-            messageRepository.SaveMessage(1, new List<int>{1,3}, "test subject", "test body", "Email", "Success");
+            var messageId = messageRepository.SaveMessage(1, "test subject", "test body", "Email");
+            messageRepository.SaveMessageRecepient(messageId, new[]{1,3}, "Success", string.Empty);
             Assert.That(DatabaseIsInExpectedState());
         }
 

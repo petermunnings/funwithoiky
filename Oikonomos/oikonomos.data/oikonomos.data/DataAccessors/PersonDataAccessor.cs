@@ -625,22 +625,19 @@ namespace oikonomos.data.DataAccessors
                                 .Distinct()
                                 .ToList();
 
-                foreach (string email in emailList)
+                foreach (var email in emailList.Where(email => Utils.ValidEmailAddress(email) && !validEmails.Contains(email)))
                 {
-                    if (Utils.ValidEmailAddress(email) && !validEmails.Contains(email))
-                    {
-                        validEmails.Add(email);
-                    }
+                    validEmails.Add(email);
                 }
             }
 
             return validEmails;
         }
 
-        public static List<string> FetchChurchCellPhoneNos(Person currentPerson, bool search, string searchField, string searchString)
+        public static IEnumerable<string> FetchChurchCellPhoneNos(Person currentPerson, bool search, string searchField, string searchString)
         {
-            List<string> validatedNumbers = new List<string>();
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            var validatedNumbers = new List<string>();
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 var personList = FetchChurchList(currentPerson, search, searchField, searchString, context);
 
@@ -654,16 +651,9 @@ namespace oikonomos.data.DataAccessors
                                     .Distinct()
                                     .ToList();
                 
-                foreach (string cellPhoneNo in cellPhoneList)
+                foreach (var cellPhoneNo in cellPhoneList.Where(cellPhoneNo => cellPhoneNo != null && cellPhoneNo.Trim() != string.Empty).Where(cellPhoneNo => !validatedNumbers.Contains(cellPhoneNo)))
                 {
-                    if (cellPhoneNo != null && cellPhoneNo.Trim() != string.Empty)
-                    {
-                        string intNo = Utils.ConvertCellPhoneToInternational(cellPhoneNo, currentPerson.Church.Country);
-                        if (!validatedNumbers.Contains(intNo))
-                        {
-                            validatedNumbers.Add(intNo);
-                        }
-                    }
+                    validatedNumbers.Add(cellPhoneNo);
                 }
             }
 

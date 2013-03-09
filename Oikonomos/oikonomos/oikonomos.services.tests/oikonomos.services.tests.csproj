@@ -47,7 +47,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommentTests.cs" />
-    <Compile Include="EmailLoggerTests.cs" />
     <Compile Include="EventTests.cs" />
     <Compile Include="GridFormatterTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -20,7 +20,7 @@ namespace oikonomos.web.Controllers
             var personRepository = new PersonRepository(permissionRepository, new ChurchRepository());
             var usernamePasswordRepository = new UsernamePasswordRepository(permissionRepository);
             var groupRepository = new GroupRepository();
-            var emailSender = new EmailSender(new EmailLogger(new MessageRepository(), personRepository));
+            var emailSender = new EmailSender(new MessageRepository(), personRepository);
             var emailContentService = new EmailContentService(new EmailContentRepository());
             _emailService = new EmailService(
                 usernamePasswordRepository,

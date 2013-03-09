@@ -27,7 +27,7 @@ namespace oikonomos.web.ApiControllers
             var personGroupRepository = new PersonGroupRepository(_personRepository);
             var relationshipRepository = new RelationshipRepository(_personRepository);
             var usernamePasswordRepository = new UsernamePasswordRepository(permissionRepository);
-            var emailSender = new EmailSender(new EmailLogger(new MessageRepository(), _personRepository));
+            var emailSender = new EmailSender(new MessageRepository(), _personRepository);
             var groupRepository = new GroupRepository();
             var emailContentService = new EmailContentService(new EmailContentRepository());
             var emailService = new EmailService(

@@ -2,41 +2,53 @@
 using System.Collections.Generic;
 using System.Net.Mail;
 using System.Web;
+using oikonomos.repositories.interfaces;
 using oikonomos.services.interfaces;
 
 namespace oikonomos.services
 {
     public class EmailSender : IEmailSender
     {
-        private readonly IEmailLogger _emailLogger;
+        private readonly IMessageRepository _messageRepository;
+        private readonly IPersonRepository _personRepository;
 
-        public EmailSender(IEmailLogger emailLogger)
+        public EmailSender(IMessageRepository messageRepository, IPersonRepository personRepository)
         {
-            _emailLogger = emailLogger;
+            _messageRepository = messageRepository;
+            _personRepository = personRepository;
         }
 
         public void SendEmail(string subject, string body, string displayFrom, IEnumerable<string> emailAddressTo, string login, string password, int personIdFrom, int churchId)
         {
-
-            using (var message = new MailMessage())
+            try
             {
-                try
+                var messageId = _messageRepository.SaveMessage(personIdFrom, subject, body, "Email");
+                foreach (var emailTo in emailAddressTo)
                 {
-                    message.From = new MailAddress(login);
-                    message.Subject = subject;
-                    message.Body = body;
-                    message.IsBodyHtml = true;
-                    foreach (var emailTo in emailAddressTo)
+                    try
                     {
-                        message.To.Add(emailTo); 
+                        using (var message = new MailMessage())
+                        {
+
+                            message.From = new MailAddress(login);
+                            message.Subject = subject;
+                            message.Body = body;
+                            message.IsBodyHtml = true;
+
+                            message.To.Add(emailTo);
+                            SendEmail(message, login, password, displayFrom);
+                            _messageRepository.SaveMessageRecepient(messageId, _personRepository.FetchPersonIdsFromEmailAddress(emailTo, churchId),"Success", string.Empty);
+                        }
                     }
-                    SendEmail(message, login, password, displayFrom);
-                    _emailLogger.LogSuccess(message, body, personIdFrom, churchId);
+                    catch (Exception e)
+                    {
+                        _messageRepository.SaveMessageRecepient(messageId, _personRepository.FetchPersonIdsFromEmailAddress(emailTo, churchId), "Failure", e.Message);
+                    }
                 }
-                catch (Exception e)
-                {
-                    _emailLogger.LogError(message, body, 1, e, churchId);
-                }
+            }
+            catch (Exception)
+            {
+                //There is a problem creating the email...
             }
         }
 
@@ -54,9 +66,9 @@ namespace oikonomos.services
 
                     SendEmail(message, "support@oikonomos.co.za", "sandton2000", "Oiky Error");
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    _emailLogger.LogError(message, "Exception from website", 1, e, 1);
+                    //There is a problem creating the email...
                 }
             }
         }
@@ -76,14 +88,14 @@ namespace oikonomos.services
                     SendEmail(message, "support@oikonomos.co.za", "sandton2000", "Oiky System Message");
 
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    _emailLogger.LogError(message, HttpUtility.HtmlDecode(body), 1, e, 1);
+                    //There is a problem creating the email...
                 }
             }
         }
 
-        private void SendEmail(MailMessage message, string username, string password, string displayName)
+        private static void SendEmail(MailMessage message, string username, string password, string displayName)
         {
             message.From = new MailAddress(username, displayName);
 

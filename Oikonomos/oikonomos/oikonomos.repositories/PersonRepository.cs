@@ -285,5 +285,11 @@ namespace oikonomos.repositories
             var peopleInChurch = Context.PersonChurches.Where(p => p.ChurchId == churchId);
             return peopleInChurch.Where(p => p.Person.Email == emailAddress).Select(p => p.PersonId);
         }
+
+        public IEnumerable<int> FetchPersonIdsFromCellPhoneNos(IEnumerable<string> cellPhoneNos, int churchId)
+        {
+            var peopleInChurch = Context.PersonChurches.Where(p => p.ChurchId == churchId).Select(p=>p.Person.PersonOptionalFields);
+            return (from po in peopleInChurch.SelectMany(p => p) where po.OptionalFieldId == (int) OptionalFields.CellPhone && cellPhoneNos.Contains(po.Value) select po.PersonId).ToList();
+        }
     }
 }

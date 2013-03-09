@@ -8,12 +8,7 @@ namespace oikonomos.repositories
 {
     public class MessageRepository : RepositoryBase, IMessageRepository
     {
-        public void SaveMessage(int fromPersonId, IEnumerable<int> toPeopleIds, string subject, string body, string messageType, string messageStatus)
-        {
-            SaveMessage(fromPersonId, toPeopleIds, subject, body, messageType, messageStatus, string.Empty);
-        }
-
-        public void SaveMessage(int fromPersonId, IEnumerable<int> toPeopleIds, string subject, string body, string messageType, string messageStatus, string errorMessage)
+        public int SaveMessage(int fromPersonId, string subject, string body, string messageType)
         {
             var message = new Message
             {
@@ -23,15 +18,20 @@ namespace oikonomos.repositories
                 MessageType = messageType
             };
             Context.AddToMessages(message);
+            Context.SaveChanges();
+            return message.MessageId;
+        }
 
-            foreach (var messageRecepient in toPeopleIds.Select(personId => new MessageRecepient
-            {
-                MessageSent = DateTime.Now,
-                MessageTo = personId,
-                Message = message,
-                Status = messageStatus,
-                StatusMessage = errorMessage
-            }))
+        public void SaveMessageRecepient(int messageId, IEnumerable<int> toPersonIds, string messageStatus, string errorMessage)
+        {
+            foreach (var messageRecepient in toPersonIds.Select(personId => new MessageRecepient
+                {
+                    MessageSent = DateTime.Now,
+                    MessageTo = personId,
+                    MessageId = messageId,
+                    Status = messageStatus,
+                    StatusMessage = errorMessage
+                }))
             {
                 Context.AddToMessageRecepients(messageRecepient);
             }

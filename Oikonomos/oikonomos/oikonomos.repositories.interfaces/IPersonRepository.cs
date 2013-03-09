@@ -20,5 +20,6 @@ namespace oikonomos.repositories.interfaces
         Person FetchPersonFromFacebookId(long facebookId);
         IEnumerable<Person> FetchPersonFromName(string fullname, string firstname, string surname, string email);
         IEnumerable<int> FetchPersonIdsFromEmailAddress(string emailAddress, int churchId);
+        IEnumerable<int> FetchPersonIdsFromCellPhoneNos(IEnumerable<string> cellPhoneNos, int churchId);
     }
 }

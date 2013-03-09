@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Facebook;
 using oikonomos.common;
 using System;
-using oikonomos.data.Services;
 using oikonomos.repositories;
 using oikonomos.repositories.interfaces;
 using oikonomos.services;
@@ -29,10 +28,12 @@ namespace oikonomos.web.Controllers
         private readonly IPersonGroupService _personGroupService;
         private readonly IPersonGroupRepository _personGroupRepository;
         private readonly IEmailService _emailService;
-        private MessageRecepientRepository _messageRecepientRepository;
+        private readonly IMessageRecepientRepository _messageRecepientRepository;
+        private readonly ISmsSender _smsSender;
 
         public AjaxController()
         {
+            var messageRepository = new MessageRepository();
             var permissionRepository = new PermissionRepository();
             var churchRepository = new ChurchRepository();            
             var personRepository = new PersonRepository(permissionRepository, churchRepository);
@@ -41,7 +42,7 @@ namespace oikonomos.web.Controllers
             var personGroupRepository = new PersonGroupRepository(personRepository);
             _personGroupRepository = personGroupRepository;
             var groupRepository = new GroupRepository();
-            var emailSender = new EmailSender(new EmailLogger(new MessageRepository(), personRepository));
+            var emailSender = new EmailSender(messageRepository, personRepository);
             var emailContentService = new EmailContentService(new EmailContentRepository());
             _emailService = new EmailService(
                 _usernamePasswordRepository,
@@ -71,6 +72,7 @@ namespace oikonomos.web.Controllers
             _systemAdministratorService  = new SystemAdministratorService(churchRepository, permissionRepository);
             _personGroupService = new PersonGroupService(_personGroupRepository);
             _messageRecepientRepository = new MessageRecepientRepository();
+            _smsSender = new SmsSender(messageRepository, personRepository);
 
         }
 
@@ -1550,7 +1552,7 @@ namespace oikonomos.web.Controllers
 
             var chellPhoneNoList = (List<string>)Session[SessionVariable.CellPhoneNos];
             var sessionTimedOut = false;
-            var responseMessage = string.Empty;
+            string responseMessage;
             if (Session[SessionVariable.LoggedOnPerson] == null)
             {
                 sessionTimedOut = true;
@@ -1561,8 +1563,8 @@ namespace oikonomos.web.Controllers
                 var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 if (currentPerson.HasPermission(Permissions.SmsGroupMembers))
                 {
-                    string username = string.Empty;
-                    string password = string.Empty;
+                    string username;
+                    string password;
                     ChurchDataAccessor.FetchBulkSmsUsernameAndPassword(currentPerson, out username, out password);
                     if (username == null || password == null)
                     {
@@ -1570,7 +1572,7 @@ namespace oikonomos.web.Controllers
                     }
                     else
                     {
-                        responseMessage = Sms.SendSmses(chellPhoneNoList, message, username, password);
+                        responseMessage = _smsSender.SendSmses(message, chellPhoneNoList, username, password, currentPerson);
                     }
                 }
                 else

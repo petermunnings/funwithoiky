@@ -647,18 +647,12 @@ namespace oikonomos.data.DataAccessors
 
         public static List<string> FetchGroupCellPhoneNos(Person currentPerson, int groupId, List<int> selectedIds, bool selectedOnly)
         {
-            List<string> cellPhoneNos = new List<string>();
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            var cellPhoneNos = new List<string>();
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                List<PersonViewModel> people = selectedOnly ? FetchPeopleInGroup(currentPerson, groupId, context, selectedIds).ToList() : FetchPeopleInGroup(currentPerson, groupId, context).ToList();
+                var people = selectedOnly ? FetchPeopleInGroup(currentPerson, groupId, context, selectedIds).ToList() : FetchPeopleInGroup(currentPerson, groupId, context).ToList();
 
-                foreach (PersonViewModel person in people)
-                {
-                    if (person.CellPhone != null && person.CellPhone.Trim() != string.Empty)
-                    {
-                        cellPhoneNos.Add(Utils.ConvertCellPhoneToInternational(person.CellPhone, currentPerson.Church.Country));
-                    }
-                }
+                cellPhoneNos.AddRange(from person in people where person.CellPhone != null && person.CellPhone.Trim() != string.Empty select person.CellPhone.Trim());
             }
 
             return cellPhoneNos;
@@ -719,17 +713,17 @@ namespace oikonomos.data.DataAccessors
 
                 foreach (PersonOptionalField po in leaders)
                 {
-                    AddCellPhoneNoToList(currentPerson, cellPhoneNos, po);
+                    AddCellPhoneNoToList(cellPhoneNos, po);
                 }
 
                 foreach (PersonOptionalField po in administrators)
                 {
-                    AddCellPhoneNoToList(currentPerson, cellPhoneNos, po);
+                    AddCellPhoneNoToList(cellPhoneNos, po);
                 }
 
                 foreach (PersonOptionalField po in people)
                 {
-                    AddCellPhoneNoToList(currentPerson, cellPhoneNos, po);
+                    AddCellPhoneNoToList(cellPhoneNos, po);
                 }
             }
 
@@ -1090,14 +1084,13 @@ namespace oikonomos.data.DataAccessors
 
         #region Private Methods
 
-        private static void AddCellPhoneNoToList(Person currentPerson, List<string> cellPhoneNos, PersonOptionalField po)
+        private static void AddCellPhoneNoToList(ICollection<string> cellPhoneNos, PersonOptionalField po)
         {
             if (po.Value.Trim() == string.Empty)
                 return;
 
-            string internationalCellPhoneNo = Utils.ConvertCellPhoneToInternational(po.Value, currentPerson.Church.Country);
-            if (!cellPhoneNos.Contains(internationalCellPhoneNo))
-                cellPhoneNos.Add(internationalCellPhoneNo);
+            if (!cellPhoneNos.Contains(po.Value.Trim()))
+                cellPhoneNos.Add(po.Value.Trim());
         }
 
         public static JqGridData FetchPeopleInGroupJQGrid(Person currentPerson, JqGridRequest request, int groupId)

@@ -43,7 +43,6 @@
   <ItemGroup>
     <Compile Include="ICommentService.cs" />
     <Compile Include="IEmailContentService.cs" />
-    <Compile Include="IEmailLogger.cs" />
     <Compile Include="IEmailSender.cs" />
     <Compile Include="IEmailService.cs" />
     <Compile Include="IEventService.cs" />
@@ -51,6 +50,7 @@
     <Compile Include="IPasswordService.cs" />
     <Compile Include="IPersonGroupService.cs" />
     <Compile Include="IPersonService.cs" />
+    <Compile Include="ISmsSender.cs" />
     <Compile Include="ISystemAdministratorService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

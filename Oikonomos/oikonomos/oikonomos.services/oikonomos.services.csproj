@@ -44,7 +44,6 @@
   <ItemGroup>
     <Compile Include="CommentService.cs" />
     <Compile Include="EmailContentService.cs" />
-    <Compile Include="EmailLogger.cs" />
     <Compile Include="EmailSender.cs" />
     <Compile Include="EmailService.cs" />
     <Compile Include="EventService.cs" />
@@ -53,6 +52,7 @@
     <Compile Include="PersonGroupService.cs" />
     <Compile Include="PersonService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SmsSender.cs" />
     <Compile Include="SystemAdministratorService.cs" />
   </ItemGroup>
   <ItemGroup>

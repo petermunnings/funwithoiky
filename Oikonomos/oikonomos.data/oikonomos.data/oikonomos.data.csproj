@@ -67,7 +67,6 @@
     <Compile Include="Services\Cache.cs" />
     <Compile Include="Services\Filters.cs" />
     <Compile Include="Services\PasswordGenerator.cs" />
-    <Compile Include="Services\Sms.cs" />
   </ItemGroup>
   <ItemGroup>
     <EntityDeploy Include="OikonomosModel.edmx">
