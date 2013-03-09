@@ -1415,6 +1415,32 @@ namespace oikonomos.web.Controllers
         }
 
 
+        public JsonResult SetCellNoFromPersonId(int personId)
+        {
+            var sessionTimedOut = false;
+            var message = string.Empty;
+            if (Session[SessionVariable.LoggedOnPerson] == null)
+            {
+                sessionTimedOut = true;
+                message = ExceptionMessage.SessionTimedOut;
+            }
+            else
+            {
+                var person = _personService.FetchPersonViewModel(personId, (Person)Session[SessionVariable.LoggedOnPerson]);
+                if (person == null || string.IsNullOrEmpty(person.CellPhone))
+                    message = "Could not find recepient cell no";
+                else
+                    Session[SessionVariable.CellPhoneNos] = new List<string> { person.CellPhone };
+            }
+
+            var response = new
+            {
+                SessionTimeOut = sessionTimedOut,
+                Message = message
+            };
+            return Json(response, JsonRequestBehavior.DenyGet);
+        }
+
         public JsonResult SetEmailAddressesFromPersonId(int personId)
         {
             var sessionTimedOut = false;
@@ -1438,6 +1464,35 @@ namespace oikonomos.web.Controllers
                 SessionTimeOut = sessionTimedOut,
                 Message = message
             };
+            return Json(response, JsonRequestBehavior.DenyGet);
+        }
+
+        public JsonResult SetCellNosFromMessageRecepientId(int messageRecepientId)
+        {
+            var sessionTimedOut = false;
+            var message = string.Empty;
+            MessageRecepientViewModel messageRecepientViewModel=null;
+            if (Session[SessionVariable.LoggedOnPerson] == null)
+            {
+                sessionTimedOut = true;
+                message = ExceptionMessage.SessionTimedOut;
+            }
+            else
+            {
+                messageRecepientViewModel = _messageRecepientRepository.FetchMessageRecepient(messageRecepientId);
+                if (messageRecepientViewModel == null || messageRecepientViewModel.MessageToCellNo == string.Empty)
+                    message = "Could not find recepient cell No";
+                else
+                    Session[SessionVariable.CellPhoneNos] = new List<string> { messageRecepientViewModel.MessageToCellNo };
+            }
+
+            var response = new
+                {
+                    SessionTimeOut = sessionTimedOut,
+                    Message = message,
+                    NoNumbers = 1,
+                    Subject = messageRecepientViewModel == null ? string.Empty : messageRecepientViewModel.Subject
+                };
             return Json(response, JsonRequestBehavior.DenyGet);
         }
 

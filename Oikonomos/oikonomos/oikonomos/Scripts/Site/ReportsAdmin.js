@@ -56,7 +56,7 @@ function FetchSmsList() {
     OpenSmsDialog();
     var jqxhr = $.post("/Ajax/FetchGroupLeaderCellPhoneNos", postData, function (data) {
         if (data.Message == "") {
-            SetSmsList(data.NoNos);
+            SetupSmsDialog(data.NoNos);
         }
         else {
             $("#responseMessage_text").html(data.Message);

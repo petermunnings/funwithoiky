@@ -13,5 +13,7 @@ namespace oikonomos.common.Models
         public string StatusMessage { get; set; }
         public string Subject { get; set; }
         public string Body { get; set; }
+        public string MessageToCellNo { get; set; }
+        
     }
 }

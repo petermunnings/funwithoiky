@@ -123,13 +123,20 @@ function SetupEmailDialog(subject, body) {
     $("#email_bodyWithFormatting").val(body);
 }
 
-function SetSmsList(noNos) {
+function SetupSmsDialog(noNos, message) {
     $("#ajax_loader_sendSms").hide();
-    var button = getDialogButton('.sms_dialog', 'Submit');
-    if (button) {
-        button.prop('disabled', false).removeClass('ui-state-disabled');
+    var sendButton = getDialogButton('.sms_dialog', 'Submit');
+    if (sendButton) {
+        sendButton.button("enable");
+        sendButton.button("option", "icons", { primary: "ui-icon-mail-closed" });
+        sendButton.button().addClass("ui-state-active");
+    }
+    var cancelButton = getDialogButton('.sms_dialog', 'Cancel');
+    if (cancelButton) {
+        cancelButton.button("option", "icons", { primary: "ui-icon-close" });
     }
     $("#noNos").html("Sms will be sent to " + noNos + " valid cell phone Nos");
+    $("#sms_message").val(message);
 }
 
 function OpenEmailDialog() {
@@ -139,8 +146,6 @@ function OpenEmailDialog() {
     $("#email_bodyWithFormatting").val("");
     $("#send_Email").slideDown(200);
     $("#mainContent").slideUp(200);
-
-
 }
 
 function OpenSmsDialog() {
@@ -155,15 +160,15 @@ function OpenSmsDialog() {
             height: 350,
             width: 600,
             buttons: {
-                Cancel: function () {
-                    $("#sms_message").val("");
-                    $(this).dialog('close');
-                },
                 Submit: function () {
                     if (SendSms() == true) {
                         $("#sms_message").val("");
                         $(this).dialog('close');
                     }
+                },
+                Cancel: function () {
+                    $("#sms_message").val("");
+                    $(this).dialog('close');
                 }
             }
         });

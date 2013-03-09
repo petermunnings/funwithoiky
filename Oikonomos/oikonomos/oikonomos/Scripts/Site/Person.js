@@ -379,29 +379,58 @@ function SetPrimaryGroup(groupId) {
 }
 
 var ViewMessage = function(rowid) {
-    OpenEmailDialog();
-    var postData = { messageRecepientId: rowid };
-    $.post("/Ajax/SetEmailAddressesFromMessageRecepientId", $.postify(postData), function (data) {
-        if (data.Message == "") {
-            SetupEmailDialog(data.Subject, data.Body);
-        }
-        else {
-            ShowErrorMessage("Error opening message", data.Message);
-        }
-    });
+    var rowData = $("#jqgMessages").jqGrid().getRowData(rowid);
+    var messageType = rowData['MessageType'];
+    var postData;
+    if (messageType == 'Sms') {
+        OpenSmsDialog();
+        postData = { messageRecepientId: rowid };
+        $.post("/Ajax/SetCellNosFromMessageRecepientId", $.postify(postData), function (data) {
+            if (data.Message == "") {
+                SetupSmsDialog(data.NoNumbers, data.Subject);
+            }
+            else {
+                ShowErrorMessage("Error opening message", data.Message);
+            }
+        });
+    } else {
+        OpenEmailDialog();
+        postData = { messageRecepientId: rowid };
+        $.post("/Ajax/SetEmailAddressesFromMessageRecepientId", $.postify(postData), function (data) {
+            if (data.Message == "") {
+                SetupEmailDialog(data.Subject, data.Body);
+            }
+            else {
+                ShowErrorMessage("Error opening message", data.Message);
+            }
+        });
+    }
+    
 };
 
-var CreateNewMessage = function(personId) {
-    OpenEmailDialog();
-    var postData = { personId: personId };
-    $.post("/Ajax/SetEmailAddressesFromPersonId", $.postify(postData), function (data) {
-        if (data.Message == "") {
-            SetupEmailDialog();
-        }
-        else {
-            ShowErrorMessage("Error opening message", data.Message);
-        }
-    });
+var CreateNewMessage = function(personId, messageType) {
+    var postData;
+    if (messageType == "Sms") {
+        OpenSmsDialog();
+        postData = { personId: personId };
+        $.post("/Ajax/SetCellNoFromPersonId", $.postify(postData), function (data) {
+            if (data.Message == "") {
+                SetupSmsDialog(1);
+            } else {
+                ShowErrorMessage("Error opening message", data.Message);
+            }
+        });
+    } else {
+        OpenEmailDialog();
+        postData = { personId: personId };
+        $.post("/Ajax/SetEmailAddressesFromPersonId", $.postify(postData), function(data) {
+            if (data.Message == "") {
+                SetupEmailDialog();
+            } else {
+                ShowErrorMessage("Error opening message", data.Message);
+            }
+        });
+    }
 };
 
 var pageIsDirty = false;
@@ -874,8 +903,13 @@ $(document).ready(function() {
 
     $("#email_sendNew").button({ icons: { primary: "ui-icon-mail-closed" } })
         .click(function () {
-            CreateNewMessage($("#hidden_personId").val());
+            CreateNewMessage($("#hidden_personId").val(), "Email");
         });
+    
+    $("#sms_sendNew").button({ icons: { primary: "ui-icon-comment" } })
+    .click(function () {
+        CreateNewMessage($("#hidden_personId").val(), "Sms");
+    });
 
 });
 
