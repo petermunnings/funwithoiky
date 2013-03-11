@@ -193,6 +193,9 @@
     <Content Include="Content\images\add_family_48.png" />
     <Content Include="Content\images\ajax-loader.gif" />
     <Content Include="Content\images\backgrounds\background.png" />
+    <Content Include="Content\images\backgrounds\connect.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\images\backgrounds\default.png" />
     <Content Include="Content\images\backgrounds\dropdown.png" />
     <Content Include="Content\images\backgrounds\ncf.png" />

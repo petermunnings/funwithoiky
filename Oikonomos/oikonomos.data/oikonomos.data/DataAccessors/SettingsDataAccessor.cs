@@ -378,111 +378,102 @@ namespace oikonomos.data.DataAccessors
 
         public static void CreateNewChurch(Person currentPerson, ChurchSettingsViewModel churchSettings)
         {
-            if (currentPerson.HasPermission(common.Permissions.SystemAdministrator))
+            if (!currentPerson.HasPermission(Permissions.SystemAdministrator)) return;
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+                var newChurch = new Church();
+                context.AddToChurches(newChurch);
+                newChurch.Created = DateTime.Now;
+
+                PopulateChurchModel(churchSettings, newChurch);
+                newChurch.EmailLogin = "support@oikonomos.co.za";
+                newChurch.EmailPassword = "sandton2000";
+                newChurch.Country = "South Africa";
+                PopulateChurchAddress(churchSettings, context, newChurch);
+                context.SaveChanges();
+
+                //Save Roles
+                var currentChurchRoles = context.Roles.Where(r => (r.ChurchId == currentPerson.ChurchId && r.Name != "System Administrator")).ToList();
+                foreach (var currentRole in currentChurchRoles)
                 {
-                    var newChurch = new Church();
-                    context.AddToChurches(newChurch);
-                    newChurch.Created = DateTime.Now;
+                    var newChurchRole = new Role();
+                    context.AddToRoles(newChurchRole);
+                    newChurchRole.Created = DateTime.Now;
+                    newChurchRole.Changed = DateTime.Now;
+                    newChurchRole.Name = currentRole.Name;
+                    newChurchRole.DisplayName = currentRole.DisplayName;
+                    newChurchRole.ChurchId = newChurch.ChurchId;
 
-                    PopulateChurchModel(churchSettings, newChurch);
-                    newChurch.EmailLogin = "support@oikonomos.co.za";
-                    newChurch.EmailPassword = "sandton2000";
-                    PopulateChurchAddress(churchSettings, context, newChurch);
-                    context.SaveChanges();
-
-                    //Save Roles
-                    var currentChurchRoles = context.Roles.Where(r => (r.ChurchId == currentPerson.ChurchId && r.Name != "System Administrator")).ToList();
-                    foreach (var currentRole in currentChurchRoles)
+                    foreach (var permission in currentRole.PermissionRoles)
                     {
-                        var newChurchRole = new Role();
-                        context.AddToRoles(newChurchRole);
-                        newChurchRole.Created = DateTime.Now;
-                        newChurchRole.Changed = DateTime.Now;
-                        newChurchRole.Name = currentRole.Name;
-                        newChurchRole.DisplayName = currentRole.DisplayName;
-                        newChurchRole.ChurchId = newChurch.ChurchId;
-
-                        foreach (var permission in currentRole.PermissionRoles)
-                        {
-                            var newRolePerm = new PermissionRole();
-                            context.AddToPermissionRoles(newRolePerm);
-                            newRolePerm.Created = DateTime.Now;
-                            newRolePerm.Changed = DateTime.Now;
-                            newRolePerm.PermissionId = permission.PermissionId;
-                            newChurchRole.PermissionRoles.Add(newRolePerm);
-                        }
+                        var newRolePerm = new PermissionRole();
+                        context.AddToPermissionRoles(newRolePerm);
+                        newRolePerm.Created = DateTime.Now;
+                        newRolePerm.Changed = DateTime.Now;
+                        newRolePerm.PermissionId = permission.PermissionId;
+                        newChurchRole.PermissionRoles.Add(newRolePerm);
                     }
-
-                    context.SaveChanges();
-
-                    //Update Role that can be set by any role
-                    foreach (var currentRole in currentChurchRoles)
-                    {
-                        var newRole = context.Roles.Where(r => (r.ChurchId == newChurch.ChurchId && r.Name == currentRole.Name)).FirstOrDefault();
-                        foreach (var roleToSet in currentRole.CanSetRoles)
-                        {
-                            if (roleToSet.Name != "System Administrator")
-                            {
-                                var newRoleToSet = context.Roles.FirstOrDefault(r => (r.ChurchId == newChurch.ChurchId && r.Name == roleToSet.Name));
-                                newRole.CanSetRoles.Add(newRoleToSet);
-                            }
-                        }
-                    }
-
-                    context.SaveChanges();
-
-                    var personAddress = new Address {Created = DateTime.Now, Changed = DateTime.Now, Line1 = string.Empty, Line2=string.Empty, Line3=string.Empty, Line4 = string.Empty};
-                    context.AddToAddresses(personAddress);
-
-                    var churchAdministrator              = new Person();
-                    context.AddToPeople(churchAdministrator);
-                    churchAdministrator.Created          = DateTime.Now;
-                    churchAdministrator.Changed          = DateTime.Now;
-                    churchAdministrator.Firstname        = churchSettings.ContactFirstname;
-                    churchAdministrator.Church           = newChurch;
-                    churchAdministrator.Email            = churchSettings.OfficeEmail;
-                    var churchAdministratorFamily        = new Family();
-                    context.AddToFamilies(churchAdministratorFamily);
-                    churchAdministratorFamily.FamilyName = churchSettings.ContactSurname;
-                    churchAdministratorFamily.Created    = DateTime.Now;
-                    churchAdministratorFamily.Changed    = DateTime.Now;
-                    churchAdministrator.Family           = churchAdministratorFamily;
-                    churchAdministrator.Family.Address   = personAddress;
-
-                    context.SaveChanges();
-
-                    //Set the new persons role to administrator
-                    churchAdministrator.RoleId = context.Roles.First(r => (r.ChurchId == newChurch.ChurchId && r.Name == "Church Administrator")).RoleId;
-                    context.SaveChanges();
-
-                    //Update Church Optional Fields
-                    var churchOptionalFields = context.ChurchOptionalFields.Where(c=>c.ChurchId == currentPerson.ChurchId);
-                    foreach (var co in churchOptionalFields)
-                    {
-                        var newCo = new ChurchOptionalField();
-                        context.AddToChurchOptionalFields(newCo);
-                        newCo.Created = DateTime.Now;
-                        newCo.Changed = DateTime.Now;
-                        newCo.ChurchId = newChurch.ChurchId;
-                        newCo.OptionalFieldId = co.OptionalFieldId;
-                        newCo.Visible = co.Visible;
-                    }
-
-                    context.SaveChanges();
-
-                    var personChurch = new PersonChurch
-                        {
-                            Church = newChurch,
-                            Person = churchAdministrator,
-                            RoleId = churchAdministrator.RoleId
-                        };
-
-                    context.PersonChurches.AddObject(personChurch);
-
-                    context.SaveChanges();
                 }
+
+                context.SaveChanges();
+
+                //Update Role that can be set by any role
+                foreach (var currentRole in currentChurchRoles)
+                {
+                    var newRole = context.Roles.FirstOrDefault(r => (r.ChurchId == newChurch.ChurchId && r.Name == currentRole.Name));
+                    foreach (var newRoleToSet in from roleToSet in currentRole.CanSetRoles where roleToSet.Name != "System Administrator" select context.Roles.FirstOrDefault(r => (r.ChurchId == newChurch.ChurchId && r.Name == roleToSet.Name)))
+                    {
+                        newRole.CanSetRoles.Add(newRoleToSet);
+                    }
+                }
+
+                context.SaveChanges();
+
+                var personAddress = new Address {Created = DateTime.Now, Changed = DateTime.Now, Line1 = string.Empty, Line2=string.Empty, Line3=string.Empty, Line4 = string.Empty};
+                context.AddToAddresses(personAddress);
+
+                var churchAdministrator              = new Person();
+                context.AddToPeople(churchAdministrator);
+                churchAdministrator.Created          = DateTime.Now;
+                churchAdministrator.Changed          = DateTime.Now;
+                churchAdministrator.Firstname        = churchSettings.ContactFirstname;
+                churchAdministrator.Church           = newChurch;
+                churchAdministrator.Email            = churchSettings.OfficeEmail;
+                var churchAdministratorFamily        = new Family();
+                context.AddToFamilies(churchAdministratorFamily);
+                churchAdministratorFamily.FamilyName = churchSettings.ContactSurname;
+                churchAdministratorFamily.Created    = DateTime.Now;
+                churchAdministratorFamily.Changed    = DateTime.Now;
+                churchAdministrator.Family           = churchAdministratorFamily;
+                churchAdministrator.Family.Address   = personAddress;
+
+                context.SaveChanges();
+
+                //Set the new persons role to administrator
+                var personChurchRecord = new PersonChurch
+                    {
+                        Person = churchAdministrator,
+                        Church = newChurch,
+                        Role = context.Roles.First(r => (r.ChurchId == newChurch.ChurchId && r.Name == "Church Administrator"))
+                    };
+
+                context.AddToPersonChurches(personChurchRecord);
+                context.SaveChanges();
+
+                //Update Church Optional Fields
+                var churchOptionalFields = context.ChurchOptionalFields.Where(c=>c.ChurchId == currentPerson.ChurchId);
+                foreach (var co in churchOptionalFields)
+                {
+                    var newCo = new ChurchOptionalField();
+                    context.AddToChurchOptionalFields(newCo);
+                    newCo.Created = DateTime.Now;
+                    newCo.Changed = DateTime.Now;
+                    newCo.ChurchId = newChurch.ChurchId;
+                    newCo.OptionalFieldId = co.OptionalFieldId;
+                    newCo.Visible = co.Visible;
+                }
+
+                context.SaveChanges();
             }
         }
 

@@ -1252,20 +1252,29 @@ namespace oikonomos.web.Controllers
         public JsonResult CreateNewChurch(ChurchSettingsViewModel churchSettings)
         {
             bool sessionTimedOut = false;
+            var message = string.Empty;
             if (Session[SessionVariable.LoggedOnPerson] == null)
             {
                 sessionTimedOut = true;
+                message = "Session has timed out";
             }
             else
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                SettingsDataAccessor.CreateNewChurch(currentPerson, churchSettings);
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                try
+                {
+                    SettingsDataAccessor.CreateNewChurch(currentPerson, churchSettings);
+                }
+                catch (Exception ex)
+                {
+                    message = ex.Message;
+                }
             }
 
             var response = new
             {
                 SessionTimeOut = sessionTimedOut,
-                Message = "Church Created"
+                Message = message
             };
 
             return Json(response);

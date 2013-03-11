@@ -16,6 +16,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="bin/AutoMapper.xml">
       <publishTime>08/19/2012 20:30:22</publishTime>
     </File>
+    <File Include="bin/Content/images/backgrounds/connect.png">
+      <publishTime>03/11/2013 21:30:02</publishTime>
+    </File>
     <File Include="bin/Content/Site.css">
       <publishTime>03/02/2013 22:08:42</publishTime>
     </File>
@@ -74,16 +77,16 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/13/2012 22:52:51</publishTime>
     </File>
     <File Include="bin/oikonomos.data.dll">
-      <publishTime>03/09/2013 20:57:09</publishTime>
+      <publishTime>03/11/2013 20:57:22</publishTime>
     </File>
     <File Include="bin/oikonomos.data.pdb">
       <publishTime>10/10/2012 21:20:38</publishTime>
     </File>
     <File Include="bin/oikonomos.repositories.dll">
-      <publishTime>03/09/2013 20:57:10</publishTime>
+      <publishTime>03/11/2013 20:57:22</publishTime>
     </File>
     <File Include="bin/oikonomos.repositories.interfaces.dll">
-      <publishTime>03/09/2013 20:57:10</publishTime>
+      <publishTime>03/11/2013 20:57:22</publishTime>
     </File>
     <File Include="bin/oikonomos.repositories.interfaces.pdb">
       <publishTime>10/10/2012 21:20:39</publishTime>
@@ -92,10 +95,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/10/2012 21:20:39</publishTime>
     </File>
     <File Include="bin/oikonomos.services.dll">
-      <publishTime>03/09/2013 20:57:10</publishTime>
+      <publishTime>03/11/2013 20:57:23</publishTime>
     </File>
     <File Include="bin/oikonomos.services.interfaces.dll">
-      <publishTime>03/09/2013 20:57:10</publishTime>
+      <publishTime>03/11/2013 20:57:22</publishTime>
     </File>
     <File Include="bin/oikonomos.services.interfaces.pdb">
       <publishTime>10/10/2012 21:20:39</publishTime>
@@ -104,7 +107,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/10/2012 21:20:39</publishTime>
     </File>
     <File Include="bin/oikonomos.web.dll">
-      <publishTime>03/09/2013 21:01:41</publishTime>
+      <publishTime>03/11/2013 21:32:14</publishTime>
     </File>
     <File Include="bin/oikonomos.web.pdb">
       <publishTime>10/10/2012 21:24:02</publishTime>
@@ -159,6 +162,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="Content/images/backgrounds/background.png">
       <publishTime>08/15/2012 19:09:02</publishTime>
+    </File>
+    <File Include="Content/images/backgrounds/connect.png">
+      <publishTime>03/11/2013 21:30:02</publishTime>
     </File>
     <File Include="Content/images/backgrounds/default.png">
       <publishTime>08/15/2012 19:09:02</publishTime>
@@ -2108,7 +2114,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/15/2012 19:09:05</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>03/09/2013 21:01:41</publishTime>
+      <publishTime>03/11/2013 21:32:15</publishTime>
     </File>
   </ItemGroup>
 </Project>
