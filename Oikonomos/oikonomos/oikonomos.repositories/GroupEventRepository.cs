@@ -17,6 +17,7 @@ namespace oikonomos.repositories
 
         public void Save(Person currentPerson, HomeGroupEventViewModel hgEvent)
         {
+            if (hgEvent == null) return;
             var didAttend = 0;
             var didNotAttend = 0;
             foreach (var personEvents in hgEvent.Events)

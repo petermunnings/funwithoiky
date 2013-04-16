@@ -1192,7 +1192,6 @@ namespace oikonomos.data.DataAccessors
             }
         }
 
-
         private static IEnumerable<PersonViewModel> FetchPeopleInGroup(Person currentPerson, int groupId, oikonomosEntities context)
         {
             return FetchPeopleInGroup(currentPerson, groupId, context, null);
@@ -1202,7 +1201,7 @@ namespace oikonomos.data.DataAccessors
         {
             var rolesToInclude = context
                                  .PermissionRoles
-                                 .Where(p => p.PermissionId == (int)Permissions.IncludeInChurchList && p.Role.ChurchId == currentPerson.ChurchId)
+                                 .Where(p => p.PermissionId == (int)Permissions.IncludeInGroupList && p.Role.ChurchId == currentPerson.ChurchId)
                                  .Select(p => p.RoleId)
                                  .ToList();
             
