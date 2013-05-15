@@ -1216,7 +1216,7 @@ namespace oikonomos.data.DataAccessors
                               on pc.RoleId equals permissions.RoleId
                           orderby p.Family.FamilyName, p.PersonId
                           where pg.GroupId == groupId
-                              && (permissions.PermissionId == (int)Permissions.Login)
+                              && (permissions.PermissionId == (int)Permissions.IncludeInGroupList)
                               && pc.ChurchId == currentPerson.ChurchId
                               && rolesToInclude.Contains(pc.RoleId)
                           select new PersonViewModel
@@ -1244,7 +1244,7 @@ namespace oikonomos.data.DataAccessors
             return people.OrderBy(p => p.RoleName).ThenBy(p => p.Surname).ThenBy(p => p.PersonId);
         }
 
-        private static IQueryable<Group> FetchGroupList(Person currentPerson, bool search, List<JqGridFilterRule> rules, oikonomosEntities context)
+        private static IQueryable<Group> FetchGroupList(Person currentPerson, bool search, IEnumerable<JqGridFilterRule> rules, oikonomosEntities context)
         {
             IQueryable<Group> groups = null;
             if (currentPerson.HasPermission(Permissions.EditAllGroups))

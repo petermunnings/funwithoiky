@@ -13,7 +13,7 @@ namespace oikonomos.repositories
     {
         private static Dictionary<string, oikonomosEntities> instances;
         private static string _connectionString;
-        private static Mutex updateMutex = new Mutex();
+        private static readonly Mutex updateMutex = new Mutex();
 
         public static oikonomosEntities Instance
         {
@@ -47,11 +47,9 @@ namespace oikonomos.repositories
         {
             try
             {
-                if (instances.ContainsKey(sessionId))
-                {
-                    Task.Factory.StartNew(() => SaveEndSession(sessionId));
-                    instances.Remove(sessionId);
-                }
+                if (!instances.ContainsKey(sessionId)) return;
+                Task.Factory.StartNew(() => SaveEndSession(sessionId));
+                instances.Remove(sessionId);
             }
             catch
             {
@@ -62,10 +60,10 @@ namespace oikonomos.repositories
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionString))
+                using (var con = new SqlConnection(_connectionString))
                 {
                     con.Open();
-                    using (SqlCommand cmd = new SqlCommand(string.Format("UPDATE oiky.Session SET SessionEnded = '{0}' WHERE SessionId = '{1}", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), sessionId), con))
+                    using (var cmd = new SqlCommand(string.Format("UPDATE oiky.Session SET SessionEnded = '{0}' WHERE SessionId = '{1}", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), sessionId), con))
                     {
                         cmd.ExecuteNonQuery();
                     }
@@ -81,10 +79,10 @@ namespace oikonomos.repositories
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionString))
+                using (var con = new SqlConnection(_connectionString))
                 {
                     con.Open();
-                    using (SqlCommand cmd = new SqlCommand(string.Format("INSERT INTO oiky.Session (SessionId, SessionStarted) VALUES ('{0}', '{1}')", key, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")), con))
+                    using (var cmd = new SqlCommand(string.Format("INSERT INTO oiky.Session (SessionId, SessionStarted) VALUES ('{0}', '{1}')", key, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")), con))
                     {
                         cmd.ExecuteNonQuery();
                     }
@@ -102,10 +100,10 @@ namespace oikonomos.repositories
             {
                 updateMutex.WaitOne();
                 
-                using (SqlConnection con = new SqlConnection(_connectionString))
+                using (var con = new SqlConnection(_connectionString))
                 {
                     con.Open();
-                    using (SqlCommand cmd = new SqlCommand(string.Format("SELECT UserName FROM oiky.Session WHERE SessionId = '{0}'", key), con))
+                    using (var cmd = new SqlCommand(string.Format("SELECT UserName FROM oiky.Session WHERE SessionId = '{0}'", key), con))
                     {
                         var userNameExisting = cmd.ExecuteScalar();
                         if (userNameExisting == DBNull.Value)

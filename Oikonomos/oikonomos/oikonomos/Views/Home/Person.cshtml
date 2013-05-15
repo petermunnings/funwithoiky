@@ -124,7 +124,7 @@
 
                             @if (ViewBag.DisplayFacebook)
                             {
-                                <div class="tableRow" id="row_image" @if (Model.FacebookId == "" || Model.FacebookId == null)
+                                <div class="tableRow" id="row_image" @if (string.IsNullOrEmpty(Model.FacebookId)) 
                                                                      {<text>style="display:none;"</text>} >
                                     <div style="text-align:right; display:table-cell; width:160px">&nbsp;</div>
                                     <div style="text-align:right; display:table-cell; width:10px">&nbsp;</div>
@@ -339,7 +339,7 @@
                         }
                         @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.SendWelcomeLetter))
                         {     
-                            <img class="button" style="display:none" id="button_sendWelcomeMail" alt="Send Welcome email and password" src="/Content/images/email_24.png" title="Send Username and password" />
+                            <img class="button" style="display:none" id="button_sendWelcomeMail" alt="Send login details" src="/Content/images/email_24.png" title="Send login details" />
                         }
                         <img id="ajax_personSearch" alt="loading" src="/Content/images/ajax-loader.gif" style="display:none" />
                         <span id="span_message" style="display: none;"></span>
