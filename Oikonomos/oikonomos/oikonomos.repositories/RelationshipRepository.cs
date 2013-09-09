@@ -40,6 +40,7 @@ namespace oikonomos.repositories
                 //Check the opposite relationship
                 UpdateOtherRelationships(familyMember, person);
             }
+            Context.SaveChanges();
         }
 
         private void UpdateOtherRelationships(FamilyMemberViewModel familyMember, PersonViewModel person)

@@ -242,7 +242,7 @@ $(document).ready(function () {
 
     $("#email_bodyWithFormatting").tinymce({
         theme: "advanced",
-        theme_advanced_buttons1: "bold,italic,underline, strikethrough, separator,justifyleft, justifycenter,justifyright,  justifyfull, separator,forecolor,backcolor,separator, bullist,numlist,separator,outdent,indent,separator,undo,redo",
+        theme_advanced_buttons1: "bold,italic,underline, strikethrough, separator,justifyleft, justifycenter,justifyright, justifyfull, separator,forecolor,backcolor,separator, bullist,numlist,separator,outdent,indent,separator,undo,redo, code",
         theme_advanced_buttons2: "fontselect,fontsizeselect,formatselect",
         theme_advanced_buttons3: "",
         theme_advanced_buttons4: "",
