@@ -188,6 +188,7 @@ namespace oikonomos.data.DataAccessors
                     {
                         siteToSave.Address = new Address();
                         siteToSave.Address.Created = DateTime.Now;
+                        context.Sites.AddObject(siteToSave);
                     }
 
                     siteToSave.Address.Changed = DateTime.Now;
@@ -198,8 +199,6 @@ namespace oikonomos.data.DataAccessors
                     siteToSave.Address.Lat = siteSettings.Lat;
                     siteToSave.Address.Long = siteSettings.Lng;
                     siteToSave.Address.AddressType = siteSettings.AddressType ?? string.Empty;
-
-                    context.Sites.AddObject(siteToSave);
 
                     context.SaveChanges();
                 }
