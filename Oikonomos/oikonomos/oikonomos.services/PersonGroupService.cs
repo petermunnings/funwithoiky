@@ -40,6 +40,7 @@ namespace oikonomos.services
 
             switch (request.sidx)
             {
+                case "Name":
                 case "GroupName":
                     {
                         if (request.sord.ToLower() == "asc")
