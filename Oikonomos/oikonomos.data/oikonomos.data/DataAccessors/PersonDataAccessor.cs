@@ -881,7 +881,7 @@ namespace oikonomos.data.DataAccessors
                                        id = f.FamilyId,
                                        label = f.FamilyName,
                                        value = f.FamilyName
-                                   }).Take(12).ToArray();
+                                   }).Distinct().Take(12).ToArray();
 
             }
         }

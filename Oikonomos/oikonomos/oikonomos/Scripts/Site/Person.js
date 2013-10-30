@@ -554,6 +554,21 @@ $(document).ready(function() {
         }
     });
 
+    $("#text_newFamilySearch").autocomplete({
+        source: function(request, response) {
+            var postData = { term: request.term };
+            var jqxhr = $.post("/Ajax/FamilyAutoComplete", $.postify(postData), function(data) {
+                response(data);
+            }).error(function(jqXHR, textStatus, errorThrown) {
+                SendErrorEmail("Error calling FamilyAutoComplete", jqXHR.responseText);
+            });
+        },
+        minLength: 1,
+        select: function(event, ui) {
+            alert(ui.item.id);
+        }
+    });
+
     $("#text_dateOfBirth").datepicker({
         changeMonth: true,
         changeYear: true,
@@ -600,6 +615,13 @@ $(document).ready(function() {
         }
     });
 
+    $("#button_linkPersonToNewFamily").click(function () {
+        $("#text_newFamilySearch").val('');
+        if ($("#hidden_personId").val() != "0") {
+            $("#div_linkPersonToAnotherFamily").dialog('open');
+        }
+    });
+
     $("#div_warningDelete").dialog({
         autoOpen: false,
         modal: true,
@@ -612,6 +634,25 @@ $(document).ready(function() {
                 DeletePerson();
             },
             "No": function() {
+                $(this).dialog('close');
+            }
+        }
+    });
+    
+    $("#div_linkPersonToAnotherFamily").dialog({
+        autoOpen: false,
+        modal: true,
+        height: 300,
+        width: 580,
+        resizable: false,
+        buttons: {
+            "Link to family": function () {
+                $(this).dialog('close');
+            },
+            "Create new family": function () {
+                $(this).dialog('close');
+            },
+            "Cancel": function () {
                 $(this).dialog('close');
             }
         }

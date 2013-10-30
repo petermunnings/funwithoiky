@@ -85,7 +85,8 @@ namespace oikonomos.common
         ViewPersonGroups              = 56,
         ViewDiscipleship101           = 57,
         ViewMessages                  = 58,
-        IncludeInGroupList            = 59
+        IncludeInGroupList            = 59,
+        LinkPersonToNewFamily         = 60
     }
 
     public enum Relationships

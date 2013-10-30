@@ -343,6 +343,10 @@
                         }
                         <img id="ajax_personSearch" alt="loading" src="/Content/images/ajax-loader.gif" style="display:none" />
                         <span id="span_message" style="display: none;"></span>
+                        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.LinkPersonToNewFamily))
+                        {     
+                            <br /><button class="button" id="button_linkPersonToNewFamily" title="Link person to another family">Link person to another family</button>
+                        }
                     </div>
                 </div>
             </div>
@@ -413,29 +417,39 @@
 </div>
 
 <div id="div_editGroups" style="display: none;" title="Edit Groups">
-	<div style="width:100%">
-	    <div style="width:50%; float:left;">
-	        <table id="jqgGroupsPersonIsIn" cellpadding="0" cellspacing="0"></table>
+    <div style="width:100%">
+        <div style="width:50%; float:left;">
+            <table id="jqgGroupsPersonIsIn" cellpadding="0" cellspacing="0"></table>
             <div id="jqgpGroupsPersonIsIn" style="text-align:center;"></div>
-	    </div>
-	    <div style="width:10%; float:left;">
-	        <table>
-	            <thead>
-	                <tr>
-	                    <td>&nbsp;</td>
-	                </tr>
-	            </thead>
-	            <tbody>
-	                <tr><td><button class="button" title="Add person to group" id="addToGroup"><</button></td></tr>
+        </div>
+        <div style="width:10%; float:left;">
+            <table>
+                <thead>
+                    <tr>
+                        <td>&nbsp;</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><button class="button" title="Add person to group" id="addToGroup"><</button></td></tr>
                     <tr><td><button class="button" title="Remove person from group" id="removeFromGroup">></button></td></tr>
-	            </tbody>
-	        </table>
-	    </div>
+                </tbody>
+            </table>
+        </div>
         <div style="width:40%; float:left;">
-	        <table id="jqgGroupsPersonIsNotIn" cellpadding="0" cellspacing="0"></table>
+            <table id="jqgGroupsPersonIsNotIn" cellpadding="0" cellspacing="0"></table>
             <div id="jqgpGroupsPersonIsNotIn" style="text-align:center;"></div>
-	    </div>
-	</div>
+        </div>
+    </div>
+</div>
+
+<div id="div_linkPersonToAnotherFamily" style="display: none;" title="Linking person to another family">
+    <div style="text-align:left; width:100%">
+        Type the surname of the family you wish to link this person to.  If this person needs to be put in a new family, type the new surname and click the create new family button
+    </div>
+    <div>&nbsp;</div>
+    <div>
+        <input id="text_newFamilySearch" type="text" style="width:250px" class="ui-corner-all" />
+    </div>
 </div>
 
 <input id="hidden_personId" value="@(Model.PersonId == null ? 0 : Model.PersonId)" type="hidden" />
