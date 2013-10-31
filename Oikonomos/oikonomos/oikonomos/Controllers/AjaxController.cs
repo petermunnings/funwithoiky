@@ -95,6 +95,7 @@ namespace oikonomos.web.Controllers
 
         public JsonResult LinkPersonToFamily(int personId, int familyId)
         {
+            _personService.LinkPersonToFamily(personId, familyId);
             return Json(new {personId=personId}, JsonRequestBehavior.DenyGet);
         }
         

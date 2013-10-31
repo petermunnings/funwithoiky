@@ -136,6 +136,11 @@ namespace oikonomos.services
             throw new Exception(ExceptionMessage.InvalidCredentials);
         }
 
+        public void LinkPersonToFamily(int personId, int familyId)
+        {
+            _personRepository.UpdateFamilyId(personId, familyId);
+        }
+
         public int Save(PersonViewModel person, Person currentPerson)
         {
             if (!currentPerson.HasPermission(Permissions.EditChurchPersonalDetails))

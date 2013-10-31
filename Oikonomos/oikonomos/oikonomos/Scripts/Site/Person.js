@@ -678,9 +678,9 @@ $(document).ready(function() {
                     $(this).dialog('close');
                 }
             },
-            "Create new family": function () {
-                $(this).dialog('close');
-            },
+            //"Create new family": function () {
+            //    $(this).dialog('close');
+            //},
             "Cancel": function () {
                 $(this).dialog('close');
             }

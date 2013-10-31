@@ -291,5 +291,19 @@ namespace oikonomos.repositories
             var peopleInChurch = Context.PersonChurches.Where(p => p.ChurchId == churchId).Select(p=>p.Person.PersonOptionalFields);
             return (from po in peopleInChurch.SelectMany(p => p) where po.OptionalFieldId == (int) OptionalFields.CellPhone && cellPhoneNos.Contains(po.Value) select po.PersonId).ToList();
         }
+
+        public void UpdateFamilyId(int personId, int familyId)
+        {
+            var person = Context.People.FirstOrDefault(p => p.PersonId == personId);
+            if(person == null) throw new Exception(string.Format("Cannot find person with personId = {0}", personId));
+            var personRelationships = Context.PersonRelationships.Where(p => p.PersonId == personId || p.PersonRelatedToId==personId).ToList();
+            foreach (var p in personRelationships)
+            {
+                Context.PersonRelationships.DeleteObject(p);
+            }
+
+            person.FamilyId = familyId;
+            Context.SaveChanges();
+        }
     }
 }

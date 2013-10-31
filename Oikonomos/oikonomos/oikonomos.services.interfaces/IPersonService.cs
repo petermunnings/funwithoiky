@@ -8,5 +8,6 @@ namespace oikonomos.services.interfaces
         int Save(PersonViewModel person, Person currentPerson);
         void SavePersonToSampleChurch(string firstname, string surname, string liveId, string cellPhone, string email, int roleId);
         PersonViewModel FetchPersonViewModel(int personId, Person currentPerson);
+        void LinkPersonToFamily(int personId, int familyId);
     }
 }

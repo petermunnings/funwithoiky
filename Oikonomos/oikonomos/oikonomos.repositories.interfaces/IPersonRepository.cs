@@ -21,5 +21,6 @@ namespace oikonomos.repositories.interfaces
         IEnumerable<Person> FetchPersonFromName(string fullname, string firstname, string surname, string email);
         IEnumerable<int> FetchPersonIdsFromEmailAddress(string emailAddress, int churchId);
         IEnumerable<int> FetchPersonIdsFromCellPhoneNos(IEnumerable<string> cellPhoneNos, int churchId);
+        void UpdateFamilyId(int personId, int familyId);
     }
 }
