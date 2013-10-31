@@ -93,6 +93,11 @@ namespace oikonomos.web.Controllers
             return Json(data, JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult LinkPersonToFamily(int personId, int familyId)
+        {
+            return Json(new {personId=personId}, JsonRequestBehavior.DenyGet);
+        }
+        
         public JsonResult FamilyAutoComplete(string term)
         {
             var data = new AutoCompleteViewModel[0];

@@ -138,6 +138,31 @@ function FetchPersonData(personId) {
     });
 }
 
+function SavePersonAjaxCall(postData, refreshAfterSave) {
+
+    var jqxhr = $.post("/Ajax/SavePerson", $.postify(postData), function(data) {
+        if (data.PersonId == 0) {
+            var errMessage = "There was a problem saving the person";
+            ShowErrorMessage("Cannot save person", errMessage);
+        } else {
+            $("#hidden_personId").val(data.PersonId + "");
+            $("#span_message").html("Person saved succesfully");
+            $("#span_message").show();
+            //Refetch the person
+            if (refreshAfterSave) {
+                FetchPersonData(data.PersonId);
+            } else {
+                $("#ajax_personSearch").hide();
+            }
+            pageIsDirty = false;
+        }
+    })
+        .error(function(jqXHR, textStatus, errorThrown) {
+            $("#ajax_personSearch").hide();
+            SendErrorEmail("Error calling SavePerson", jqXHR.responseText);
+        });
+}
+
 function SavePerson(refreshAfterSave) {
     var canSave = true;
     if ($("#text_firstname").val() == "") {
@@ -210,26 +235,26 @@ function SavePerson(refreshAfterSave) {
         GroupId: groupId
     };
 
-    var jqxhr = $.post("/Ajax/SavePerson", $.postify(postData), function (data) {
-        if (data.PersonId == 0) {
-            var errMessage = "There was a problem saving the person";
-            ShowErrorMessage("Cannot save person", errMessage);
-        }
-        else {
-            $("#hidden_personId").val(data.PersonId + "");
-            $("#span_message").html("Person saved succesfully");
-            $("#span_message").show();
-            //Refetch the person
-            if (refreshAfterSave) {
-                FetchPersonData(data.PersonId);
-            }
-            else {
-                $("#ajax_personSearch").hide();
-            }
-            pageIsDirty = false;
+    SavePersonAjaxCall(postData, refreshAfterSave);
+
+}
+
+function LinkToFamily() {
+    var postData = {
+        personId: $("#hidden_personId").val(),
+        familyId: $("#hidden_newFamilyId").val()
+    };
+    $.post("/Ajax/LinkPersonToFamily", $.postify(postData), function (data) {
+        if (data.personId == 0) {
+            var errMessage = "There was a problem linking the person to a new family";
+            ShowErrorMessage("Cannot link person to new family", errMessage);
+        } else {
+            window.location = "/Home/Person?PersonId=" + data.personId;
         }
     })
-        .error(function (jqXHR, textStatus, errorThrown) { $("#ajax_personSearch").hide(); SendErrorEmail("Error calling SavePerson", jqXHR.responseText); });
+        .error(function (jqXHR, textStatus, errorThrown) {
+            SendErrorEmail("Error calling LinkPersonToFamily", jqXHR.responseText);
+        });
 }
 
 function FetchFamilyMembers() {
@@ -565,7 +590,7 @@ $(document).ready(function() {
         },
         minLength: 1,
         select: function(event, ui) {
-            alert(ui.item.id);
+            $("#hidden_newFamilyId").val(ui.item.id);
         }
     });
 
@@ -617,6 +642,7 @@ $(document).ready(function() {
 
     $("#button_linkPersonToNewFamily").click(function () {
         $("#text_newFamilySearch").val('');
+        $("#hidden_newFamilyId").val('0');
         if ($("#hidden_personId").val() != "0") {
             $("#div_linkPersonToAnotherFamily").dialog('open');
         }
@@ -647,7 +673,10 @@ $(document).ready(function() {
         resizable: false,
         buttons: {
             "Link to family": function () {
-                $(this).dialog('close');
+                if ($("#hidden_newFamilyId").val() != '0') {
+                    LinkToFamily();
+                    $(this).dialog('close');
+                }
             },
             "Create new family": function () {
                 $(this).dialog('close');
