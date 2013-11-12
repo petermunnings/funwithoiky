@@ -377,9 +377,13 @@ namespace oikonomos.data.DataAccessors
                                             }).ToList();
 
                 var upcomingBirthdays = (from p in context.People
-                                         from c in p.PersonChurches
+                                         join c in context.PersonChurches
+                                            on p.PersonId equals c.PersonId
+                                         join permissions in context.PermissionRoles
+                                            on c.RoleId equals permissions.RoleId
                                          where p.DateOfBirth.HasValue
                                          && c.ChurchId == currentPerson.ChurchId
+                                         && (permissions.PermissionId == (int)Permissions.ShowEvents)
                                          select new EventListModel
                                          {
                                              EntityName = p.Firstname + " " + p.Family.FamilyName,
@@ -388,15 +392,19 @@ namespace oikonomos.data.DataAccessors
                                          }).ToList();
 
                 var upcomingAnniversaries = (from p in context.People
-                                             from c in p.PersonChurches
+                                             join c in context.PersonChurches
+                                                 on p.PersonId equals c.PersonId
+                                             join permissions in context.PermissionRoles
+                                                 on c.RoleId equals permissions.RoleId
                                              where p.Anniversary.HasValue
-                                             && c.ChurchId == currentPerson.ChurchId
+                                                   && c.ChurchId == currentPerson.ChurchId
+                                                   && (permissions.PermissionId == (int)Permissions.ShowEvents)
                                              select new EventListModel
-                                             {
-                                                 EntityName = p.Firstname + " " + p.Family.FamilyName,
-                                                 Description = "Anniversary",
-                                                 Date = p.Anniversary.Value
-                                             }).ToList();
+                                                 {
+                                                     EntityName = p.Firstname + " " + p.Family.FamilyName,
+                                                     Description = "Anniversary",
+                                                     Date = p.Anniversary.Value
+                                                 }).ToList();
 
                 AddBirthdays(upcomingBirthdays);
                 AddAnniversaries(upcomingAnniversaries);
