@@ -993,8 +993,7 @@ namespace oikonomos.data.DataAccessors
 
                             if (address == null) //Should never happen, but just to be sure
                             {
-                                address = new Address();
-                                address.Created = DateTime.Now;
+                                address = new Address {Created = DateTime.Now};
                                 hgvm.AddressId = 0;
                             }
                         }
@@ -1003,13 +1002,13 @@ namespace oikonomos.data.DataAccessors
                             address.Created = DateTime.Now;
                         }
 
-                        address.Line1 = hgvm.Address1 == null ? "" : hgvm.Address1;
-                        address.Line2 = hgvm.Address2 == null ? "" : hgvm.Address2;
-                        address.Line3 = hgvm.Address3 == null ? "" : hgvm.Address3;
-                        address.Line4 = hgvm.Address4 == null ? "" : hgvm.Address4;
-                        address.AddressType = hgvm.AddressType == null ? "" : hgvm.AddressType;
-                        address.Lat = hgvm.Lat == null ? 0 : hgvm.Lat;
-                        address.Long = hgvm.Lng == null ? 0 : hgvm.Lng;
+                        address.Line1 = hgvm.Address1 ?? "";
+                        address.Line2 = hgvm.Address2 ?? "";
+                        address.Line3 = hgvm.Address3 ?? "";
+                        address.Line4 = hgvm.Address4 ?? "";
+                        address.AddressType = hgvm.AddressType ?? "";
+                        address.Lat = hgvm.Lat;
+                        address.Long = hgvm.Lng;
                         address.ChurchSuburbId = hgvm.SuburbId != 0 ? hgvm.SuburbId : (int?)null;
                         address.Changed = DateTime.Now;
 
@@ -1034,7 +1033,7 @@ namespace oikonomos.data.DataAccessors
 
         public static void SaveGroupSettings(Person currentPerson, GroupDto groupSettings)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 //Check to see if the address already exists
 

@@ -105,7 +105,7 @@ namespace oikonomos.web.Controllers
             if (Session[SessionVariable.LoggedOnPerson] != null)
             {
                 var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                data = PersonDataAccessor.FetchFamilyAutoComplete(term, currentPerson.ChurchId);
+                data = PersonDataAccessor.FetchFamilyAutoComplete(term, currentPerson.ChurchId, currentPerson.FamilyId);
             }
 
             return Json(data, JsonRequestBehavior.AllowGet);

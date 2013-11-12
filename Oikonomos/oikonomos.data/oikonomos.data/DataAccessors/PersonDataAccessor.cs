@@ -863,26 +863,46 @@ namespace oikonomos.data.DataAccessors
             }
         }
 
-        public static AutoCompleteViewModel[] FetchFamilyAutoComplete(string term, int churchId)
+        public static AutoCompleteViewModel[] FetchFamilyAutoComplete(string term, int churchId, int familyId)
         {
             using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
+                var families = (from f in context.Families
+                                join p in context.People
+                                    on f.FamilyId equals p.FamilyId
+                                join pc in context.PersonChurches
+                                    on p.PersonId equals pc.PersonId
+                                where pc.ChurchId == churchId
+                                      && f.FamilyName.Contains(term)
+                                      && f.FamilyId != familyId
+                                select f)
+                    .ToList().OrderBy(f => f.FamilyName).Distinct().Take(12);
 
-                return (from f in context.Families
-                        join p in context.People
-                            on f.FamilyId equals p.FamilyId
-                        join pc in context.PersonChurches
-                            on p.PersonId equals pc.PersonId
-                        where pc.ChurchId == churchId
-                              && f.FamilyName.Contains(term)
-                        orderby f.FamilyName
-                        select new AutoCompleteViewModel
+                var returns = (from f in families
+                               select new AutoCompleteViewModel
                                    {
                                        id = f.FamilyId,
                                        label = f.FamilyName,
                                        value = f.FamilyName
-                                   }).Distinct().Take(12).ToArray();
+                                   }).ToList();
+                
+                foreach (var r in returns)
+                {
+                    var famId = r.id;
+                    var firstNames = context.People.Where(p => p.FamilyId == famId).OrderBy(p=>p.PersonId).Select(p=>p.Firstname);
+                    var labelLength = r.label.Length;
+                    foreach (var p in firstNames)
+                    {
+                        if (labelLength >= 46) continue;
+                        r.label += string.Format(", {0}", p);
+                        labelLength += p.Length + 2;
+                    }
 
+                    if (labelLength >= 46 && r.label.Contains(","))
+                        r.label = r.label.Substring(0, 43) + "...";
+                }
+
+                return returns.ToArray();
             }
         }
 
