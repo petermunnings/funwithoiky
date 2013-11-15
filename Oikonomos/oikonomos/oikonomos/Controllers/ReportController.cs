@@ -119,7 +119,7 @@ namespace oikonomos.web.Controllers
             
             HttpContext.Response.AddHeader("content-disposition", "attachment; filename=churchdata.csv");
             var sw = new StreamWriter(new MemoryStream());
-            sw.WriteLine(@"Surname, Firstname, CellPhone, Email, HomePhone, WorkPhone, RoleName, Address1, Address2, Address3, Address4, Anniversary, DateOfBirth, Gender, Occupation, Skype, Twitter, Site, HeardAbout, Group");
+            sw.WriteLine(@"Surname, Firstname, CellPhone, Email, HomePhone, WorkPhone, RoleName, Address1, Address2, Address3, Address4, Anniversary, DateOfBirth, Gender, Occupation, Skype, Twitter, Site, HeardAbout, Group, Leader, Administrator");
 
             var list = PersonDataAccessor.FetchExtendedChurchList(currentUser);
             foreach (var person in list)
@@ -143,7 +143,9 @@ namespace oikonomos.web.Controllers
                     person.Twitter          + ", " +
                     person.Site             + ", " +
                     person.HeardAbout       + ", " +
-                    person.GroupName
+                    person.GroupName        + ", " +
+                    person.GroupLeader      + ", " +
+                    person.GroupAdministrator
                     );
             }
 

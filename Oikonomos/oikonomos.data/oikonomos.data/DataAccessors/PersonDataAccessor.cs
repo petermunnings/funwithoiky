@@ -728,7 +728,7 @@ namespace oikonomos.data.DataAccessors
                     return new List<PersonViewModel>();
                 }
 
-                return (from p in personList
+                var people = (from p in personList
                         orderby p.Family.FamilyName, p.PersonId
                         select new PersonViewModel
                         {
@@ -754,12 +754,43 @@ namespace oikonomos.data.DataAccessors
                             Skype             = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Skype).Value,
                             Twitter           = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Twitter).Value,
                             RoleName          = p.PersonChurches.FirstOrDefault(pc=>pc.ChurchId==currentPerson.ChurchId).Role.Name,
-                            GroupName         = p.PersonGroups.Count(pg => pg.Group.ChurchId == currentPerson.ChurchId) == 0 ? 
-                                                "None" : 
+                            GroupId           = p.PersonGroups.Count(pg => pg.Group.ChurchId == currentPerson.ChurchId) == 0 ? 
+                                                0 : 
                                                 p.PersonGroups.FirstOrDefault(pg => pg.Group.ChurchId == currentPerson.ChurchId && pg.PrimaryGroup).Group == null ? 
-                                                p.PersonGroups.FirstOrDefault(pg => pg.Group.ChurchId == currentPerson.ChurchId).Group.Name : 
-                                                p.PersonGroups.FirstOrDefault(pg => pg.Group.ChurchId == currentPerson.ChurchId && pg.PrimaryGroup).Group.Name
+                                                p.PersonGroups.FirstOrDefault(pg => pg.Group.ChurchId == currentPerson.ChurchId).Group.GroupId : 
+                                                p.PersonGroups.FirstOrDefault(pg => pg.Group.ChurchId == currentPerson.ChurchId && pg.PrimaryGroup).Group.GroupId
                         }).ToList();
+
+                AddGroupDetails(people, context);
+                return people;
+            }
+        }
+
+        private static void AddGroupDetails(IEnumerable<PersonViewModel> people, oikonomosEntities context)
+        {
+            foreach (var p in people)
+            {
+                if (p.GroupId == 0)
+                    p.GroupName = "None";
+                else
+                {
+                    var group = context.Groups.FirstOrDefault(g => g.GroupId == p.GroupId);
+                    if (@group == null)
+                        p.GroupName = "None";
+                    else
+                    {
+                        p.GroupName = @group.Name;
+                        if (@group.Leader == null)
+                            p.GroupLeader = "";
+                        else
+                            p.GroupLeader = @group.Leader.Firstname + " " + @group.Leader.Family.FamilyName;
+
+                        if (@group.Administrator == null)
+                            p.GroupAdministrator = "";
+                        else
+                            p.GroupAdministrator = @group.Administrator.Firstname + " " + @group.Administrator.Family.FamilyName;
+                    }
+                }
             }
         }
 

@@ -59,6 +59,8 @@ namespace oikonomos.common.Models
         public int GroupId { get; set; }  //This is for saving it into the right group
         public bool IsInMultipleGroups { get; set; }
         public string GroupName { get; set; }
+        public string GroupLeader { get; set; }
+        public string GroupAdministrator { get; set; }
         public string Site { get; set; }
         public string HeardAbout { get; set; }
         public string FacebookId { get; set; }
@@ -71,6 +73,7 @@ namespace oikonomos.common.Models
         public IEnumerable<FamilyMemberViewModel> FamilyMembers { get; set; }
 
         public IEnumerable<PersonGroupViewModel> PersonGroups { get; set; }
+
     }
 
     public class FamilyMemberViewModel
