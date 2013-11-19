@@ -99,13 +99,13 @@ namespace oikonomos.web.Controllers
             return Json(new {personId=personId}, JsonRequestBehavior.DenyGet);
         }
         
-        public JsonResult FamilyAutoComplete(string term)
+        public JsonResult FamilyAutoComplete(string term, int familyId)
         {
             var data = new AutoCompleteViewModel[0];
             if (Session[SessionVariable.LoggedOnPerson] != null)
             {
                 var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                data = PersonDataAccessor.FetchFamilyAutoComplete(term, currentPerson.ChurchId, currentPerson.FamilyId);
+                data = PersonDataAccessor.FetchFamilyAutoComplete(term, currentPerson.ChurchId, familyId);
             }
 
             return Json(data, JsonRequestBehavior.AllowGet);

@@ -21,12 +21,13 @@ function ClearForm() {
     $("#Site").val("Select site...");
     $("#row_image").hide();
     $("#img_person").prop("src", " ");
-    $("#GroupId").val("0"); 
-    }
+    $("#GroupId").val("0");
+    $("#button_linkPersonToNewFamily").hide();
+}
 
 function PopulatePerson(person) {
     $("#hidden_personId").val(person.PersonId);
-
+    $("#button_linkPersonToNewFamily").show();
     $("#hidden_familyId").val(person.FamilyId);
     $("#hidden_groupId").val(person.GroupId);
     $("#group_Name").text(person.GroupName);
@@ -581,7 +582,10 @@ $(document).ready(function() {
 
     $("#text_newFamilySearch").autocomplete({
         source: function(request, response) {
-            var postData = { term: request.term };
+            var postData = {
+                term: request.term,
+                familyId: $("#hidden_familyId").val()
+            };
             var jqxhr = $.post("/Ajax/FamilyAutoComplete", $.postify(postData), function(data) {
                 response(data);
             }).error(function(jqXHR, textStatus, errorThrown) {
