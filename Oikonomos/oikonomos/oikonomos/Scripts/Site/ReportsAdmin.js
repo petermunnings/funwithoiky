@@ -101,7 +101,7 @@ $(document).ready(function () {
         //url access method type
         mtype: 'POST',
         //columns names
-        colNames: ['GroupId', 'GroupName', 'Leader', 'Administrator', 'Suburb', 'GroupClassification'],
+        colNames: ['GroupId', 'Group Name', 'Leader', 'Administrator', 'Suburb', 'Group Classification'],
         //columns model
         colModel: [
                     { name: 'GroupId', index: 'GroupId', hidden: true, search: false },

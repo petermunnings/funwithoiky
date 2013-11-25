@@ -141,73 +141,51 @@ namespace oikonomos.data.DataAccessors
             if (string.IsNullOrWhiteSpace(siteSettings.SiteName))
                 return;
 
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 //Check Roles
-                if (currentPerson.HasPermission(common.Permissions.AddSite) ||
-                    currentPerson.HasPermission(common.Permissions.EditSite))
+                if (!currentPerson.HasPermission(Permissions.AddSite) && !currentPerson.HasPermission(Permissions.EditSite)) return;
+                var siteToSave = new Site();
+                if (siteSettings.SiteId == 0)
                 {
-                    Site siteToSave = new Site();
-                    if (siteSettings.SiteId == 0)
-                    {
-                        if (currentPerson.HasPermission(common.Permissions.AddSite))
-                        {
-                            siteToSave.Created = DateTime.Now;
-                            siteToSave.ChurchId = currentPerson.ChurchId;
-                        }
-                        else
-                        {
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        if (currentPerson.HasPermission(Permissions.EditSite))
-                        {
-                            siteToSave = (from s in context.Sites.Include("Address")
-                                          where s.SiteId == siteSettings.SiteId
-                                          select s).FirstOrDefault();
-
-                            if (siteToSave == null)
-                            {
-                                siteToSave = new Site();
-                                siteToSave.Created = DateTime.Now;
-                                siteToSave.ChurchId = currentPerson.ChurchId;
-                            }
-                        }
-                        else
-                        {
-                            return;
-                        }
-                    }
-
-                    siteToSave.Changed = DateTime.Now;
-                    siteToSave.Name = siteSettings.SiteName;
-
-                    if (siteSettings.AddressId == 0)
-                    {
-                        siteToSave.Address = new Address();
-                        siteToSave.Address.Created = DateTime.Now;
-                        context.Sites.AddObject(siteToSave);
-                    }
-
-                    siteToSave.Address.Changed = DateTime.Now;
-                    siteToSave.Address.Line1 = siteSettings.Address1 ?? string.Empty;
-                    siteToSave.Address.Line2 = siteSettings.Address2 ?? string.Empty;
-                    siteToSave.Address.Line3 = siteSettings.Address3 ?? string.Empty;
-                    siteToSave.Address.Line4 = siteSettings.Address4 ?? string.Empty;
-                    siteToSave.Address.Lat = siteSettings.Lat;
-                    siteToSave.Address.Long = siteSettings.Lng;
-                    siteToSave.Address.AddressType = siteSettings.AddressType ?? string.Empty;
-
-                    context.SaveChanges();
+                    if (!currentPerson.HasPermission(Permissions.AddSite)) return;
+                    siteToSave.Created = DateTime.Now;
+                    siteToSave.ChurchId = currentPerson.ChurchId;
                 }
+                else
+                {
+                    if (!currentPerson.HasPermission(Permissions.EditSite)) return;
+                    siteToSave = (from s in context.Sites.Include("Address")
+                                  where s.SiteId == siteSettings.SiteId
+                                  select s).FirstOrDefault() ??
+                                 new Site {Created = DateTime.Now, ChurchId = currentPerson.ChurchId};
+                }
+
+                siteToSave.Changed = DateTime.Now;
+                siteToSave.Name = siteSettings.SiteName;
+
+                if (siteSettings.AddressId == 0)
+                {
+                    siteToSave.Address = new Address {Created = DateTime.Now};
+                    context.Sites.AddObject(siteToSave);
+                }
+
+                siteToSave.Address.Changed = DateTime.Now;
+                siteToSave.Address.Line1 = siteSettings.Address1 ?? string.Empty;
+                siteToSave.Address.Line2 = siteSettings.Address2 ?? string.Empty;
+                siteToSave.Address.Line3 = siteSettings.Address3 ?? string.Empty;
+                siteToSave.Address.Line4 = siteSettings.Address4 ?? string.Empty;
+                siteToSave.Address.Lat = siteSettings.Lat;
+                siteToSave.Address.Long = siteSettings.Lng;
+                siteToSave.Address.AddressType = siteSettings.AddressType ?? string.Empty;
+
+                context.SaveChanges();
             }
         }
 
         public static JqGridData FetchSitesJQGrid(Person currentPerson, JqGridRequest request)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 var sites = (from s in context.Sites.Include("Address")
                               where s.ChurchId == currentPerson.ChurchId
@@ -290,7 +268,7 @@ namespace oikonomos.data.DataAccessors
                         }
                 }
 
-                JqGridData sitesGridData = new JqGridData()
+                var sitesGridData = new JqGridData()
                 {
                     total = (int)Math.Ceiling((float)totalRecords / (float)request.rows),
                     page = request.page,
@@ -315,7 +293,7 @@ namespace oikonomos.data.DataAccessors
         
         public static ChurchViewModel FetchChurch(string churchName)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 return (from c in context.Churches
                         where c.Name == churchName
@@ -328,7 +306,7 @@ namespace oikonomos.data.DataAccessors
                             BackgroundImage = c.BackgroundImage,
                             UITheme = c.UITheme,
                             GoogleSearchRegion = c.Province,
-                            ShowFacebookLogin = c.ChurchOptionalFields.Where<ChurchOptionalField>(co => co.OptionalFieldId == (int)OptionalFields.Facebook).FirstOrDefault().Visible
+                            ShowFacebookLogin = c.ChurchOptionalFields.FirstOrDefault(co => co.OptionalFieldId == (int)OptionalFields.Facebook).Visible
                         }).FirstOrDefault();
 
             }
@@ -355,13 +333,13 @@ namespace oikonomos.data.DataAccessors
             }
         }
 
-        public static void SaveChurchOptionalFields(int churchId, List<OptionalFieldViewModel> optionalFields)
+        public static void SaveChurchOptionalFields(int churchId, IEnumerable<OptionalFieldViewModel> optionalFields)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                foreach (OptionalFieldViewModel optionalField in optionalFields)
+                foreach (var optionalField in optionalFields)
                 {
-                    ChurchOptionalField ct = new ChurchOptionalField();
+                    var ct = new ChurchOptionalField();
                     if (optionalField.ChurchOptionalFieldId != 0)
                     {
                         ct = (from c in context.ChurchOptionalFields

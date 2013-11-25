@@ -359,6 +359,11 @@ namespace oikonomos.web.Controllers
                             ViewBag.DisplayOccupation = ct.Display ? "tableRow" : "displayNone";
                             break;
                         }
+                    case OptionalFields.MaritalStatus:
+                        {
+                            ViewBag.DisplayMaritalStatus = ct.Display ? "tableRow" : "displayNone";
+                            break;
+                        }
                     case OptionalFields.Gender:
                         {
                             ViewBag.DisplayGender = ct.Display;
@@ -601,6 +606,11 @@ namespace oikonomos.web.Controllers
                     case OptionalFields.Occupation:
                         {
                             ViewBag.DisplayOccupation = ct.Display ? "tableRow" : "displayNone";
+                            break;
+                        }
+                    case OptionalFields.MaritalStatus:
+                        {
+                            ViewBag.DisplayMaritalStatus = ct.Display ? "tableRow" : "displayNone";
                             break;
                         }
                     case OptionalFields.Facebook:

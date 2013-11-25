@@ -479,7 +479,7 @@ namespace oikonomos.data.DataAccessors
 
         public static List<OptionalFieldViewModel> FetchChurchOptionalFields(int churchId)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 return (from c in context.OptionalFields
                         join cc in context.ChurchOptionalFields
@@ -491,7 +491,7 @@ namespace oikonomos.data.DataAccessors
                             ChurchOptionalFieldId = cc.ChurchOptionalFieldId == null ? 0 : cc.ChurchOptionalFieldId,
                             OptionalFieldId = c.OptionalFieldId,
                             Name = c.Name,
-                            Regex = c.Regex == null ? string.Empty : c.Regex,
+                            Regex = c.Regex ?? string.Empty,
                             Display = cc.Visible == null ? true : cc.Visible
                         }).ToList();
             }

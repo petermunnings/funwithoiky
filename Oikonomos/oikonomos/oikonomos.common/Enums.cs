@@ -22,7 +22,8 @@ namespace oikonomos.common
         GroupAdministratorsCanAddMembers = 12,
         ShowWholeChurch = 13,
         Gender = 14,
-        WindowsLive = 15
+        WindowsLive = 15,
+        MaritalStatus = 16
     }
 
     public enum Permissions

@@ -250,13 +250,13 @@ namespace oikonomos.data.DataAccessors
                 throw new Exception("Invalid security Role");
             }
 
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                List<JqGridFilterRule> rules = request.filters == null ? null : request.filters.rules;
+                var rules = request.filters == null ? null : request.filters.rules;
                 var groups = FetchGroupList(currentPerson, request._search, rules, context);
 
-                int totalRecords = groups.Count();
-
+                var totalRecords = groups.Count();
+                
                 switch (request.sidx)
                 {
                     case "GroupName":
@@ -1094,29 +1094,29 @@ namespace oikonomos.data.DataAccessors
 
         public static JqGridData FetchPeopleInGroupJQGrid(Person currentPerson, JqGridRequest request, int groupId)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 var people = FetchPeopleInGroup(currentPerson, groupId, context);
 
                 if (request._search)
                 {
-                    foreach (JqGridFilterRule rule in request.filters.rules)
+                    foreach (var rule in request.filters.rules)
                     {
-                        string ruleData = rule.data;
+                        var ruleData = rule.data.ToLower();
                         //If we use rule.data throughout we get some strange errors in the SQL that Linq generates
                         switch (rule.field)
                         {
                             case "Firstname":
                                 {
                                     people = (from p in people
-                                              where p.Firstname.Contains(ruleData)
+                                              where p.Firstname.ToLower().Contains(ruleData)
                                               select p);
                                     break;
                                 }
                             case "Surname":
                                 {
                                     people = (from p in people
-                                              where p.Surname.Contains(ruleData)
+                                              where p.Surname.ToLower().Contains(ruleData)
                                               select p);
                                     break;
                                 }
@@ -1265,14 +1265,14 @@ namespace oikonomos.data.DataAccessors
 
             if (search)
             {
-                foreach (JqGridFilterRule rule in rules)
+                foreach (var rule in rules)
                 {
                     //If we use rule.data throughout we get some strange errors in the SQL that Linq generates
                     switch (rule.field)
                     {
                         case "GroupName":
                             {
-                                string groupName = rule.data;
+                                var groupName = rule.data;
                                 groups = (from g in groups
                                           where g.Name.Contains(groupName)
                                           select g);

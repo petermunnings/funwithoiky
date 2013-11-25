@@ -98,8 +98,6 @@ namespace oikonomos.repositories
         {
             var anniversaryHasChanged = personToSave.Anniversary != person.Anniversary_Value;
             personToSave.Anniversary = person.Anniversary_Value;
-
-            personToSave.Occupation = person.Occupation;
             var selectedSite = (from s in Context.Sites where s.ChurchId == currentPerson.ChurchId && s.Name == person.Site select s).FirstOrDefault();
             if (selectedSite == null)
             {

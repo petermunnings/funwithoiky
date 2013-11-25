@@ -5,7 +5,7 @@ namespace oikonomos.repositories.interfaces
 {
     public interface IPersonOptionalFieldRepository
     {
-        void SaveContactInformation(PersonViewModel person, Person personToSave);
+        void SaveOptionalFields(PersonViewModel person, Person personToSave);
 
     }
 }

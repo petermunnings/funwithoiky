@@ -45,6 +45,7 @@ namespace oikonomos.common.Models
         public string Skype { get; set; }
         public string Twitter { get; set; }
         public string Occupation { get; set; }
+        public string MaritalStatus { get; set; }
         public string Address1 { get; set; }
         public string Address2 { get; set; }
         public string Address3 { get; set; }
@@ -67,13 +68,25 @@ namespace oikonomos.common.Models
         public string Gender { get; set; }
         public int RoleId { get; set; }
         public string RoleName { get; set; }
-
         public IEnumerable<RoleViewModel> SecurityRoles { get; set; }
-
         public IEnumerable<FamilyMemberViewModel> FamilyMembers { get; set; }
-
         public IEnumerable<PersonGroupViewModel> PersonGroups { get; set; }
-
+        public IEnumerable<string> MaritalStatuses
+        {
+            get
+            {
+                return new List<string>
+                    {
+                        "Please select...",
+                        "Single",
+                        "Married",
+                        "Divorced",
+                        "Child",
+                        "Widow",
+                        "Widower"
+                    };
+            }
+        }
     }
 
     public class FamilyMemberViewModel

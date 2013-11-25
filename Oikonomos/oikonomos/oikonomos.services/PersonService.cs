@@ -98,8 +98,9 @@ namespace oikonomos.services
                             Skype = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int) OptionalFields.Skype) == null ? string.Empty : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int) OptionalFields.Skype).Value,
                             Twitter = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int) OptionalFields.Twitter) == null ? string.Empty : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int) OptionalFields.Twitter).Value,
                             FacebookId = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int) OptionalFields.Facebook) == null ? string.Empty : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int) OptionalFields.Facebook).Value,
-                            Occupation = person.Occupation,
-                            Gender = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int) OptionalFields.Gender) == null ? string.Empty : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int) OptionalFields.Gender).Value,
+                            Occupation = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Occupation) == null ? string.Empty : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int)OptionalFields.Occupation).Value,
+                            MaritalStatus = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.MaritalStatus) == null ? string.Empty : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int)OptionalFields.MaritalStatus).Value,
+                            Gender = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Gender) == null ? string.Empty : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int)OptionalFields.Gender).Value,
                             Address1 = person.Family.Address.Line1,
                             Address2 = person.Family.Address.Line2,
                             Address3 = person.Family.Address.Line3,
@@ -165,7 +166,7 @@ namespace oikonomos.services
             var anniversaryHasChanged = _personRepository.SavePersonalDetails(person, currentPerson, personToSave);
             _personRoleRepository.SavePersonChurchRole(person, currentPerson, personToSave);
             var addedToNewGroup = _personGroupRepository.AddPersonToGroup(person, currentPerson, personToSave);
-            _personOptionalFieldRepository.SaveContactInformation(person, personToSave);
+            _personOptionalFieldRepository.SaveOptionalFields(person, personToSave);
             _addressRepository.SaveAddressInformation(person, personToSave.Family.Address, personToSave.Family);
             _relationshipRepository.UpdateRelationships(person, personToSave, anniversaryHasChanged);
             personToSave = _personRepository.FetchPerson(personToSave.PersonId, currentPerson);

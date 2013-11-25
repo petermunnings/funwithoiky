@@ -9,7 +9,7 @@ namespace oikonomos.repositories
 {
     public class PersonOptionalFieldRepository : RepositoryBase, IPersonOptionalFieldRepository
     {
-        public void SaveContactInformation(PersonViewModel person, Person personToSave)
+        public void SaveOptionalFields(PersonViewModel person, Person personToSave)
         {
             personToSave.Family.HomePhone = person.HomePhone;
             UpdatePersonOptionalField(personToSave, OptionalFields.CellPhone, person.CellPhone);
@@ -18,6 +18,8 @@ namespace oikonomos.repositories
             UpdatePersonOptionalField(personToSave, OptionalFields.WorkPhone, person.WorkPhone);
             UpdatePersonOptionalField(personToSave, OptionalFields.HeardAbout, person.HeardAbout);
             UpdatePersonOptionalField(personToSave, OptionalFields.Gender, person.Gender);
+            UpdatePersonOptionalField(personToSave, OptionalFields.Occupation, person.Occupation);
+            UpdatePersonOptionalField(personToSave, OptionalFields.MaritalStatus, person.MaritalStatus);
             Context.SaveChanges();
         }
 

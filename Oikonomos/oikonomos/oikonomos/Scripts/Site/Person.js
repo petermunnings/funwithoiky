@@ -45,6 +45,7 @@ function PopulatePerson(person) {
     $("#text_skype").val(person.Skype);
     $("#text_twitter").val(person.Twitter);
     $("#text_occupation").val(person.Occupation);
+    $("#MaritalStatus").val(person.MaritalStatus);
     var genderRadio = $('input:radio[name=Gender]');
     genderRadio.filter('[value=Male]').prop('checked', false);
     genderRadio.filter('[value=Female]').prop('checked', false);
@@ -222,6 +223,7 @@ function SavePerson(refreshAfterSave) {
         Skype: $("#text_skype").val(),
         Twitter: $("#text_twitter").val(),
         Occupation: $("#text_occupation").val(),
+        MaritalStatus: $("#MaritalStatus").val(),
         Gender: $("input[name=Gender]:checked").val(),
         Address1: $("#text_address1").val(),
         Address2: $("#text_address2").val(),

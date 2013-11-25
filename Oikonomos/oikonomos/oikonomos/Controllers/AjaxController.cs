@@ -368,10 +368,10 @@ namespace oikonomos.web.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public JsonResult FetchPeopleInGroup(JqGridRequest request, int groupId)
         {
-            JqGridData jqGridData = new JqGridData();
+            var jqGridData = new JqGridData();
             if (Session[SessionVariable.LoggedOnPerson] != null)
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 jqGridData = GroupDataAccessor.FetchPeopleInGroupJQGrid(currentPerson, request, groupId);
             }
 
@@ -589,15 +589,15 @@ namespace oikonomos.web.Controllers
 
         public JsonResult FetchOptionalFields()
         {
-            List<OptionalFieldViewModel> optionalFields = new List<OptionalFieldViewModel>();
-            bool sessionTimedOut = false;
+            var optionalFields = new List<OptionalFieldViewModel>();
+            var sessionTimedOut = false;
             if (Session[SessionVariable.LoggedOnPerson] == null)
             {
                 sessionTimedOut = true;
             }
             else
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 optionalFields = SettingsDataAccessor.FetchChurchOptionalFields(currentPerson.ChurchId);
             }
 
@@ -1173,8 +1173,10 @@ namespace oikonomos.web.Controllers
             }
             else
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                //TODO Check for User Roles
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                if (!currentPerson.HasPermission(Permissions.EditSettings))
+                    throw new Exception(ExceptionMessage.InvalidCredentials);
+                
                 ChurchDataAccessor.SaveChurchOptionalFields(currentPerson.ChurchId, optionalFields);
             }
 

@@ -199,9 +199,17 @@
                             </div>
                         
                             <div class="@ViewBag.DisplayOccupation">
-                            <div style="text-align:right; display:table-cell">Occupation</div>
-                            <div style="text-align:right; display:table-cell">&nbsp;</div>
-                            <div style="text-align:left; display:table-cell"><input id="text_occupation" type="text" value="@Model.Occupation" class="ui-corner-all"/></div>
+                                <div style="text-align:right; display:table-cell">Occupation</div>
+                                <div style="text-align:right; display:table-cell">&nbsp;</div>
+                                <div style="text-align:left; display:table-cell"><input id="text_occupation" type="text" value="@Model.Occupation" class="ui-corner-all"/></div>
+                            </div>
+                            
+                            <div class="@ViewBag.DisplayMaritalStatus">
+                                <div style="text-align:right; display:table-cell">Martial Status</div>
+                                <div style="text-align:right; display:table-cell">&nbsp;</div>
+                                <div style="text-align:left; display:table-cell">
+                                    @Html.DropDownListFor(model => model.MaritalStatus, new SelectList(Model.MaritalStatuses), new { @class = "ui-corner-all" })
+                                </div>
                             </div>
 
                             @if (ViewBag.DisplayGender)
