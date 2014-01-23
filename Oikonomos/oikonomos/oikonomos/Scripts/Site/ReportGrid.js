@@ -63,11 +63,11 @@ $(document).ready(function () {
         //columns model
         colModel: [
                     { name: 'PersonId', index: 'PersonId', hidden: true, search: false },
-                    { name: 'Firstname', index: 'Firstname', align: 'left', width: 140, search: true },
-                    { name: 'Surname', index: 'Surname', align: 'left', width: 140, search: true },
-                    { name: 'HomePhone', index: 'HomePhone', align: 'left', width: 120, sortable: false, search: true },
-                    { name: 'CellPhone', index: 'CellPhone', align: 'left', width: 120, sortable: false, search: true },
-                    { name: 'Email', index: 'Email', align: 'left', width: 254, sortable: false, search: true }
+                    { name: 'Firstname', index: 'Firstname', align: 'left', width: 165, search: true },
+                    { name: 'Surname', index: 'Surname', align: 'left', width: 165, search: true },
+                    { name: 'HomePhone', index: 'HomePhone', align: 'left', width: 170, sortable: false, search: true },
+                    { name: 'CellPhone', index: 'CellPhone', align: 'left', width: 170, sortable: false, search: true },
+                    { name: 'Email', index: 'Email', align: 'left', width: 304, sortable: false, search: true }
                   ],
         //pager for grid
         pager: $('#jqgpChurchList'),

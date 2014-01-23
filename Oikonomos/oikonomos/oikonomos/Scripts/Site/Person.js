@@ -23,6 +23,20 @@ function ClearForm() {
     $("#img_person").prop("src", " ");
     $("#GroupId").val("0");
     $("#button_linkPersonToNewFamily").hide();
+    
+    try {
+        $("#jqgEventList").jqGrid("setGridParam", { "postData": { personId: 0 } });
+        $("#jqgEventList").trigger("reloadGrid");
+        $("#jqgCommentList").jqGrid("setGridParam", { "postData": { personId: 0 } });
+        $("#jqgCommentList").trigger("reloadGrid");
+        ReloadGroups(0);
+        ReloadMessages(0);
+    }
+    catch (err) {
+        SendErrorEmail("Error updating jqgrids", err);
+
+    }
+
 }
 
 function PopulatePerson(person) {

@@ -1336,9 +1336,8 @@ namespace oikonomos.web.Controllers
 
         public JsonResult FetchGroupLeaderEmails(bool search, JqGridFilters filters, bool includeMembers)
         {
-            bool sessionTimedOut = false;
-            string message = string.Empty;
-            List<string> addresses = new List<string>();
+            var sessionTimedOut = false;
+            var message = string.Empty;
             if (Session[SessionVariable.LoggedOnPerson] == null)
             {
                 sessionTimedOut = true;
@@ -1346,7 +1345,7 @@ namespace oikonomos.web.Controllers
             }
             else
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 if (currentPerson.HasPermission(Permissions.EmailGroupLeaders))
                 {
                     Session[SessionVariable.EmailAddresses] = GroupDataAccessor.FetchGroupLeaderAddresses(currentPerson, search, filters, includeMembers);
@@ -1365,6 +1364,69 @@ namespace oikonomos.web.Controllers
             return Json(response, JsonRequestBehavior.DenyGet);
         }
 
+        public JsonResult FetchPeopleInARoleCellPhoneNos(int roleId)
+        {
+            var sessionTimedOut = false;
+            var message = string.Empty;
+            var noNos = 0;
+            if (Session[SessionVariable.LoggedOnPerson] == null)
+            {
+                sessionTimedOut = true;
+                message = ExceptionMessage.SessionTimedOut;
+            }
+            else
+            {
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                if (currentPerson.HasPermission(Permissions.SmsGroupLeaders))
+                {
+                    Session[SessionVariable.CellPhoneNos] = GroupDataAccessor.FetchPeopleInARoleCellPhoneNos(currentPerson, roleId);
+                    noNos = ((List<string>)Session[SessionVariable.CellPhoneNos]).Count;
+                }
+                else
+                {
+                    message = ExceptionMessage.InvalidCredentials;
+                }
+            }
+
+            var response = new
+            {
+                SessionTimeOut = sessionTimedOut,
+                Message = message,
+                NoNos = noNos
+            };
+            return Json(response, JsonRequestBehavior.DenyGet);
+        }
+
+        public JsonResult FetchPeopleInARoleEmails(int roleId)
+        {
+            var sessionTimedOut = false;
+            var message = string.Empty;
+            if (Session[SessionVariable.LoggedOnPerson] == null)
+            {
+                sessionTimedOut = true;
+                message = ExceptionMessage.SessionTimedOut;
+            }
+            else
+            {
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                if (currentPerson.HasPermission(Permissions.SmsGroupLeaders))
+                {
+                    Session[SessionVariable.EmailAddresses] = GroupDataAccessor.FetchPeopleInARoleEmails(currentPerson, roleId);
+                }
+                else
+                {
+                    message = ExceptionMessage.InvalidCredentials;
+                }
+            }
+
+            var response = new
+            {
+                SessionTimeOut = sessionTimedOut,
+                Message = message
+            };
+            return Json(response, JsonRequestBehavior.DenyGet);
+        }
+        
         public JsonResult FetchGroupLeaderCellPhoneNos(bool search, JqGridFilters filters, bool includeMembers)
         {
             bool sessionTimedOut = false;

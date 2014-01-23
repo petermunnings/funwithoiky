@@ -79,8 +79,29 @@
         <div id="jqgpEventList" style="text-align:center;"></div>
     </div>
     <div id="tabs-peopleInARole">
-        @Html.DropDownListFor(model => model.RoleId, new SelectList(Model.SecurityRoles, "RoleId", "Name"), new { @class = "ui-corner-all" })
-        <button id="button_viewPeopleInARole">Print/View Pdf</button><br />&nbsp;<br />
+        
+        <div class="ui-widget-content">
+            <table>
+                <tr>
+                    <td>Select a role: <br />@Html.DropDownListFor(model => model.RoleId, new SelectList(Model.SecurityRoles, "RoleId", "Name"), new { @class = "ui-corner-all" })</td>
+                    <td><button id="button_viewPeopleInARole" title="View List as pdf for printing/emailing" style="width:120px">View as pdf</button></td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td><button id="button_sendEmail" title="Send an email" style="width:120px">Send Email</button></td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>
+                        @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.SmsChurch))
+                        {
+                            <button id="button_sendSms" title="Send an SMS" style="width:120px">Send SMS</button>
+                        }
+                    </td>
+                </tr>
+            </table>
+        </div>
+
         <table id="jqgPeopleInARole" cellpadding="0" cellspacing="0" style="width:800px"></table>
         <div id="jqgpPeopleInARole" style="text-align:center;"></div>
     </div>

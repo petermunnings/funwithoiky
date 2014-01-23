@@ -16,15 +16,9 @@
     grid.trigger("reloadGrid", [{ page: 1}]);
 }
 
-function FetchEmailList() {
-    var gridFilter = $("#jqgHomegroups").jqGrid('getGridParam', 'postData');
-    var postData = {
-        search: gridFilter._search,
-        filters: gridFilter.filters,
-        includeMembers: $("#checkBox_IncludeMembers").prop('checked') 
-    };
+function SendReportEmail(sourceOfEmails, postData) {
     OpenEmailDialog();
-    var jqxhr = $.post("/Ajax/FetchGroupLeaderEmails", $.postify(postData), function (data) {
+    $.post(sourceOfEmails, $.postify(postData), function (data) {
         if (data.Message == "") {
             SetupEmailDialog();
         }
@@ -46,34 +40,62 @@ function FetchEmailList() {
     });
 }
 
-function FetchSmsList() {
+function FetchGroupLeadersEmailList() {
     var gridFilter = $("#jqgHomegroups").jqGrid('getGridParam', 'postData');
     var postData = {
         search: gridFilter._search,
         filters: gridFilter.filters,
         includeMembers: $("#checkBox_IncludeMembers").prop('checked') 
     };
+
+    SendReportEmail("/Ajax/FetchGroupLeaderEmails", postData);
+}
+
+
+function FetchPeopleInARoleEmailList() {
+    var postData = { roleId: $("#RoleId").val() };
+
+    SendReportEmail("/Ajax/FetchPeopleInARoleEmails", postData);
+}
+
+function SendReportSms(sourceOfCellPhoneNos, postData) {
     OpenSmsDialog();
-    var jqxhr = $.post("/Ajax/FetchGroupLeaderCellPhoneNos", postData, function (data) {
+    $.post(sourceOfCellPhoneNos, postData, function (data) {
         if (data.Message == "") {
             SetupSmsDialog(data.NoNos);
-        }
-        else {
+        } else {
             $("#responseMessage_text").html(data.Message);
             $("#response_Message").dialog(
-            {
-                modal: true,
-                height: 200,
-                width: 500,
-                resizable: true,
-                buttons: {
-                    "Close": function () {
-                        $(this).dialog("close");
+                {
+                    modal: true,
+                    height: 200,
+                    width: 500,
+                    resizable: true,
+                    buttons: {
+                        "Close": function() {
+                            $(this).dialog("close");
+                        }
                     }
-                }
-            });
+                });
         }
     });
+}
+
+function FetchGroupLeadersSmsList() {
+    var gridFilter = $("#jqgHomegroups").jqGrid('getGridParam', 'postData');
+    var postData = {
+        search: gridFilter._search,
+        filters: gridFilter.filters,
+        includeMembers: $("#checkBox_IncludeMembers").prop('checked')
+    };
+
+    SendReportSms("/Ajax/FetchGroupLeaderCellPhoneNos", postData);
+}
+
+function FetchPeopleInARoleSmsList() {
+    var postData = {roleId: $("#RoleId").val()};
+
+    SendReportSms("/Ajax/FetchPeopleInARoleCellPhoneNos", postData);
 }
 
 $(document).ready(function () {
@@ -167,13 +189,21 @@ $(document).ready(function () {
     }).navGrid('#jqgpNotInGroup', { edit: false, add: false, del: false, search: false });
 
     $("#button_sendHomeGroupLeaderEmail").click(function () {
-        FetchEmailList();
+        FetchGroupLeadersEmailList();
     });
 
     $("#button_sendHomeGroupLeaderSms").click(function () {
-        FetchSmsList();
+        FetchGroupLeadersSmsList();
     });
-
+    
+    $("#button_sendEmail").click(function () {
+        FetchPeopleInARoleEmailList();
+    });
+    
+    $("#button_sendSms").click(function () {
+        FetchPeopleInARoleSmsList();
+    });
+    
     $('#jqgEventList').jqGrid({
         //url from wich data should be requested
         url: '/Ajax/FetchEventList',

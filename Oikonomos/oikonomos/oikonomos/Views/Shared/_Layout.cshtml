@@ -24,7 +24,7 @@
 @if (Session[oikonomos.common.SessionVariable.LoggedOnPerson] != null)
 {
 <div style="width: 100%" >
-    <div id="menu" class="ui-widget" style="margin: 0 auto; text-align:center; width:800px">
+    <div id="menu" class="ui-widget" style="margin: 0 auto; text-align:center; width:1000px">
         <div id="buttons" style="text-align: left; height:40px" >
             <button id="button_home">Home</button> 
             @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditGroupPersonalDetails) ||
@@ -88,18 +88,18 @@
 }
 
 <div style="width: 100%" >
-    <div id="send_Email" title="Send Email" class="ui-widget" style="display:none; margin: 0 auto; text-align:center; width:800px">
+    <div id="send_Email" title="Send Email" class="ui-widget" style="display:none; margin: 0 auto; text-align:center; width:1000px">
         <div class="ui-widget">
             <div class="ui-widget-content ui-corner-all">
                 <table border="0px" cellpadding="5px" cellspacing="5px">
                     <tr>
                         <td style="width:150px">Subject</td>
-                        <td style="width:650px"><input type="text" id="email_subject" style="width:640px" /></td>
+                        <td style="width:850px"><input type="text" id="email_subject" style="width:840px" /></td>
                     </tr>
                     <tr>
                         <td style="vertical-align:top">Message&nbsp;</td>
                         <td>
-                            <textarea id="email_bodyWithFormatting" name="email_bodyWithFormatting" rows="30" cols="100" style="width:640px; height: 350px">
+                            <textarea id="email_bodyWithFormatting" name="email_bodyWithFormatting" rows="30" cols="100" style="width:840px; height: 350px">
 		                    </textarea>
                         </td>
                     </tr>
@@ -117,7 +117,7 @@
         </div>
     </div>
     
-    <div id="mainContent" class="ui-widget" style="margin: 0 auto; text-align:center; width:800px">
+    <div id="mainContent" class="ui-widget" style="margin: 0 auto; text-align:center; width:1000px">
         @RenderBody() 
     </div>
 </div>

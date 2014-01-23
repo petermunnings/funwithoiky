@@ -660,10 +660,10 @@ namespace oikonomos.data.DataAccessors
 
         public static List<string> FetchGroupLeaderCellPhoneNos(Person currentPerson, bool search, JqGridFilters filters, bool includeMembers)
         {
-            List<string> cellPhoneNos = new List<string>();
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            var cellPhoneNos = new List<string>();
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                List<JqGridFilterRule> rules = filters == null ? null : filters.rules;
+                var rules = filters == null ? null : filters.rules;
                 var groups = FetchGroupList(currentPerson, search, rules, context);
 
                 var leaders = (from g in groups
@@ -711,17 +711,17 @@ namespace oikonomos.data.DataAccessors
                               select po).ToList();
                 }
 
-                foreach (PersonOptionalField po in leaders)
+                foreach (var po in leaders)
                 {
                     AddCellPhoneNoToList(cellPhoneNos, po);
                 }
 
-                foreach (PersonOptionalField po in administrators)
+                foreach (var po in administrators)
                 {
                     AddCellPhoneNoToList(cellPhoneNos, po);
                 }
 
-                foreach (PersonOptionalField po in people)
+                foreach (var po in people)
                 {
                     AddCellPhoneNoToList(cellPhoneNos, po);
                 }
@@ -1047,8 +1047,7 @@ namespace oikonomos.data.DataAccessors
 
                     if (address == null) //Should never happen, but just to be sure
                     {
-                        address = new Address();
-                        address.Created = DateTime.Now;
+                        address = new Address {Created = DateTime.Now};
                         groupSettings.AddressId = 0;
                     }
                 }
@@ -1079,6 +1078,53 @@ namespace oikonomos.data.DataAccessors
 
                 context.SaveChanges();
             }
+        }
+
+        public static IEnumerable<string> FetchPeopleInARoleCellPhoneNos(Person currentPerson, int roleId)
+        {
+            var cellPhoneNos = new List<string>();
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            {
+                var allPhoneNos = (from pc in context.PersonChurches
+                                    join po in context.PersonOptionalFields
+                                        on pc.PersonId equals po.PersonId
+                                    where pc.ChurchId == currentPerson.ChurchId
+                                          && pc.RoleId == roleId
+                                          && po.OptionalFieldId == (int) OptionalFields.CellPhone
+                                    select po
+                                   ).ToList();
+                
+                foreach (var pn in allPhoneNos)
+                {
+                    AddCellPhoneNoToList(cellPhoneNos, pn);
+                }
+            }
+
+            return cellPhoneNos;
+        }
+
+
+        public static IEnumerable<string> FetchPeopleInARoleEmails(Person currentPerson, int roleId)
+        {
+            var addresses = new List<string>();
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            {
+                var peopleInRole = (from pc in context.PersonChurches
+                                   join p in context.People
+                                       on pc.PersonId equals p.PersonId
+                                   where pc.ChurchId == currentPerson.ChurchId
+                                         && pc.RoleId == roleId
+                                   select p
+                                   ).ToList();
+                
+                foreach (var p in peopleInRole)
+                {
+                    if (p.HasValidEmail() && !addresses.Contains(p.Email))
+                        addresses.Add(p.Email);
+                }
+            }
+            
+            return addresses;
         }
 
         #region Private Methods
@@ -1313,5 +1359,6 @@ namespace oikonomos.data.DataAccessors
         }
 
         #endregion Private Methods
+
     }
 }
