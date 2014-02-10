@@ -192,15 +192,6 @@ $(document).ready(function () {
 
     document.onkeypress = stopRKey;
 
-    $("#sms_message").keyup(function () {
-        var noCharactersLeft = 153 - $("#sms_message").val().length;
-        if (noCharactersLeft < 0) {
-            $("#sms_message").val($("#sms_message").val().substring(0, 153));
-            noCharactersLeft = 0;
-        }
-        $("#span_noCharactersLeft").html(noCharactersLeft);
-    });
-
     $('.button').live('mouseover mouseout', function (event) {
         if (event.type == 'mouseover') {
             $(this).css("cursor", "pointer");

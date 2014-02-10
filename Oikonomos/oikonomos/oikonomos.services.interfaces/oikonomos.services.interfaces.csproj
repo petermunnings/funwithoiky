@@ -47,6 +47,7 @@
     <Compile Include="IEmailService.cs" />
     <Compile Include="IEventService.cs" />
     <Compile Include="IGridFormatter.cs" />
+    <Compile Include="IHttpPostService.cs" />
     <Compile Include="IPasswordService.cs" />
     <Compile Include="IPersonGroupService.cs" />
     <Compile Include="IPersonService.cs" />

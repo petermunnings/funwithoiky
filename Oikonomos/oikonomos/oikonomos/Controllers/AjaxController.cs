@@ -72,7 +72,8 @@ namespace oikonomos.web.Controllers
             _systemAdministratorService  = new SystemAdministratorService(churchRepository, permissionRepository);
             _personGroupService = new PersonGroupService(_personGroupRepository);
             _messageRecepientRepository = new MessageRecepientRepository();
-            _smsSender = new SmsSender(messageRepository, personRepository);
+            var httpPostService = new HttpPostService();
+            _smsSender = new SmsSender(messageRepository, personRepository, httpPostService);
 
         }
 

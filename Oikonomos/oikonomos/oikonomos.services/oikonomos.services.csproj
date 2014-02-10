@@ -48,6 +48,7 @@
     <Compile Include="EmailService.cs" />
     <Compile Include="EventService.cs" />
     <Compile Include="GridFormatter.cs" />
+    <Compile Include="HttpPostService.cs" />
     <Compile Include="PasswordService.cs" />
     <Compile Include="PersonGroupService.cs" />
     <Compile Include="PersonService.cs" />
