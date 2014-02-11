@@ -940,13 +940,13 @@ namespace oikonomos.data.DataAccessors
             }
         }
 
-        public static void SaveHomeGroup(Person currentPerson, HomeGroupsViewModel hgvm)
+        public static int SaveHomeGroup(Person currentPerson, HomeGroupsViewModel hgvm)
         {
             if (currentPerson.HasPermission(Permissions.EditGroups) || currentPerson.HasPermission(Permissions.AddGroups))
             {
-                using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+                using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
                 {
-                    Group hg = new Group();
+                    var hg = new Group();
                     if (hgvm.GroupId != 0)
                     {
                         hg = (from g in context.Groups
@@ -1023,12 +1023,11 @@ namespace oikonomos.data.DataAccessors
                     hg.GroupClassificationId = hgvm.GroupClassificationId == 0 ? (int?)null : hgvm.GroupClassificationId;
 
                     context.SaveChanges();
+                    return hg.GroupId;
                 }
             }
-            else
-            {
-                throw new ApplicationException("You do not have the required permission");
-            }
+            
+            throw new ApplicationException("You do not have the required permission");
         }
 
         public static void SaveGroupSettings(Person currentPerson, GroupDto groupSettings)

@@ -110,9 +110,8 @@ function SaveHomeGroup() {
     };
 
     $.post("/Ajax/SaveHomeGroup", postData, function (data) {
+        selectedGroupId = data.GroupId;
         $("#jqgGroups").trigger("reloadGrid");
-        //Set newly create group as the selected group
-        //Trigger the rest
     }).error(function (jqXHR, textStatus, errorThrown) {
         $("#ajax_loader").hide();
         SendErrorEmail("Error calling SaveHomeGroup", jqXHR.responseText);
@@ -521,7 +520,6 @@ function SetupPeopleGrid() {
 }
 
 function ReloadPeopleGrid(id) {
-    
     selectedGroupId = id;
     $('#jqgGroups').jqGrid('setSelection', selectedGroupId);
     var ret = $("#jqgGroups").getRowData(selectedGroupId);
@@ -644,8 +642,11 @@ $(document).ready(function () {
             viewrecords: true,
             width: 'auto',
             height: 'auto',
-            gridComplete: function () {
-                if ($('#jqgGroups').getDataIDs().length > 0) {
+            
+            loadComplete: function() {
+                if (selectedGroupId != 0) {
+                    ReloadPeopleGrid(selectedGroupId);
+                } else if ($('#jqgGroups').getDataIDs().length > 0) {
                     ReloadPeopleGrid($('#jqgGroups').getDataIDs()[0]);
                 }
             },

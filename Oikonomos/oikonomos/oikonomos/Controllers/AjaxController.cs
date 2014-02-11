@@ -511,7 +511,7 @@ namespace oikonomos.web.Controllers
             if (Session[SessionVariable.LoggedOnPerson] != null)
             {
                 Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                if (currentPerson.HasPermission(common.Permissions.ViewPeopleNotInAnyGroup))
+                if (currentPerson.HasPermission(Permissions.ViewPeopleNotInAnyGroup))
                 {
                     jqGridData = GroupDataAccessor.FetchPeopleNotInAHomeGroupJQGrid(currentPerson, request);
                 }
@@ -1146,20 +1146,23 @@ namespace oikonomos.web.Controllers
 
         public JsonResult SaveHomeGroup(HomeGroupsViewModel hgvm)
         {
-            bool sessionTimedOut = false;
+            var sessionTimedOut = false;
+            var groupId = 0;
             if (Session[SessionVariable.LoggedOnPerson] == null)
             {
                 sessionTimedOut = true;
             }
             else
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                
                 //TODO Check for User Roles
-                GroupDataAccessor.SaveHomeGroup(currentPerson, hgvm);
+                groupId = GroupDataAccessor.SaveHomeGroup(currentPerson, hgvm);
             }
 
             var response = new
             {
+                GroupId = groupId,
                 SessionTimeOut = sessionTimedOut
             };
             return Json(response, JsonRequestBehavior.DenyGet);
