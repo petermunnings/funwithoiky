@@ -235,6 +235,7 @@ function DeleteGroup() {
     var jqxhr = $.post("/Ajax/DeleteHomeGroup", $.postify(postData), function (data) {
         $("#message").html(data.Message);
         if (data.Success) {
+            selectedGroupId = 0;
             $("#jqgGroups").trigger("reloadGrid");
             $("#ajax_loader").hide();
         }
