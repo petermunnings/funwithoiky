@@ -446,7 +446,7 @@ namespace oikonomos.web.Controllers
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
-        public JsonResult FetchGroupList(JqGridRequest request)
+        public JsonResult FetchGroupList(JqGridRequest request, int selectedGroupId, bool useGroupId)
         {
             try
             {
@@ -456,7 +456,7 @@ namespace oikonomos.web.Controllers
                     var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                     if (currentPerson.HasPermission(Permissions.EditAllGroups) || currentPerson.HasPermission(Permissions.EditOwnGroups))
                     {
-                        jqGridData = GroupDataAccessor.FetchHomeGroupsJQGrid(currentPerson, request);
+                        jqGridData = GroupDataAccessor.FetchHomeGroupsJQGrid(currentPerson, request, selectedGroupId, useGroupId);
                     }
                 }
 

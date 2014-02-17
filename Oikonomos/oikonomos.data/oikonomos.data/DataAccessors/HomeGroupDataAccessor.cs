@@ -243,7 +243,7 @@ namespace oikonomos.data.DataAccessors
             }
         }
 
-        public static JqGridData FetchHomeGroupsJQGrid(Person currentPerson, JqGridRequest request)
+        public static JqGridData FetchHomeGroupsJQGrid(Person currentPerson, JqGridRequest request, int selectedGroupId, bool useGroupId)
         {
             if (!(currentPerson.HasPermission(Permissions.EditOwnGroups) || currentPerson.HasPermission(Permissions.EditAllGroups)))
             {
@@ -255,78 +255,34 @@ namespace oikonomos.data.DataAccessors
                 var rules = request.filters == null ? null : request.filters.rules;
                 var groups = FetchGroupList(currentPerson, request._search, rules, context);
 
-                var totalRecords = groups.Count();
-                
-                switch (request.sidx)
+                var sortedGroups = sortGroupList(request, groups).ToList();
+
+                if (useGroupId)
                 {
-                    case "GroupName":
-                        {
-                            if (request.sord.ToLower() == "asc")
-                            {
-                                groups = groups.OrderBy(g => g.Name).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            else
-                            {
-                                groups = groups.OrderByDescending(g => g.Name).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            break;
-                        }
-                    case "LeaderName":
-                        {
-                            if (request.sord.ToLower() == "asc")
-                            {
-                                groups = groups.OrderBy(g => g.Leader.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            else
-                            {
-                                groups = groups.OrderByDescending(g => g.Leader.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            break;
-                        }
-                    case "Administrator":
-                        {
-                            if (request.sord.ToLower() == "asc")
-                            {
-                                groups = groups.OrderBy(g => g.Administrator.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            else
-                            {
-                                groups = groups.OrderByDescending(g => g.Administrator.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            break;
-                        }
-                    case "Suburb":
-                        {
-                            if (request.sord.ToLower() == "asc")
-                            {
-                                groups = groups.OrderBy(g => g.Address.ChurchSuburb.Suburb).ThenBy(g => g.Address.Line3).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            else
-                            {
-                                groups = groups.OrderByDescending(g => g.Address.ChurchSuburb.Suburb).ThenByDescending(g => g.Address.Line3).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            break;
-                        }
-                    case "GroupClassification":
-                        {
-                            if (request.sord.ToLower() == "asc")
-                            {
-                                groups = groups.OrderBy(g => g.GroupClassification.Name).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            else
-                            {
-                                groups = groups.OrderByDescending(g => g.GroupClassification.Name).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            break;
-                        }
+                    if (selectedGroupId == 0)
+                        request.page = 1;
+                    else
+                    {
+                        var result = sortedGroups
+                            .Select((x, i) => new {Item = x, Index = i})
+                            .FirstOrDefault(itemWithIndex => itemWithIndex.Item.GroupId == selectedGroupId);
+
+                        request.page = 1;
+                        if (result != null)
+                            request.page = ((result.Index + request.rows)/request.rows);
+
+                    }
                 }
 
-                JqGridData sitesGridData = new JqGridData()
+                var totalRecords = sortedGroups.Count();
+                var filteredGroups = sortedGroups.Skip((request.page - 1) * request.rows).Take(request.rows).ToList();
+                
+                var sitesGridData = new JqGridData()
                 {
                     total = (int)Math.Ceiling((float)totalRecords / (float)request.rows),
                     page = request.page,
                     records = totalRecords,
-                    rows = (from g in groups.AsEnumerable()
+                    rows = (from g in filteredGroups.AsEnumerable()
                             select new JqGridRow()
                             {
                                 id = g.GroupId.ToString(),
@@ -344,6 +300,45 @@ namespace oikonomos.data.DataAccessors
 
                 return sitesGridData;
             }
+        }
+
+        private static IOrderedQueryable<Group> sortGroupList(JqGridRequest request, IQueryable<Group> groups)
+        {
+            switch (request.sidx)
+            {
+                case "GroupName":
+                    {
+                        return request.sord.ToLower() == "asc"
+                                     ? groups.OrderBy(g => g.Name)
+                                     : groups.OrderByDescending(g => g.Name);
+                    }
+                case "LeaderName":
+                    {
+                        return request.sord.ToLower() == "asc"
+                                     ? groups.OrderBy(g => g.Leader.Firstname)
+                                     : groups.OrderByDescending(g => g.Leader.Firstname);
+                    }
+                case "Administrator":
+                    {
+                        return request.sord.ToLower() == "asc"
+                                     ? groups.OrderBy(g => g.Administrator.Firstname)
+                                     : groups.OrderByDescending(g => g.Administrator.Firstname);
+                    }
+                case "Suburb":
+                    {
+                        return request.sord.ToLower() == "asc"
+                                     ? groups.OrderBy(g => g.Address.ChurchSuburb.Suburb).ThenBy(g => g.Address.Line3)
+                                     : groups.OrderByDescending(g => g.Address.ChurchSuburb.Suburb)
+                                             .ThenByDescending(g => g.Address.Line3);
+                    }
+                case "GroupClassification":
+                    {
+                        return request.sord.ToLower() == "asc"
+                                     ? groups.OrderBy(g => g.GroupClassification.Name)
+                                     : groups.OrderByDescending(g => g.GroupClassification.Name);
+                    }
+            }
+            throw new Exception("Invalid sort parameter");
         }
 
         public static JqGridData FetchPeopleNotInAHomeGroupJQGrid(Person currentPerson, JqGridRequest request)

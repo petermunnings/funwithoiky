@@ -1,6 +1,7 @@
 ﻿var homeGroups;
 var rowId = 0;
 var selectedGroupId = 0;
+var useGroupId = false;
 
 var PopulateEvents = function () {
     var postData = { groupId: selectedGroupId };
@@ -111,6 +112,7 @@ function SaveHomeGroup() {
 
     $.post("/Ajax/SaveHomeGroup", postData, function (data) {
         selectedGroupId = data.GroupId;
+        useGroupId = true;
         $("#jqgGroups").trigger("reloadGrid");
     }).error(function (jqXHR, textStatus, errorThrown) {
         $("#ajax_loader").hide();
@@ -236,6 +238,7 @@ function DeleteGroup() {
         $("#message").html(data.Message);
         if (data.Success) {
             selectedGroupId = 0;
+            useGroupId = true;
             $("#jqgGroups").trigger("reloadGrid");
             $("#ajax_loader").hide();
         }
@@ -643,13 +646,14 @@ $(document).ready(function () {
             viewrecords: true,
             width: 'auto',
             height: 'auto',
-            
+            postData: { selectedGroupId: function () { return selectedGroupId; }, useGroupId: function () { return useGroupId; } },
             loadComplete: function() {
                 if (selectedGroupId != 0) {
                     ReloadPeopleGrid(selectedGroupId);
                 } else if ($('#jqgGroups').getDataIDs().length > 0) {
                     ReloadPeopleGrid($('#jqgGroups').getDataIDs()[0]);
                 }
+                useGroupId = false;
             },
             onSelectRow: function (id) {
                 if (selectedGroupId != id) {
