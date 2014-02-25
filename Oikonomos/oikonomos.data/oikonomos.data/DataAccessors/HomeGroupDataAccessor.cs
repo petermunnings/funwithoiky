@@ -495,15 +495,31 @@ namespace oikonomos.data.DataAccessors
 
         public static bool DeleteHomeGroup(int groupId, ref string message)
         {
-            bool success = false;
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            var success = false;
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                //Check to see if there is anyone in the group
+
+                var rolesToInclude = context.PermissionRoles.Where(p => p.PermissionId == (int) Permissions.IncludeInChurchList).Select(r => r.RoleId);
+
+                var peopleInRoles = context.PersonChurches.Where(r => rolesToInclude.Contains(r.RoleId)).Select(p => p.PersonId);
+
+                    //Check to see if there is anyone in the group
                 var peopleInGroup = (from pg in context.PersonGroups
-                                     where pg.GroupId == groupId
+                                     where pg.GroupId == groupId && peopleInRoles.Contains(pg.PersonId)
                                      select pg).Count();
+
                 if (peopleInGroup == 0)
                 {
+                    //Delete any remaining people in the group
+                    var peopleLeftInGroup = (from pg in context.PersonGroups
+                                             where pg.GroupId == groupId
+                                             select pg);
+                    
+                    foreach (var pg in peopleLeftInGroup)
+                    {
+                        context.PersonGroups.DeleteObject(pg);
+                    }
+                    
                     //Delete group
                     var groupToDelete = (from g in context.Groups
                                          where g.GroupId == groupId

@@ -946,18 +946,17 @@ namespace oikonomos.web.Controllers
 
         public JsonResult DeleteHomeGroup(int groupId)
         {
-            string message=string.Empty;
-            bool success = false;
-            List<HomeGroupsViewModel> homeGroups = new List<HomeGroupsViewModel>();
-            bool sessionTimedOut = false;
+            var message=string.Empty;
+            var success = false;
+            var sessionTimedOut = false;
             if (Session[SessionVariable.LoggedOnPerson] == null)
             {
                 sessionTimedOut = true;
             }
             else
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                if (currentPerson.HasPermission(common.Permissions.DeleteGroups))
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                if (currentPerson.HasPermission(Permissions.DeleteGroups))
                 {
                     success = GroupDataAccessor.DeleteHomeGroup(groupId, ref message);
                 }
