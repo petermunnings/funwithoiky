@@ -32,6 +32,21 @@ function ShowErrorMessage(title, message) {
     });
 }
 
+function ShowInfoMessage(title, message) {
+    $("#infoMessage").html(message);
+
+    $("#dialog_infoMessage").dialog({
+        modal: true,
+        title: title,
+        buttons: {
+            Ok: function () {
+                $("#infoMessage").html("");
+                $(this).dialog("close");
+            }
+        }
+    });
+}
+
 function SendEmail() {
     if ($("#email_bodyWithFormatting").val() == "") {
         ShowErrorMessage("No email to send", "Email message is empty");

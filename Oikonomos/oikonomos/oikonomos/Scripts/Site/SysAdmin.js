@@ -8,18 +8,57 @@ var ChurchViewModel = function () {
     $.get("/Ajax/InitializeChurchSettingsViewModel", self.church);
 
     self.createNewChurch = function () {
-        var postData = ko.toJS(self.church);
-        var jqxhr = $.post("/Ajax/CreateNewChurch", $.postify(postData), function (data) {
-            if (data.Message == "") {
-                self.showChurchFields = false;
-            } else {
-                ShowErrorMessage("Could not create church", data.Message);
+        try {
+            if (self.church().ChurchName == null || self.church().ChurchName == '') {
+                ShowErrorMessage("Error Creating New Church", "Church name is required");
+                return;
             }
-        }).error(function (jqXhr, textStatus, errorThrown) {
-            SendErrorEmail("Error calling CreateNewChurch", jqXhr.responseText);
-            self.showChurchFields = false;
-        });
-    };
+            if (self.church().ContactFirstname == null || self.church().ContactFirstname == '') {
+                ShowErrorMessage("Error Creating New Church", "Contact Firstname is required");
+                return;
+            }
+            if (self.church().ContactSurname == null || self.church().ContactSurname == '') {
+                ShowErrorMessage("Error Creating New Church", "Contact Surname is required");
+                return;
+            }
+            if (self.church().OfficePhone == null || self.church().OfficePhone == '') {
+                ShowErrorMessage("Error Creating New Church", "Office Phone No is required");
+                return;
+            }
+            if (self.church().OfficeEmail == null || self.church().OfficeEmail == '') {
+                ShowErrorMessage("Error Creating New Church", "Office email is required");
+                return;
+            }
+            if (self.church().Url == null)
+                self.church().Url = '';
+            if (self.church().Address1 == null)
+                self.church().Address1 = '';
+            if (self.church().Address2 == null)
+                self.church().Address2 = '';
+            if (self.church().Address3 == null)
+                self.church().Address3 = '';
+            if (self.church().Address4 == null)
+                self.church().Address4 = '';
+            if (self.church().Province == null)
+                self.church().Province = 'Gauteng';
+            var postData = ko.toJS(self.church);
+            $.post("/Ajax/CreateNewChurch", $.postify(postData), function (data) {
+                if (data.Message == "Church was succesfully created...") {
+                    self.showChurchFields = false;
+                    ShowInfoMessage('Success', data.Message);
+                } else {
+                    ShowErrorMessage("Could not create church", data.Message);
+                }
+            }).error(function (jqXhr, textStatus, errorThrown) {
+                SendErrorEmail("Error calling CreateNewChurch", jqXhr.responseText);
+                self.showChurchFields = false;
+            });
+        } catch (e) {
+            ShowErrorMessage("Unexpected error occured", e.message);
+            return;
+        } 
+    };
+
 
     self.runQuery = function () {
         $("#jqgQueryResults").GridUnload();

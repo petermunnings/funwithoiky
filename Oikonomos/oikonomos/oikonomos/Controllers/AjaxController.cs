@@ -1262,8 +1262,8 @@ namespace oikonomos.web.Controllers
 
         public JsonResult CreateNewChurch(ChurchSettingsViewModel churchSettings)
         {
-            bool sessionTimedOut = false;
-            var message = string.Empty;
+            var sessionTimedOut = false;
+            string message;
             if (Session[SessionVariable.LoggedOnPerson] == null)
             {
                 sessionTimedOut = true;
@@ -1275,6 +1275,7 @@ namespace oikonomos.web.Controllers
                 try
                 {
                     SettingsDataAccessor.CreateNewChurch(currentPerson, churchSettings);
+                    message = "Church was succesfully created...";
                 }
                 catch (Exception ex)
                 {
