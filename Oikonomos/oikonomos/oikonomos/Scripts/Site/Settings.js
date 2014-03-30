@@ -512,7 +512,7 @@ $(document).ready(function () {
         DeleteStandardComment($.tmplItem(this).data.StandardCommentId);
     });
 
-    $(".optionsButton").live('mouseover mouseout', function (event) {
+    $(".optionsButton").on('mouseover mouseout', function (event) {
         if (event.type == 'mouseover') {
             $(this).css("cursor", "pointer");
         } else {

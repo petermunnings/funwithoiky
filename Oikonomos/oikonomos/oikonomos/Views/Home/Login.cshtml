@@ -41,10 +41,10 @@
     </table>
 }
 
-@if (Session[oikonomos.common.SessionVariable.Church] == null ? true : ((oikonomos.common.Models.ChurchViewModel)Session[oikonomos.common.SessionVariable.Church]).ShowFacebookLogin)
+@if (Session[oikonomos.common.SessionVariable.Church] == null || ((oikonomos.common.Models.ChurchViewModel)Session[oikonomos.common.SessionVariable.Church]).ShowFacebookLogin)
 {
     <script type="text/javascript">
-        $("#facebook_login").live('mouseover mouseout', function (event) {
+        $("#facebook_login").on('mouseover mouseout', function (event) {
             if (event.type == 'mouseover') {
                 $(this).css("cursor", "pointer");
             } else {

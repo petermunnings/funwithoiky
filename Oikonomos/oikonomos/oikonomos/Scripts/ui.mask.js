@@ -5,7 +5,7 @@ Licensed under the MIT license (http://digitalbush.com/projects/masked-input-plu
 Version: @version
 */
 (function ($) {
-    var pasteEventName = ($.browser.msie ? 'paste' : 'input') + ".mask";
+    var pasteEventName = "input.mask";
     var iPhone = (window.orientation != undefined);
 
     $.mask = {

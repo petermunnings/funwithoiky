@@ -207,7 +207,7 @@ $(document).ready(function () {
 
     document.onkeypress = stopRKey;
 
-    $('.button').live('mouseover mouseout', function (event) {
+    $('.button').on('mouseover mouseout', function (event) {
         if (event.type == 'mouseover') {
             $(this).css("cursor", "pointer");
         } else {
@@ -271,6 +271,44 @@ $(document).ready(function () {
             $("#send_Email").slideUp();
             $("#mainContent").slideDown();
         }
+    });
+
+    $('#fileupload').fileupload({
+        dataType: 'json',
+        url: '/Home/UploadFiles',
+        autoUpload: true,
+        done: function (e, data) {
+            $("#progressbar").progressbar({
+                value: 0
+            });
+            $("#progressbar").hide();
+            $("#fileupload").show();
+            var newHtml = [];
+            $.each(data.result.list, function (index, value) {
+                newHtml.push("<tr style='vertical-align:top'><td><span class='ui-icon ui-icon-closethick removeButton'></span>&nbsp;</td><td>" + value.name + "</td></tr>");
+            });
+
+            $('.file_name').html(newHtml.join(""));
+        }
+    }).on('fileuploadprogressall', function (e, data) {
+        $("#progressbar").show();
+        $("#fileupload").hide();
+        var progress = parseInt(data.loaded / data.total * 100, 10);
+        $("#progressbar").progressbar({
+            value: progress
+        });
+    });
+    
+    $(".file_name").on("click", ".removeButton", function () {
+        $.post("/Home/RemoveAttachment?name=" + this.parentElement.parentElement.innerText.trim(), function (data) {
+            var newHtml = [];
+            $.each(data.list, function (index, value) {
+                newHtml.push("<tr style='vertical-align:top'><td><span class='ui-icon ui-icon-closethick removeButton'></span>&nbsp;</td><td>" + value.name + "</td></tr>");
+            });
+
+            $('.file_name').html(newHtml.join(""));
+        });
+
     });
 
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using oikonomos.data;
@@ -15,6 +16,7 @@ using oikonomos.repositories.interfaces;
 using oikonomos.services;
 using oikonomos.services.interfaces;
 using oikonomos.web.Helpers;
+using oikonomos.web.Models.Email;
 using oikonomos.web.Models.Groups;
 
 
@@ -83,6 +85,69 @@ namespace oikonomos.web.Controllers
                 }
             }
             return View(settings);
+        }
+
+        [HttpPost]
+        public ContentResult UploadFiles()
+        {
+            if (Session["AttachmentList"] == null)
+                Session["AttachmentList"] = new List<UploadFilesResult>();
+            var r = (List<UploadFilesResult>)Session["AttachmentList"];
+
+            foreach (string file in Request.Files)
+            {
+                var hpf = Request.Files[file];
+                if (hpf.ContentLength == 0)
+                    continue;
+
+                var savedFileName = Path.Combine(Server.MapPath("~/Email_Attachments"), Path.GetFileName(hpf.FileName));
+                hpf.SaveAs(savedFileName);
+
+                var newItem = r.FirstOrDefault(i => i.Name == hpf.FileName);
+                if (newItem == null)
+                {
+                    newItem = new UploadFilesResult()
+                    {
+                        Name = hpf.FileName,
+                        Length = hpf.ContentLength,
+                        Type = hpf.ContentType
+                    };
+                    r.Add(newItem);
+                }
+                else
+                {
+                    newItem.Length = hpf.ContentLength;
+                    newItem.Type = hpf.ContentType;
+                }
+            }
+            Session["AttachmentList"] = r;
+            var response = r.Aggregate("{\"list\":[", (current, item) => current + ("{\"name\":\"" + item.Name + "\"},"));
+            response = response.Substring(0, response.Length - 1);
+            response += "]}";
+            return Content(response, "application/json");
+        }
+        
+        [HttpPost]
+        public ContentResult RemoveAttachment(string name)
+        {
+            if (Session["AttachmentList"] == null)
+                Session["AttachmentList"] = new List<UploadFilesResult>();
+            var r = (List<UploadFilesResult>)Session["AttachmentList"];
+
+
+            var itemToRemove = r.FirstOrDefault(i => i.Name == name);
+            if (itemToRemove != null)
+            {
+                r.Remove(itemToRemove);
+            }
+            Session["AttachmentList"] = r;
+            var response = r.Aggregate("{\"list\":[", (current, item) => current + ("{\"name\":\"" + item.Name + "\"},"));
+
+            if (r.Count > 0) 
+                response = response.Substring(0, response.Length - 1);
+             
+            response += "]}";
+            return Content(response, "application/json");
         }
 
         public ActionResult SysAdmin()

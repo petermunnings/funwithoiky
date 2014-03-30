@@ -182,6 +182,7 @@
     <Compile Include="Helpers\JsonWebToken.cs" />
     <Compile Include="Helpers\SecurityHelper.cs" />
     <Compile Include="Models\Api\Group.cs" />
+    <Compile Include="Models\Email\UploadFilesResult.cs" />
     <Compile Include="Models\Groups\GroupViewModel.cs" />
     <Compile Include="Models\Api\Item.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -282,10 +283,8 @@
     <Content Include="Scripts\i18n\grid.locale-sv.js" />
     <Content Include="Scripts\i18n\grid.locale-tr.js" />
     <Content Include="Scripts\i18n\grid.locale-ua.js" />
-    <None Include="Scripts\jquery-1.4.4-vsdoc.js" />
-    <Content Include="Scripts\jquery-1.4.4.js" />
-    <Content Include="Scripts\jquery-1.4.4.min.js" />
-    <Content Include="Scripts\jquery-ui-1.8.11.custom.min.js" />
+    <Content Include="Scripts\jquery-ui-1.10.4.custom.min.js" />
+    <Content Include="Scripts\jquery.fileupload.js" />
     <Content Include="Scripts\jquery.jqGrid.min.js" />
     <Content Include="Scripts\jquery.jqGrid.src.js" />
     <Content Include="Scripts\jquery.tmpl.min.js" />
@@ -574,7 +573,6 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\jquery.validate-vsdoc.js" />
@@ -666,6 +664,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\PublishProfiles\Profile1.pubxml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Email_Attachments\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
