@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace oikonomos.common.Models
+﻿namespace oikonomos.common.Models
 {
     public class PersonListViewModel
     {
@@ -15,5 +10,6 @@ namespace oikonomos.common.Models
         public string CellPhone { get; set; }
         public string WorkPhone { get; set; }
         public string Email { get; set; }
+        public string Site { get; set; }
     }
 }

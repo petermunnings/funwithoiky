@@ -325,7 +325,7 @@ namespace oikonomos.data.DataAccessors
 
         public static JqGridData FetchChurchListJQGrid(Person currentPerson, JqGridRequest request)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 var rolesToInclude = context
                     .PermissionRoles
@@ -384,7 +384,7 @@ namespace oikonomos.data.DataAccessors
                     }
                 }
 
-                int totalRecords = people.Count();
+                var totalRecords = people.Count();
 
                 switch (request.sidx)
                 {
@@ -406,24 +406,26 @@ namespace oikonomos.data.DataAccessors
                 }
 
                 var membersGridData = new JqGridData()
-                {
-                    total = (int)Math.Ceiling((float)totalRecords / request.rows),
-                    page = request.page,
-                    records = totalRecords,
-                    rows = (from p in people.AsEnumerable()
-                            select new JqGridRow()
-                            {
-                                id = p.PersonId.ToString(),
-                                cell = new string[] {
-                                                    p.PersonId.ToString(),
-                                                    p.Firstname,
-                                                    p.Family.FamilyName,
-                                                    p.Family.HomePhone,
-                                                    p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.CellPhone)==null?"":p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).Value,
-                                                    p.Email
-                                                }
-                            }).ToArray()
-                };
+                    {
+                        total = (int) Math.Ceiling((float) totalRecords/request.rows),
+                        page = request.page,
+                        records = totalRecords,
+                        rows = (from p in people.AsEnumerable()
+                                select new JqGridRow()
+                                    {
+                                        id = p.PersonId.ToString(),
+                                        cell = new[]
+                                            {
+                                                p.PersonId.ToString(),
+                                                p.Firstname,
+                                                p.Family.FamilyName,
+                                                p.Family.HomePhone,
+                                                p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int) OptionalFields.CellPhone) == null ? "" : p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int) OptionalFields.CellPhone).Value,
+                                                p.Email,
+                                                p.Site == null ? string.Empty : p.Site.Name
+                                            }
+                                    }).ToArray()
+                    };
                 return membersGridData;
             }
         }
@@ -677,7 +679,8 @@ namespace oikonomos.data.DataAccessors
                             HomePhone = p.Family.HomePhone,
                             CellPhone = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).Value,
                             WorkPhone = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.WorkPhone).Value,
-                            Email = p.Email
+                            Email = p.Email,
+                            Site = p.Site == null ? string.Empty : p.Site.Name
                         }).ToList();
             }
         }

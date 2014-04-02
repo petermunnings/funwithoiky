@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net.Mail;
 using System.Web;
+using oikonomos.common.DTOs;
 using oikonomos.repositories.interfaces;
 using oikonomos.services.interfaces;
 
@@ -18,22 +21,26 @@ namespace oikonomos.services
             _personRepository = personRepository;
         }
 
-        public void SendEmail(string subject, string body, string displayFrom, IEnumerable<string> emailAddressTo, string login, string password, int personIdFrom, int churchId)
+        public void SendEmail(string subject, string body, string displayFrom, IEnumerable<string> emailAddressTo, string login, string password, int personIdFrom, int churchId, IEnumerable<UploadFilesResult> attachmentList)
         {
             try
             {
                 var messageId = _messageRepository.SaveMessage(personIdFrom, subject, body, "Email");
+
                 foreach (var emailTo in emailAddressTo)
                 {
                     try
                     {
                         using (var message = new MailMessage())
                         {
-
                             message.From = new MailAddress(login);
                             message.Subject = subject;
                             message.Body = body;
                             message.IsBodyHtml = true;
+                            foreach (var attachment in attachmentList.Select(a => new Attachment(new MemoryStream(a.AttachmentContent), a.Name, a.AttachmentContentType)))
+                            {
+                                message.Attachments.Add(attachment);
+                            }
 
                             message.To.Add(emailTo);
                             SendEmail(message, login, password, displayFrom);

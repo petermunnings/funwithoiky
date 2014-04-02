@@ -28,7 +28,7 @@ namespace oikonomos.data.DataAccessors
         {
             if (currentPerson.HasPermission(common.Permissions.SmsChurch) || currentPerson.HasPermission(common.Permissions.SmsGroupLeaders) || currentPerson.HasPermission(common.Permissions.SmsGroupMembers))
             {
-                using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+                using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
                 {
                     username = (from c in context.ChurchSmsProviders
                                 where c.ChurchId == currentPerson.ChurchId
@@ -52,9 +52,9 @@ namespace oikonomos.data.DataAccessors
         
         public static string DeleteSite(Person currentPerson, int siteId)
         {
-            if (currentPerson.HasPermission(common.Permissions.DeleteSite))
+            if (currentPerson.HasPermission(Permissions.DeleteSite))
             {
-                using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+                using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
                 {
                     var siteToDelete = (from s in context.Sites
                                         where s.ChurchId == currentPerson.ChurchId
@@ -67,11 +67,9 @@ namespace oikonomos.data.DataAccessors
                     }
 
                     //Remove all the people linked to this site
-                    var peopleLinkedToSite = (from p in context.People
-                                              where p.SiteId == siteId
-                                              select p);
+                    var peopleLinkedToSite = context.People.Where(p => p.SiteId == siteId);
 
-                    foreach (Person p in peopleLinkedToSite)
+                    foreach (var p in peopleLinkedToSite)
                     {
                         p.SiteId = null;
                         p.Changed = DateTime.Now;
@@ -83,16 +81,12 @@ namespace oikonomos.data.DataAccessors
                     return "Site succesfully removed";
                 }
             }
-            else
-            {
-                return "Could not delete site";
-            }
-
+            return "Could not delete site";
         }
 
         public static List<SiteSettingsViewModel> FetchSites(Person currentPerson)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 return (from s in context.Sites
                         where s.ChurchId == currentPerson.ChurchId
@@ -115,7 +109,7 @@ namespace oikonomos.data.DataAccessors
 
         public static SiteSettingsViewModel FetchSite(Person currentPerson, int siteId)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 return (from s in context.Sites
                         where s.ChurchId == currentPerson.ChurchId

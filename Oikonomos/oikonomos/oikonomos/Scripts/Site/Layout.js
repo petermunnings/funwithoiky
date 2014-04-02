@@ -62,7 +62,7 @@ function SendEmail() {
         body: $("#email_bodyWithFormatting").val()
     };
 
-    var jqxhr = $.post("/Ajax/SendGroupEmail", $.postify(postData), function (data) {
+    $.post("/Ajax/SendGroupEmail", $.postify(postData), function (data) {
         $("#responseMessage_text").html(data.Message);
         $("#response_Message").dialog(
             {
@@ -258,13 +258,17 @@ $(document).ready(function () {
     });
 
     $("#email_cancel").button({ icons: { primary: "ui-icon-close" } })
-        .click(function(event) {
+        .click(function() {
             $("#send_Email").slideUp();
             $("#mainContent").slideDown();
+            $.post("/Home/RemoveAllAttachments", function (data) {
+                var newHtml = [];
+                $('.file_name').html(newHtml.join(""));
+            });
         });
     
     $("#email_send").button({ icons: { primary: "ui-icon-mail-closed" } })
-    .click(function (event) {
+    .click(function () {
         if (SendEmail() == true) {
             $("#email_subject").val("");
             $("#email_bodyWithFormatting").val("");
@@ -278,6 +282,8 @@ $(document).ready(function () {
         url: '/Home/UploadFiles',
         autoUpload: true,
         done: function (e, data) {
+            if (data.result.errorMessage)
+                ShowErrorMessage("Error", data.result.errorMessage);
             $("#progressbar").progressbar({
                 value: 0
             });
@@ -285,7 +291,7 @@ $(document).ready(function () {
             $("#fileupload").show();
             var newHtml = [];
             $.each(data.result.list, function (index, value) {
-                newHtml.push("<tr style='vertical-align:top'><td><span class='ui-icon ui-icon-closethick removeButton'></span>&nbsp;</td><td>" + value.name + "</td></tr>");
+                newHtml.push("<tr style='vertical-align:top'><td><span class='ui-icon ui-icon-close removeButton'></span>&nbsp;</td><td>" + value.name + "</td></tr>");
             });
 
             $('.file_name').html(newHtml.join(""));
@@ -303,7 +309,7 @@ $(document).ready(function () {
         $.post("/Home/RemoveAttachment?name=" + this.parentElement.parentElement.innerText.trim(), function (data) {
             var newHtml = [];
             $.each(data.list, function (index, value) {
-                newHtml.push("<tr style='vertical-align:top'><td><span class='ui-icon ui-icon-closethick removeButton'></span>&nbsp;</td><td>" + value.name + "</td></tr>");
+                newHtml.push("<tr style='vertical-align:top'><td><span class='ui-icon ui-icon-close removeButton'></span>&nbsp;</td><td>" + value.name + "</td></tr>");
             });
 
             $('.file_name').html(newHtml.join(""));

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using oikonomos.common.DTOs;
 using oikonomos.common.Models;
 using oikonomos.data;
 
@@ -11,7 +12,7 @@ namespace oikonomos.services.interfaces
         void EmailGroupLeader(PersonViewModel person, Person currentPerson, Church church, Person personToSave, bool addedToNewGroup);
         void SendExceptionEmail(Exception ex);
         void SendSystemEmail(string subject, string body);
-        string SendGroupEmail(IEnumerable<string> addresses, string subject, string body, Person currentPerson);
+        string SendGroupEmail(IEnumerable<string> addresses, string subject, string body, Person currentPerson, IEnumerable<UploadFilesResult> attachmentList);
         bool SendEmailAndPassword(Person currentPerson, int personId, out string message);
         string SendResetPasswordEmail(Person person, Church church, string password);
     }

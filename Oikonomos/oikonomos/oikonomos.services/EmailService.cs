@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using oikonomos.common;
+using oikonomos.common.DTOs;
 using oikonomos.common.Models;
 using oikonomos.data;
 using oikonomos.repositories.interfaces;
@@ -76,9 +77,9 @@ namespace oikonomos.services
             Task.Factory.StartNew(() => _emailSender.SendSystemEmailAsync(subject, body));
         }
 
-        public string SendGroupEmail(IEnumerable<string> addresses, string subject, string body, Person currentPerson)
+        public string SendGroupEmail(IEnumerable<string> addresses, string subject, string body, Person currentPerson, IEnumerable<UploadFilesResult> attachmentList)
         {
-            Task.Factory.StartNew(() => _emailSender.SendEmail(subject, body, currentPerson.Fullname, addresses, currentPerson.Church.EmailLogin, currentPerson.Church.EmailPassword, currentPerson.PersonId, currentPerson.Church.ChurchId));
+            Task.Factory.StartNew(() => _emailSender.SendEmail(subject, body, currentPerson.Fullname, addresses, currentPerson.Church.EmailLogin, currentPerson.Church.EmailPassword, currentPerson.PersonId, currentPerson.Church.ChurchId, attachmentList));
             return "Emails queued for sending";
         }
 
@@ -135,7 +136,7 @@ namespace oikonomos.services
                                            church.OfficePhone,
                                            church.OfficeEmail);
 
-            _emailSender.SendEmail(subject, body, person.Fullname, new[] { person.Email }, church.EmailLogin, church.EmailPassword, person.PersonId, church.ChurchId);
+            _emailSender.SendEmail(subject, body, person.Fullname, new[] { person.Email }, church.EmailLogin, church.EmailPassword, person.PersonId, church.ChurchId, new List<UploadFilesResult>());
             return "Password has been reset.  You should receive an email shortly explaining what to do next";
         }
 
@@ -173,7 +174,7 @@ namespace oikonomos.services
                         isVisitor,
                         includeUserNamePassword);
 
-            Task.Factory.StartNew(() => _emailSender.SendEmail(subject, body, currentPerson.Fullname, new[] { email }, church.EmailLogin, church.EmailPassword, currentPerson.PersonId, church.ChurchId));
+            Task.Factory.StartNew(() => _emailSender.SendEmail(subject, body, currentPerson.Fullname, new[] { email }, church.EmailLogin, church.EmailPassword, currentPerson.PersonId, church.ChurchId, new List<UploadFilesResult>()));
 
         }
 
@@ -182,7 +183,7 @@ namespace oikonomos.services
            var subject = "A new visitor to " + church.Name + " has been added to your homegroup";
            var body = GetNewVisitorEmailBody(firstname, surname, church.Name, person);
 
-           Task.Factory.StartNew(() => _emailSender.SendEmail(subject, body, currentPerson.Fullname, new[]{email}, church.EmailLogin, church.EmailPassword, currentPerson.PersonId, church.ChurchId));
+           Task.Factory.StartNew(() => _emailSender.SendEmail(subject, body, currentPerson.Fullname, new[]{email}, church.EmailLogin, church.EmailPassword, currentPerson.PersonId, church.ChurchId, new List<UploadFilesResult>()));
         }
 
 

@@ -182,7 +182,6 @@
     <Compile Include="Helpers\JsonWebToken.cs" />
     <Compile Include="Helpers\SecurityHelper.cs" />
     <Compile Include="Models\Api\Group.cs" />
-    <Compile Include="Models\Email\UploadFilesResult.cs" />
     <Compile Include="Models\Groups\GroupViewModel.cs" />
     <Compile Include="Models\Api\Item.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -667,6 +666,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Email_Attachments\" />
+    <Folder Include="Models\Email\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

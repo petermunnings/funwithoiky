@@ -1663,7 +1663,8 @@ namespace oikonomos.web.Controllers
             else
             {
                 var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                message = currentPerson.HasPermission(Permissions.EmailGroupMembers) ? _emailService.SendGroupEmail(addressList, subject, body, currentPerson) : ExceptionMessage.InvalidCredentials;
+                var attachmentList = (List<UploadFilesResult>) Session["AttachmentList"];
+                message = currentPerson.HasPermission(Permissions.EmailGroupMembers) ? _emailService.SendGroupEmail(addressList, subject, body, currentPerson, attachmentList) : ExceptionMessage.InvalidCredentials;
             }
 
             Session[SessionVariable.EmailAddresses] = null;

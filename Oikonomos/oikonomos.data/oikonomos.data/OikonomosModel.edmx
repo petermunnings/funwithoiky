@@ -23,6 +23,7 @@
           <EntitySet Name="GroupClassification" EntityType="oikonomosModel.Store.GroupClassification" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="GroupType" EntityType="oikonomosModel.Store.GroupType" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Message" EntityType="oikonomosModel.Store.Message" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="MessageAttachment" EntityType="oikonomosModel.Store.MessageAttachment" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="MessageRecepient" EntityType="oikonomosModel.Store.MessageRecepient" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="OldEvent" EntityType="oikonomosModel.Store.OldEvent" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="OptionalField" EntityType="oikonomosModel.Store.OptionalField" store:Type="Tables" Schema="dbo" />
@@ -173,6 +174,10 @@
           <AssociationSet Name="FK_Message_Person" Association="oikonomosModel.Store.FK_Message_Person">
             <End Role="Person" EntitySet="Person" />
             <End Role="Message" EntitySet="Message" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MessageAttachment_Message" Association="oikonomosModel.Store.FK_MessageAttachment_Message">
+            <End Role="Message" EntitySet="Message" />
+            <End Role="MessageAttachment" EntitySet="MessageAttachment" />
           </AssociationSet>
           <AssociationSet Name="FK_MessageRecepient_Message" Association="oikonomosModel.Store.FK_MessageRecepient_Message">
             <End Role="Message" EntitySet="Message" />
@@ -446,10 +451,19 @@
             <PropertyRef Name="MessageId" />
           </Key>
           <Property Name="MessageId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="Subject" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="Subject" Type="nvarchar(max)" />
           <Property Name="Body" Type="nvarchar(max)" />
           <Property Name="MessageFrom" Type="int" Nullable="false" />
           <Property Name="MessageType" Type="nvarchar" Nullable="false" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="MessageAttachment">
+          <Key>
+            <PropertyRef Name="MessageAttachmentId" />
+          </Key>
+          <Property Name="MessageAttachmentId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="MessageId" Type="int" />
+          <Property Name="FileName" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="FileContent" Type="varbinary(max)" Nullable="false" />
         </EntityType>
         <EntityType Name="MessageRecepient">
           <Key>
@@ -1048,6 +1062,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_MessageAttachment_Message">
+          <End Role="Message" Type="oikonomosModel.Store.Message" Multiplicity="0..1" />
+          <End Role="MessageAttachment" Type="oikonomosModel.Store.MessageAttachment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Message">
+              <PropertyRef Name="MessageId" />
+            </Principal>
+            <Dependent Role="MessageAttachment">
+              <PropertyRef Name="MessageId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_MessageRecepient_Message">
           <End Role="Message" Type="oikonomosModel.Store.Message" Multiplicity="1" />
           <End Role="MessageRecepient" Type="oikonomosModel.Store.MessageRecepient" Multiplicity="*" />
@@ -1574,6 +1600,11 @@
           <AssociationSet Name="FK_MessageRecepient_Message" Association="oikonomosModel.FK_MessageRecepient_Message">
             <End Role="Message" EntitySet="Messages" />
             <End Role="MessageRecepient" EntitySet="MessageRecepients" />
+          </AssociationSet>
+          <EntitySet Name="MessageAttachments" EntityType="oikonomosModel.MessageAttachment" />
+          <AssociationSet Name="FK_MessageAttachment_Message" Association="oikonomosModel.FK_MessageAttachment_Message">
+            <End Role="Message" EntitySet="Messages" />
+            <End Role="MessageAttachment" EntitySet="MessageAttachments" />
           </AssociationSet>
           </EntityContainer>
         <ComplexType Name="FetchComments_Result">
@@ -2447,12 +2478,13 @@
             <PropertyRef Name="MessageId" />
           </Key>
           <Property Type="Int32" Name="MessageId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Type="String" Name="Subject" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Subject" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="Body" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="MessageFrom" Nullable="false" />
           <Property Type="String" Name="MessageType" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Person" Relationship="oikonomosModel.FK_Message_Person" FromRole="Message" ToRole="Person" />
           <NavigationProperty Name="MessageRecepients" Relationship="oikonomosModel.FK_MessageRecepient_Message" FromRole="Message" ToRole="MessageRecepient" />
+          <NavigationProperty Name="MessageAttachments" Relationship="oikonomosModel.FK_MessageAttachment_Message" FromRole="Message" ToRole="MessageAttachment" />
         </EntityType>
         <EntityType Name="MessageRecepient">
           <Key>
@@ -2691,6 +2723,28 @@
               <PropertyRef Name="MessageId" />
             </Principal>
             <Dependent Role="MessageRecepient">
+              <PropertyRef Name="MessageId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="MessageAttachment">
+          <Key>
+            <PropertyRef Name="MessageAttachmentId" />
+          </Key>
+          <Property Type="Int32" Name="MessageAttachmentId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="MessageId" />
+          <Property Type="String" Name="FileName" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="Binary" Name="FileContent" Nullable="false" MaxLength="Max" FixedLength="false" />
+          <NavigationProperty Name="Message" Relationship="oikonomosModel.FK_MessageAttachment_Message" FromRole="MessageAttachment" ToRole="Message" />
+        </EntityType>
+        <Association Name="FK_MessageAttachment_Message">
+          <End Type="oikonomosModel.Message" Role="Message" Multiplicity="0..1" />
+          <End Type="oikonomosModel.MessageAttachment" Role="MessageAttachment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Message">
+              <PropertyRef Name="MessageId" />
+            </Principal>
+            <Dependent Role="MessageAttachment">
               <PropertyRef Name="MessageId" />
             </Dependent>
           </ReferentialConstraint>
@@ -3132,8 +3186,8 @@
                 <ScalarProperty Name="StatusId" ColumnName="StatusId" />
                 <ScalarProperty Name="EmailPassword" ColumnName="EmailPassword" />
                 <ScalarProperty Name="EmailLogin" ColumnName="EmailLogin" />
-                <ScalarProperty Name="Country" ColumnName="Country" />
                 <ScalarProperty Name="Province" ColumnName="Province" />
+                <ScalarProperty Name="Country" ColumnName="Country" />
                 <ScalarProperty Name="OfficeEmail" ColumnName="OfficeEmail" />
                 <ScalarProperty Name="OfficePhone" ColumnName="OfficePhone" />
                 <ScalarProperty Name="Url" ColumnName="Url" />
@@ -3147,6 +3201,16 @@
                 <ScalarProperty Name="Created" ColumnName="Created" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="ChurchId" ColumnName="ChurchId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MessageAttachments">
+            <EntityTypeMapping TypeName="oikonomosModel.MessageAttachment">
+              <MappingFragment StoreEntitySet="MessageAttachment">
+                <ScalarProperty Name="FileContent" ColumnName="FileContent" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="MessageId" ColumnName="MessageId" />
+                <ScalarProperty Name="MessageAttachmentId" ColumnName="MessageAttachmentId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -3506,6 +3570,8 @@
         <AssociationConnector Association="oikonomosModel.FK_Site_Church" />
         <AssociationConnector Association="oikonomosModel.FK_StandardComment_Church" />
         <AssociationConnector Association="oikonomosModel.FK_MessageRecepient_Message" />
+        <EntityTypeShape EntityType="oikonomosModel.MessageAttachment" Width="1.5" PointX="3.125" PointY="12" />
+        <AssociationConnector Association="oikonomosModel.FK_MessageAttachment_Message" />
         </Diagram>
     </Diagrams>
   </Designer>

@@ -59,15 +59,16 @@ $(document).ready(function () {
         //url access method type
         mtype: 'POST',
         //columns names
-        colNames: ['PersonId', 'Firstname', 'Surname', 'HomePhone', 'CellPhone', 'Email'],
+        colNames: ['PersonId', 'Firstname', 'Surname', 'HomePhone', 'CellPhone', 'Email', 'Site'],
         //columns model
         colModel: [
                     { name: 'PersonId', index: 'PersonId', hidden: true, search: false },
-                    { name: 'Firstname', index: 'Firstname', align: 'left', width: 165, search: true },
-                    { name: 'Surname', index: 'Surname', align: 'left', width: 165, search: true },
-                    { name: 'HomePhone', index: 'HomePhone', align: 'left', width: 170, sortable: false, search: true },
-                    { name: 'CellPhone', index: 'CellPhone', align: 'left', width: 170, sortable: false, search: true },
-                    { name: 'Email', index: 'Email', align: 'left', width: 304, sortable: false, search: true }
+                    { name: 'Firstname', index: 'Firstname', align: 'left', width: 150, search: true },
+                    { name: 'Surname', index: 'Surname', align: 'left', width: 150, search: true },
+                    { name: 'HomePhone', index: 'HomePhone', align: 'left', width: 150, sortable: false, search: true },
+                    { name: 'CellPhone', index: 'CellPhone', align: 'left', width: 150, sortable: false, search: true },
+                    { name: 'Email', index: 'Email', align: 'left', width: 260, sortable: false, search: true },
+                    { name: 'Site', index: 'Site', align: 'left', width: 110, sortable: false, search: true }
                   ],
         //pager for grid
         pager: $('#jqgpChurchList'),

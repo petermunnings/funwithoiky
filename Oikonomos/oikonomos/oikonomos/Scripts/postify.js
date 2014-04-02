@@ -8,7 +8,8 @@ $.postify = function(value) {
 
     var buildResult = function(object, prefix) {
         for (var key in object) {
-
+            if (object[key] == null)
+                object[key] = "";
             var postKey = isFinite(key)
                 ? (prefix != "" ? prefix : "") + "[" + key + "]"
                 : (prefix != "" ? prefix + "." : "") + key;

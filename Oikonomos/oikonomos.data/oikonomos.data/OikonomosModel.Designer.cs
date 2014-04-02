@@ -72,6 +72,7 @@ using System.Xml.Serialization;
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_Site_Church", "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Church), "Site", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.Site), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_StandardComment_Church", "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Church), "StandardComment", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.StandardComment), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_MessageRecepient_Message", "Message", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Message), "MessageRecepient", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.MessageRecepient), true)]
+[assembly: EdmRelationshipAttribute("oikonomosModel", "FK_MessageAttachment_Message", "Message", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(oikonomos.data.Message), "MessageAttachment", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.MessageAttachment), true)]
 
 #endregion
 
@@ -666,6 +667,22 @@ namespace oikonomos.data
             }
         }
         private ObjectSet<Church> _Churches;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<MessageAttachment> MessageAttachments
+        {
+            get
+            {
+                if ((_MessageAttachments == null))
+                {
+                    _MessageAttachments = base.CreateObjectSet<MessageAttachment>("MessageAttachments");
+                }
+                return _MessageAttachments;
+            }
+        }
+        private ObjectSet<MessageAttachment> _MessageAttachments;
 
         #endregion
 
@@ -941,6 +958,14 @@ namespace oikonomos.data
         public void AddToChurches(Church church)
         {
             base.AddObject("Churches", church);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the MessageAttachments EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToMessageAttachments(MessageAttachment messageAttachment)
+        {
+            base.AddObject("MessageAttachments", messageAttachment);
         }
 
         #endregion
@@ -5253,14 +5278,12 @@ namespace oikonomos.data
         /// Create a new Message object.
         /// </summary>
         /// <param name="messageId">Initial value of the MessageId property.</param>
-        /// <param name="subject">Initial value of the Subject property.</param>
         /// <param name="messageFrom">Initial value of the MessageFrom property.</param>
         /// <param name="messageType">Initial value of the MessageType property.</param>
-        public static Message CreateMessage(global::System.Int32 messageId, global::System.String subject, global::System.Int32 messageFrom, global::System.String messageType)
+        public static Message CreateMessage(global::System.Int32 messageId, global::System.Int32 messageFrom, global::System.String messageType)
         {
             Message message = new Message();
             message.MessageId = messageId;
-            message.Subject = subject;
             message.MessageFrom = messageFrom;
             message.MessageType = messageType;
             return message;
@@ -5300,7 +5323,7 @@ namespace oikonomos.data
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
         [DataMemberAttribute()]
         public global::System.String Subject
         {
@@ -5312,7 +5335,7 @@ namespace oikonomos.data
             {
                 OnSubjectChanging(value);
                 ReportPropertyChanging("Subject");
-                _Subject = StructuralObject.SetValidValue(value, false);
+                _Subject = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("Subject");
                 OnSubjectChanged();
             }
@@ -5454,6 +5477,203 @@ namespace oikonomos.data
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<MessageRecepient>("oikonomosModel.FK_MessageRecepient_Message", "MessageRecepient", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_MessageAttachment_Message", "MessageAttachment")]
+        public EntityCollection<MessageAttachment> MessageAttachments
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<MessageAttachment>("oikonomosModel.FK_MessageAttachment_Message", "MessageAttachment");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<MessageAttachment>("oikonomosModel.FK_MessageAttachment_Message", "MessageAttachment", value);
+                }
+            }
+        }
+
+        #endregion
+
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="oikonomosModel", Name="MessageAttachment")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class MessageAttachment : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new MessageAttachment object.
+        /// </summary>
+        /// <param name="messageAttachmentId">Initial value of the MessageAttachmentId property.</param>
+        /// <param name="fileName">Initial value of the FileName property.</param>
+        /// <param name="fileContent">Initial value of the FileContent property.</param>
+        public static MessageAttachment CreateMessageAttachment(global::System.Int32 messageAttachmentId, global::System.String fileName, global::System.Byte[] fileContent)
+        {
+            MessageAttachment messageAttachment = new MessageAttachment();
+            messageAttachment.MessageAttachmentId = messageAttachmentId;
+            messageAttachment.FileName = fileName;
+            messageAttachment.FileContent = fileContent;
+            return messageAttachment;
+        }
+
+        #endregion
+
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 MessageAttachmentId
+        {
+            get
+            {
+                return _MessageAttachmentId;
+            }
+            set
+            {
+                if (_MessageAttachmentId != value)
+                {
+                    OnMessageAttachmentIdChanging(value);
+                    ReportPropertyChanging("MessageAttachmentId");
+                    _MessageAttachmentId = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("MessageAttachmentId");
+                    OnMessageAttachmentIdChanged();
+                }
+            }
+        }
+        private global::System.Int32 _MessageAttachmentId;
+        partial void OnMessageAttachmentIdChanging(global::System.Int32 value);
+        partial void OnMessageAttachmentIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.Int32> MessageId
+        {
+            get
+            {
+                return _MessageId;
+            }
+            set
+            {
+                OnMessageIdChanging(value);
+                ReportPropertyChanging("MessageId");
+                _MessageId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("MessageId");
+                OnMessageIdChanged();
+            }
+        }
+        private Nullable<global::System.Int32> _MessageId;
+        partial void OnMessageIdChanging(Nullable<global::System.Int32> value);
+        partial void OnMessageIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String FileName
+        {
+            get
+            {
+                return _FileName;
+            }
+            set
+            {
+                OnFileNameChanging(value);
+                ReportPropertyChanging("FileName");
+                _FileName = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("FileName");
+                OnFileNameChanged();
+            }
+        }
+        private global::System.String _FileName;
+        partial void OnFileNameChanging(global::System.String value);
+        partial void OnFileNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Byte[] FileContent
+        {
+            get
+            {
+                return StructuralObject.GetValidValue(_FileContent);
+            }
+            set
+            {
+                OnFileContentChanging(value);
+                ReportPropertyChanging("FileContent");
+                _FileContent = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("FileContent");
+                OnFileContentChanged();
+            }
+        }
+        private global::System.Byte[] _FileContent;
+        partial void OnFileContentChanging(global::System.Byte[] value);
+        partial void OnFileContentChanged();
+
+        #endregion
+
+    
+        #region Navigation Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_MessageAttachment_Message", "Message")]
+        public Message Message
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Message>("oikonomosModel.FK_MessageAttachment_Message", "Message").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Message>("oikonomosModel.FK_MessageAttachment_Message", "Message").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<Message> MessageReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Message>("oikonomosModel.FK_MessageAttachment_Message", "Message");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Message>("oikonomosModel.FK_MessageAttachment_Message", "Message", value);
                 }
             }
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System.IO;
+using MigraDoc.Rendering;
 using oikonomos.web.Helpers;
 using oikonomos.data;
 using oikonomos.data.DataAccessors;
@@ -10,6 +11,7 @@ using oikonomos.common.Models;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
 using System.Text;
+using Table = MigraDoc.DocumentObjectModel.Tables.Table;
 
 namespace oikonomos.web.Controllers
 {
@@ -25,9 +27,11 @@ namespace oikonomos.web.Controllers
                 Redirect("/Home/Index");
             }
 
+            var sites = ChurchDataAccessor.FetchSites(currentUser);
+           
             var churchList = PersonDataAccessor.FetchChurchList(currentUser, search, searchField, searchString);
             var stream = new MemoryStream();
-            CreatePeopleListDocument(currentUser, churchList, "Member").Save(stream, false);
+            CreatePeopleListDocument(currentUser, churchList, "Member", sites.Count > 0).Save(stream, false);
 
             HttpContext.Response.AddHeader("content-disposition", "attachment; filename=churchlist.pdf");
             return new FileStreamResult(stream, "application/pdf");
@@ -41,10 +45,10 @@ namespace oikonomos.web.Controllers
                 Redirect("/Home/Index");
             }
 
-            List<PersonListViewModel> peopleList = PersonDataAccessor.FetchPeople(currentUser, roleId);
+            var peopleList = PersonDataAccessor.FetchPeople(currentUser, roleId);
 
-            MemoryStream stream = new MemoryStream();
-            CreatePeopleListDocument(currentUser, peopleList, roleName).Save(stream, false);
+            var stream = new MemoryStream();
+            CreatePeopleListDocument(currentUser, peopleList, roleName, false).Save(stream, false);
 
             HttpContext.Response.AddHeader("content-disposition", String.Format("attachment; filename={0}list.pdf", roleName));
             return new FileStreamResult(stream, "application/pdf");
@@ -58,10 +62,10 @@ namespace oikonomos.web.Controllers
                 Redirect("/Home/Index");
             }
 
-            List<PersonListViewModel> peopleList = GroupDataAccessor.FetchPeopleNotInAGroup(currentUser);
+            var peopleList = GroupDataAccessor.FetchPeopleNotInAGroup(currentUser);
 
-            MemoryStream stream = new MemoryStream();
-            CreatePeopleListDocument(currentUser, peopleList, "People not in any group").Save(stream, false);
+            var stream = new MemoryStream();
+            CreatePeopleListDocument(currentUser, peopleList, "People not in any group", false).Save(stream, false);
 
             HttpContext.Response.AddHeader("content-disposition", String.Format("attachment; filename={0}list.pdf", "PeopleNotInAGroup"));
             return new FileStreamResult(stream, "application/pdf");
@@ -159,62 +163,60 @@ namespace oikonomos.web.Controllers
         private static MigraDoc.Rendering.PdfDocumentRenderer CreateHomeGroupListDocument(string groupName, List<PersonViewModel> personList)
         {
             // Create new MigraDoc document
-            Document document = new Document();
-            document.Info.Title = groupName;
-            document.Info.Author = "oikonomos";
-            document.Info.Subject = "Group List for " + groupName;
-            Section sec = document.AddSection();
+            var document = new Document
+                {
+                    Info = {Title = groupName, Author = "oikonomos", Subject = "Group List for " + groupName}
+                };
+            var sec = document.AddSection();
             sec.PageSetup.TopMargin = Unit.FromCentimeter(1);
             sec.PageSetup.LeftMargin = Unit.FromCentimeter(1);
             document.DefaultPageSetup.TopMargin = Unit.FromCentimeter(1);
             document.DefaultPageSetup.LeftMargin = Unit.FromCentimeter(1);
 
-            Paragraph p = sec.Headers.Primary.AddParagraph();
+            var p = sec.Headers.Primary.AddParagraph();
             p.AddText("Group List for " + groupName);
             p.Format.Font.Size = 10.0;
             p.Format.Font.Bold = true;
             p.Format.Alignment = ParagraphAlignment.Center;
 
-            Paragraph pf = new Paragraph();
+            var pf = new Paragraph();
             pf.AddText("Date: " + DateTime.Now.ToString("dd MMM yyyy"));
             pf.Format.Font.Size = 6.0;
             sec.Footers.Primary.Add(pf);
 
-            MigraDoc.DocumentObjectModel.Tables.Table membersTable = new MigraDoc.DocumentObjectModel.Tables.Table();
+            var membersTable = new Table();
             personList = personList.OrderBy(x => x.RoleName).ThenBy(x => x.Surname).ThenBy(x => x.PersonId).ToList();
-            AddHeaders(membersTable, null);
+            AddHeaders(membersTable, null, false);
             AddHomegroupData(document, personList, membersTable);
-
-            MigraDoc.DocumentObjectModel.Tables.Table visitorsTable = new MigraDoc.DocumentObjectModel.Tables.Table();
 
             sec.Add(membersTable);
 
             document.LastSection.PageSetup.TopMargin = Unit.FromMillimeter(20);
 
-            MigraDoc.Rendering.PdfDocumentRenderer pdfRender = new MigraDoc.Rendering.PdfDocumentRenderer(false, PdfSharp.Pdf.PdfFontEmbedding.Always);
+            var pdfRender = new MigraDoc.Rendering.PdfDocumentRenderer(false, PdfSharp.Pdf.PdfFontEmbedding.Always);
             pdfRender.Document = document; //document is where all of my info has been written to and is a MigraDoc type
             pdfRender.RenderDocument();
 
             return pdfRender;
         }
 
-        private static void AddHomegroupData(Document document, List<PersonViewModel> personList, MigraDoc.DocumentObjectModel.Tables.Table table)
+        private static void AddHomegroupData(Document document, IEnumerable<PersonViewModel> personList, Table table)
         {
             var style = document.Styles["Normal"];
             style.Font.Size = 8.0;
-            TextMeasurement tm = new TextMeasurement(style.Font.Clone());
-            int familyId = 0;
+            var tm = new TextMeasurement(style.Font.Clone());
+            var familyId = 0;
             var roleName = string.Empty;
-            foreach (PersonViewModel person in personList)
+            foreach (var person in personList)
             {
                 if (roleName != person.RoleName)
                 {
                     roleName = person.RoleName;
-                    AddRoleHeader(table, roleName);
+                    AddRoleHeader(table, roleName, false);
                 }
                 
-                Row row = table.AddRow();
-                Cell cell = row.Cells[0];
+                var row = table.AddRow();
+                var cell = row.Cells[0];
                 if (familyId != person.FamilyId)
                 {
                     cell.AddParagraph(AdjustIfTooWideToFitIn(cell, person.Surname, tm));
@@ -422,35 +424,40 @@ namespace oikonomos.web.Controllers
             return 2;
         }
 
-        private static MigraDoc.Rendering.PdfDocumentRenderer CreatePeopleListDocument(Person currentUser, List<PersonListViewModel> churchList, string documentType)
+        private static PdfDocumentRenderer CreatePeopleListDocument(Person currentUser, IEnumerable<PersonListViewModel> churchList, string documentType, bool includeSite)
         {
             // Create new MigraDoc document
-            Document document = new Document();
-            document.Info.Title = documentType + " List for " + currentUser.Church.Name;
-            document.Info.Author = "oikonomos";
-            document.Info.Subject = documentType + " List";
-            Section sec = document.AddSection();
+            var document = new Document
+                {
+                    Info =
+                        {
+                            Title = documentType + " List for " + currentUser.Church.Name,
+                            Author = "oikonomos",
+                            Subject = documentType + " List"
+                        }
+                };
+            var sec = document.AddSection();
             sec.PageSetup.TopMargin = Unit.FromCentimeter(1);
             sec.PageSetup.LeftMargin = Unit.FromCentimeter(1);
             document.DefaultPageSetup.TopMargin = Unit.FromCentimeter(1);
             document.DefaultPageSetup.LeftMargin = Unit.FromCentimeter(1);
 
-            Paragraph p = new Paragraph();
+            var p = new Paragraph();
             p.AddText(documentType + " List for " + currentUser.Church.Name);
             p.Format.Font.Size = 6.0;
             sec.Footers.Primary.Add(p);
 
-            MigraDoc.DocumentObjectModel.Tables.Table table = new MigraDoc.DocumentObjectModel.Tables.Table();
-            AddHeaders(table, documentType + "s");
+            var table = new Table();
+            AddHeaders(table, documentType + "s", includeSite);
 
             var style = document.Styles["Normal"];
             style.Font.Size = 8.0;
-            TextMeasurement tm = new TextMeasurement(style.Font.Clone());
-            int familyId = 0;
-            foreach (PersonListViewModel person in churchList)
+            var tm = new TextMeasurement(style.Font.Clone());
+            var familyId = 0;
+            foreach (var person in churchList)
             {
-                Row row=table.AddRow();
-                Cell cell = row.Cells[0];
+                var row=table.AddRow();
+                var cell = row.Cells[0];
                 if (familyId != person.FamilyId)
                 {
                     cell.Format.Font.Bold = true;
@@ -469,12 +476,17 @@ namespace oikonomos.web.Controllers
                 cell.AddParagraph(AdjustIfTooWideToFitIn(cell, person.CellPhone ?? string.Empty, tm));
                 cell = row.Cells[5];
                 cell.AddParagraph(AdjustIfTooWideToFitIn(cell, person.Email ?? string.Empty, tm));
+                if (includeSite)
+                {
+                    cell = row.Cells[6];
+                    cell.AddParagraph(AdjustIfTooWideToFitIn(cell, person.Site ?? string.Empty, tm));
+                }
                 familyId = person.FamilyId;
             }
 
             sec.Add(table);
             
-            MigraDoc.Rendering.PdfDocumentRenderer pdfRender = new MigraDoc.Rendering.PdfDocumentRenderer(false, PdfSharp.Pdf.PdfFontEmbedding.Always);
+            var pdfRender = new MigraDoc.Rendering.PdfDocumentRenderer(false, PdfSharp.Pdf.PdfFontEmbedding.Always);
             pdfRender.Document = document; //document is where all of my info has been written to and is a MigraDoc type
             pdfRender.RenderDocument();
 
@@ -559,30 +571,44 @@ namespace oikonomos.web.Controllers
 
         }
 
-        private static void AddHeaders(MigraDoc.DocumentObjectModel.Tables.Table table, string optionalHeader)
+        private static void AddHeaders(Table table, string optionalHeader, bool includeSite)
         {
             //Headers
             // Create a font
-            Font font = new Font("Arial", 8);
+            var font = new Font("Arial", 8);
 
             table.Borders.Width = 0.25;
 
-            table.AddColumn(Unit.FromCentimeter(3));
-            table.AddColumn(Unit.FromMillimeter(28));
-            table.AddColumn(Unit.FromMillimeter(28));
-            table.AddColumn(Unit.FromMillimeter(28));
-            table.AddColumn(Unit.FromMillimeter(28));
-            table.AddColumn(Unit.FromCentimeter(5));
+            if (includeSite)
+            {
+                table.AddColumn(Unit.FromMillimeter(25));
+                table.AddColumn(Unit.FromMillimeter(25));
+                table.AddColumn(Unit.FromMillimeter(27));
+                table.AddColumn(Unit.FromMillimeter(27));
+                table.AddColumn(Unit.FromMillimeter(27));
+                table.AddColumn(Unit.FromCentimeter(4));
+                table.AddColumn(Unit.FromMillimeter(21));
+            }
+            else
+            {
+                table.AddColumn(Unit.FromCentimeter(3));
+                table.AddColumn(Unit.FromMillimeter(28));
+                table.AddColumn(Unit.FromMillimeter(28));
+                table.AddColumn(Unit.FromMillimeter(28));
+                table.AddColumn(Unit.FromMillimeter(28));
+                table.AddColumn(Unit.FromCentimeter(5));
+            }
+
 
             if(optionalHeader != null)
-                AddRoleHeader(table, optionalHeader);
+                AddRoleHeader(table, optionalHeader, includeSite);
 
-            MigraDoc.DocumentObjectModel.Tables.Row row = table.AddRow();
+            var row = table.AddRow();
             row.HeadingFormat = true;
             row.Format.Font.ApplyFont(font);
             row.Format.Font.Bold = true;
             row.Shading.Color = Colors.PaleGoldenrod;
-            Cell cell = row.Cells[0];
+            var cell = row.Cells[0];
             cell.AddParagraph("Surname");
             cell = row.Cells[1];
             cell.AddParagraph("Firstname");
@@ -594,20 +620,22 @@ namespace oikonomos.web.Controllers
             cell.AddParagraph("Cell");
             cell = row.Cells[5];
             cell.AddParagraph("Email");
-
+            if (!includeSite) return;
+            cell = row.Cells[6];
+            cell.AddParagraph("Site");
         }
 
-        private static void AddRoleHeader(MigraDoc.DocumentObjectModel.Tables.Table table, string headingType)
+        private static void AddRoleHeader(Table table, string headingType, bool includeSite)
         {
-            Font font = new Font("Arial", 8);
-            MigraDoc.DocumentObjectModel.Tables.Row rowHeader = table.AddRow();
+            var font = new Font("Arial", 8);
+            var rowHeader = table.AddRow();
             rowHeader.HeadingFormat = true;
             rowHeader.Format.Font.ApplyFont(font);
             rowHeader.Shading.Color = Colors.PaleGoldenrod;
             rowHeader.Format.Font.Bold = true;
-            Cell cellHeader = rowHeader.Cells[0];
+            var cellHeader = rowHeader.Cells[0];
             cellHeader.AddParagraph(headingType);
-            cellHeader.MergeRight = 5;
+            cellHeader.MergeRight = includeSite ? 6 : 5;
         }
 
         private static string AdjustIfTooWideToFitIn(Cell cell, string text, TextMeasurement tm)
