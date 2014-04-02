@@ -107,7 +107,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/10/2012 21:20:39</publishTime>
     </File>
     <File Include="bin/oikonomos.web.dll">
-      <publishTime>04/02/2014 21:59:45</publishTime>
+      <publishTime>04/02/2014 22:13:35</publishTime>
     </File>
     <File Include="bin/oikonomos.web.pdb">
       <publishTime>10/10/2012 21:24:02</publishTime>
@@ -1237,6 +1237,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Scripts/knockout-2.0.0.js">
       <publishTime>08/27/2013 12:43:42</publishTime>
     </File>
+    <File Include="Scripts/knockout-3.1.0.js">
+      <publishTime>04/02/2014 22:11:25</publishTime>
+    </File>
     <File Include="Scripts/postify.js">
       <publishTime>04/01/2014 19:22:50</publishTime>
     </File>
@@ -2114,7 +2117,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/27/2013 12:43:42</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>03/30/2014 22:38:31</publishTime>
+      <publishTime>04/02/2014 22:11:52</publishTime>
     </File>
     <File Include="Views/Web.config">
       <publishTime>08/27/2013 12:43:42</publishTime>
