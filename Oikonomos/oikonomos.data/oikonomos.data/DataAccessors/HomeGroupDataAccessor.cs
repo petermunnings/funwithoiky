@@ -1180,19 +1180,22 @@ namespace oikonomos.data.DataAccessors
                     }
                 }
 
-                int totalRecords = people.Count();
-
-                switch (request.sidx)
+                var totalRecords = people.Count();
+                var sort = "Surname";
+                var sortList = request.sidx.Split(',');
+                if (sortList.Count() > 1)
+                    sort = sortList[1].Trim();
+                switch (sort)
                 {
                     case "Firstname":
                         {
                             if (request.sord.ToLower() == "asc")
                             {
-                                people = people.OrderBy(p => p.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows);
+                                people = people.OrderBy(p=>p.RoleName).ThenBy(p => p.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows);
                             }
                             else
                             {
-                                people = people.OrderByDescending(p => p.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows);
+                                people = people.OrderBy(p => p.RoleName).ThenByDescending(p => p.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows);
                             }
                             break;
                         }
@@ -1200,29 +1203,17 @@ namespace oikonomos.data.DataAccessors
                         {
                             if (request.sord.ToLower() == "asc")
                             {
-                                people = people.OrderBy(p => p.Surname).Skip((request.page - 1) * request.rows).Take(request.rows);
+                                people = people.OrderBy(p => p.RoleName).ThenBy(p => p.Surname).Skip((request.page - 1) * request.rows).Take(request.rows);
                             }
                             else
                             {
-                                people = people.OrderByDescending(p => p.Surname).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            break;
-                        }
-                    case "Role":
-                        {
-                            if (request.sord.ToLower() == "asc")
-                            {
-                                people = people.OrderBy(p => p.RoleName).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            else
-                            {
-                                people = people.OrderByDescending(p => p.RoleName).Skip((request.page - 1) * request.rows).Take(request.rows);
+                                people = people.OrderBy(p => p.RoleName).ThenByDescending(p => p.Surname).Skip((request.page - 1) * request.rows).Take(request.rows);
                             }
                             break;
                         }
                 }
 
-                JqGridData peopleGridData = new JqGridData()
+                var peopleGridData = new JqGridData()
                 {
                     total = (int)Math.Ceiling((float)totalRecords / (float)request.rows),
                     page = request.page,
