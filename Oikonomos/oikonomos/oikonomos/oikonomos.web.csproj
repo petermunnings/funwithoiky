@@ -596,7 +596,7 @@
       <Name>Lib.Web.Mvc</Name>
     </ProjectReference>
     <ProjectReference Include="..\oikonomos.common\oikonomos.common.csproj">
-      <Project>{54B0FB5D-AFBE-448A-ABD9-A0FBF75433D9}</Project>
+      <Project>{54b0fb5d-afbe-448a-abd9-a0fbf75433d9}</Project>
       <Name>oikonomos.common</Name>
     </ProjectReference>
     <ProjectReference Include="..\oikonomos.repositories.interfaces\oikonomos.repositories.interfaces.csproj">

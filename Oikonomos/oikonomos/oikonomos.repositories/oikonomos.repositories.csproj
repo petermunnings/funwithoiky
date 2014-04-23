@@ -56,8 +56,9 @@
     <Compile Include="FamilyRepository.cs" />
     <Compile Include="GroupEventRepository.cs" />
     <Compile Include="GroupRepository.cs" />
-    <Compile Include="MessageRecepientRepository.cs" />
-    <Compile Include="MessageRepository.cs" />
+    <Compile Include="Messages\MessageAttachmentRepository.cs" />
+    <Compile Include="Messages\MessageRecepientRepository.cs" />
+    <Compile Include="Messages\MessageRepository.cs" />
     <Compile Include="PermissionRepository.cs" />
     <Compile Include="PersonGroupRepository.cs" />
     <Compile Include="PersonOptionalFieldRepository.cs" />

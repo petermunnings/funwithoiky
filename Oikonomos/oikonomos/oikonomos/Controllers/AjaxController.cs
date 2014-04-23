@@ -11,7 +11,9 @@ using Facebook;
 using oikonomos.common;
 using System;
 using oikonomos.repositories;
+using oikonomos.repositories.Messages;
 using oikonomos.repositories.interfaces;
+using oikonomos.repositories.interfaces.Messages;
 using oikonomos.services;
 using oikonomos.services.interfaces;
 
@@ -42,7 +44,7 @@ namespace oikonomos.web.Controllers
             var personGroupRepository = new PersonGroupRepository(personRepository);
             _personGroupRepository = personGroupRepository;
             var groupRepository = new GroupRepository();
-            var emailSender = new EmailSender(messageRepository, personRepository);
+            var emailSender = new EmailSender(messageRepository, new MessageRecepientRepository(), new MessageAttachmentRepository(), personRepository);
             var emailContentService = new EmailContentService(new EmailContentRepository());
             _emailService = new EmailService(
                 _usernamePasswordRepository,
@@ -73,7 +75,7 @@ namespace oikonomos.web.Controllers
             _personGroupService = new PersonGroupService(_personGroupRepository);
             _messageRecepientRepository = new MessageRecepientRepository();
             var httpPostService = new HttpPostService();
-            _smsSender = new SmsSender(messageRepository, personRepository, httpPostService);
+            _smsSender = new SmsSender(messageRepository, new MessageRecepientRepository(), personRepository, httpPostService);
 
         }
 

@@ -464,6 +464,8 @@
           <Property Name="MessageId" Type="int" />
           <Property Name="FileName" Type="nvarchar" Nullable="false" MaxLength="255" />
           <Property Name="FileContent" Type="varbinary(max)" Nullable="false" />
+          <Property Name="FileType" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="FileLength" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="MessageRecepient">
           <Key>
@@ -2736,6 +2738,8 @@
           <Property Type="String" Name="FileName" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Type="Binary" Name="FileContent" Nullable="false" MaxLength="Max" FixedLength="false" />
           <NavigationProperty Name="Message" Relationship="oikonomosModel.FK_MessageAttachment_Message" FromRole="MessageAttachment" ToRole="Message" />
+          <Property Type="String" Name="FileType" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="FileLength" Nullable="false" />
         </EntityType>
         <Association Name="FK_MessageAttachment_Message">
           <End Type="oikonomosModel.Message" Role="Message" Multiplicity="0..1" />
@@ -3207,6 +3211,8 @@
           <EntitySetMapping Name="MessageAttachments">
             <EntityTypeMapping TypeName="oikonomosModel.MessageAttachment">
               <MappingFragment StoreEntitySet="MessageAttachment">
+                <ScalarProperty Name="FileLength" ColumnName="FileLength" />
+                <ScalarProperty Name="FileType" ColumnName="FileType" />
                 <ScalarProperty Name="FileContent" ColumnName="FileContent" />
                 <ScalarProperty Name="FileName" ColumnName="FileName" />
                 <ScalarProperty Name="MessageId" ColumnName="MessageId" />

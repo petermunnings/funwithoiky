@@ -5,6 +5,7 @@ using System.Text;
 using oikonomos.common;
 using oikonomos.data;
 using oikonomos.repositories.interfaces;
+using oikonomos.repositories.interfaces.Messages;
 using oikonomos.services.interfaces;
 
 namespace oikonomos.services
@@ -12,22 +13,23 @@ namespace oikonomos.services
     public class SmsSender : ISmsSender
     {
         private readonly IMessageRepository _messageRepository;
+        private readonly IMessageRecepientRepository _messageRecepientRepository;
         private readonly IPersonRepository _personRepository;
         private readonly string _bulkSmsUrl;
         private readonly string _bulkSmsCommunityUrl;
         private readonly IHttpPostService _httpPostService;
 
-        public SmsSender(IMessageRepository messageRepository, IPersonRepository personRepository, IHttpPostService httpPostService)
+        public SmsSender(IMessageRepository messageRepository, IMessageRecepientRepository messageRecepientRepository, IPersonRepository personRepository, IHttpPostService httpPostService)
         {
             _messageRepository = messageRepository;
+            _messageRecepientRepository = messageRecepientRepository;
             _personRepository = personRepository;
             _httpPostService = httpPostService;
             _bulkSmsUrl = "http://bulksms.2way.co.za:5567/eapi/submission/send_sms/2/2.0";
             _bulkSmsCommunityUrl = "http://community.bulksms.com:5567/eapi/submission/send_sms/2/2.0";
         }
 
-        public string SendSmses(string smsText, IEnumerable<string> cellPhoneNos, string username, string password,
-                                Person currentPerson)
+        public string SendSmses(string smsText, IEnumerable<string> cellPhoneNos, string username, string password, Person currentPerson)
         {
             //Must remove the &
             smsText = smsText.Replace("&", "and");
@@ -77,7 +79,7 @@ namespace oikonomos.services
         private void SaveMessage(IEnumerable<string> cellPhoneNos, Person currentPerson, string response, int messageId)
         {
             var messageStatus = response == "Smses sent succesfully" ? "Success" : "Failure";
-            _messageRepository.SaveMessageRecepient(messageId, _personRepository.FetchPersonIdsFromCellPhoneNos(cellPhoneNos, currentPerson.ChurchId), messageStatus, messageStatus == "Success" ? string.Empty : response);
+            _messageRecepientRepository.SaveMessageRecepient(messageId, _personRepository.FetchPersonIdsFromCellPhoneNos(cellPhoneNos, currentPerson.ChurchId), messageStatus, messageStatus == "Success" ? string.Empty : response);
         }
 
         private static StringBuilder BuildQueryParams(

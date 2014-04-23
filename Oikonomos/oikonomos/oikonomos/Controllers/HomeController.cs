@@ -13,6 +13,7 @@ using oikonomos.data.DataAccessors;
 using oikonomos.common.Models;
 using System.Net.Mail;
 using oikonomos.repositories;
+using oikonomos.repositories.Messages;
 using oikonomos.repositories.interfaces;
 using oikonomos.services;
 using oikonomos.services.interfaces;
@@ -39,7 +40,7 @@ namespace oikonomos.web.Controllers
             _personGroupRepository = new PersonGroupRepository(_personRepository);
             _usernamePasswordRepository = new UsernamePasswordRepository(permissionRepository);
             var groupRepository = new GroupRepository();
-            var emailSender = new EmailSender(new MessageRepository(), _personRepository);
+            var emailSender = new EmailSender(new MessageRepository(), new MessageRecepientRepository(), new MessageAttachmentRepository(), _personRepository);
             var emailContentService = new EmailContentService(new EmailContentRepository());
             var emailService = new EmailService(
                 _usernamePasswordRepository,

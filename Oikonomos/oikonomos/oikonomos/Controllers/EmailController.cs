@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using oikonomos.common;
 using oikonomos.data;
 using oikonomos.repositories;
+using oikonomos.repositories.Messages;
 using oikonomos.services;
 
 namespace oikonomos.web.Controllers
@@ -20,7 +21,7 @@ namespace oikonomos.web.Controllers
             var personRepository = new PersonRepository(permissionRepository, new ChurchRepository());
             var usernamePasswordRepository = new UsernamePasswordRepository(permissionRepository);
             var groupRepository = new GroupRepository();
-            var emailSender = new EmailSender(new MessageRepository(), personRepository);
+            var emailSender = new EmailSender(new MessageRepository(), new MessageRecepientRepository(), new MessageAttachmentRepository(), personRepository);
             var emailContentService = new EmailContentService(new EmailContentRepository());
             _emailService = new EmailService(
                 usernamePasswordRepository,

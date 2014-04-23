@@ -458,6 +458,7 @@ function AddPerson() {
                 }
             }
         });
+    SetupPersonLookup();
 }
 
 function SetupPeopleGrid() {
@@ -569,12 +570,15 @@ function AddGroup() {
             }
 
         });
+
+    SetupLeaderAndAdministratorLookup();
+    SetupAddressLookup();
 }
 
 function EditGroup() {
     var postData = { groupId: selectedGroupId };
     $("#hidden_homeGroupId").val(selectedGroupId);
-    var jqxhr = $.post("/Ajax/FetchGroupInfo", $.postify(postData), function (data) {
+    $.post("/Ajax/FetchGroupInfo", $.postify(postData), function (data) {
 
         $("#text_groupName").val(data.GroupInfo.GroupName);
         $("#text_homeGroupLeader").val(data.GroupInfo.LeaderName);
@@ -618,7 +622,111 @@ function EditGroup() {
             }
 
         });
+
+    SetupLeaderAndAdministratorLookup();
+    SetupAddressLookup();
 }
+
+function SetupPersonLookup()
+{
+    $("#text_personName").autocomplete({
+        source: function (request, response) {
+            $("#ajax_loader_addPerson").show();
+            $("#hidden_personId").val("0");
+            $("#row_roleId").show();
+            var postData = { term: request.term };
+
+            $.post("/Ajax/PersonAutoComplete", $.postify(postData), function (data) {
+                $("#ajax_loader_addPerson").hide();
+                response(data);
+            }).error(function (jqXhr) {
+                $("#ajax_loader_addPerson").hide();
+                SendErrorEmail("Error calling PersonAutoComplete", jqXhr.responseText);
+            });
+        }
+        ,
+        minLength: 1,
+        select: function (event, ui) {
+            if (ui.item) {
+                $("#hidden_personId").val(ui.item.id);
+                $("#row_roleId").hide();
+            } else {
+                $("#hidden_personId").val("0");
+                $("#row_roleId").show();
+            }
+        }
+    });
+}
+
+function SetupLeaderAndAdministratorLookup() {
+    $("#text_homeGroupLeader").autocomplete({
+        source: "/Ajax/PersonAutoComplete",
+        minLength: 1,
+        select: function (event, ui) {
+            $("#hidden_homeGroupLeaderId").val(ui.item ? ui.item.id : "0");
+        }
+    });
+
+    $("#text_homeGroupAdministrator").autocomplete({
+        source: "/Ajax/PersonAutoComplete",
+        minLength: 1,
+        select: function (event, ui) {
+            $("#hidden_homeGroupAdministratorId").val(ui.item ? ui.item.id : "0");
+        }
+    });
+}
+
+function SetupAddressLookup() {
+    $("#text_address1").autocomplete({
+        source: function (request, response) {
+            $("#ajax_gpsCoordinates").show();
+            var address = $("#text_address1").val().replace(/ /g, "+") + ", " + $("#hidden_googleSearchRegion").val();
+            Google.searchAddress(address).then(function (data) {
+                $("#ajax_gpsCoordinates").hide();
+                response(data);
+            });
+        }
+    ,
+        minLength: 4,
+        select: function (event, ui) {
+            AddressSelected(ui.item.id, 2, '', false);
+        },
+        open: function () {
+            $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
+        },
+        close: function () {
+            $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
+        }
+    });
+    
+    $("#text_address2").autocomplete({
+        source: function (request, response) {
+            $("#message").html("");
+            if ($("#hidden_addressChosen").val() == "selected") {
+                response("");
+                return;
+            }
+            $("#ajax_gpsCoordinates2").show();
+            var address = $("#text_address2").val().replace(/ /g, "+") + ", " + $("#hidden_googleSearchRegion").val();
+            Google.searchAddress(address).then(function (data) {
+                $("#ajax_gpsCoordinates2").hide();
+                response(data);
+            });
+        }
+    ,
+        minLength: 4,
+        select: function (event, ui) {
+            AddressSelected(ui.item.id, 3, '', false);
+        },
+        open: function () {
+            $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
+        },
+        close: function () {
+            $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
+        }
+    });
+}
+
 
 $(document).ready(function () {
     selectedGroupId = $("#div_groupId").html();
@@ -738,51 +846,6 @@ $(document).ready(function () {
         }
     });
 
-    $("#text_homeGroupLeader").autocomplete({
-        source: "/Ajax/PersonAutoComplete",
-        minLength: 1,
-        select: function (event, ui) {
-            $("#hidden_homeGroupLeaderId").val(ui.item ? ui.item.id : "0");
-        }
-    });
-
-    $("#text_homeGroupAdministrator").autocomplete({
-        source: "/Ajax/PersonAutoComplete",
-        minLength: 1,
-        select: function (event, ui) {
-            $("#hidden_homeGroupAdministratorId").val(ui.item ? ui.item.id : "0");
-        }
-    });
-
-
-    $("#text_personName").autocomplete({
-        source: function (request, response) {
-            $("#ajax_loader_addPerson").show();
-            $("#hidden_personId").val("0");
-            $("#row_roleId").show();
-            var postData = { term: request.term };
-
-            var jqxhr = $.post("/Ajax/PersonAutoComplete", $.postify(postData), function (data) {
-                $("#ajax_loader_addPerson").hide();
-                response(data);
-            }).error(function (jqXHR, textStatus, errorThrown) {
-                $("#ajax_loader_addPerson").hide();
-                SendErrorEmail("Error calling PersonAutoComplete", jqXHR.responseText);
-            });
-        }
-        ,
-        minLength: 1,
-        select: function (event, ui) {
-            if (ui.item) {
-                $("#hidden_personId").val(ui.item.id);
-                $("#row_roleId").hide();
-            } else {
-                $("#hidden_personId").val("0");
-                $("#row_roleId").show();
-            }
-        }
-    });
-
     $("#table_comments").delegate(".addComment", "click", function () {
         $("#previous_commentsList").empty();
         $("#hidden_commentsPersonId").val($.tmplItem(this).data.PersonId);
@@ -864,55 +927,6 @@ $(document).ready(function () {
     $("#text_address1").keypress(function () {
         $("#message").html("");
         $("#hidden_addressChosen").val("");
-    });
-
-    $("#text_address1").autocomplete({
-        source: function (request, response) {
-            $("#ajax_gpsCoordinates").show();
-            var address = $("#text_address1").val().replace(/ /g, "+") + ", " + $("#hidden_googleSearchRegion").val();
-            Google.searchAddress(address).then(function (data) {
-                $("#ajax_gpsCoordinates").hide();
-                response(data);
-            });
-        }
-        ,
-        minLength: 4,
-        select: function (event, ui) {
-            AddressSelected(ui.item.id, 2, '', false);
-        },
-        open: function () {
-            $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
-        },
-        close: function () {
-            $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
-        }
-    });
-
-    $("#text_address2").autocomplete({
-        source: function (request, response) {
-            $("#message").html("");
-            if ($("#hidden_addressChosen").val() == "selected") {
-                response("");
-                return;
-            }
-            $("#ajax_gpsCoordinates2").show();
-            var address = $("#text_address2").val().replace(/ /g, "+") + ", " + $("#hidden_googleSearchRegion").val();
-            Google.searchAddress(address).then(function (data) {
-                $("#ajax_gpsCoordinates2").hide();
-                response(data);
-            });
-        }
-        ,
-        minLength: 4,
-        select: function (event, ui) {
-            AddressSelected(ui.item.id, 3, '', false);
-        },
-        open: function () {
-            $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
-        },
-        close: function () {
-            $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
-        }
     });
 
     $("#text_other").keyup(function () {

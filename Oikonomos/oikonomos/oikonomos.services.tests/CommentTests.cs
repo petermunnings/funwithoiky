@@ -56,7 +56,6 @@ namespace oikonomos.services.tests
             var commentRepository = MockRepository.GenerateStub<ICommentRepository>();
 
             ICommentService commentService = new CommentService(commentRepository);
-            const int personId = 1;
             var currentPerson = new Person();
             var newCommentDto = new CommentDto();
             const int commentId = 1;

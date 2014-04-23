@@ -5,6 +5,7 @@ using System.Web.Http;
 using oikonomos.common.Models;
 using oikonomos.data.DataAccessors;
 using oikonomos.repositories;
+using oikonomos.repositories.Messages;
 using oikonomos.repositories.interfaces;
 using oikonomos.services;
 using oikonomos.services.interfaces;
@@ -27,7 +28,7 @@ namespace oikonomos.web.ApiControllers
             var personGroupRepository = new PersonGroupRepository(_personRepository);
             var relationshipRepository = new RelationshipRepository(_personRepository);
             var usernamePasswordRepository = new UsernamePasswordRepository(permissionRepository);
-            var emailSender = new EmailSender(new MessageRepository(), _personRepository);
+            var emailSender = new EmailSender(new MessageRepository(), new MessageRecepientRepository(), new MessageAttachmentRepository(), _personRepository);
             var groupRepository = new GroupRepository();
             var emailContentService = new EmailContentService(new EmailContentRepository());
             var emailService = new EmailService(

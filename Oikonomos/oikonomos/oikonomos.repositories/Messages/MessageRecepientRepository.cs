@@ -1,9 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using oikonomos.common;
 using oikonomos.common.Models;
-using oikonomos.repositories.interfaces;
+using oikonomos.data;
+using oikonomos.repositories.interfaces.Messages;
 
-namespace oikonomos.repositories
+namespace oikonomos.repositories.Messages
 {
     public class MessageRecepientRepository : RepositoryBase, IMessageRecepientRepository
     {
@@ -26,6 +29,22 @@ namespace oikonomos.repositories
                     Body = messageRecepient.Message.Body,
                     MessageToCellNo = cellPhoneNo == null ? string.Empty : cellPhoneNo.Value
                 };
+        }
+
+        public void SaveMessageRecepient(int messageId, IEnumerable<int> toPersonIds, string messageStatus, string errorMessage)
+        {
+            foreach (var messageRecepient in toPersonIds.Select(personId => new MessageRecepient
+            {
+                MessageSent = DateTime.Now,
+                MessageTo = personId,
+                MessageId = messageId,
+                Status = messageStatus,
+                StatusMessage = errorMessage
+            }))
+            {
+                Context.AddToMessageRecepients(messageRecepient);
+            }
+            Context.SaveChanges();
         }
     }
 }

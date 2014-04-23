@@ -5523,12 +5523,16 @@ namespace oikonomos.data
         /// <param name="messageAttachmentId">Initial value of the MessageAttachmentId property.</param>
         /// <param name="fileName">Initial value of the FileName property.</param>
         /// <param name="fileContent">Initial value of the FileContent property.</param>
-        public static MessageAttachment CreateMessageAttachment(global::System.Int32 messageAttachmentId, global::System.String fileName, global::System.Byte[] fileContent)
+        /// <param name="fileType">Initial value of the FileType property.</param>
+        /// <param name="fileLength">Initial value of the FileLength property.</param>
+        public static MessageAttachment CreateMessageAttachment(global::System.Int32 messageAttachmentId, global::System.String fileName, global::System.Byte[] fileContent, global::System.String fileType, global::System.Int32 fileLength)
         {
             MessageAttachment messageAttachment = new MessageAttachment();
             messageAttachment.MessageAttachmentId = messageAttachmentId;
             messageAttachment.FileName = fileName;
             messageAttachment.FileContent = fileContent;
+            messageAttachment.FileType = fileType;
+            messageAttachment.FileLength = fileLength;
             return messageAttachment;
         }
 
@@ -5634,6 +5638,54 @@ namespace oikonomos.data
         private global::System.Byte[] _FileContent;
         partial void OnFileContentChanging(global::System.Byte[] value);
         partial void OnFileContentChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String FileType
+        {
+            get
+            {
+                return _FileType;
+            }
+            set
+            {
+                OnFileTypeChanging(value);
+                ReportPropertyChanging("FileType");
+                _FileType = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("FileType");
+                OnFileTypeChanged();
+            }
+        }
+        private global::System.String _FileType;
+        partial void OnFileTypeChanging(global::System.String value);
+        partial void OnFileTypeChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 FileLength
+        {
+            get
+            {
+                return _FileLength;
+            }
+            set
+            {
+                OnFileLengthChanging(value);
+                ReportPropertyChanging("FileLength");
+                _FileLength = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("FileLength");
+                OnFileLengthChanged();
+            }
+        }
+        private global::System.Int32 _FileLength;
+        partial void OnFileLengthChanging(global::System.Int32 value);
+        partial void OnFileLengthChanged();
 
         #endregion
 

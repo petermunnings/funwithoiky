@@ -1,5 +1,6 @@
 ﻿using System.Data.SqlClient;
 using NUnit.Framework;
+using oikonomos.repositories.Messages;
 
 namespace oikonomos.repositories.tests
 {
@@ -26,8 +27,9 @@ namespace oikonomos.repositories.tests
         public void GivenAMessage_WhenSaveMessage_ThenMessageShouldBeSaved()
         {
             var messageRepository = new MessageRepository();
+            var messageRecepientRepository = new MessageRecepientRepository();
             var messageId = messageRepository.SaveMessage(1, "test subject", "test body", "Email");
-            messageRepository.SaveMessageRecepient(messageId, new[]{1,3}, "Success", string.Empty);
+            messageRecepientRepository.SaveMessageRecepient(messageId, new[] { 1, 3 }, "Success", string.Empty);
             Assert.That(DatabaseIsInExpectedState());
         }
 

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Mail;
 using System.Web;
 using oikonomos.common.DTOs;
 using oikonomos.repositories.interfaces;
+using oikonomos.repositories.interfaces.Messages;
 using oikonomos.services.interfaces;
 
 namespace oikonomos.services
@@ -13,11 +13,19 @@ namespace oikonomos.services
     public class EmailSender : IEmailSender
     {
         private readonly IMessageRepository _messageRepository;
+        private readonly IMessageRecepientRepository _messageRecepientRepository;
+        private readonly IMessageAttachmentRepository _messageAttachmentRepository;
         private readonly IPersonRepository _personRepository;
 
-        public EmailSender(IMessageRepository messageRepository, IPersonRepository personRepository)
+        public EmailSender(
+            IMessageRepository messageRepository,
+            IMessageRecepientRepository messageRecepientRepository,
+            IMessageAttachmentRepository messageAttachmentRepository,
+            IPersonRepository personRepository)
         {
             _messageRepository = messageRepository;
+            _messageRecepientRepository = messageRecepientRepository;
+            _messageAttachmentRepository = messageAttachmentRepository;
             _personRepository = personRepository;
         }
 
@@ -37,19 +45,24 @@ namespace oikonomos.services
                             message.Subject = subject;
                             message.Body = body;
                             message.IsBodyHtml = true;
-                            foreach (var attachment in attachmentList.Select(a => new Attachment(new MemoryStream(a.AttachmentContent), a.Name, a.AttachmentContentType)))
+                            if (attachmentList != null)
                             {
-                                message.Attachments.Add(attachment);
+                                foreach (var attachment in attachmentList)
+                                {
+                                    var msgAttachment = new Attachment(new MemoryStream(attachment.AttachmentContent), attachment.Name, attachment.AttachmentContentType);
+                                    _messageAttachmentRepository.SaveMessageAttachment(messageId, attachment.Name, attachment.Type, attachment.Length, attachment.AttachmentContentType, attachment.AttachmentContent);
+                                    message.Attachments.Add(msgAttachment);
+                                }
                             }
 
                             message.To.Add(emailTo);
                             SendEmail(message, login, password, displayFrom);
-                            _messageRepository.SaveMessageRecepient(messageId, _personRepository.FetchPersonIdsFromEmailAddress(emailTo, churchId),"Success", string.Empty);
+                            _messageRecepientRepository.SaveMessageRecepient(messageId, _personRepository.FetchPersonIdsFromEmailAddress(emailTo, churchId),"Success", string.Empty);
                         }
                     }
                     catch (Exception e)
                     {
-                        _messageRepository.SaveMessageRecepient(messageId, _personRepository.FetchPersonIdsFromEmailAddress(emailTo, churchId), "Failure", e.Message);
+                        _messageRecepientRepository.SaveMessageRecepient(messageId, _personRepository.FetchPersonIdsFromEmailAddress(emailTo, churchId), "Failure", e.Message);
                     }
                 }
             }

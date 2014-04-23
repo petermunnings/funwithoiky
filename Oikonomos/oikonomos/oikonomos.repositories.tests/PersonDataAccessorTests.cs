@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using NUnit.Framework;
+using oikonomos.repositories.Messages;
 using oikonomos.services;
 
 namespace oikonomos.repositories.tests
@@ -14,7 +15,7 @@ namespace oikonomos.repositories.tests
             var permissionRepository = new PermissionRepository();
             var churchRepository = new ChurchRepository();
             var personRepository = new PersonRepository(permissionRepository, churchRepository);
-            var emailSender = new EmailSender(new MessageRepository(), personRepository);
+            var emailSender = new EmailSender(new MessageRepository(), new MessageRecepientRepository(), new MessageAttachmentRepository(), personRepository);
             var emailService = new EmailService(new UsernamePasswordRepository(permissionRepository), personRepository, new GroupRepository(), emailSender, new EmailContentService(new EmailContentRepository()));
             var personService = new PersonService(
                 personRepository,
