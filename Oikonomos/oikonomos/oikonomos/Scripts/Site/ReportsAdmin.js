@@ -159,7 +159,7 @@ $(document).ready(function () {
         //url access method type
         mtype: 'POST',
         //columns names
-        colNames: ['PersonId', 'Firstname', 'Surname', 'HomePhone', 'CellPhone', 'Email'],
+        colNames: ['PersonId', 'Firstname', 'Surname', 'HomePhone', 'CellPhone', 'Email', 'Site'],
         //columns model
         colModel: [
                     { name: 'PersonId', index: 'PersonId', hidden: true, search: false },
@@ -167,7 +167,8 @@ $(document).ready(function () {
                     { name: 'Surname', index: 'Surname', align: 'left', width: 140, search: true },
                     { name: 'HomePhone', index: 'HomePhone', align: 'left', width: 120, sortable: false, search: true },
                     { name: 'CellPhone', index: 'CellPhone', align: 'left', width: 120, sortable: false, search: true },
-                    { name: 'Email', index: 'Email', align: 'left', width: 194, sortable: false, search: true }
+                    { name: 'Email', index: 'Email', align: 'left', width: 194, sortable: false, search: true },
+                    { name: 'Site', index: 'Site', align: 'left', width: 150, sortable: false, search: false }
                   ],
         //pager for grid
         pager: $('#jqgpNotInGroup'),

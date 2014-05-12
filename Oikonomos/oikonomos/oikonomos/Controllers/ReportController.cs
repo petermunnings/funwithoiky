@@ -63,9 +63,9 @@ namespace oikonomos.web.Controllers
             }
 
             var peopleList = GroupDataAccessor.FetchPeopleNotInAGroup(currentUser);
-
+            var sites = ChurchDataAccessor.FetchSites(currentUser);
             var stream = new MemoryStream();
-            CreatePeopleListDocument(currentUser, peopleList, "People not in any group", false).Save(stream, false);
+            CreatePeopleListDocument(currentUser, peopleList, "People not in any group", sites.Count > 0).Save(stream, false);
 
             HttpContext.Response.AddHeader("content-disposition", String.Format("attachment; filename={0}list.pdf", "PeopleNotInAGroup"));
             return new FileStreamResult(stream, "application/pdf");

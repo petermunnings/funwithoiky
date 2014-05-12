@@ -509,10 +509,10 @@ namespace oikonomos.web.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public JsonResult FetchPeopleNotInHomeGroup(JqGridRequest request)
         {
-            JqGridData jqGridData = new JqGridData();
+            var jqGridData = new JqGridData();
             if (Session[SessionVariable.LoggedOnPerson] != null)
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 if (currentPerson.HasPermission(Permissions.ViewPeopleNotInAnyGroup))
                 {
                     jqGridData = GroupDataAccessor.FetchPeopleNotInAHomeGroupJQGrid(currentPerson, request);

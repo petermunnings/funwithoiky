@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using oikonomos.data;
@@ -343,7 +344,7 @@ namespace oikonomos.data.DataAccessors
 
         public static JqGridData FetchPeopleNotInAHomeGroupJQGrid(Person currentPerson, JqGridRequest request)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 var includedRoles = context
                                     .PermissionRoles
@@ -363,7 +364,7 @@ namespace oikonomos.data.DataAccessors
                                          && includedRoles.Contains(c.RoleId)
                                          select p);
 
-                int totalRecords = peopleNotInGroups.Count();
+                var totalRecords = peopleNotInGroups.Count();
 
                 switch (request.sidx)
                 {
@@ -393,7 +394,7 @@ namespace oikonomos.data.DataAccessors
                         }
                 }
 
-                JqGridData sitesGridData = new JqGridData()
+                var sitesGridData = new JqGridData()
                 {
                     total = (int)Math.Ceiling((float)totalRecords / (float)request.rows),
                     page = request.page,
@@ -403,12 +404,13 @@ namespace oikonomos.data.DataAccessors
                             {
                                 id = p.PersonId.ToString(),
                                 cell = new string[] {
-                                                    p.PersonId.ToString(),
+                                                    p.PersonId.ToString(CultureInfo.InvariantCulture),
                                                     p.Firstname,
                                                     p.Family.FamilyName,
                                                     p.Family.HomePhone,
                                                     p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.CellPhone)==null?"":p.PersonOptionalFields.Where<PersonOptionalField>(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).FirstOrDefault().Value,
-                                                    p.Email
+                                                    p.Email,
+                                                    p.Site==null?string.Empty:p.Site.Name
                                 }
                             }).ToArray()
                 };
@@ -417,7 +419,7 @@ namespace oikonomos.data.DataAccessors
         }
 
 
-        public static List<PersonListViewModel> FetchPeopleNotInAGroup(Person currentPerson)
+        public static IEnumerable<PersonListViewModel> FetchPeopleNotInAGroup(Person currentPerson)
         {
             using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
@@ -426,35 +428,36 @@ namespace oikonomos.data.DataAccessors
                     .Where(pr => pr.PermissionId == (int)Permissions.IncludeInNotInGroupList)
                     .Select(pr => pr.RoleId)
                     .ToList();
-                
+
                 return (from p in context.People
-                        join c in context.PersonChurches
-                          on p.PersonId equals c.PersonId
-                        join pg in context.PersonGroups
-                          on p.PersonId equals pg.PersonId into tList
-                        from pgEmpty in tList.DefaultIfEmpty()
-                        where pgEmpty.GroupId == null
-                        && c.ChurchId == currentPerson.ChurchId
-                        && includedRoles.Contains(c.RoleId)
-                        orderby p.Family.FamilyName, p.PersonId
-                        select new PersonListViewModel
-                        {
-                            PersonId  = p.PersonId,
-                            FamilyId  = p.FamilyId,
-                            Firstname = p.Firstname,
-                            Surname   = p.Family.FamilyName,
-                            HomePhone = p.Family.HomePhone,
-                            CellPhone = p.PersonOptionalFields.FirstOrDefault(cp => cp.OptionalFieldId == (int)OptionalFields.CellPhone).Value,
-                            WorkPhone = p.PersonOptionalFields.FirstOrDefault(cp => cp.OptionalFieldId == (int)OptionalFields.WorkPhone).Value,
-                            Email     = p.Email
-                        }).ToList();
+                    join c in context.PersonChurches
+                        on p.PersonId equals c.PersonId
+                    join pg in context.PersonGroups
+                        on p.PersonId equals pg.PersonId into tList
+                    from pgEmpty in tList.DefaultIfEmpty()
+                    where pgEmpty.GroupId == null
+                          && c.ChurchId == currentPerson.ChurchId
+                          && includedRoles.Contains(c.RoleId)
+                    orderby p.Family.FamilyName, p.PersonId
+                    select new PersonListViewModel
+                    {
+                        PersonId = p.PersonId,
+                        FamilyId = p.FamilyId,
+                        Firstname = p.Firstname,
+                        Surname = p.Family.FamilyName,
+                        HomePhone = p.Family.HomePhone,
+                        CellPhone = p.PersonOptionalFields.FirstOrDefault(cp => cp.OptionalFieldId == (int) OptionalFields.CellPhone).Value,
+                        WorkPhone = p.PersonOptionalFields.FirstOrDefault(cp => cp.OptionalFieldId == (int) OptionalFields.WorkPhone).Value,
+                        Email = p.Email,
+                        Site = p.Site == null ? string.Empty : p.Site.Name
+                    }).ToList();
 
             }
         }
 
         public static string FetchHomeGroupName(int groupId)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 return (from g in context.Groups
                         where g.GroupId == groupId
@@ -464,28 +467,20 @@ namespace oikonomos.data.DataAccessors
 
         public static string FetchHomeGroupName(Person currentPerson, out bool displayList, ref int? groupId)
         {
-            displayList = false;
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 var homeGroups = (from g in context.Groups
                                   where (g.LeaderId == currentPerson.PersonId || g.AdministratorId == currentPerson.PersonId)
                                   && g.ChurchId==currentPerson.ChurchId
                                   orderby g.Name
                                   select g);
-                if (homeGroups.Count() == 0)
+                if (!homeGroups.Any())
                 {
                     displayList = false;
                     return string.Empty;
                 }
 
-                if (homeGroups.Count() == 1)
-                {
-                    displayList = false;
-                }
-                else
-                {
-                    displayList = true;
-                }
+                displayList = homeGroups.Count() != 1;
 
                 if(!groupId.HasValue)
                     groupId = homeGroups.First().GroupId;
