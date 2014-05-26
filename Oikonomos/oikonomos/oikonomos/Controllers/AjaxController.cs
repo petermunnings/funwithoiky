@@ -96,6 +96,18 @@ namespace oikonomos.web.Controllers
             return Json(data, JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult ElderAutoComplete(string term)
+        {
+            var data = new AutoCompleteViewModel[0];
+            if (Session[SessionVariable.LoggedOnPerson] != null)
+            {
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                data = PersonDataAccessor.FetchElderAutoComplete(term, currentPerson, Request.UrlReferrer.PathAndQuery == "/Home/Groups");
+            }
+
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
         public JsonResult LinkPersonToFamily(int personId, int familyId)
         {
             _personService.LinkPersonToFamily(personId, familyId);

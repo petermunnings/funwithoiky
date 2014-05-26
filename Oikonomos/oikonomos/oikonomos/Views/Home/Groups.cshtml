@@ -222,17 +222,17 @@
 </script>
 
 <div id="edit_homeGroup" style="display:none;" title="Edit Group details">  
-    <div id="homeGroupDetails" style="display:table; width:400px">
+    <div id="homeGroupDetails" style="display:table; width:500px">
         <div class="tableRow">
         
             <div class="tableRow">
-                <div style="text-align:right; display:table-cell">Name</div>
+                <div style="text-align:right; display:table-cell; width:150px">Name</div>
                 <div style="display:table-cell">&nbsp;</div>
                 <div style="text-align:left; display:table-cell"><input id="text_groupName" type="text" class="ui-corner-all" /></div>
             </div>
             
             <div class="tableRow">
-                <div style="text-align:right; display:table-cell">Leader</div>
+                <div style="text-align:right; display:table-cell; width:150px">Leader</div>
                 <div style="display:table-cell">&nbsp;</div>
                 <div style="text-align:left; display:table-cell">
                     <input id="text_homeGroupLeader" type="text" class="ui-corner-all" />
@@ -241,7 +241,7 @@
             </div>
 
             <div class="tableRow">
-                <div style="text-align:right; display:table-cell">Administrator</div>
+                <div style="text-align:right; display:table-cell; width:150px">Administrator</div>
                 <div style="display:table-cell">&nbsp;</div>
                 <div style="text-align:left; display:table-cell">
                     <input id="text_homeGroupAdministrator" type="text" class="ui-corner-all" />
@@ -249,8 +249,17 @@
                 </div>
             </div>
 
+            <div class="@Model.DisplayOverseeingElder">
+                <div style="text-align:right; display:table-cell; width:150px">Overseeing elder</div>
+                <div style="display:table-cell">&nbsp;</div>
+                <div style="text-align:left; display:table-cell">
+                    <input id="text_overseeingElder" type="text" class="ui-corner-all" />
+                    <input type="hidden" id="hidden_overseeingElderId" />
+                </div>
+            </div>
+
             <div class="@Model.DisplayGroupClassification">
-                <div style="text-align:right; display:table-cell">Group Classification</div>
+                <div style="text-align:right; display:table-cell; width:150px">Group Classification</div>
                 <div style="display:table-cell">&nbsp;</div>
                 <div style="text-align:left; display:table-cell">
                     @Html.DropDownListFor(m => m.SelectedGroupClassificationId, new SelectList(Model.GroupClassifications, "GroupClassificationId", "GroupClassification"), new { @class = "ui-corner-all" })
@@ -258,27 +267,27 @@
             </div>
 
             <div class="tableRow">
-                <div style="text-align:right; display:table-cell">Address</div>
+                <div style="text-align:right; display:table-cell; width:150px">Address</div>
                 <div style="display:table-cell">&nbsp;</div>
                 <div style="text-align:left; display:table-cell"><input id="text_address1" type="text" class="ui-corner-all" />
                 <img id="ajax_gpsCoordinates" alt="loading" src="/Content/images/ajax-loader.gif" style="display:none" /></div>
             </div>
 
             <div class="tableRow">
-                <div style="text-align:right; display:table-cell">&nbsp;</div>
+                <div style="text-align:right; display:table-cell; width:150px">&nbsp;</div>
                 <div style="display:table-cell">&nbsp;</div>
                 <div style="text-align:left; display:table-cell"><input id="text_address2" type="text" class="ui-corner-all" /></div>
                 <img id="ajax_gpsCoordinates2" alt="loading" src="/Content/images/ajax-loader.gif" style="display:none" />
             </div>
 
             <div class="tableRow">
-                <div style="text-align:right; display:table-cell">&nbsp;</div>
+                <div style="text-align:right; display:table-cell; width:150px">&nbsp;</div>
                 <div style="display:table-cell">&nbsp;</div>
                 <div style="text-align:left; display:table-cell"><input id="text_address3" type="text" class="ui-corner-all" /></div>
             </div>
     
             <div class="tableRow">
-                <div style="text-align:right; display:table-cell">&nbsp;</div>
+                <div style="text-align:right; display:table-cell; width:150px">&nbsp;</div>
                 <div style="display:table-cell">&nbsp;</div>
                 <div style="text-align:left; display:table-cell">
                     <input id="text_address4" type="text" class="ui-corner-all" />
@@ -292,7 +301,7 @@
             </div>
             
             <div class="@Model.DisplaySuburbLookup">
-                <div style="text-align:right; display:table-cell">Suburb</div>
+                <div style="text-align:right; display:table-cell; width:150px">Suburb</div>
                 <div style="display:table-cell">&nbsp;</div>
                 <div style="text-align:left; display:table-cell">
                     @Html.DropDownListFor(m => m.SelectedSuburbId, new SelectList(Model.Suburbs, "SuburbId", "SuburbName"), new { @class = "ui-corner-all" })

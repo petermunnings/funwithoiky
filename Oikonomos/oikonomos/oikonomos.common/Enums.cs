@@ -23,7 +23,8 @@ namespace oikonomos.common
         ShowWholeChurch = 13,
         Gender = 14,
         WindowsLive = 15,
-        MaritalStatus = 16
+        MaritalStatus = 16,
+        ShowOverseeingElder = 17
     }
 
     public enum Permissions
@@ -181,6 +182,11 @@ namespace oikonomos.common
         public static string SecurityRoles
         {
             get { return "SecurityRoles"; }
+        }
+
+        public static string OverseeingElder
+        {
+            get { return "Overseeing Elder"; }
         }
     }
 

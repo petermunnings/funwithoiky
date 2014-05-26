@@ -33,6 +33,7 @@
           <EntitySet Name="PersonChurch" EntityType="oikonomosModel.Store.PersonChurch" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="PersonEvent" EntityType="oikonomosModel.Store.PersonEvent" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="PersonGroup" EntityType="oikonomosModel.Store.PersonGroup" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="PersonLinkedToGroup" EntityType="oikonomosModel.Store.PersonLinkedToGroup" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="PersonOptionalField" EntityType="oikonomosModel.Store.PersonOptionalField" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="PersonRelationship" EntityType="oikonomosModel.Store.PersonRelationship" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Relationship" EntityType="oikonomosModel.Store.Relationship" store:Type="Tables" Schema="dbo" />
@@ -234,6 +235,14 @@
           <AssociationSet Name="FK_PersonGroup_Person" Association="oikonomosModel.Store.FK_PersonGroup_Person">
             <End Role="Person" EntitySet="Person" />
             <End Role="PersonGroup" EntitySet="PersonGroup" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonLinkedToGroup_Group" Association="oikonomosModel.Store.FK_PersonLinkedToGroup_Group">
+            <End Role="Group" EntitySet="Group" />
+            <End Role="PersonLinkedToGroup" EntitySet="PersonLinkedToGroup" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonLinkedToGroup_Person" Association="oikonomosModel.Store.FK_PersonLinkedToGroup_Person">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="PersonLinkedToGroup" EntitySet="PersonLinkedToGroup" />
           </AssociationSet>
           <AssociationSet Name="FK_PersonOptionalField_OptionalField" Association="oikonomosModel.Store.FK_PersonOptionalField_OptionalField">
             <End Role="OptionalField" EntitySet="OptionalField" />
@@ -577,6 +586,15 @@
           <Property Name="Created" Type="datetime" Nullable="false" />
           <Property Name="Changed" Type="datetime" Nullable="false" />
           <Property Name="PrimaryGroup" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PersonLinkedToGroup">
+          <Key>
+            <PropertyRef Name="PersonId" />
+            <PropertyRef Name="GroupId" />
+          </Key>
+          <Property Name="PersonId" Type="int" Nullable="false" />
+          <Property Name="GroupId" Type="int" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" Nullable="false" MaxLength="255" />
         </EntityType>
         <EntityType Name="PersonOptionalField">
           <Key>
@@ -1244,6 +1262,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_PersonLinkedToGroup_Group">
+          <End Role="Group" Type="oikonomosModel.Store.Group" Multiplicity="1" />
+          <End Role="PersonLinkedToGroup" Type="oikonomosModel.Store.PersonLinkedToGroup" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Group">
+              <PropertyRef Name="GroupId" />
+            </Principal>
+            <Dependent Role="PersonLinkedToGroup">
+              <PropertyRef Name="GroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PersonLinkedToGroup_Person">
+          <End Role="Person" Type="oikonomosModel.Store.Person" Multiplicity="1" />
+          <End Role="PersonLinkedToGroup" Type="oikonomosModel.Store.PersonLinkedToGroup" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="PersonId" />
+            </Principal>
+            <Dependent Role="PersonLinkedToGroup">
+              <PropertyRef Name="PersonId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_PersonOptionalField_OptionalField">
           <End Role="OptionalField" Type="oikonomosModel.Store.OptionalField" Multiplicity="1" />
           <End Role="PersonOptionalField" Type="oikonomosModel.Store.PersonOptionalField" Multiplicity="*" />
@@ -1608,6 +1650,15 @@
             <End Role="Message" EntitySet="Messages" />
             <End Role="MessageAttachment" EntitySet="MessageAttachments" />
           </AssociationSet>
+          <EntitySet Name="PersonLinkedToGroups" EntityType="oikonomosModel.PersonLinkedToGroup" />
+          <AssociationSet Name="FK_PersonLinkedToGroup_Group" Association="oikonomosModel.FK_PersonLinkedToGroup_Group">
+            <End Role="Group" EntitySet="Groups" />
+            <End Role="PersonLinkedToGroup" EntitySet="PersonLinkedToGroups" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonLinkedToGroup_Person" Association="oikonomosModel.FK_PersonLinkedToGroup_Person">
+            <End Role="Person" EntitySet="People" />
+            <End Role="PersonLinkedToGroup" EntitySet="PersonLinkedToGroups" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="FetchComments_Result">
           <Property Type="Int32" Name="Reference" Nullable="false" />
@@ -1742,6 +1793,7 @@
           <NavigationProperty Name="Leader" Relationship="oikonomosModel.FK_Group_Leader" FromRole="Group" ToRole="Person" />
           <NavigationProperty Name="PersonGroups" Relationship="oikonomosModel.FK_PersonGroup_Group" FromRole="Group" ToRole="PersonGroup" />
           <NavigationProperty Name="Church" Relationship="oikonomosModel.FK_Group_Church" FromRole="Group" ToRole="Church" />
+          <NavigationProperty Name="PersonLinkedToGroups" Relationship="oikonomosModel.FK_PersonLinkedToGroup_Group" FromRole="Group" ToRole="PersonLinkedToGroup" />
         </EntityType>
         <EntityType Name="GroupClassification">
           <Key>
@@ -1839,6 +1891,7 @@
           <NavigationProperty Name="PersonEvents" Relationship="oikonomosModel.FK_PersonEvent_Person" FromRole="Person" ToRole="PersonEvent" />
           <NavigationProperty Name="Messages" Relationship="oikonomosModel.FK_Message_Person" FromRole="Person" ToRole="Message" />
           <NavigationProperty Name="MessageRecepients" Relationship="oikonomosModel.FK_MessageRecepient_Person" FromRole="Person" ToRole="MessageRecepient" />
+          <NavigationProperty Name="PersonLinkedToGroups" Relationship="oikonomosModel.FK_PersonLinkedToGroup_Person" FromRole="Person" ToRole="PersonLinkedToGroup" />
           </EntityType>
         <EntityType Name="PersonChurch">
           <Key>
@@ -2753,6 +2806,41 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="PersonLinkedToGroup">
+          <Key>
+            <PropertyRef Name="PersonId" />
+            <PropertyRef Name="GroupId" />
+          </Key>
+          <Property Type="Int32" Name="PersonId" Nullable="false" />
+          <Property Type="Int32" Name="GroupId" Nullable="false" />
+          <Property Type="String" Name="Description" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Group" Relationship="oikonomosModel.FK_PersonLinkedToGroup_Group" FromRole="PersonLinkedToGroup" ToRole="Group" />
+          <NavigationProperty Name="Person" Relationship="oikonomosModel.FK_PersonLinkedToGroup_Person" FromRole="PersonLinkedToGroup" ToRole="Person" />
+        </EntityType>
+        <Association Name="FK_PersonLinkedToGroup_Group">
+          <End Type="oikonomosModel.Group" Role="Group" Multiplicity="1" />
+          <End Type="oikonomosModel.PersonLinkedToGroup" Role="PersonLinkedToGroup" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Group">
+              <PropertyRef Name="GroupId" />
+            </Principal>
+            <Dependent Role="PersonLinkedToGroup">
+              <PropertyRef Name="GroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PersonLinkedToGroup_Person">
+          <End Type="oikonomosModel.Person" Role="Person" Multiplicity="1" />
+          <End Type="oikonomosModel.PersonLinkedToGroup" Role="PersonLinkedToGroup" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="PersonId" />
+            </Principal>
+            <Dependent Role="PersonLinkedToGroup">
+              <PropertyRef Name="PersonId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3220,6 +3308,15 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="PersonLinkedToGroups">
+            <EntityTypeMapping TypeName="oikonomosModel.PersonLinkedToGroup">
+              <MappingFragment StoreEntitySet="PersonLinkedToGroup">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="GroupId" ColumnName="GroupId" />
+                <ScalarProperty Name="PersonId" ColumnName="PersonId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -3240,7 +3337,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="Model1" ZoomLevel="73">
+      <Diagram Name="Model1" ZoomLevel="88">
         <EntityTypeShape EntityType="oikonomosModel.Address" Width="1.5" PointX="7.5" PointY="30.5" Height="4.0956022135416674" />
         <EntityTypeShape EntityType="oikonomosModel.ChurchEmailTemplate" Width="1.5" PointX="5.25" PointY="26.75" Height="2.1725878906250102" />
         <EntityTypeShape EntityType="oikonomosModel.ChurchOptionalField" Width="1.5" PointX="8.25" PointY="26.5" Height="2.5571907552083388" />
@@ -3578,6 +3675,9 @@
         <AssociationConnector Association="oikonomosModel.FK_MessageRecepient_Message" />
         <EntityTypeShape EntityType="oikonomosModel.MessageAttachment" Width="1.5" PointX="3.125" PointY="12" />
         <AssociationConnector Association="oikonomosModel.FK_MessageAttachment_Message" />
+        <EntityTypeShape EntityType="oikonomosModel.PersonLinkedToGroup" Width="1.5" PointX="19.25" PointY="24.5" />
+        <AssociationConnector Association="oikonomosModel.FK_PersonLinkedToGroup_Group" />
+        <AssociationConnector Association="oikonomosModel.FK_PersonLinkedToGroup_Person" />
         </Diagram>
     </Diagrams>
   </Designer>

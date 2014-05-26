@@ -73,6 +73,8 @@ using System.Xml.Serialization;
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_StandardComment_Church", "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Church), "StandardComment", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.StandardComment), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_MessageRecepient_Message", "Message", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Message), "MessageRecepient", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.MessageRecepient), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_MessageAttachment_Message", "Message", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(oikonomos.data.Message), "MessageAttachment", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.MessageAttachment), true)]
+[assembly: EdmRelationshipAttribute("oikonomosModel", "FK_PersonLinkedToGroup_Group", "Group", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Group), "PersonLinkedToGroup", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.PersonLinkedToGroup), true)]
+[assembly: EdmRelationshipAttribute("oikonomosModel", "FK_PersonLinkedToGroup_Person", "Person", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Person), "PersonLinkedToGroup", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.PersonLinkedToGroup), true)]
 
 #endregion
 
@@ -683,6 +685,22 @@ namespace oikonomos.data
             }
         }
         private ObjectSet<MessageAttachment> _MessageAttachments;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<PersonLinkedToGroup> PersonLinkedToGroups
+        {
+            get
+            {
+                if ((_PersonLinkedToGroups == null))
+                {
+                    _PersonLinkedToGroups = base.CreateObjectSet<PersonLinkedToGroup>("PersonLinkedToGroups");
+                }
+                return _PersonLinkedToGroups;
+            }
+        }
+        private ObjectSet<PersonLinkedToGroup> _PersonLinkedToGroups;
 
         #endregion
 
@@ -966,6 +984,14 @@ namespace oikonomos.data
         public void AddToMessageAttachments(MessageAttachment messageAttachment)
         {
             base.AddObject("MessageAttachments", messageAttachment);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the PersonLinkedToGroups EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToPersonLinkedToGroups(PersonLinkedToGroup personLinkedToGroup)
+        {
+            base.AddObject("PersonLinkedToGroups", personLinkedToGroup);
         }
 
         #endregion
@@ -4813,6 +4839,28 @@ namespace oikonomos.data
                 }
             }
         }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_PersonLinkedToGroup_Group", "PersonLinkedToGroup")]
+        public EntityCollection<PersonLinkedToGroup> PersonLinkedToGroups
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<PersonLinkedToGroup>("oikonomosModel.FK_PersonLinkedToGroup_Group", "PersonLinkedToGroup");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<PersonLinkedToGroup>("oikonomosModel.FK_PersonLinkedToGroup_Group", "PersonLinkedToGroup", value);
+                }
+            }
+        }
 
         #endregion
 
@@ -8042,6 +8090,28 @@ namespace oikonomos.data
                 }
             }
         }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_PersonLinkedToGroup_Person", "PersonLinkedToGroup")]
+        public EntityCollection<PersonLinkedToGroup> PersonLinkedToGroups
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<PersonLinkedToGroup>("oikonomosModel.FK_PersonLinkedToGroup_Person", "PersonLinkedToGroup");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<PersonLinkedToGroup>("oikonomosModel.FK_PersonLinkedToGroup_Person", "PersonLinkedToGroup", value);
+                }
+            }
+        }
 
         #endregion
 
@@ -8777,6 +8847,198 @@ namespace oikonomos.data
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Person>("oikonomosModel.FK_PersonGroup_Person", "Person", value);
+                }
+            }
+        }
+
+        #endregion
+
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="oikonomosModel", Name="PersonLinkedToGroup")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class PersonLinkedToGroup : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new PersonLinkedToGroup object.
+        /// </summary>
+        /// <param name="personId">Initial value of the PersonId property.</param>
+        /// <param name="groupId">Initial value of the GroupId property.</param>
+        /// <param name="description">Initial value of the Description property.</param>
+        public static PersonLinkedToGroup CreatePersonLinkedToGroup(global::System.Int32 personId, global::System.Int32 groupId, global::System.String description)
+        {
+            PersonLinkedToGroup personLinkedToGroup = new PersonLinkedToGroup();
+            personLinkedToGroup.PersonId = personId;
+            personLinkedToGroup.GroupId = groupId;
+            personLinkedToGroup.Description = description;
+            return personLinkedToGroup;
+        }
+
+        #endregion
+
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 PersonId
+        {
+            get
+            {
+                return _PersonId;
+            }
+            set
+            {
+                if (_PersonId != value)
+                {
+                    OnPersonIdChanging(value);
+                    ReportPropertyChanging("PersonId");
+                    _PersonId = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("PersonId");
+                    OnPersonIdChanged();
+                }
+            }
+        }
+        private global::System.Int32 _PersonId;
+        partial void OnPersonIdChanging(global::System.Int32 value);
+        partial void OnPersonIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 GroupId
+        {
+            get
+            {
+                return _GroupId;
+            }
+            set
+            {
+                if (_GroupId != value)
+                {
+                    OnGroupIdChanging(value);
+                    ReportPropertyChanging("GroupId");
+                    _GroupId = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("GroupId");
+                    OnGroupIdChanged();
+                }
+            }
+        }
+        private global::System.Int32 _GroupId;
+        partial void OnGroupIdChanging(global::System.Int32 value);
+        partial void OnGroupIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Description
+        {
+            get
+            {
+                return _Description;
+            }
+            set
+            {
+                OnDescriptionChanging(value);
+                ReportPropertyChanging("Description");
+                _Description = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Description");
+                OnDescriptionChanged();
+            }
+        }
+        private global::System.String _Description;
+        partial void OnDescriptionChanging(global::System.String value);
+        partial void OnDescriptionChanged();
+
+        #endregion
+
+    
+        #region Navigation Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_PersonLinkedToGroup_Group", "Group")]
+        public Group Group
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Group>("oikonomosModel.FK_PersonLinkedToGroup_Group", "Group").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Group>("oikonomosModel.FK_PersonLinkedToGroup_Group", "Group").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<Group> GroupReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Group>("oikonomosModel.FK_PersonLinkedToGroup_Group", "Group");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Group>("oikonomosModel.FK_PersonLinkedToGroup_Group", "Group", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_PersonLinkedToGroup_Person", "Person")]
+        public Person Person
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Person>("oikonomosModel.FK_PersonLinkedToGroup_Person", "Person").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Person>("oikonomosModel.FK_PersonLinkedToGroup_Person", "Person").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<Person> PersonReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Person>("oikonomosModel.FK_PersonLinkedToGroup_Person", "Person");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Person>("oikonomosModel.FK_PersonLinkedToGroup_Person", "Person", value);
                 }
             }
         }

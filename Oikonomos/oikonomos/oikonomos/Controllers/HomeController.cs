@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using oikonomos.common.DTOs;
@@ -214,8 +213,8 @@ namespace oikonomos.web.Controllers
             viewModel.Suburbs = SettingsDataAccessor.FetchSuburbs(currentPerson);
             viewModel.StandardComments = SettingsDataAccessor.FetchStandardComments(currentPerson);
 
-            List<OptionalFieldViewModel> optionalFields = SettingsDataAccessor.FetchChurchOptionalFields(currentPerson.ChurchId);
-            foreach (OptionalFieldViewModel ct in optionalFields)
+            var optionalFields = SettingsDataAccessor.FetchChurchOptionalFields(currentPerson.ChurchId);
+            foreach (var ct in optionalFields)
             {
                 switch ((OptionalFields)ct.OptionalFieldId)
                 {
@@ -234,6 +233,11 @@ namespace oikonomos.web.Controllers
                             viewModel.ShowRoles = ct.Display;
                             break;
                         }
+                    case OptionalFields.ShowOverseeingElder:
+                    {
+                        viewModel.DisplayOverseeingElder = ct.Display ? "tableRow" : "displayNone";
+                        break;
+                    }
                 }
             }
 

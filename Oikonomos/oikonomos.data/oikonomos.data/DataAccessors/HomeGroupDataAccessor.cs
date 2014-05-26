@@ -905,11 +905,13 @@ namespace oikonomos.data.DataAccessors
 
         public static HomeGroupsViewModel FetchGroupInfo(Person currentPerson, int groupId)
         {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
-                Group hg = (from g in context.Groups
+                var hg = (from g in context.Groups
                             where g.GroupId == groupId
                             select g).FirstOrDefault();
+
+                var overseeingElder = hg.PersonLinkedToGroups.FirstOrDefault(p => p.Description == CacheNames.OverseeingElder);
 
                 return new HomeGroupsViewModel()
                 {
@@ -921,6 +923,8 @@ namespace oikonomos.data.DataAccessors
                     AddressType = hg.AddressId == null ? string.Empty : hg.Address.AddressType,
                     AdministratorId = hg.AdministratorId == null ? 0 : hg.AdministratorId.Value,
                     AdministratorName = hg.AdministratorId == null ? string.Empty : hg.Administrator.Firstname + " " + hg.Administrator.Family.FamilyName,
+                    OverseeingElderId = overseeingElder == null ? 0 : overseeingElder.PersonId,
+                    OverseeingElderName = overseeingElder == null ? string.Empty : overseeingElder.Person.Firstname + " " + overseeingElder.Person.Family.FamilyName,
                     ChurchName = hg.Church.Name,
                     GroupClassificationId = hg.GroupClassificationId.HasValue ? hg.GroupClassificationId.Value : 0,
                     GroupId = hg.GroupId,
@@ -975,14 +979,15 @@ namespace oikonomos.data.DataAccessors
                     }
 
                     hg.Name = hgvm.GroupName;
-                    if (hgvm.LeaderId == 0 || hgvm.LeaderName == null || hgvm.LeaderName == string.Empty)
+                    if (hgvm.LeaderId == 0 || string.IsNullOrEmpty(hgvm.LeaderName))
                         hg.LeaderId = null;
                     else
                         hg.LeaderId = hgvm.LeaderId;
-                    if (hgvm.AdministratorId == 0 || hgvm.AdministratorName == null || hgvm.AdministratorName == string.Empty)
+                    if (hgvm.AdministratorId == 0 || string.IsNullOrEmpty(hgvm.AdministratorName))
                         hg.AdministratorId = null;
                     else
                         hg.AdministratorId = hgvm.AdministratorId;
+                    
                     hg.Changed = DateTime.Now;
 
 
@@ -1028,6 +1033,31 @@ namespace oikonomos.data.DataAccessors
 
                     hg.GroupClassificationId = hgvm.GroupClassificationId == 0 ? (int?)null : hgvm.GroupClassificationId;
 
+                    context.SaveChanges();
+                    if (hgvm.OverseeingElderId == 0 || string.IsNullOrEmpty(hgvm.OverseeingElderName))
+                    {
+                        var linkedPersonToDelete = context.PersonLinkedToGroups.FirstOrDefault(p => p.GroupId == hgvm.GroupId && p.Description == CacheNames.OverseeingElder);
+                        if(linkedPersonToDelete!=null)
+                            context.PersonLinkedToGroups.DeleteObject(linkedPersonToDelete);
+                    }
+                    else
+                    {
+                        var linkedPersonToDelete = context.PersonLinkedToGroups.FirstOrDefault(p => p.GroupId == hgvm.GroupId && p.Description == CacheNames.OverseeingElder);
+                        if (linkedPersonToDelete == null)
+                        {
+                            var newOverseeingElder = new PersonLinkedToGroup
+                            {
+                                GroupId = hgvm.GroupId,
+                                PersonId = hgvm.OverseeingElderId,
+                                Description = CacheNames.OverseeingElder
+                            };
+                            context.PersonLinkedToGroups.AddObject(newOverseeingElder);
+                        }
+                        else
+                        {
+                            linkedPersonToDelete.PersonId = hgvm.OverseeingElderId;
+                        }
+                    }
                     context.SaveChanges();
                     return hg.GroupId;
                 }

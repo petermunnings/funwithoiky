@@ -14,6 +14,8 @@ namespace oikonomos.common.Models
         public int LeaderId { get; set; }
         public string AdministratorName { get; set; }
         public int AdministratorId { get; set; }
+        public string OverseeingElderName { get; set; }
+        public int OverseeingElderId { get; set; }
         public int AddressId { get; set; }
         public string Address1 { get; set; }
         public string Address2 { get; set; }

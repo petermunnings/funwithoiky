@@ -942,6 +942,41 @@ namespace oikonomos.data.DataAccessors
             }
         }
 
+        public static AutoCompleteViewModel[] FetchElderAutoComplete(string term, Person currentPerson, bool wholeChurch)
+        {
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            {
+                var query = (from p in context.People
+                             from c in p.PersonChurches
+                             join r in context.Roles
+                                on c.RoleId equals r.RoleId
+                             where c.ChurchId == currentPerson.ChurchId
+                               && r.ChurchId == currentPerson.ChurchId
+                               && r.Name == "Elder"
+                             select p);
+
+                if (term.Contains(" "))
+                {
+                    var searchStrings = term.Split(' ');
+                    var searchString1 = searchStrings[0];
+                    var searchString2 = searchStrings[1];
+                    query = query.Where(p => p.Firstname.Contains(searchString1) && p.Family.FamilyName.Contains(searchString2));
+                }
+                else
+                {
+                    query = query.Where(p => p.Firstname.Contains(term) || p.Family.FamilyName.Contains(term));
+                }
+
+                return (from p in query.OrderBy(p => p.Firstname)
+                        select new AutoCompleteViewModel
+                        {
+                            id = p.PersonId,
+                            label = p.Firstname + " " + p.Family.FamilyName,
+                            value = p.Firstname + " " + p.Family.FamilyName
+                        }).ToArray();
+            }
+        }
+
         public static AutoCompleteViewModel[] FetchPersonAutoComplete(string term, Person currentPerson, bool wholeChurch)
         {
             using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))

@@ -98,6 +98,8 @@ function SaveHomeGroup() {
         LeaderName: $("#text_homeGroupLeader").val(),
         AdministratorId: $("#hidden_homeGroupAdministratorId").val(),
         AdministratorName: $("#text_homeGroupAdministrator").val(),
+        OverseeingElderId: $("#hidden_overseeingElderId").val(),
+        OverseeingElderName: $("#text_overseeingElder").val(),
         AddressId: $("#hidden_addressId").val(),
         Address1: $("#text_address1").val(),
         Address2: $("#text_address2").val(),
@@ -542,6 +544,8 @@ function AddGroup() {
     $("#hidden_homeGroupLeaderId").val("0");
     $("#text_homeGroupAdministrator").val("");
     $("#hidden_homeGroupAdministratorId").val("0");
+    $("#text_overseeingElder").val("");
+    $("#hidden_overseeingElderId").val("0");
     $("#text_homeGroupAddress").val("");
     $("#SelectedGroupClassificationId").val("0");
     $("#SelectedSuburbId").val("0");
@@ -550,7 +554,7 @@ function AddGroup() {
         {
             modal: true,
             height: 400,
-            width: 440,
+            width: 540,
             resizable: false,
             title: "Add Group",
             buttons: {
@@ -585,6 +589,8 @@ function EditGroup() {
         $("#hidden_homeGroupLeaderId").val(data.GroupInfo.LeaderId);
         $("#text_homeGroupAdministrator").val(data.GroupInfo.AdministratorName);
         $("#hidden_homeGroupAdministratorId").val(data.GroupInfo.AdministratorId);
+        $("#hidden_overseeingElderId").val(data.GroupInfo.OverseeingElderId);
+        $("#text_overseeingElder").val(data.GroupInfo.OverseeingElderName);
         $("#text_address1").val(data.GroupInfo.Address1);
         $("#text_address2").val(data.GroupInfo.Address2);
         $("#text_address3").val(data.GroupInfo.Address3);
@@ -602,7 +608,7 @@ function EditGroup() {
         {
             modal: true,
             height: 400,
-            width: 440,
+            width: 540,
             resizable: false,
             title: "Edit Group details",
             buttons: {
@@ -672,6 +678,14 @@ function SetupLeaderAndAdministratorLookup() {
         minLength: 1,
         select: function (event, ui) {
             $("#hidden_homeGroupAdministratorId").val(ui.item ? ui.item.id : "0");
+        }
+    });
+
+    $("#text_overseeingElder").autocomplete({
+        source: "/Ajax/ElderAutoComplete",
+        minLength: 1,
+        select: function (event, ui) {
+            $("#hidden_overseeingElderId").val(ui.item ? ui.item.id : "0");
         }
     });
 }

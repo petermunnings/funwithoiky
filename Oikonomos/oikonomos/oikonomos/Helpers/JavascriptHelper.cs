@@ -4,7 +4,7 @@
     {
         public static string Content(string path)
         {
-            return path.Replace("~",string.Empty) + "?ver=56";
+            return path.Replace("~",string.Empty) + "?ver=57";
         }
     }
 }

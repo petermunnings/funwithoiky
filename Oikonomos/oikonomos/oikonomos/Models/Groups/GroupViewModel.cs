@@ -20,5 +20,6 @@ namespace oikonomos.web.Models.Groups
         public IEnumerable<StandardCommentViewModel> StandardComments              { get; set; }
         public int                                   RoleId                        { get; set; }
         public IEnumerable<RoleViewModel>            SecurityRoles                 { get; set; }
+        public string                                DisplayOverseeingElder        { get; set; }
     }
 }
