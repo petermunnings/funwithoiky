@@ -475,6 +475,26 @@ var CreateNewMessage = function(personId, messageType) {
     }
 };
 
+function SetupFamilyLookup() {
+    $("#text_newFamilySearch").autocomplete({
+        source: function(request, response) {
+            var postData = {
+                term: request.term,
+                familyId: $("#hidden_familyId").val()
+            };
+            var jqxhr = $.post("/Ajax/FamilyAutoComplete", $.postify(postData), function(data) {
+                response(data);
+            }).error(function(jqXHR, textStatus, errorThrown) {
+                SendErrorEmail("Error calling FamilyAutoComplete", jqXHR.responseText);
+            });
+        },
+        minLength: 1,
+        select: function(event, ui) {
+            $("#hidden_newFamilyId").val(ui.item.id);
+        }
+    });
+}
+
 var pageIsDirty = false;
 $(document).ready(function() {
     
@@ -596,24 +616,6 @@ $(document).ready(function() {
         }
     });
 
-    $("#text_newFamilySearch").autocomplete({
-        source: function(request, response) {
-            var postData = {
-                term: request.term,
-                familyId: $("#hidden_familyId").val()
-            };
-            var jqxhr = $.post("/Ajax/FamilyAutoComplete", $.postify(postData), function(data) {
-                response(data);
-            }).error(function(jqXHR, textStatus, errorThrown) {
-                SendErrorEmail("Error calling FamilyAutoComplete", jqXHR.responseText);
-            });
-        },
-        minLength: 1,
-        select: function(event, ui) {
-            $("#hidden_newFamilyId").val(ui.item.id);
-        }
-    });
-
     $("#text_dateOfBirth").datepicker({
         changeMonth: true,
         changeYear: true,
@@ -706,6 +708,8 @@ $(document).ready(function() {
             }
         }
     });
+
+    SetupFamilyLookup();
 
     $("#text_address1").keypress(function() {
         $("#hidden_addressChosen").val("");
