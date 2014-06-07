@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 
 namespace oikonomos.data.Services
 {
@@ -9,8 +6,8 @@ namespace oikonomos.data.Services
     {
         public static IQueryable<Person> ApplyNameSearch(string searchString, IQueryable<Person> people)
         {
-            string completeName = searchString;
-            string[] names = completeName.Split(' ');
+            var completeName = searchString;
+            var names = completeName.Split(' ');
             switch (names.Length)
             {
                 case 1:
@@ -23,8 +20,8 @@ namespace oikonomos.data.Services
                     }
                 case 2:
                     {
-                        string name0 = names[0];
-                        string name1 = names[1];
+                        var name0 = names[0];
+                        var name1 = names[1];
                         people = (from p in people
                                   where (p.Firstname.Contains(name0) && p.Family.FamilyName.Contains(name1))
                                   || (p.Firstname.Contains(completeName))
@@ -34,9 +31,9 @@ namespace oikonomos.data.Services
                     }
                 case 3:
                     {
-                        string name0 = names[0];
-                        string name1 = names[1];
-                        string name2 = names[2];
+                        var name0 = names[0];
+                        var name1 = names[1];
+                        var name2 = names[2];
                         people = (from p in people
                                   where (p.Firstname.Contains(name0 + " " + name1) && p.Family.FamilyName.Contains(name2))
                                   || (p.Firstname.Contains(name0) && p.Family.FamilyName.Contains(name1 + " " + name2))
@@ -47,10 +44,10 @@ namespace oikonomos.data.Services
                     }
                 case 4:
                     {
-                        string name0 = names[0];
-                        string name1 = names[1];
-                        string name2 = names[2];
-                        string name3 = names[3];
+                        var name0 = names[0];
+                        var name1 = names[1];
+                        var name2 = names[2];
+                        var name3 = names[3];
                         people = (from p in people
                                   where (p.Firstname.Contains(name0 + " " + name1) && p.Family.FamilyName.Contains(name2 + " " + name3))
                                   || (p.Firstname.Contains(name0) && p.Family.FamilyName.Contains(names[1] + " " + name2 + " " + name3))
@@ -64,11 +61,11 @@ namespace oikonomos.data.Services
                 case 6:
                 case 7:
                     {
-                        string name0 = names[0];
-                        string name1 = names[1];
-                        string name2 = names[2];
-                        string name3 = names[3];
-                        string name4 = names[4];
+                        var name0 = names[0];
+                        var name1 = names[1];
+                        var name2 = names[2];
+                        var name3 = names[3];
+                        var name4 = names[4];
                         people = (from p in people
                                   where (p.Firstname.Contains(name0) && p.Family.FamilyName.Contains(name1 + " " + name2 + " " + name3 + " " + name4))
                                   || (p.Firstname.Contains(name0 + " " + name1) && p.Family.FamilyName.Contains(name2 + " " + name3 + " " + name4))

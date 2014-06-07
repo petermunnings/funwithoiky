@@ -403,6 +403,11 @@ namespace oikonomos.data.DataAccessors
                             people = request.sord.ToLower() == "asc" ? people.OrderBy(p => p.Email).Skip((request.page - 1) * request.rows).Take(request.rows) : people.OrderByDescending(p => p.Email).Skip((request.page - 1) * request.rows).Take(request.rows);
                             break;
                         }
+                    case "Site":
+                        {
+                            people = request.sord.ToLower() == "asc" ? people.OrderBy(p => p.Site.Name).Skip((request.page - 1) * request.rows).Take(request.rows) : people.OrderByDescending(p => p.Site.Name).Skip((request.page - 1) * request.rows).Take(request.rows);
+                            break;
+                        }
                 }
 
                 var membersGridData = new JqGridData()
