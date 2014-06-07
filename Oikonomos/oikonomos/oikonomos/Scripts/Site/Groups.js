@@ -747,20 +747,28 @@ $(document).ready(function () {
 
     SetupPeopleGrid();
 
+    var colNames = ['GroupId', 'Group Name', 'Leader', 'Administrator', 'Suburb', 'Classification'];
+    var colModel = [
+        { name: 'GroupId', index: 'GroupId', hidden: true, search: false },
+        { name: 'GroupName', index: 'GroupName', align: 'left', width: 150, search: true },
+        { name: 'LeaderName', index: 'LeaderName', align: 'left', width: 130, search: true },
+        { name: 'Administrator', index: 'Administrator', align: 'left', width: 130, search: true },
+        { name: 'Suburb', index: 'Suburb', align: 'left', width: 130, search: true },
+        { name: 'GroupClassification', index: 'GroupClassification', align: 'left', width: 150, search: true }
+    ];
+    
+    if (!($("#div_displayOverseeingElder").text() == "displayNone")) {
+        colNames.push('Overseeing elder');
+        colModel.push({ name: 'OverseeingElder', index: 'OverseeingElder', align: 'left', width: 150, search: true });
+    }
+
     if ($("#div_showList").html() == "True") {
         $('#jqgGroups').jqGrid({
             url: '/Ajax/FetchGroupList',
             datatype: 'json',
             mtype: 'POST',
-            colNames: ['GroupId', 'Group Name', 'Leader', 'Administrator', 'Suburb', 'Classification'],
-            colModel: [
-                    { name: 'GroupId', index: 'GroupId', hidden: true, search: false },
-                    { name: 'GroupName', index: 'GroupName', align: 'left', width: 150, search: true },
-                    { name: 'LeaderName', index: 'LeaderName', align: 'left', width: 130, search: true },
-                    { name: 'Administrator', index: 'Administrator', align: 'left', width: 130, search: true },
-                    { name: 'Suburb', index: 'Suburb', align: 'left', width: 130, search: true },
-                    { name: 'GroupClassification', index: 'GroupClassification', align: 'left', width: 150, search: true }
-                  ],
+            colNames: colNames,
+            colModel: colModel,
             pager: $('#jqgpGroups'),
             rowNum: 25,
             sortname: 'GroupName',

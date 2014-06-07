@@ -293,7 +293,8 @@ namespace oikonomos.data.DataAccessors
                                                     g.Leader==null? string.Empty : g.Leader.Firstname + " " + g.Leader.Family.FamilyName,
                                                     g.Administrator==null? string.Empty : g.Administrator.Firstname + " " + g.Administrator.Family.FamilyName,
                                                     g.Address==null? string.Empty : g.Address.ChurchSuburb==null?g.Address.Line3:g.Address.ChurchSuburb.Suburb,
-                                                    g.GroupClassification==null? string.Empty :g.GroupClassification.Name
+                                                    g.GroupClassification==null? string.Empty :g.GroupClassification.Name,
+                                                    g.PersonLinkedToGroups.FirstOrDefault(p => p.Description == CacheNames.OverseeingElder)==null? string.Empty : g.PersonLinkedToGroups.First(p => p.Description == CacheNames.OverseeingElder).Person.Firstname + " " + g.PersonLinkedToGroups.First(p => p.Description == CacheNames.OverseeingElder).Person.Family.FamilyName
                                 }
                             }).ToArray()
                 };
@@ -303,7 +304,7 @@ namespace oikonomos.data.DataAccessors
             }
         }
 
-        private static IOrderedQueryable<Group> sortGroupList(JqGridRequest request, IQueryable<Group> groups)
+        private static IEnumerable<Group> sortGroupList(JqGridRequest request, IQueryable<Group> groups)
         {
             switch (request.sidx)
             {
@@ -337,6 +338,12 @@ namespace oikonomos.data.DataAccessors
                         return request.sord.ToLower() == "asc"
                                      ? groups.OrderBy(g => g.GroupClassification.Name)
                                      : groups.OrderByDescending(g => g.GroupClassification.Name);
+                    }
+                case "OverseeingElder":
+                    {
+                        return request.sord.ToLower() == "asc"
+                                     ? groups.OrderBy(g => g.PersonLinkedToGroups.FirstOrDefault(p => p.Description == CacheNames.OverseeingElder).Person.Firstname).ThenBy(g => g.PersonLinkedToGroups.FirstOrDefault(p => p.Description == CacheNames.OverseeingElder).Person.Family.FamilyName)
+                                     : groups.OrderByDescending(g => g.PersonLinkedToGroups.FirstOrDefault(p => p.Description == CacheNames.OverseeingElder).Person.Firstname).ThenByDescending(g => g.PersonLinkedToGroups.FirstOrDefault(p => p.Description == CacheNames.OverseeingElder).Person.Family.FamilyName);
                     }
             }
             throw new Exception("Invalid sort parameter");
@@ -1334,40 +1341,45 @@ namespace oikonomos.data.DataAccessors
                     switch (rule.field)
                     {
                         case "GroupName":
-                            {
-                                var groupName = rule.data;
-                                groups = (from g in groups
-                                          where g.Name.Contains(groupName)
-                                          select g);
-                                break;
-                            }
+                        {
+                            var groupName = rule.data;
+                            groups = (from g in groups
+                                where g.Name.Contains(groupName)
+                                select g);
+                            break;
+                        }
                         case "LeaderName":
-                            {
-                                groups = Filters.ApplyNameSearchGroupLeader(rule.data, groups);
-                                break;
-                            }
+                        {
+                            groups = Filters.ApplyNameSearchGroupLeader(rule.data, groups);
+                            break;
+                        }
                         case "Administrator":
-                            {
-                                groups = Filters.ApplyNameSearchGroupAdministrator(rule.data, groups);
-                                break;
-                            }
+                        {
+                            groups = Filters.ApplyNameSearchGroupAdministrator(rule.data, groups);
+                            break;
+                        }
                         case "Suburb":
-                            {
-                                string suburb = rule.data;
-                                groups = (from g in groups
-                                          where g.Address.ChurchSuburb.Suburb.Contains(suburb)
-                                          || g.Address.Line3.Contains(suburb)
-                                          select g);
-                                break;
-                            }
+                        {
+                            var suburb = rule.data;
+                            groups = (from g in groups
+                                where g.Address.ChurchSuburb.Suburb.Contains(suburb)
+                                      || g.Address.Line3.Contains(suburb)
+                                select g);
+                            break;
+                        }
                         case "GroupClassification":
-                            {
-                                string classification = rule.data;
-                                groups = (from g in groups
-                                          where g.GroupClassification.Name.Contains(classification)
-                                          select g);
-                                break;
-                            }
+                        {
+                            var classification = rule.data;
+                            groups = (from g in groups
+                                where g.GroupClassification.Name.Contains(classification)
+                                select g);
+                            break;
+                        }
+                        case "OverseeingElder":
+                        {
+                            groups = Filters.ApplyNameSearchOverseeingElder(rule.data, groups);
+                            break;
+                        }
                     }
                 }
             }
