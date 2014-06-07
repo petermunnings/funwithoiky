@@ -168,7 +168,7 @@ $(document).ready(function () {
                     { name: 'HomePhone', index: 'HomePhone', align: 'left', width: 120, sortable: false, search: true },
                     { name: 'CellPhone', index: 'CellPhone', align: 'left', width: 120, sortable: false, search: true },
                     { name: 'Email', index: 'Email', align: 'left', width: 194, sortable: false, search: true },
-                    { name: 'Site', index: 'Site', align: 'left', width: 150, sortable: false, search: false }
+                    { name: 'Site', index: 'Site', align: 'left', width: 150, sortable: true, search: false }
                   ],
         //pager for grid
         pager: $('#jqgpNotInGroup'),

@@ -369,29 +369,20 @@ namespace oikonomos.data.DataAccessors
                 switch (request.sidx)
                 {
                     case "Firstname":
-                        {
-                            if (request.sord.ToLower() == "asc")
-                            {
-                                peopleNotInGroups = peopleNotInGroups.OrderBy(p => p.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            else
-                            {
-                                peopleNotInGroups = peopleNotInGroups.OrderByDescending(p => p.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            break;
-                        }
+                    {
+                        peopleNotInGroups = request.sord.ToLower() == "asc" ? peopleNotInGroups.OrderBy(p => p.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows) : peopleNotInGroups.OrderByDescending(p => p.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows);
+                        break;
+                    }
                     case "Surname":
-                        {
-                            if (request.sord.ToLower() == "asc")
-                            {
-                                peopleNotInGroups = peopleNotInGroups.OrderBy(p => p.Family.FamilyName).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            else
-                            {
-                                peopleNotInGroups = peopleNotInGroups.OrderByDescending(p => p.Family.FamilyName).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            break;
-                        }
+                    {
+                        peopleNotInGroups = request.sord.ToLower() == "asc" ? peopleNotInGroups.OrderBy(p => p.Family.FamilyName).Skip((request.page - 1) * request.rows).Take(request.rows) : peopleNotInGroups.OrderByDescending(p => p.Family.FamilyName).Skip((request.page - 1) * request.rows).Take(request.rows);
+                        break;
+                    }
+                    case "Site":
+                    {
+                        peopleNotInGroups = request.sord.ToLower() == "asc" ? peopleNotInGroups.OrderBy(p => p.Site.Name).Skip((request.page - 1) * request.rows).Take(request.rows) : peopleNotInGroups.OrderByDescending(p => p.Site.Name).Skip((request.page - 1) * request.rows).Take(request.rows);
+                        break;
+                    }
                 }
 
                 var sitesGridData = new JqGridData()
