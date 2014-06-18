@@ -100,6 +100,7 @@
                         <tr>
                             <td><button id="button_printList" title="View Homegroup List as pdf for printing/emailing" style="width:120px">View as pdf</button></td>
                             <td>&nbsp;</td>
+                            <td><button id="button_showAllPeople"><span class="ui-button-text">Show all people in group</span></button></td>
                         </tr>
                         <tr>
                             <td><button id="button_sendEmail" title="Send an email" style="width:120px">Send Email</button></td>
@@ -113,14 +114,16 @@
                                 }
                                 </td>
                             <td><input type="radio" name="radio_selected" id="selected_selected" value="selected" /> To selected only</td>
+                            <td>&nbsp;</td>
                         </tr>
                     </table>
                 </div>
 
                 <span id="message_hg"></span><img id="ajax_loader_hg" src="/Content/images/ajax-loader.gif" alt="loading.." /><br />&nbsp;<br />
-
+                
                 <table id="jqgPeople" cellpadding="0" cellspacing="0"></table>
                 <div id="jqgpPeople" style="text-align:center;"></div>
+
             </div>  
         </div>
     </div>

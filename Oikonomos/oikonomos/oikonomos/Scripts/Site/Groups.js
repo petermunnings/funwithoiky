@@ -745,6 +745,18 @@ function SetupAddressLookup() {
 $(document).ready(function () {
     selectedGroupId = $("#div_groupId").html();
 
+    $("#button_showAllPeople").click(function() {
+        var paging = $('#jqgPeople').getGridParam('rowNum');
+        if (paging == '25') {
+            $('#jqgPeople').setGridParam({ rowNum: '' });
+            $("span", this).text("Show 25 people per page");
+        } else {
+            $('#jqgPeople').setGridParam({ rowNum: '25' });
+            $("span", this).text("Show all people in group");
+        }
+        ReloadPeopleGrid(selectedGroupId);
+    });
+
     SetupPeopleGrid();
 
     var colNames = ['GroupId', 'Group Name', 'Leader', 'Administrator', 'Suburb', 'Classification'];

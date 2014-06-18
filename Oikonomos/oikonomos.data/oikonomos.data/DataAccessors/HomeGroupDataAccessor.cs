@@ -1211,34 +1211,25 @@ namespace oikonomos.data.DataAccessors
                 switch (sort)
                 {
                     case "Firstname":
-                        {
-                            if (request.sord.ToLower() == "asc")
-                            {
-                                people = people.OrderBy(p=>p.RoleName).ThenBy(p => p.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            else
-                            {
-                                people = people.OrderBy(p => p.RoleName).ThenByDescending(p => p.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            break;
-                        }
+                    {
+                        people = request.sord.ToLower() == "asc" ? people.OrderBy(p => p.RoleName).ThenBy(p => p.Firstname) : people.OrderBy(p => p.RoleName).ThenByDescending(p => p.Firstname);
+                        break;
+                    }
                     case "Surname":
-                        {
-                            if (request.sord.ToLower() == "asc")
-                            {
-                                people = people.OrderBy(p => p.RoleName).ThenBy(p => p.Surname).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            else
-                            {
-                                people = people.OrderBy(p => p.RoleName).ThenByDescending(p => p.Surname).Skip((request.page - 1) * request.rows).Take(request.rows);
-                            }
-                            break;
-                        }
+                    {
+                        people = request.sord.ToLower() == "asc" ? people.OrderBy(p => p.RoleName).ThenBy(p => p.Surname) : people.OrderBy(p => p.RoleName).ThenByDescending(p => p.Surname);
+                        break;
+                    }
                 }
+
+                if (request.rows > 0)
+                    people = people.Skip((request.page - 1)*request.rows).Take(request.rows);
+                else
+                    request.page = 1;
 
                 var peopleGridData = new JqGridData()
                 {
-                    total = (int)Math.Ceiling((float)totalRecords / (float)request.rows),
+                    total = request.rows>0 ? (int)Math.Ceiling((float)totalRecords / (float)request.rows) : 1,
                     page = request.page,
                     records = totalRecords,
                     rows = (from p in people.AsEnumerable()
