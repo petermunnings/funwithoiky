@@ -34,6 +34,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -51,6 +52,7 @@
     <Compile Include="IPasswordService.cs" />
     <Compile Include="IPersonGroupService.cs" />
     <Compile Include="IPersonService.cs" />
+    <Compile Include="IPhotoServices.cs" />
     <Compile Include="ISmsSender.cs" />
     <Compile Include="ISystemAdministratorService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

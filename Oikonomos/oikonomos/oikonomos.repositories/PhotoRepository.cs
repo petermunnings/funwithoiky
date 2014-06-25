@@ -15,9 +15,7 @@ namespace oikonomos.repositories
 
         public void SavePhoto(int personId, byte[] photoContent, string contentType, string fileName, string imageSize)
         {
-
-            var currentPhoto =
-                Context.UploadPhotoes.FirstOrDefault(p => p.PersonId == personId && p.ImageSize == imageSize);
+            var currentPhoto = Context.UploadPhotoes.FirstOrDefault(p => p.PersonId == personId && p.ImageSize == imageSize);
             if (currentPhoto != null)
             {
                 Context.DeleteObject(currentPhoto);

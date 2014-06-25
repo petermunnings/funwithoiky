@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Metadata.Edm;
+using System.Drawing;
 using System.Linq;
 using System.Web.Mvc;
 using oikonomos.common.DTOs;
@@ -31,6 +32,7 @@ namespace oikonomos.web.Controllers
         private readonly IPersonService _personService;
         private readonly IUsernamePasswordRepository _usernamePasswordRepository;
         private readonly IPhotoRepository _photoRepository;
+        private readonly IPhotoServices _photoServices;
 
         public HomeController()
         {
@@ -51,6 +53,7 @@ namespace oikonomos.web.Controllers
                 emailContentService
                 );
             _photoRepository = new PhotoRepository();
+            _photoServices = new PhotoServices();
             _personService = new PersonService(
                 _personRepository,
                 new PersonGroupRepository(_personRepository),
@@ -163,7 +166,19 @@ namespace oikonomos.web.Controllers
                     var s = hpf.InputStream;
                     var attachmentContent = new byte[hpf.ContentLength + 1];
                     s.Read(attachmentContent, 0, hpf.ContentLength);
-                    _photoRepository.SavePhoto(currentPerson.PersonId, attachmentContent, hpf.ContentType, hpf.FileName);
+                    var image = _photoServices.ByteArrayToImage(attachmentContent);
+                    var scaleFactor = image.Width/600d;
+                    if (scaleFactor > 1d)
+                    {
+                        var newSize = new Size((int) (image.Width/scaleFactor), (int) (image.Height/scaleFactor));
+                        var newImage = _photoServices.ResizeImage(_photoServices.ByteArrayToImage(attachmentContent),newSize);
+                        _photoRepository.SavePhoto(currentPerson.PersonId, _photoServices.ImageToByteArray(newImage, hpf.ContentType),hpf.ContentType, hpf.FileName);
+                    }
+                    else
+                    {
+                        _photoRepository.SavePhoto(currentPerson.PersonId, attachmentContent, hpf.ContentType, hpf.FileName);
+                    }
+                    
                     var response = "{\"filename\":\"" + hpf.FileName + "\"}";
                     return Content(response, "application/json");
                 }

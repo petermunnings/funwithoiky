@@ -742,9 +742,13 @@ $(document).ready(function() {
                     type: "POST",
                     contentType: 'application/json; charset=utf-8',
                     success: function (result) {
+                        var d = new Date();
                         $.ajax({
                             url: "/Images/DeleteDefaultImage",
-                            type: "POST"
+                            type: "POST",
+                            success: function(result) {
+                                $("#img_person").attr("src", "/Images/GetImage?personId=" + $("#hidden_personId").val() + "&imageSize=Small&dateTime=" + d.getTime());
+                            }
                         });
                     }
                 });
@@ -1069,16 +1073,10 @@ $(document).ready(function() {
             $("#photoProgressbar").hide();
             $("#photoupload").show();
             setupCropPic();
-            
-
         }
     }).on('fileuploadprogressall', function (e, data) {
         $("#photoProgressbar").show();
         $("#photoupload").hide();
-        var progress = parseInt(data.loaded / data.total * 100, 10);
-        $("#photoProgressbar").progressbar({
-            value: progress
-        });
     });
 
     
