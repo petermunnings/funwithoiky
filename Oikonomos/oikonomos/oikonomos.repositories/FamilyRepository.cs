@@ -9,6 +9,13 @@ namespace oikonomos.repositories
 {
     public class FamilyRepository : RepositoryBase, IFamilyRepository
     {
+        private readonly IPhotoRepository _photoRepository;
+
+        public FamilyRepository(IPhotoRepository photoRepository)
+        {
+            _photoRepository = photoRepository;
+        }
+
         public IEnumerable<FamilyMemberViewModel> FetchFamilyMembers(int personId, int familyId)
         {
             var personFirstname = (from p in Context.People
@@ -36,6 +43,11 @@ namespace oikonomos.repositories
                         FacebookId = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Facebook) == null ? "" : p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Facebook).Value
                     }).ToList();
 
+            foreach (var familyMember in familyMembers)
+            {
+                setImageLink(familyMember);
+            }
+
             familyMembers.Sort((e1, e2) => e1.RelationshipId.CompareTo(e2.RelationshipId));
 
             return familyMembers;
@@ -52,6 +64,17 @@ namespace oikonomos.repositories
             Context.SaveChanges();
 
             return FetchFamilyMembers(personId, familyId);
+        }
+
+        private void setImageLink(FamilyMemberViewModel familyMember)
+        {
+            if (_photoRepository.ImageExists(familyMember.PersonId))
+                familyMember.ImageLink = string.Format("/Images/GetImage?personId={0}&imageSize={1}", familyMember.PersonId,
+                    ImageSize.Small);
+            else if (familyMember.FacebookId != string.Empty)
+                familyMember.ImageLink = string.Format("https://graph.facebook.com/{0}/picture", familyMember.FacebookId);
+            else
+                familyMember.ImageLink = string.Empty;
         }
     }
 }

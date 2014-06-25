@@ -17,6 +17,7 @@ namespace oikonomos.repositories.tests
             var personRepository = new PersonRepository(permissionRepository, churchRepository);
             var emailSender = new EmailSender(new MessageRepository(), new MessageRecepientRepository(), new MessageAttachmentRepository(), personRepository);
             var emailService = new EmailService(new UsernamePasswordRepository(permissionRepository), personRepository, new GroupRepository(), emailSender, new EmailContentService(new EmailContentRepository()));
+            var uploadPhotoRepository = new PhotoRepository();
             var personService = new PersonService(
                 personRepository,
                 new PersonGroupRepository(personRepository),
@@ -26,9 +27,10 @@ namespace oikonomos.repositories.tests
                 new RelationshipRepository(personRepository),
                 new ChurchMatcherRepository(),
                 new GroupRepository(),
-                new FamilyRepository(),
+                new FamilyRepository(uploadPhotoRepository),
                 emailService,
-                new AddressRepository()
+                new AddressRepository(),
+                uploadPhotoRepository
                 );
             personService.SavePersonToSampleChurch("test1", "test1", "liveId1", "", "", 47);
 

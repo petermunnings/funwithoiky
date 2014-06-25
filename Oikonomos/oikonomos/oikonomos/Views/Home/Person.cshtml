@@ -12,21 +12,12 @@
     <div class="tableRow">
         <div style="display:table-cell; width:20px; text-align:right; vertical-align:middle">&nbsp;</div>
         <div style="display:table-cell; width:40px; text-align:right; vertical-align:middle">
-        @if (ViewBag.DisplayFacebook)
-        {
-            <text>
-           
-            {{if FacebookId != ''}}
-                <img src="https://graph.facebook.com/${FacebookId}/picture"/> 
+
+            {{if ImageLink != ''}}
+                <img src="${ImageLink}"/> 
             {{/if}}
             &nbsp; 
-            </text>
-            
-        }
-        else
-        {
-            <text>&nbsp;</text>
-        }
+
         </div>
         <div style="display:table-cell; width:100px; text-align:left; vertical-align:middle" class="selectPerson">
             ${FamilyMember}&nbsp;is&nbsp;${Person}'s&nbsp;

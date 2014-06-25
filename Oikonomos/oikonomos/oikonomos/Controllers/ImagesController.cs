@@ -1,13 +1,10 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Net.Mime;
 using System.Web.Mvc;
 using oikonomos.common;
-using oikonomos.common.DTOs;
 using oikonomos.data;
 using oikonomos.repositories;
 using oikonomos.repositories.interfaces;
@@ -17,11 +14,11 @@ namespace oikonomos.web.Controllers
 {
     public class ImagesController : Controller
     {
-        private readonly IUploadPhotoRepository _uploadPhotoRepository;
+        private readonly IPhotoRepository _photoRepository;
 
         public ImagesController()
         {
-            _uploadPhotoRepository = new UploadPhotoRepository();
+            _photoRepository = new PhotoRepository();
         }
 
         public FileContentResult Index(string dateTime)
@@ -32,14 +29,24 @@ namespace oikonomos.web.Controllers
                 return null;
             }
 
-            var uploadedImage = _uploadPhotoRepository.FetchPhoto(currentPerson.PersonId, ImageSize.FullSize);
+            var uploadedImage = _photoRepository.FetchPhoto(currentPerson.PersonId, ImageSize.FullSize);
             return new FileContentResult(uploadedImage.FileContent, uploadedImage.FileType);
         }
 
         public FileContentResult GetImage(int personId, string imageSize)
         {
-            var uploadedImage = _uploadPhotoRepository.FetchPhoto(personId, imageSize);
+            var uploadedImage = _photoRepository.FetchPhoto(personId, imageSize);
             return new FileContentResult(uploadedImage.FileContent, uploadedImage.FileType);
+        }
+
+        public void DeleteDefaultImage()
+        {
+            Person currentPerson = SecurityHelper.CheckCurrentUser(Session, Response, ViewBag);
+            if (currentPerson == null)
+            {
+                return;
+            }
+            _photoRepository.DeleteDefaultImage(currentPerson.PersonId);
         }
 
         public void SaveCroppedImage(PictureCrop picCrop)
@@ -49,7 +56,7 @@ namespace oikonomos.web.Controllers
             {
                 return;
             }
-            var oldImage = _uploadPhotoRepository.FetchPhoto(currentPerson.PersonId, ImageSize.FullSize);
+            var oldImage = _photoRepository.FetchPhoto(currentPerson.PersonId, ImageSize.FullSize);
             var cropArea = new Rectangle(picCrop.X1, picCrop.Y1, picCrop.Width, picCrop.Height);
             var croppedImage = CropImage(ByteArrayToImage(oldImage.FileContent), cropArea);
 
@@ -57,11 +64,11 @@ namespace oikonomos.web.Controllers
             var largeImage = ResizeImage(croppedImage, newSize);
 
             var extension = oldImage.FileType.Split('/').Count()>1 ? oldImage.FileType.Split('/')[1] : "bmp";
-            _uploadPhotoRepository.SavePhoto(picCrop.PersonId, ImageToByteArray(largeImage, oldImage.FileType), oldImage.FileType, string.Format("200.{0}", extension), ImageSize.Large);
+            _photoRepository.SavePhoto(picCrop.PersonId, ImageToByteArray(largeImage, oldImage.FileType), oldImage.FileType, string.Format("200.{0}", extension), ImageSize.Large);
 
-            newSize = new Size(100,100);
+            newSize = new Size(50,50);
             var smallImage = ResizeImage(croppedImage, newSize);
-            _uploadPhotoRepository.SavePhoto(picCrop.PersonId, ImageToByteArray(smallImage, oldImage.FileType), oldImage.FileType, string.Format("100.{0}", extension), ImageSize.Small);
+            _photoRepository.SavePhoto(picCrop.PersonId, ImageToByteArray(smallImage, oldImage.FileType), oldImage.FileType, string.Format("100.{0}", extension), ImageSize.Small);
 
         }
 

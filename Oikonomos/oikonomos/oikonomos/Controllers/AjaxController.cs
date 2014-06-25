@@ -39,7 +39,8 @@ namespace oikonomos.web.Controllers
             var permissionRepository = new PermissionRepository();
             var churchRepository = new ChurchRepository();            
             var personRepository = new PersonRepository(permissionRepository, churchRepository);
-            _familyRepository = new FamilyRepository();
+            var uploadPhotoRepository = new PhotoRepository();
+            _familyRepository = new FamilyRepository(uploadPhotoRepository);
             _usernamePasswordRepository = new UsernamePasswordRepository(permissionRepository);
             var personGroupRepository = new PersonGroupRepository(personRepository);
             _personGroupRepository = personGroupRepository;
@@ -67,7 +68,8 @@ namespace oikonomos.web.Controllers
                 groupRepository,
                 _familyRepository,
                 _emailService,
-                new AddressRepository()
+                new AddressRepository(),
+                uploadPhotoRepository
                 );
 
             _groupEventRepository = new GroupEventRepository(personRepository);

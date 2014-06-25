@@ -30,7 +30,7 @@ namespace oikonomos.web.Controllers
         private readonly IPersonRepository _personRepository;
         private readonly IPersonService _personService;
         private readonly IUsernamePasswordRepository _usernamePasswordRepository;
-        private readonly IUploadPhotoRepository _uploadPhotoRepository;
+        private readonly IPhotoRepository _photoRepository;
 
         public HomeController()
         {
@@ -50,7 +50,7 @@ namespace oikonomos.web.Controllers
                 emailSender,
                 emailContentService
                 );
-
+            _photoRepository = new PhotoRepository();
             _personService = new PersonService(
                 _personRepository,
                 new PersonGroupRepository(_personRepository),
@@ -60,12 +60,13 @@ namespace oikonomos.web.Controllers
                 new RelationshipRepository(_personRepository),
                 new ChurchMatcherRepository(),
                 new GroupRepository(),
-                new FamilyRepository(),
+                new FamilyRepository(_photoRepository),
                 emailService,
-                new AddressRepository()
+                new AddressRepository(),
+                _photoRepository
                 );
 
-            _uploadPhotoRepository = new UploadPhotoRepository();
+            
             
         }
 
@@ -162,7 +163,7 @@ namespace oikonomos.web.Controllers
                     var s = hpf.InputStream;
                     var attachmentContent = new byte[hpf.ContentLength + 1];
                     s.Read(attachmentContent, 0, hpf.ContentLength);
-                    _uploadPhotoRepository.SavePhoto(currentPerson.PersonId, attachmentContent, hpf.ContentType, hpf.FileName);
+                    _photoRepository.SavePhoto(currentPerson.PersonId, attachmentContent, hpf.ContentType, hpf.FileName);
                     var response = "{\"filename\":\"" + hpf.FileName + "\"}";
                     return Content(response, "application/json");
                 }

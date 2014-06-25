@@ -26,13 +26,12 @@
     $("#span_address2").html(person.Address2);
     $("#span_address3").html(person.Address3);
     $("#span_address4").html(person.Address4);
-    if (person.FacebookId != null) {
-        $("#img_person").prop("src", "https://graph.facebook.com/" + person.FacebookId + "/picture?type=large");
+    $("#img_person").prop("src", person.ImageLinkLarge);
+    if (person.ImageLinkLarge != '') {
         $("#row_image").show();
     }
     else {
         $("#row_image").hide();
-        $("#img_person").prop("src", " ");
     }
 
     $("#display_person").dialog(

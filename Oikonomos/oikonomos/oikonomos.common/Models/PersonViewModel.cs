@@ -89,6 +89,7 @@ namespace oikonomos.common.Models
         }
 
         public string ImageLink { get; set; }
+        public string ImageLinkLarge { get; set; }
     }
 
     public class FamilyMemberViewModel
@@ -98,6 +99,7 @@ namespace oikonomos.common.Models
         public string FamilyMember { get; set; }
         public string Person { get; set; }
         public string Relationship { get; set; }
+        public string ImageLink { get; set; }
         public string FacebookId { get; set; }
     }
 }

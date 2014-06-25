@@ -523,7 +523,8 @@ $(document).ready(function() {
     $("#text_cellPhone").mask("(999) 9999999");
     $("#text_workPhone").mask("(999) 9999999");
 
-    $("input").change(function() {
+    $("input").change(function(event) {
+        if (event.target.id == "photoupload") return;
         pageIsDirty = true;
     });
 
@@ -741,7 +742,10 @@ $(document).ready(function() {
                     type: "POST",
                     contentType: 'application/json; charset=utf-8',
                     success: function (result) {
-                        //update picture
+                        $.ajax({
+                            url: "/Images/DeleteDefaultImage",
+                            type: "POST"
+                        });
                     }
                 });
                 $(this).dialog('close');

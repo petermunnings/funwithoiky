@@ -23,6 +23,7 @@ namespace oikonomos.services
         private readonly IFamilyRepository _familyRepository;
         private readonly IEmailService _emailService;
         private readonly IAddressRepository _addressRepository;
+        private readonly IPhotoRepository _photoRepository;
 
         public PersonService(
             IPersonRepository personRepository, 
@@ -35,7 +36,8 @@ namespace oikonomos.services
             IGroupRepository groupRepository,
             IFamilyRepository familyRepository,
             IEmailService emailService,
-            IAddressRepository addressRepository)
+            IAddressRepository addressRepository,
+            IPhotoRepository photoRepository)
         {
             _personRepository = personRepository;
             _personGroupRepository = personGroupRepository;
@@ -48,6 +50,7 @@ namespace oikonomos.services
             _familyRepository = familyRepository;
             _emailService = emailService;
             _addressRepository = addressRepository;
+            _photoRepository = photoRepository;
         }
 
         public void SavePersonToSampleChurch(string firstname, string surname, string liveId, string cellPhone, string email, int roleId)
@@ -82,20 +85,21 @@ namespace oikonomos.services
                     if (person == null)
                         throw new ApplicationException("Invalid PersonId");
 
-                    //SetupPermissions(context, person, currentPerson.Church);
-
                     var imageLink = string.Empty;
+                    var imageLinkLarge = string.Empty;
                     var faceBookId = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int) OptionalFields.Facebook) == null ? string.Empty : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int) OptionalFields.Facebook).Value;
-                    var img = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int) OptionalFields.ImageLink) == null ? string.Empty : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int) OptionalFields.ImageLink).Value;
-                    if (img != string.Empty)
+                    var imageExists = _photoRepository.ImageExists(person.PersonId);
+                    if (imageExists)
                     {
-                        imageLink = string.Format("https://www.oikonomos.co.za/Images/{0}", img);
+                        imageLink = string.Format("/Images/GetImage?personId={0}&imageSize={1}", person.PersonId, ImageSize.Small);
+                        imageLinkLarge = string.Format("/Images/GetImage?personId={0}&imageSize={1}", person.PersonId, ImageSize.Large);
                     }
                     else
                     {
                         if (faceBookId != string.Empty)
                         {
                             imageLink = string.Format("https://graph.facebook.com/{0}/picture", faceBookId);
+                            imageLinkLarge = string.Format("https://graph.facebook.com/{0}/picture?type=large", faceBookId);
                         }
                     }
 
@@ -114,6 +118,7 @@ namespace oikonomos.services
                             Skype = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int) OptionalFields.Skype) == null ? string.Empty : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int) OptionalFields.Skype).Value,
                             Twitter = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int) OptionalFields.Twitter) == null ? string.Empty : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int) OptionalFields.Twitter).Value,
                             ImageLink = imageLink,
+                            ImageLinkLarge = imageLinkLarge,
                             FacebookId = faceBookId,
                             Occupation = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Occupation) == null ? string.Empty : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int)OptionalFields.Occupation).Value,
                             MaritalStatus = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.MaritalStatus) == null ? string.Empty : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int)OptionalFields.MaritalStatus).Value,

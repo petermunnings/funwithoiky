@@ -39,6 +39,8 @@ namespace oikonomos.web.ApiControllers
                 emailContentService
                 );
 
+            var uploadPhotoRepository = new PhotoRepository();
+
             _personService = new PersonService(_personRepository, 
                 personGroupRepository, 
                 permissionRepository, 
@@ -47,9 +49,10 @@ namespace oikonomos.web.ApiControllers
                 relationshipRepository, 
                 new ChurchMatcherRepository(), 
                 new GroupRepository(), 
-                new FamilyRepository(), 
+                new FamilyRepository(uploadPhotoRepository), 
                 emailService,
-                new AddressRepository());
+                new AddressRepository(),
+                uploadPhotoRepository);
         }
 
         public IEnumerable<Item> Get()
