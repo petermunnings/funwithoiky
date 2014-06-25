@@ -44,6 +44,7 @@
           <EntitySet Name="Status" EntityType="oikonomosModel.Store.Status" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Table" EntityType="oikonomosModel.Store.Table" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Title" EntityType="oikonomosModel.Store.Title" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="UploadPhoto" EntityType="oikonomosModel.Store.UploadPhoto" store:Type="Tables" Schema="dbo" />
           <AssociationSet Name="FK_Address_ChurchSuburb" Association="oikonomosModel.Store.FK_Address_ChurchSuburb">
             <End Role="ChurchSuburb" EntitySet="ChurchSuburb" />
             <End Role="Address" EntitySet="Address" />
@@ -685,6 +686,17 @@
           <Property Name="TitleId" Type="int" Nullable="false" />
           <Property Name="Title" Type="nvarchar" Nullable="false" MaxLength="50" />
           <Property Name="Created" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UploadPhoto">
+          <Key>
+            <PropertyRef Name="PersonId" />
+            <PropertyRef Name="ImageSize" />
+          </Key>
+          <Property Name="PersonId" Type="int" Nullable="false" />
+          <Property Name="Photo" Type="varbinary(max)" Nullable="false" />
+          <Property Name="ContentType" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="FileName" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="ImageSize" Type="nvarchar" Nullable="false" MaxLength="50" />
         </EntityType>
         <Association Name="FK_Address_ChurchSuburb">
           <End Role="ChurchSuburb" Type="oikonomosModel.Store.ChurchSuburb" Multiplicity="0..1" />
@@ -1659,6 +1671,7 @@
             <End Role="Person" EntitySet="People" />
             <End Role="PersonLinkedToGroup" EntitySet="PersonLinkedToGroups" />
           </AssociationSet>
+          <EntitySet Name="UploadPhotoes" EntityType="oikonomosModel.UploadPhoto" />
           </EntityContainer>
         <ComplexType Name="FetchComments_Result">
           <Property Type="Int32" Name="Reference" Nullable="false" />
@@ -2841,6 +2854,17 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="UploadPhoto">
+          <Key>
+            <PropertyRef Name="PersonId" />
+            <PropertyRef Name="ImageSize" />
+          </Key>
+          <Property Type="Int32" Name="PersonId" Nullable="false" />
+          <Property Type="Binary" Name="Photo" Nullable="false" MaxLength="Max" FixedLength="false" />
+          <Property Type="String" Name="ContentType" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="FileName" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="ImageSize" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3317,6 +3341,17 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="UploadPhotoes">
+            <EntityTypeMapping TypeName="oikonomosModel.UploadPhoto">
+              <MappingFragment StoreEntitySet="UploadPhoto">
+                <ScalarProperty Name="ImageSize" ColumnName="ImageSize" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="ContentType" ColumnName="ContentType" />
+                <ScalarProperty Name="Photo" ColumnName="Photo" />
+                <ScalarProperty Name="PersonId" ColumnName="PersonId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -3337,7 +3372,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="Model1" ZoomLevel="88">
+      <Diagram Name="Model1" ZoomLevel="215">
         <EntityTypeShape EntityType="oikonomosModel.Address" Width="1.5" PointX="7.5" PointY="30.5" Height="4.0956022135416674" />
         <EntityTypeShape EntityType="oikonomosModel.ChurchEmailTemplate" Width="1.5" PointX="5.25" PointY="26.75" Height="2.1725878906250102" />
         <EntityTypeShape EntityType="oikonomosModel.ChurchOptionalField" Width="1.5" PointX="8.25" PointY="26.5" Height="2.5571907552083388" />
@@ -3678,6 +3713,7 @@
         <EntityTypeShape EntityType="oikonomosModel.PersonLinkedToGroup" Width="1.5" PointX="19.25" PointY="24.5" />
         <AssociationConnector Association="oikonomosModel.FK_PersonLinkedToGroup_Group" />
         <AssociationConnector Association="oikonomosModel.FK_PersonLinkedToGroup_Person" />
+        <EntityTypeShape EntityType="oikonomosModel.UploadPhoto" Width="1.5" PointX="0.76128312608286886" PointY="17.730949752838793" />
         </Diagram>
     </Diagrams>
   </Designer>

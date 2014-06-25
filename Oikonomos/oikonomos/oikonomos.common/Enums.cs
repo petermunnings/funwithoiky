@@ -24,7 +24,8 @@ namespace oikonomos.common
         Gender = 14,
         WindowsLive = 15,
         MaritalStatus = 16,
-        ShowOverseeingElder = 17
+        ShowOverseeingElder = 17,
+        ImageLink = 18
     }
 
     public enum Permissions
@@ -209,6 +210,13 @@ namespace oikonomos.common
         public static string CellPhoneNos { get { return "CellPhoneNos"; } }
         public static string LoggedOnPerson { get { return "LoggedOnPerson"; } }
         public static string Church { get { return "Church"; } }
+    }
+
+    public class ImageSize
+    {
+        public static string FullSize {get { return "FullSize"; }}
+        public static string Large { get { return "Large"; } }
+        public static string Small { get { return "Small"; } }
     }
 
 }

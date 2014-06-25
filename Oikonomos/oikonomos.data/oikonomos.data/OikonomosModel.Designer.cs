@@ -701,6 +701,22 @@ namespace oikonomos.data
             }
         }
         private ObjectSet<PersonLinkedToGroup> _PersonLinkedToGroups;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<UploadPhoto> UploadPhotoes
+        {
+            get
+            {
+                if ((_UploadPhotoes == null))
+                {
+                    _UploadPhotoes = base.CreateObjectSet<UploadPhoto>("UploadPhotoes");
+                }
+                return _UploadPhotoes;
+            }
+        }
+        private ObjectSet<UploadPhoto> _UploadPhotoes;
 
         #endregion
 
@@ -992,6 +1008,14 @@ namespace oikonomos.data
         public void AddToPersonLinkedToGroups(PersonLinkedToGroup personLinkedToGroup)
         {
             base.AddObject("PersonLinkedToGroups", personLinkedToGroup);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the UploadPhotoes EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToUploadPhotoes(UploadPhoto uploadPhoto)
+        {
+            base.AddObject("UploadPhotoes", uploadPhoto);
         }
 
         #endregion
@@ -11023,6 +11047,170 @@ namespace oikonomos.data
 
         #endregion
 
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="oikonomosModel", Name="UploadPhoto")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class UploadPhoto : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new UploadPhoto object.
+        /// </summary>
+        /// <param name="personId">Initial value of the PersonId property.</param>
+        /// <param name="photo">Initial value of the Photo property.</param>
+        /// <param name="contentType">Initial value of the ContentType property.</param>
+        /// <param name="fileName">Initial value of the FileName property.</param>
+        /// <param name="imageSize">Initial value of the ImageSize property.</param>
+        public static UploadPhoto CreateUploadPhoto(global::System.Int32 personId, global::System.Byte[] photo, global::System.String contentType, global::System.String fileName, global::System.String imageSize)
+        {
+            UploadPhoto uploadPhoto = new UploadPhoto();
+            uploadPhoto.PersonId = personId;
+            uploadPhoto.Photo = photo;
+            uploadPhoto.ContentType = contentType;
+            uploadPhoto.FileName = fileName;
+            uploadPhoto.ImageSize = imageSize;
+            return uploadPhoto;
+        }
+
+        #endregion
+
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 PersonId
+        {
+            get
+            {
+                return _PersonId;
+            }
+            set
+            {
+                if (_PersonId != value)
+                {
+                    OnPersonIdChanging(value);
+                    ReportPropertyChanging("PersonId");
+                    _PersonId = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("PersonId");
+                    OnPersonIdChanged();
+                }
+            }
+        }
+        private global::System.Int32 _PersonId;
+        partial void OnPersonIdChanging(global::System.Int32 value);
+        partial void OnPersonIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Byte[] Photo
+        {
+            get
+            {
+                return StructuralObject.GetValidValue(_Photo);
+            }
+            set
+            {
+                OnPhotoChanging(value);
+                ReportPropertyChanging("Photo");
+                _Photo = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Photo");
+                OnPhotoChanged();
+            }
+        }
+        private global::System.Byte[] _Photo;
+        partial void OnPhotoChanging(global::System.Byte[] value);
+        partial void OnPhotoChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ContentType
+        {
+            get
+            {
+                return _ContentType;
+            }
+            set
+            {
+                OnContentTypeChanging(value);
+                ReportPropertyChanging("ContentType");
+                _ContentType = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("ContentType");
+                OnContentTypeChanged();
+            }
+        }
+        private global::System.String _ContentType;
+        partial void OnContentTypeChanging(global::System.String value);
+        partial void OnContentTypeChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String FileName
+        {
+            get
+            {
+                return _FileName;
+            }
+            set
+            {
+                OnFileNameChanging(value);
+                ReportPropertyChanging("FileName");
+                _FileName = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("FileName");
+                OnFileNameChanged();
+            }
+        }
+        private global::System.String _FileName;
+        partial void OnFileNameChanging(global::System.String value);
+        partial void OnFileNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ImageSize
+        {
+            get
+            {
+                return _ImageSize;
+            }
+            set
+            {
+                if (_ImageSize != value)
+                {
+                    OnImageSizeChanging(value);
+                    ReportPropertyChanging("ImageSize");
+                    _ImageSize = StructuralObject.SetValidValue(value, false);
+                    ReportPropertyChanged("ImageSize");
+                    OnImageSizeChanged();
+                }
+            }
+        }
+        private global::System.String _ImageSize;
+        partial void OnImageSizeChanging(global::System.String value);
+        partial void OnImageSizeChanged();
+
+        #endregion
+
+    
     }
 
     #endregion

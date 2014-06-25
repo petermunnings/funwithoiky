@@ -122,15 +122,23 @@
                                 <div style="text-align:left; display:table-cell; width:230px">&nbsp;</div>
                             </div>
 
-                            @if (ViewBag.DisplayFacebook)
-                            {
-                                <div class="tableRow" id="row_image" @if (string.IsNullOrEmpty(Model.FacebookId)) 
-                                                                     {<text>style="display:none;"</text>} >
-                                    <div style="text-align:right; display:table-cell; width:160px">&nbsp;</div>
-                                    <div style="text-align:right; display:table-cell; width:10px">&nbsp;</div>
-                                    <div style="text-align:left; display:table-cell; width:230px"><img id="img_person" src="https://graph.facebook.com/@(Model.FacebookId)/picture"/></div>
+                            <div class="tableRow">
+                                <div style="text-align:right; display:table-cell; width:160px">&nbsp;</div>
+                                <div style="text-align:right; display:table-cell; width:10px">&nbsp;</div>
+                                <div style="text-align:left; display:table-cell; width:230px">
+                                    <img style="vertical-align: top" id="img_person" src="@(Model.ImageLink)" alt=""/>
+                                    &nbsp;<button style="vertical-align: top" id="button_addNewImage" >
+                                              <span id="text_addNewImage">
+                                                  Upload<br/>
+                                                    @if (Model.ImageLink != "")
+                                                    {
+                                                        <text>new</text>
+                                                    }
+                                                    image
+                                              </span>
+                                          </button>
                                 </div>
-                            }
+                            </div>
                             
                             <div class="tableRow">
                                 <div style="text-align:right; display:table-cell">Firstname</div>
@@ -327,6 +335,7 @@
                             <div style="text-align:left; display:table-cell">&nbsp;</div>
                             <div style="text-align:left; display:table-cell">&nbsp;</div>
                         </div>
+                       
                     </div>            
                 </div>
             </div>
@@ -459,6 +468,25 @@
         <input id="text_newFamilySearch" type="text" style="width:360px" class="ui-corner-all" />
         <input id="hidden_newFamilyId" type="hidden" />
     </div>
+</div>
+
+<div id="div_uploadPhoto" style="display: none;" title="Upload a photo">
+    <table>
+        <tr>
+            <td style="vertical-align:top">Select photo&nbsp;</td>
+            <td style="text-align: left">
+                <input id="photoupload" type="file" name="files[]" multiple>
+                <div id="photoProgressbar"></div>
+                <br /><br />
+            </td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td id="td_imageContainer"><img id="img_uploaded" class="cropper" src="/Images/Index" style="width:600px"/></td>
+        </tr>
+    </table>
+    
 </div>
 
 <input id="hidden_personId" value="@(Model.PersonId == null ? 0 : Model.PersonId)" type="hidden" />

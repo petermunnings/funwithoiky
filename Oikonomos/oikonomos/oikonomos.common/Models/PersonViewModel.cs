@@ -87,6 +87,8 @@ namespace oikonomos.common.Models
                     };
             }
         }
+
+        public string ImageLink { get; set; }
     }
 
     public class FamilyMemberViewModel

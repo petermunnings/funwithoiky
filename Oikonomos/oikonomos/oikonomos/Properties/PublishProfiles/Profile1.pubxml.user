@@ -51,7 +51,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/27/2013 12:43:40</publishTime>
     </File>
     <File Include="bin/Microsoft.CSharp.dll">
-      <publishTime>03/18/2010 19:31:26</publishTime>
+      <publishTime>08/13/2013 00:19:06</publishTime>
     </File>
     <File Include="bin/MigraDoc.DocumentObjectModel.dll">
       <publishTime>08/27/2013 12:43:41</publishTime>
@@ -72,22 +72,22 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/29/2012 14:45:36</publishTime>
     </File>
     <File Include="bin/oikonomos.common.dll">
-      <publishTime>05/26/2014 20:32:25</publishTime>
+      <publishTime>06/25/2014 20:39:18</publishTime>
     </File>
     <File Include="bin/oikonomos.common.pdb">
       <publishTime>09/13/2012 22:52:51</publishTime>
     </File>
     <File Include="bin/oikonomos.data.dll">
-      <publishTime>06/18/2014 21:18:49</publishTime>
+      <publishTime>06/25/2014 20:39:19</publishTime>
     </File>
     <File Include="bin/oikonomos.data.pdb">
       <publishTime>10/10/2012 21:20:38</publishTime>
     </File>
     <File Include="bin/oikonomos.repositories.dll">
-      <publishTime>06/18/2014 21:18:50</publishTime>
+      <publishTime>06/25/2014 20:39:19</publishTime>
     </File>
     <File Include="bin/oikonomos.repositories.interfaces.dll">
-      <publishTime>06/18/2014 21:18:50</publishTime>
+      <publishTime>06/25/2014 20:39:19</publishTime>
     </File>
     <File Include="bin/oikonomos.repositories.interfaces.pdb">
       <publishTime>10/10/2012 21:20:39</publishTime>
@@ -96,10 +96,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/10/2012 21:20:39</publishTime>
     </File>
     <File Include="bin/oikonomos.services.dll">
-      <publishTime>06/18/2014 21:18:50</publishTime>
+      <publishTime>06/25/2014 20:39:19</publishTime>
     </File>
     <File Include="bin/oikonomos.services.interfaces.dll">
-      <publishTime>06/18/2014 21:18:50</publishTime>
+      <publishTime>06/25/2014 20:39:19</publishTime>
     </File>
     <File Include="bin/oikonomos.services.interfaces.pdb">
       <publishTime>10/10/2012 21:20:39</publishTime>
@@ -108,7 +108,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/10/2012 21:20:39</publishTime>
     </File>
     <File Include="bin/oikonomos.web.dll">
-      <publishTime>06/18/2014 21:26:31</publishTime>
+      <publishTime>06/25/2014 20:39:20</publishTime>
     </File>
     <File Include="bin/oikonomos.web.pdb">
       <publishTime>10/10/2012 21:24:02</publishTime>
@@ -145,6 +145,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="bin/System.Web.Http.xml">
       <publishTime>08/29/2012 13:15:50</publishTime>
+    </File>
+    <File Include="Content/cropper.min.css">
+      <publishTime>06/11/2014 16:05:40</publishTime>
     </File>
     <File Include="Content/images/add_24.png">
       <publishTime>08/27/2013 12:43:41</publishTime>
@@ -1095,7 +1098,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/15/2012 19:09:04</publishTime>
     </File>
     <File Include="packages.config">
-      <publishTime>04/23/2014 20:56:48</publishTime>
+      <publishTime>06/23/2014 19:56:14</publishTime>
+    </File>
+    <File Include="Scripts/cropper.min.js">
+      <publishTime>06/22/2014 13:24:09</publishTime>
     </File>
     <File Include="Scripts/grid.locale-en.js">
       <publishTime>08/27/2013 12:43:41</publishTime>
@@ -1263,7 +1269,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/27/2013 12:43:41</publishTime>
     </File>
     <File Include="Scripts/Site/Person.js">
-      <publishTime>06/04/2014 20:03:17</publishTime>
+      <publishTime>06/25/2014 20:27:59</publishTime>
     </File>
     <File Include="Scripts/Site/ReportGrid.js">
       <publishTime>06/07/2014 19:23:05</publishTime>
@@ -2088,7 +2094,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>03/30/2014 20:31:39</publishTime>
     </File>
     <File Include="Views/Home/Person.cshtml">
-      <publishTime>11/20/2013 04:55:20</publishTime>
+      <publishTime>06/25/2014 20:25:59</publishTime>
     </File>
     <File Include="Views/Home/ReportGrid.cshtml">
       <publishTime>01/23/2014 20:28:57</publishTime>
@@ -2118,7 +2124,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/27/2013 12:43:42</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>04/02/2014 22:11:52</publishTime>
+      <publishTime>06/22/2014 14:00:11</publishTime>
     </File>
     <File Include="Views/Web.config">
       <publishTime>08/27/2013 12:43:42</publishTime>
@@ -2127,7 +2133,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/27/2013 12:43:42</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>04/23/2014 21:30:15</publishTime>
+      <publishTime>06/25/2014 20:39:20</publishTime>
     </File>
   </ItemGroup>
 </Project>

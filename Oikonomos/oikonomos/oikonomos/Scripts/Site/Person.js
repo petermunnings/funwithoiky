@@ -1,7 +1,9 @@
 ﻿var familyMembers;
+var picCrop = { PersonId: 0, X1: 0, X2: 0, Y1: 0, Y2: 0, Height: 0, Width: 0 };
 
 function ClearForm() {
     var searchText = $("#text_personSearch").val();
+    $("#button_addNewImage").hide();
     $("input:text").val("");
     $("#hidden_personId").val("0");
     $("#hidden_familyId").val("0");
@@ -19,7 +21,6 @@ function ClearForm() {
     familyMembers = [];
     $("#family_members").empty();
     $("#Site").val("Select site...");
-    $("#row_image").hide();
     $("#img_person").prop("src", " ");
     $("#GroupId").val("0");
     $("#button_linkPersonToNewFamily").hide();
@@ -34,12 +35,11 @@ function ClearForm() {
     }
     catch (err) {
         SendErrorEmail("Error updating jqgrids", err);
-
     }
-
 }
 
 function PopulatePerson(person) {
+    $("#button_addNewImage").show();
     $("#hidden_personId").val(person.PersonId);
     $("#button_linkPersonToNewFamily").show();
     $("#hidden_familyId").val(person.FamilyId);
@@ -99,15 +99,13 @@ function PopulatePerson(person) {
         $("#button_sendWelcomeMail").hide();
     }
     $("#div_saveSuccess").hide();
-    if (person.FacebookId != null) {
-        $("#img_person").prop("src", "https://graph.facebook.com/" + person.FacebookId + "/picture");
-        $("#row_image").show();
+    $("#img_person").prop("src", person.ImageLink);
+    if (person.ImageLink == '') {
+        $("#text_addNewImage").html('Upload<br/>image');
+    } else {
+        $("#text_addNewImage").html('Upload<br/>new image');
     }
-    else {
-        $("#row_image").hide();
-        $("#img_person").prop("src", " ");
-    }
-
+    
     try {
         $("#jqgEventList").jqGrid("setGridParam", { "postData": { personId: person.PersonId } });
         $("#jqgEventList").trigger("reloadGrid");
@@ -495,6 +493,25 @@ function SetupFamilyLookup() {
     });
 }
 
+function setupCropPic() {
+    var d = new Date();
+    $("#td_imageContainer").html('');
+    $("#td_imageContainer").html('<img class="cropper" style="width:600px"/>');
+    $(".cropper").attr("src", "/Images/Index?dateTime=" + d.getTime());
+    $(".cropper").cropper({
+        aspectRatio: 1,
+        done: function (data) {
+            picCrop.X1 = data.x1;
+            picCrop.X2 = data.x2;
+            picCrop.Y1 = data.y1;
+            picCrop.Y2 = data.y2;
+            picCrop.Height = data.height;
+            picCrop.Width = data.width;
+
+        }
+    });
+}
+
 var pageIsDirty = false;
 $(document).ready(function() {
     
@@ -700,12 +717,42 @@ $(document).ready(function() {
                     $(this).dialog('close');
                 }
             },
-            //"Create new family": function () {
-            //    $(this).dialog('close');
-            //},
             "Cancel": function () {
                 $(this).dialog('close');
             }
+        }
+    });
+
+    $("#button_addNewImage").click(function() {
+        $("#div_uploadPhoto").dialog('open');
+    });
+
+    $("#div_uploadPhoto").dialog({
+        autoOpen: false,
+        modal: true,
+        height: 800,
+        width: 680,
+        resizable: false,
+        buttons: {
+            "Save photo": function () {
+                $.ajax({
+                    url: "/Images/SaveCroppedImage",
+                    data: JSON.stringify(picCrop),
+                    type: "POST",
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (result) {
+                        //update picture
+                    }
+                });
+                $(this).dialog('close');
+            },
+            "Cancel": function () {
+                $(this).dialog('close');
+            }
+        },
+        open: function(event, ui) {
+            picCrop.PersonId = $("#hidden_personId").val();
+            setupCropPic();
         }
     });
 
@@ -1004,6 +1051,33 @@ $(document).ready(function() {
     .click(function () {
         CreateNewMessage($("#hidden_personId").val(), "Sms");
     });
+
+    $('#photoupload').fileupload({
+        dataType: 'json',
+        url: '/Home/UploadPhoto',
+        autoUpload: true,
+        done: function (e, data) {
+            if (data.result.errorMessage)
+                ShowErrorMessage("Error", data.result.errorMessage);
+            $("#photoProgressbar").progressbar({
+                value: 0
+            });
+            $("#photoProgressbar").hide();
+            $("#photoupload").show();
+            setupCropPic();
+            
+
+        }
+    }).on('fileuploadprogressall', function (e, data) {
+        $("#photoProgressbar").show();
+        $("#photoupload").hide();
+        var progress = parseInt(data.loaded / data.total * 100, 10);
+        $("#photoProgressbar").progressbar({
+            value: progress
+        });
+    });
+
+    
 
 });
 

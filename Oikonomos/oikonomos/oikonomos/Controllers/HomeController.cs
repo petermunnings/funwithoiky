@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Metadata.Edm;
 using System.Linq;
 using System.Web.Mvc;
 using oikonomos.common.DTOs;
@@ -29,6 +30,7 @@ namespace oikonomos.web.Controllers
         private readonly IPersonRepository _personRepository;
         private readonly IPersonService _personService;
         private readonly IUsernamePasswordRepository _usernamePasswordRepository;
+        private readonly IUploadPhotoRepository _uploadPhotoRepository;
 
         public HomeController()
         {
@@ -62,6 +64,8 @@ namespace oikonomos.web.Controllers
                 emailService,
                 new AddressRepository()
                 );
+
+            _uploadPhotoRepository = new UploadPhotoRepository();
             
         }
 
@@ -105,17 +109,6 @@ namespace oikonomos.web.Controllers
                     var s = hpf.InputStream;
                     var attachmentContent = new byte[hpf.ContentLength + 1];
                     s.Read(attachmentContent, 0, hpf.ContentLength);
-                    //var attachment = new MessageAttachment
-                    //    {
-                    //        FileName = Path.GetFileName(hpf.FileName),
-                    //        FileContent = attachmentContent
-                    //    };
-
-                    //using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
-                    //{
-                    //    context.MessageAttachments.AddObject(attachment);
-                    //    context.SaveChanges();
-                    //}
 
                     var newItem = r.FirstOrDefault(i => i.Name == hpf.FileName);
                     if (newItem == null)
@@ -146,7 +139,39 @@ namespace oikonomos.web.Controllers
             {
                 return Content("{\"errorMessage\":\"" + ex.Message + "\"}", "application/json");
             }
-            
+        }
+
+        [HttpPost]
+        public ContentResult UploadPhoto()
+        {
+            try
+            {
+                var acceptableImageTypes = new[] {"image/jpeg", "image/png", "image/bmp"};
+                Person currentPerson = SecurityHelper.CheckCurrentUser(Session, Response, ViewBag);
+                if (currentPerson == null)
+                {
+                    return Content("{\"errorMessage\":\"You have been logged out due to inactivity.  Please log in again\"}", "application/json");
+                }
+                
+                foreach (string file in Request.Files)
+                {
+                    var hpf = Request.Files[file];
+                    if (hpf.ContentLength == 0)
+                        continue;
+                    if (!acceptableImageTypes.Contains(hpf.ContentType)) return Content("{\"errorMessage\":\"The image must be a bmp, jpeg or png\"}", "application/json");
+                    var s = hpf.InputStream;
+                    var attachmentContent = new byte[hpf.ContentLength + 1];
+                    s.Read(attachmentContent, 0, hpf.ContentLength);
+                    _uploadPhotoRepository.SavePhoto(currentPerson.PersonId, attachmentContent, hpf.ContentType, hpf.FileName);
+                    var response = "{\"filename\":\"" + hpf.FileName + "\"}";
+                    return Content(response, "application/json");
+                }
+                return Content("{\"errorMessage\":\"An unkown error occured trying to upload the file\"}", "application/json");
+            }
+            catch (Exception ex)
+            {
+                return Content("{\"errorMessage\":\"" + ex.Message + "\"}", "application/json");
+            }
         }
         
         [HttpPost]

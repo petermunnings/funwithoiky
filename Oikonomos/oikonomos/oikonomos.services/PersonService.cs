@@ -83,6 +83,22 @@ namespace oikonomos.services
                         throw new ApplicationException("Invalid PersonId");
 
                     //SetupPermissions(context, person, currentPerson.Church);
+
+                    var imageLink = string.Empty;
+                    var faceBookId = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int) OptionalFields.Facebook) == null ? string.Empty : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int) OptionalFields.Facebook).Value;
+                    var img = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int) OptionalFields.ImageLink) == null ? string.Empty : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int) OptionalFields.ImageLink).Value;
+                    if (img != string.Empty)
+                    {
+                        imageLink = string.Format("https://www.oikonomos.co.za/Images/{0}", img);
+                    }
+                    else
+                    {
+                        if (faceBookId != string.Empty)
+                        {
+                            imageLink = string.Format("https://graph.facebook.com/{0}/picture", faceBookId);
+                        }
+                    }
+
                     var personViewModel = new PersonViewModel
                         {
                             PersonId = person.PersonId,
@@ -97,7 +113,8 @@ namespace oikonomos.services
                             WorkPhone = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int) OptionalFields.WorkPhone) == null ? string.Empty : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int) OptionalFields.WorkPhone).Value,
                             Skype = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int) OptionalFields.Skype) == null ? string.Empty : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int) OptionalFields.Skype).Value,
                             Twitter = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int) OptionalFields.Twitter) == null ? string.Empty : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int) OptionalFields.Twitter).Value,
-                            FacebookId = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int) OptionalFields.Facebook) == null ? string.Empty : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int) OptionalFields.Facebook).Value,
+                            ImageLink = imageLink,
+                            FacebookId = faceBookId,
                             Occupation = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Occupation) == null ? string.Empty : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int)OptionalFields.Occupation).Value,
                             MaritalStatus = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.MaritalStatus) == null ? string.Empty : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int)OptionalFields.MaritalStatus).Value,
                             Gender = person.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.Gender) == null ? string.Empty : person.PersonOptionalFields.First(c => c.OptionalFieldId == (int)OptionalFields.Gender).Value,
