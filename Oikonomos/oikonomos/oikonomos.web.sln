@@ -34,6 +34,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "oikonomos.repositories", "o
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "oikonomos.repositories.tests", "oikonomos.repositories.tests\oikonomos.repositories.tests.csproj", "{F3D322E8-95D3-408A-B4E8-911D92D5AEED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailChecker", "MailChecker\MailChecker.csproj", "{A2503507-F787-4B41-953C-B0F882033E58}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helper Libraries", "Helper Libraries", "{14C5668E-5DAF-4966-BB6F-C69EF9C055BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenPop", "Helper Classes\OpenPop\OpenPop.csproj", "{75B3E0DF-61C3-4643-AB47-DBE1CFE3D303}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = oikonomos.web.vsmdi
@@ -83,6 +89,14 @@ Global
 		{F3D322E8-95D3-408A-B4E8-911D92D5AEED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3D322E8-95D3-408A-B4E8-911D92D5AEED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3D322E8-95D3-408A-B4E8-911D92D5AEED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2503507-F787-4B41-953C-B0F882033E58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2503507-F787-4B41-953C-B0F882033E58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2503507-F787-4B41-953C-B0F882033E58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2503507-F787-4B41-953C-B0F882033E58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75B3E0DF-61C3-4643-AB47-DBE1CFE3D303}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75B3E0DF-61C3-4643-AB47-DBE1CFE3D303}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75B3E0DF-61C3-4643-AB47-DBE1CFE3D303}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75B3E0DF-61C3-4643-AB47-DBE1CFE3D303}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -95,5 +109,6 @@ Global
 		{42B40471-19BB-4727-9973-924745733AFD} = {0B58F68F-8814-465F-81EA-22023181F830}
 		{FE1C517D-4E67-403F-BF8D-0709A78DD900} = {0B58F68F-8814-465F-81EA-22023181F830}
 		{19DA1C75-7E17-4DE5-9956-8B4BD1A9C248} = {0B58F68F-8814-465F-81EA-22023181F830}
+		{75B3E0DF-61C3-4643-AB47-DBE1CFE3D303} = {14C5668E-5DAF-4966-BB6F-C69EF9C055BA}
 	EndGlobalSection
 EndGlobal

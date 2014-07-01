@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A2503507-F787-4B41-953C-B0F882033E58}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MailChecker</RootNamespace>
+    <AssemblyName>MailChecker</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Helper Classes\OpenPop\OpenPop.csproj">
+      <Project>{75b3e0df-61c3-4643-ab47-dbe1cfe3d303}</Project>
+      <Name>OpenPop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\oikonomos.common\oikonomos.common.csproj">
+      <Project>{54B0FB5D-AFBE-448A-ABD9-A0FBF75433D9}</Project>
+      <Name>oikonomos.common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\oikonomos.repositories.interfaces\oikonomos.repositories.interfaces.csproj">
+      <Project>{FE1C517D-4E67-403F-BF8D-0709A78DD900}</Project>
+      <Name>oikonomos.repositories.interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\oikonomos.repositories\oikonomos.repositories.csproj">
+      <Project>{19DA1C75-7E17-4DE5-9956-8B4BD1A9C248}</Project>
+      <Name>oikonomos.repositories</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\oikonomos.services.interfaces\oikonomos.services.interfaces.csproj">
+      <Project>{BB21F4DD-E8C9-4969-B6EB-27B35CC1AF10}</Project>
+      <Name>oikonomos.services.interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\oikonomos.services\oikonomos.services.csproj">
+      <Project>{7939F5A9-5DDF-4481-8C7F-980B1622FB69}</Project>
+      <Name>oikonomos.services</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

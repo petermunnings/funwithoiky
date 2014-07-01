@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Mail;
+using System.Text.RegularExpressions;
 using System.Web;
 using oikonomos.common.DTOs;
 using oikonomos.repositories.interfaces;
@@ -56,7 +57,7 @@ namespace oikonomos.services
                             }
 
                             message.To.Add(emailTo);
-                            SendEmail(message, login, password, displayFrom);
+                            SendEmail(message, login, password, displayFrom, messageId);
                             _messageRecepientRepository.SaveMessageRecepient(messageId, _personRepository.FetchPersonIdsFromEmailAddress(emailTo, churchId),"Success", string.Empty);
                         }
                     }
@@ -64,6 +65,46 @@ namespace oikonomos.services
                     {
                         _messageRecepientRepository.SaveMessageRecepient(messageId, _personRepository.FetchPersonIdsFromEmailAddress(emailTo, churchId), "Failure", e.Message);
                     }
+                }
+            }
+            catch (Exception)
+            {
+                //There is a problem creating the email...
+            }
+        }
+
+        public void SendEmail(string subject, string body, string displayName, string emailTo, string login,
+            string password, int personIdFrom, int churchId, AttachmentCollection attachmentCollection)
+        {
+            try
+            {
+                var messageId = _messageRepository.SaveMessage(personIdFrom, subject, body, "Email");
+
+                try
+                {
+                    using (var message = new MailMessage())
+                    {
+                        message.From = new MailAddress(login);
+                        message.Subject = subject;
+                        message.Body = body;
+                        message.IsBodyHtml = true;
+                        if (attachmentCollection != null)
+                        {
+                            foreach (var attachment in attachmentCollection)
+                            {
+                                message.Attachments.Add(attachment);
+                                //Need to save the attachements
+                            }
+                        }
+
+                        message.To.Add(emailTo);
+                        SendEmail(message, login, password, displayName, messageId);
+                        _messageRecepientRepository.SaveMessageRecepient(messageId, _personRepository.FetchPersonIdsFromEmailAddress(emailTo, churchId), "Success", string.Empty);
+                    }
+                }
+                catch (Exception e)
+                {
+                    _messageRecepientRepository.SaveMessageRecepient(messageId, _personRepository.FetchPersonIdsFromEmailAddress(emailTo, churchId), "Failure", e.Message);
                 }
             }
             catch (Exception)
@@ -84,7 +125,7 @@ namespace oikonomos.services
                     message.To.Add("peter@munnings.co.za");
                     message.IsBodyHtml = false;
 
-                    SendEmail(message, "support@oikonomos.co.za", "sandton2000", "Oiky Error");
+                    SendEmail(message, "support@oikonomos.co.za", "sandton2000", "Oiky Error", 0);
                 }
                 catch (Exception)
                 {
@@ -105,7 +146,7 @@ namespace oikonomos.services
                     message.To.Add("peter@munnings.co.za");
                     message.IsBodyHtml = true;
 
-                    SendEmail(message, "support@oikonomos.co.za", "sandton2000", "Oiky System Message");
+                    SendEmail(message, "support@oikonomos.co.za", "sandton2000", "Oiky System Message", 0);
 
                 }
                 catch (Exception)
@@ -115,25 +156,42 @@ namespace oikonomos.services
             }
         }
 
-        private static void SendEmail(MailMessage message, string username, string password, string displayName)
+        private static void SendEmail(MailMessage message, string username, string password, string displayName, int messageId)
         {
             message.From = new MailAddress(username, displayName);
 
             using (var client = new SmtpClient("mail.oikonomos.co.za"))
             {
                 client.Credentials = new System.Net.NetworkCredential(username, password);
-                AddDisclaimer(message, displayName);
+                AddMessageId(message, messageId);
                 client.Send(message);
             }
         }
 
-        private static void AddDisclaimer(MailMessage message, string displayName)
+        private static void AddMessageId(MailMessage message, int messageId)
         {
-            message.Body = "<body style='font-family:Verdana'>" + message.Body;
-            var disclaimer = "<p>&nbsp;</p><hr />";
-            disclaimer += string.Format("<p style='font-size:9px'>Please do not reply to this email.  This email was sent by {0}</p>", displayName);
-            message.Body += disclaimer;
-            message.Body += "</body>";
+            const string pattern = @"##([0-9]*)##";
+            var regex = new Regex(pattern);
+            var matches = regex.Matches(message.Body);
+            if (matches.Count > 0 && matches[0].Groups.Count > 1)
+            {
+                message.Body = Regex.Replace(message.Body, pattern, string.Format("##{0}##", messageId));
+            }
+            else
+            {
+                if (message.Body.Contains("</body>"))
+                {
+                    message.Body = message.Body.Replace("</body>", string.Format("<p style='font-size:7px'>##{0}##</p>", messageId) + "</body>");
+                }
+                else
+                {
+                    message.Body = "<body style='font-family:Verdana'>" + message.Body;
+                    var messageIdSection = "<p>&nbsp;</p><hr />";
+                    messageIdSection += string.Format("<p style='font-size:7px'>##{0}##</p>", messageId);
+                    message.Body += messageIdSection;
+                    message.Body += "</body>";
+                }
+            }
         }
     }
 }

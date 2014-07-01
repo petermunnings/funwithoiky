@@ -281,7 +281,7 @@ namespace oikonomos.repositories
         public IEnumerable<int> FetchPersonIdsFromEmailAddress(string emailAddress, int churchId)
         {
             var peopleInChurch = Context.PersonChurches.Where(p => p.ChurchId == churchId);
-            return peopleInChurch.Where(p => p.Person.Email == emailAddress).Select(p => p.PersonId);
+            return peopleInChurch.Where(p => p.Person.Email == emailAddress).Select(p => p.PersonId).ToList();
         }
 
         public IEnumerable<int> FetchPersonIdsFromCellPhoneNos(IEnumerable<string> cellPhoneNos, int churchId)

@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="DTOs\CommentDto.cs" />
     <Compile Include="DTOs\EventDto.cs" />
+    <Compile Include="DTOs\PersonDto.cs" />
     <Compile Include="DTOs\PersonEventDto.cs" />
     <Compile Include="DTOs\UploadFilesResult.cs" />
     <Compile Include="DTOs\UploadPhotoDto.cs" />

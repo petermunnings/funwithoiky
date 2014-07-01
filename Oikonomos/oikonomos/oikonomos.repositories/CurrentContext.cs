@@ -33,7 +33,7 @@ namespace oikonomos.repositories
                     Task.Factory.StartNew(() => SaveKey(key));
                 }
                 
-                if(HttpContext.Current.Session["LoggedOnPerson"]!=null)
+                if(HttpContext.Current !=null && HttpContext.Current.Session["LoggedOnPerson"]!=null)
                 {
                     var person = (Person)HttpContext.Current.Session["LoggedOnPerson"];
 

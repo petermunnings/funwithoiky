@@ -79,7 +79,7 @@ namespace oikonomos.services
 
         public string SendGroupEmail(IEnumerable<string> addresses, string subject, string body, Person currentPerson, IEnumerable<UploadFilesResult> attachmentList)
         {
-            Task.Factory.StartNew(() => _emailSender.SendEmail(subject, body, currentPerson.Fullname, addresses, currentPerson.Church.EmailLogin, currentPerson.Church.EmailPassword, currentPerson.PersonId, currentPerson.Church.ChurchId, attachmentList));
+            Task.Factory.StartNew(() => _emailSender.SendEmail(subject, body, currentPerson.Church.EmailLogin, addresses, currentPerson.Church.EmailLogin, currentPerson.Church.EmailPassword, currentPerson.PersonId, currentPerson.Church.ChurchId, attachmentList));
             return "Emails queued for sending";
         }
 
