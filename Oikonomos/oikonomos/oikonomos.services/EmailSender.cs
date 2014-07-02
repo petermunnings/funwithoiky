@@ -93,7 +93,6 @@ namespace oikonomos.services
                             foreach (var attachment in attachmentCollection)
                             {
                                 message.Attachments.Add(attachment);
-                                //Need to save the attachements
                             }
                         }
 
@@ -181,13 +180,13 @@ namespace oikonomos.services
             {
                 if (message.Body.Contains("</body>"))
                 {
-                    message.Body = message.Body.Replace("</body>", string.Format("<p style='font-size:7px'>##{0}##</p>", messageId) + "</body>");
+                    message.Body = message.Body.Replace("</body>", string.Format("<p style='font-size:7px; color:white'>##{0}##</p>", messageId) + "</body>");
                 }
                 else
                 {
                     message.Body = "<body style='font-family:Verdana'>" + message.Body;
-                    var messageIdSection = "<p>&nbsp;</p><hr />";
-                    messageIdSection += string.Format("<p style='font-size:7px'>##{0}##</p>", messageId);
+                    var messageIdSection = "<p>&nbsp;</p>";
+                    messageIdSection += string.Format("<p style='font-size:7px; color:white'>##{0}##</p>", messageId);
                     message.Body += messageIdSection;
                     message.Body += "</body>";
                 }

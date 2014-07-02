@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Mail;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -37,61 +39,26 @@ namespace MailChecker
 
         }
 
-        private static void CheckForNewEmails(Object source, ElapsedEventArgs e)
+        private static async void CheckForNewEmails(Object source, ElapsedEventArgs e)
         {
             Console.WriteLine("{0}: Checking for new messages...", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-            using (var pop3Client = new Pop3Client())
+            try
             {
-                var messages = GetNewMessages(pop3Client);
-                var messageCount = messages.Count();
-                Console.WriteLine("{0} Messages found", messageCount);
-                if (messageCount > 0)
+                using (var client = new HttpClient())
                 {
-                    IMessageRepository messageRepository = new MessageRepository();
-                    IMessageRecepientRepository messageRecepientRepository = new MessageRecepientRepository();
-                    IMessageAttachmentRepository messageAttachmentRepository = new MessageAttachmentRepository();
-                    IPermissionRepository permissionRepository = new PermissionRepository();
-                    IChurchRepository churchRepository = new ChurchRepository();
-                    IPersonRepository personRepository = new PersonRepository(permissionRepository, churchRepository);
+                    client.BaseAddress = new Uri("https://www.oikonomos.co.za/");
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                    var emailSender = new EmailSender(messageRepository, messageRecepientRepository, messageAttachmentRepository, personRepository);
-
-                    for (var count = 0; count < messageCount; count++)
-                    {
-                        var mm = messages[count].ToMailMessage();
-                        var regex = new Regex(@"##([0-9]*)##");
-                        var matches = regex.Matches(mm.Body);
-                        if (matches.Count > 0 && matches[0].Groups.Count > 1)
-                        {
-                            try
-                            {
-                                int messageId;
-                                if (int.TryParse(matches[0].Groups[1].Value, out messageId))
-                                {
-                                    var originalSender = messageRepository.GetSender(messageId);
-                                    if (originalSender != null)
-                                    {
-                                        var originalReceiver = personRepository.FetchPersonIdsFromEmailAddress(mm.From.Address, originalSender.ChurchId);
-                                        var fromPersonId = originalSender.PersonId;
-
-                                        if (originalReceiver.Any())
-                                        {
-                                            fromPersonId = originalReceiver.First();
-                                        }
-                                        Console.WriteLine("Forwarding email on to {0}", originalSender.Email);
-                                        emailSender.SendEmail(mm.Subject, mm.Body, Username, originalSender.Email, Username, Password, fromPersonId, originalSender.ChurchId, mm.Attachments);
-                                    }
-                                    pop3Client.DeleteMessage(count + 1);
-                                }
-                            }
-                            catch (Exception errSending)
-                            {
-                                Console.WriteLine(errSending.Message);
-                            }
-                        }
-
-                    }
+                    var response = await client.GetAsync("api/CheckForEmail");
+                    if (!response.IsSuccessStatusCode) return;
+                    var responseMessages = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine(responseMessages);
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
 

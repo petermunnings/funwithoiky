@@ -26,17 +26,16 @@ namespace oikonomos.repositories
                     _connectionString = ConfigurationManager.AppSettings["ConnectionString"];
                 }
 
-                var key = HttpContext.Current==null ? "Test" : HttpContext.Current.Session.SessionID;
+                var key = HttpContext.Current == null || HttpContext.Current.Session==null ? "Test" : HttpContext.Current.Session.SessionID;
                 if (!instances.ContainsKey(key))
                 {
                     instances.Add(key,new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString));
                     Task.Factory.StartNew(() => SaveKey(key));
                 }
-                
-                if(HttpContext.Current !=null && HttpContext.Current.Session["LoggedOnPerson"]!=null)
+
+                if (HttpContext.Current != null && HttpContext.Current.Session !=null && HttpContext.Current.Session["LoggedOnPerson"] != null)
                 {
                     var person = (Person)HttpContext.Current.Session["LoggedOnPerson"];
-
                     Task.Factory.StartNew(() => UpdateCurrentUser(key, person.Username, person.Church==null ? string.Empty: person.Church.Name));
                 }
                 return instances[key];

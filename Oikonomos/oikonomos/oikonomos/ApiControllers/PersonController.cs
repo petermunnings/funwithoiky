@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Web.Http;
-using oikonomos.data;
-using oikonomos.data.DataAccessors;
 using oikonomos.repositories;
 using oikonomos.repositories.Messages;
 using oikonomos.repositories.interfaces;

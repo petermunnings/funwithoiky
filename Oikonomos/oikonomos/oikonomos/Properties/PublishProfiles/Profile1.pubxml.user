@@ -84,7 +84,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/10/2012 21:20:38</publishTime>
     </File>
     <File Include="bin/oikonomos.repositories.dll">
-      <publishTime>07/01/2014 22:21:12</publishTime>
+      <publishTime>07/02/2014 20:58:21</publishTime>
     </File>
     <File Include="bin/oikonomos.repositories.interfaces.dll">
       <publishTime>07/01/2014 22:21:12</publishTime>
@@ -96,7 +96,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/10/2012 21:20:39</publishTime>
     </File>
     <File Include="bin/oikonomos.services.dll">
-      <publishTime>07/01/2014 22:21:13</publishTime>
+      <publishTime>07/02/2014 20:58:21</publishTime>
     </File>
     <File Include="bin/oikonomos.services.interfaces.dll">
       <publishTime>07/01/2014 22:21:12</publishTime>
@@ -108,10 +108,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/10/2012 21:20:39</publishTime>
     </File>
     <File Include="bin/oikonomos.web.dll">
-      <publishTime>07/01/2014 22:21:13</publishTime>
+      <publishTime>07/02/2014 20:58:22</publishTime>
     </File>
     <File Include="bin/oikonomos.web.pdb">
       <publishTime>10/10/2012 21:24:02</publishTime>
+    </File>
+    <File Include="bin/OpenPop.dll">
+      <publishTime>07/02/2014 20:58:20</publishTime>
     </File>
     <File Include="bin/PdfSharp.dll">
       <publishTime>08/27/2013 12:43:41</publishTime>
