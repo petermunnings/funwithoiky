@@ -42,7 +42,7 @@ namespace oikonomos.services
                     {
                         using (var message = new MailMessage())
                         {
-                            message.From = new MailAddress(login);
+                            message.From = new MailAddress(login, displayFrom);
                             message.Subject = subject;
                             message.Body = body;
                             message.IsBodyHtml = true;
@@ -57,7 +57,7 @@ namespace oikonomos.services
                             }
 
                             message.To.Add(emailTo);
-                            SendEmail(message, login, password, displayFrom, messageId);
+                            SendEmail(message, login, password, messageId);
                             _messageRecepientRepository.SaveMessageRecepient(messageId, _personRepository.FetchPersonIdsFromEmailAddress(emailTo, churchId),"Success", string.Empty);
                         }
                     }
@@ -84,7 +84,7 @@ namespace oikonomos.services
                 {
                     using (var message = new MailMessage())
                     {
-                        message.From = new MailAddress(login);
+                        message.From = new MailAddress(login, displayName);
                         message.Subject = subject;
                         message.Body = body;
                         message.IsBodyHtml = true;
@@ -97,7 +97,7 @@ namespace oikonomos.services
                         }
 
                         message.To.Add(emailTo);
-                        SendEmail(message, login, password, displayName, messageId);
+                        SendEmail(message, login, password, messageId);
                         _messageRecepientRepository.SaveMessageRecepient(messageId, _personRepository.FetchPersonIdsFromEmailAddress(emailTo, churchId), "Success", string.Empty);
                     }
                 }
@@ -120,11 +120,12 @@ namespace oikonomos.services
                 {
                     message.Subject = "Exception from website";
                     message.Body = ex.ToString();
+                    message.From = new MailAddress("support@oikonomos.co.za", "Oiky Support");
 
                     message.To.Add("peter@munnings.co.za");
                     message.IsBodyHtml = false;
 
-                    SendEmail(message, "support@oikonomos.co.za", "sandton2000", "Oiky Error", 0);
+                    SendEmail(message, "support@oikonomos.co.za", "sandton2000", 0);
                 }
                 catch (Exception)
                 {
@@ -139,13 +140,14 @@ namespace oikonomos.services
             {
                 try
                 {
+                    message.From = new MailAddress("support@oikonomos.co.za", "Oiky support");
                     message.Subject = subject;
                     message.Body = HttpUtility.HtmlDecode(body);
 
                     message.To.Add("peter@munnings.co.za");
                     message.IsBodyHtml = true;
 
-                    SendEmail(message, "support@oikonomos.co.za", "sandton2000", "Oiky System Message", 0);
+                    SendEmail(message, "support@oikonomos.co.za", "sandton2000", 0);
 
                 }
                 catch (Exception)
@@ -155,10 +157,8 @@ namespace oikonomos.services
             }
         }
 
-        private static void SendEmail(MailMessage message, string username, string password, string displayName, int messageId)
+        private static void SendEmail(MailMessage message, string username, string password, int messageId)
         {
-            message.From = new MailAddress(username, displayName);
-
             using (var client = new SmtpClient("mail.oikonomos.co.za"))
             {
                 client.Credentials = new System.Net.NetworkCredential(username, password);
