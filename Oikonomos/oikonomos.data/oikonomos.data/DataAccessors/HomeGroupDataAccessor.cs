@@ -519,6 +519,10 @@ namespace oikonomos.data.DataAccessors
                                          select g).FirstOrDefault();
                     if (groupToDelete != null)
                     {
+                        var linkedPersonToDelete = context.PersonLinkedToGroups.FirstOrDefault(p => p.GroupId == groupToDelete.GroupId && p.Description == CacheNames.OverseeingElder);
+                        if (linkedPersonToDelete != null)
+                            context.PersonLinkedToGroups.DeleteObject(linkedPersonToDelete);
+                        
                         context.Groups.DeleteObject(groupToDelete);
                         context.SaveChanges();
                         message = "Group succesfully deleted";
@@ -1041,20 +1045,11 @@ namespace oikonomos.data.DataAccessors
                     else
                     {
                         var linkedPersonToDelete = context.PersonLinkedToGroups.FirstOrDefault(p => p.GroupId == hgvm.GroupId && p.Description == CacheNames.OverseeingElder);
-                        if (linkedPersonToDelete == null)
+                        if (linkedPersonToDelete != null)
                         {
-                            var newOverseeingElder = new PersonLinkedToGroup
-                            {
-                                GroupId = hgvm.GroupId,
-                                PersonId = hgvm.OverseeingElderId,
-                                Description = CacheNames.OverseeingElder
-                            };
-                            context.PersonLinkedToGroups.AddObject(newOverseeingElder);
+                            context.PersonLinkedToGroups.DeleteObject(linkedPersonToDelete);
                         }
-                        else
-                        {
-                            linkedPersonToDelete.PersonId = hgvm.OverseeingElderId;
-                        }
+                        addNewElder(context, hg.GroupId, hgvm.OverseeingElderId);
                     }
                     context.SaveChanges();
                     return hg.GroupId;
@@ -1062,6 +1057,17 @@ namespace oikonomos.data.DataAccessors
             }
             
             throw new ApplicationException("You do not have the required permission");
+        }
+
+        private static void addNewElder(oikonomosEntities context, int groupId, int overseeingElderId)
+        {
+            var newOverseeingElder = new PersonLinkedToGroup
+            {
+                GroupId = groupId,
+                PersonId = overseeingElderId,
+                Description = CacheNames.OverseeingElder
+            };
+            context.PersonLinkedToGroups.AddObject(newOverseeingElder);
         }
 
         public static void SaveGroupSettings(Person currentPerson, GroupDto groupSettings)

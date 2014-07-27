@@ -244,25 +244,6 @@ namespace oikonomos.data.DataAccessors
             }
         }
 
-        public static List<EventListModel> FetchCommentHistory(int personId, Person currentPerson)
-        {
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
-            {
-                return (from e in context.OldEvents
-                        where e.TableId == (int)Tables.Person
-                        && e.Reference == personId
-                        && e.CreatedByPersonId == currentPerson.PersonId
-                        && e.Description == EventNames.Comment
-                        orderby e.EventDate descending
-                        select new EventListModel
-                        {
-                            EntityName = e.Description,
-                            Description = e.Comments,
-                            Date = e.EventDate
-                        }).Take(5).ToList();
-            }
-        }
-
         public static Dictionary<int, string> FetchGroupComments(Person currentPerson, int groupId)
         {
             var comments = new Dictionary<int, string>();
@@ -300,8 +281,7 @@ namespace oikonomos.data.DataAccessors
 
         public static List<AttendanceEventViewModel> FetchGroupAttendance(Person currentPerson, int groupId, DateTime startDate, DateTime? endDate)
         {
-            List<AttendanceEventViewModel> groupAttendance = new List<AttendanceEventViewModel>();
-            using (oikonomosEntities context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
+            using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
                 if (!(currentPerson.HasPermission(Permissions.EditOwnGroups) || currentPerson.HasPermission(Permissions.EditAllGroups)))
                 {

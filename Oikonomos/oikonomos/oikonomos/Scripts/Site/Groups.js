@@ -584,24 +584,27 @@ function EditGroup() {
     $("#hidden_homeGroupId").val(selectedGroupId);
     $.post("/Ajax/FetchGroupInfo", $.postify(postData), function (data) {
 
-        $("#text_groupName").val(data.GroupInfo.GroupName);
-        $("#text_homeGroupLeader").val(data.GroupInfo.LeaderName);
-        $("#hidden_homeGroupLeaderId").val(data.GroupInfo.LeaderId);
-        $("#text_homeGroupAdministrator").val(data.GroupInfo.AdministratorName);
-        $("#hidden_homeGroupAdministratorId").val(data.GroupInfo.AdministratorId);
-        $("#hidden_overseeingElderId").val(data.GroupInfo.OverseeingElderId);
-        $("#text_overseeingElder").val(data.GroupInfo.OverseeingElderName);
-        $("#text_address1").val(data.GroupInfo.Address1);
-        $("#text_address2").val(data.GroupInfo.Address2);
-        $("#text_address3").val(data.GroupInfo.Address3);
-        $("#text_address4").val(data.GroupInfo.Address4);
-        $("#hidden_addressType").val(data.GroupInfo.AddressType);
-        $("#hidden_addressId").val(data.GroupInfo.AddressId);
-        $("#hidden_lat").val(data.GroupInfo.Lat);
-        $("#hidden_lng").val(data.GroupInfo.Lng);
-        $("#SelectedGroupClassificationId").val(data.GroupInfo.GroupClassificationId);
-        $("#SelectedSuburbId").val(data.GroupInfo.SuburbId);
-
+        if (data.SessionTimeOut == true) {
+            window.location = "/Home/Index";
+        } else {
+            $("#text_groupName").val(data.GroupInfo.GroupName);
+            $("#text_homeGroupLeader").val(data.GroupInfo.LeaderName);
+            $("#hidden_homeGroupLeaderId").val(data.GroupInfo.LeaderId);
+            $("#text_homeGroupAdministrator").val(data.GroupInfo.AdministratorName);
+            $("#hidden_homeGroupAdministratorId").val(data.GroupInfo.AdministratorId);
+            $("#hidden_overseeingElderId").val(data.GroupInfo.OverseeingElderId);
+            $("#text_overseeingElder").val(data.GroupInfo.OverseeingElderName);
+            $("#text_address1").val(data.GroupInfo.Address1);
+            $("#text_address2").val(data.GroupInfo.Address2);
+            $("#text_address3").val(data.GroupInfo.Address3);
+            $("#text_address4").val(data.GroupInfo.Address4);
+            $("#hidden_addressType").val(data.GroupInfo.AddressType);
+            $("#hidden_addressId").val(data.GroupInfo.AddressId);
+            $("#hidden_lat").val(data.GroupInfo.Lat);
+            $("#hidden_lng").val(data.GroupInfo.Lng);
+            $("#SelectedGroupClassificationId").val(data.GroupInfo.GroupClassificationId);
+            $("#SelectedSuburbId").val(data.GroupInfo.SuburbId);
+        }
     });
 
     $("#edit_homeGroup").dialog(

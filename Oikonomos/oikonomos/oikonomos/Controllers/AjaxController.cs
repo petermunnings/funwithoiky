@@ -342,17 +342,14 @@ namespace oikonomos.web.Controllers
             return Json(jqGridData);
         }
         
-
         [AcceptVerbs(HttpVerbs.Post)]
         public JsonResult FetchEventList(JqGridRequest request, DateTime fromDate, DateTime toDate)
         {
-            JqGridData jqGridData = new JqGridData();
-            if (Session[SessionVariable.LoggedOnPerson] != null)
-            {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                jqGridData = EventDataAccessor.FetchEventListJQGrid(currentPerson, fromDate, toDate, request);
-            }
-
+            var jqGridData = new JqGridData();
+            if (Session[SessionVariable.LoggedOnPerson] == null) return Json(jqGridData);
+            
+            var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+            jqGridData = EventDataAccessor.FetchEventListJQGrid(currentPerson, fromDate, toDate, request);
             return Json(jqGridData);
         }
         
