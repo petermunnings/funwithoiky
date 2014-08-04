@@ -33,15 +33,38 @@ namespace oikonomos.services
         {
             //Must remove the &
             smsText = smsText.Replace("&", "and");
-            var intCellPhoneNos = new List<string>();
-            foreach (var intNo in cellPhoneNos.Select(cellPhoneNo => Utils.ConvertCellPhoneToInternational(cellPhoneNo, currentPerson.Church.Country)).Where(intNo => !intCellPhoneNos.Contains(intNo)))
-            {
-                intCellPhoneNos.Add(intNo);
-            }
+            var intCellPhoneNos = ConvertCellNosToInternationalFormat(cellPhoneNos, currentPerson.Church.Country);
 
-            var messageId = _messageRepository.SaveMessage(currentPerson.PersonId, smsText, string.Empty, "Sms");
+            var returnText = string.Empty;
+            var completedNos = 0;
+            const int reasonableNo = 20;
+            while (completedNos < intCellPhoneNos.Count)
+            {
+                var shortListOfInternationalFormattedNos = intCellPhoneNos.Skip(completedNos).Take(reasonableNo);
+                returnText += string.Format(" Batch {0}: {1}    ---", (completedNos/reasonableNo)+1, SendToListOfNumbers(smsText, username, password, shortListOfInternationalFormattedNos, currentPerson.PersonId, currentPerson.ChurchId));
+                completedNos += reasonableNo;
+            }
+            return returnText;
+        }
+
+        private static Dictionary<string, string> ConvertCellNosToInternationalFormat(IEnumerable<string> cellPhoneNos, string country)
+        {
+            var intCellPhoneNos = new Dictionary<string, string>();
+            foreach (var cellNo in cellPhoneNos)
+            {
+                var intCellNo = Utils.ConvertCellPhoneToInternational(cellNo, country);
+
+                if (!intCellPhoneNos.ContainsKey(intCellNo))
+                    intCellPhoneNos.Add(intCellNo, cellNo);
+            }
+            return intCellPhoneNos;
+        }
+
+        private string SendToListOfNumbers(string smsText, string username, string password, IEnumerable<KeyValuePair<string, string>> cellPhoneNos, int fromPersonId, int churchId)
+        {
+            var messageId = _messageRepository.SaveMessage(fromPersonId, smsText, string.Empty, "Sms");
             var responseText = string.Empty;
-            var urlString = BuildQueryParams(intCellPhoneNos, smsText, username, password, _bulkSmsUrl);
+            var urlString = BuildQueryParams(smsText, username, password, _bulkSmsUrl, cellPhoneNos.Select(k=>k.Key));
             try
             {
                 var completeUrl = urlString.ToString();
@@ -50,44 +73,43 @@ namespace oikonomos.services
                 var result = response.Split('|');
                 if (result[0].Contains("invalid credentials"))
                 {
-                    return sendMessageUsingCommunityBulkSms(smsText, cellPhoneNos, username, password, currentPerson, intCellPhoneNos, messageId, responseText);
+                    responseText = SendMessageUsingCommunityBulkSms(smsText, username, password, cellPhoneNos, messageId, responseText, churchId);
                 }
-                SaveMessage(cellPhoneNos, currentPerson, response, messageId);
-                return response;
+                else
+                {
+                    SaveMessage(response, messageId, churchId, cellPhoneNos.Select(k=>k.Value));
+                    responseText = response;
+                }
             }
             catch (Exception ex)
             {
                 responseText += "There was an error sending your Smses: " + ex.Message;
             }
-
             return responseText;
         }
 
-        private string sendMessageUsingCommunityBulkSms(string smsText, IEnumerable<string> cellPhoneNos, string username,
-                                                        string password, Person currentPerson, IEnumerable<string> intCellPhoneNos,
-                                                        int messageId, string responseText)
+        private string SendMessageUsingCommunityBulkSms(string smsText, string username, string password, IEnumerable<KeyValuePair<string, string>> cellPhoneNos, int messageId, string responseText, int churchId)
         {
-            var urlString = BuildQueryParams(intCellPhoneNos, smsText, username, password, _bulkSmsCommunityUrl);
+            var urlString = BuildQueryParams(smsText, username, password, _bulkSmsCommunityUrl, cellPhoneNos.Select(k=>k.Key));
             var completeUrl = urlString.ToString();
             var secondTry = completeUrl.Substring(0, completeUrl.Length - 1);
             var response2 = _httpPostService.HttpSend(secondTry);
-            SaveMessage(cellPhoneNos, currentPerson, response2, messageId);
+            SaveMessage(response2, messageId, churchId, cellPhoneNos.Select(k=>k.Value));
             responseText += response2;
             return responseText;
         }
 
-        private void SaveMessage(IEnumerable<string> cellPhoneNos, Person currentPerson, string response, int messageId)
+        private void SaveMessage(string response, int messageId, int churchId, IEnumerable<string> standardFormatCellNos)
         {
             var messageStatus = response == "Smses sent succesfully" ? "Success" : "Failure";
-            _messageRecepientRepository.SaveMessageRecepient(messageId, _personRepository.FetchPersonIdsFromCellPhoneNos(cellPhoneNos, currentPerson.ChurchId), messageStatus, messageStatus == "Success" ? string.Empty : response);
+            _messageRecepientRepository.SaveMessageRecepient(messageId, _personRepository.FetchPersonIdsFromCellPhoneNos(standardFormatCellNos, churchId), messageStatus, messageStatus == "Success" ? string.Empty : response);
         }
 
-        private static StringBuilder BuildQueryParams(
-            IEnumerable<string> cellPhoneNos, 
-            string smsText, 
+        private static StringBuilder BuildQueryParams(string smsText, 
             string username, 
             string password, 
-            string url)
+            string url, 
+            IEnumerable<string> internationFormatCellNos)
         {
             var urlString = new StringBuilder();
             urlString.Append(url);
@@ -100,7 +122,7 @@ namespace oikonomos.services
            urlString.Append("&want_report=1");
             
             urlString.Append("&msisdn=");
-            foreach (var cellPhone in cellPhoneNos)
+            foreach (var cellPhone in internationFormatCellNos)
             {
                 urlString.Append(cellPhone);
                 urlString.Append(",");
