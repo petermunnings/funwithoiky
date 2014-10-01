@@ -101,6 +101,10 @@ namespace oikonomos.services
                             imageLink = string.Format("https://graph.facebook.com/{0}/picture", faceBookId);
                             imageLinkLarge = string.Format("https://graph.facebook.com/{0}/picture?type=large", faceBookId);
                         }
+                        else
+                        {
+                            imageLink = "/Content/images/unknown.png";
+                        }
                     }
 
                     var personViewModel = new PersonViewModel

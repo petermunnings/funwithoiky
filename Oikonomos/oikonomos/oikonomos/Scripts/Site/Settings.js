@@ -38,6 +38,108 @@ function SaveSite(site) {
     });
 }
 
+function SetupSiteAddressLookup() {
+    $("#text_siteaddress1").autocomplete({
+        source: function (request, response) {
+            $("#ajax_sitegpsCoordinates").show();
+            var address = $("#text_siteaddress1").val().replace(/ /g, "+") + ", " + $("#hidden_googleSearchRegion").val();
+            Google.searchAddress(address).then(function (data) {
+                $("#ajax_sitegpsCoordinates").hide();
+                response(data);
+            });
+        }
+        ,
+        minLength: 4,
+        select: function (event, ui) {
+            AddressSelected(ui.item.id, 2, 'site', false);
+        },
+        open: function () {
+            $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
+        },
+        close: function () {
+            $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
+        }
+    });
+
+    $("#text_siteaddress2").autocomplete({
+        source: function (request, response) {
+            $("#saveMessage_Sites").html("");
+            if ($("#hidden_siteaddressChosen").val() == "selected") {
+                response("");
+                return;
+            }
+            $("#ajax_sitegpsCoordinates2").show();
+            var address = $("#text_siteaddress2").val().replace(/ /g, "+") + ", " + $("#hidden_googleSearchRegion").val();
+            Google.searchAddress(address).then(function (data) {
+                $("#ajax_sitegpsCoordinates2").hide();
+                response(data);
+            });
+        }
+        ,
+        minLength: 4,
+        select: function (event, ui) {
+            AddressSelected(ui.item.id, 3, 'site', false);
+        },
+        open: function () {
+            $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
+        },
+        close: function () {
+            $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
+        }
+    });
+}
+
+function SetupGroupAddressLookup() {
+    $("#text_address1").autocomplete({
+        source: function (request, response) {
+            $("#ajax_gpsCoordinates").show();
+            var address = $("#text_address1").val().replace(/ /g, "+") + ", " + $("#hidden_googleSearchRegion").val();
+            Google.searchAddress(address).then(function (data) {
+                $("#ajax_gpsCoordinates").hide();
+                response(data);
+            });
+        }
+        ,
+        minLength: 4,
+        select: function (event, ui) {
+            AddressSelected(ui.item.id, 2, '', false);
+        },
+        open: function () {
+            $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
+        },
+        close: function () {
+            $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
+        }
+    });
+
+    $("#text_address2").autocomplete({
+        source: function (request, response) {
+            $("#saveAddressMessage").html("");
+            if ($("#hidden_addressChosen").val() == "selected") {
+                response("");
+                return;
+            }
+            $("#ajax_gpsCoordinates2").show();
+            var address = $("#text_address2").val().replace(/ /g, "+") + ", " + $("#hidden_googleSearchRegion").val();
+            Google.searchAddress(address).then(function (data) {
+                $("#ajax_gpsCoordinates2").hide();
+                response(data);
+            });
+        }
+        ,
+        minLength: 4,
+        select: function (event, ui) {
+            AddressSelected(ui.item.id, 3, '', false);
+        },
+        open: function () {
+            $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
+        },
+        close: function () {
+            $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
+        }
+    });
+}
+
 function PopulateSite(site) {
     $("#hidden_siteId").val(site.SiteId);
     $("#text_sitename").val(site.SiteName);
@@ -91,6 +193,8 @@ function PopulateSite(site) {
             }
         });
     }
+
+    SetupSiteAddressLookup();
 }
 
 function ChangePassword() {
@@ -557,54 +661,7 @@ $(document).ready(function () {
         $("#hidden_addressChosen").val("");
     });
 
-    $("#text_address1").autocomplete({
-        source: function (request, response) {
-            $("#ajax_gpsCoordinates").show();
-            var address = $("#text_address1").val().replace(/ /g, "+") + ", " + $("#hidden_googleSearchRegion").val();
-            Google.searchAddress(address).then(function (data) {
-                $("#ajax_gpsCoordinates").hide();
-                response(data);
-            });
-        }
-        ,
-        minLength: 4,
-        select: function (event, ui) {
-            AddressSelected(ui.item.id, 2, '', false);
-        },
-        open: function () {
-            $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
-        },
-        close: function () {
-            $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
-        }
-    });
-
-    $("#text_address2").autocomplete({
-        source: function (request, response) {
-            $("#saveAddressMessage").html("");
-            if ($("#hidden_addressChosen").val() == "selected") {
-                response("");
-                return;
-            }
-            $("#ajax_gpsCoordinates2").show();
-            var address = $("#text_address2").val().replace(/ /g, "+") + ", " + $("#hidden_googleSearchRegion").val();
-            Google.searchAddress(address).then(function (data) {
-                $("#ajax_gpsCoordinates2").hide();
-                response(data);
-            });
-        }
-        ,
-        minLength: 4,
-        select: function (event, ui) {
-            AddressSelected(ui.item.id, 3, '', false);
-        },
-        open: function () {
-            $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
-        },
-        close: function () {
-            $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
-        }
-    });
+    SetupGroupAddressLookup();
 
     $("#text_churchaddress1").keypress(function () {
         $("#saveMessage_Church").html("");
@@ -717,54 +774,7 @@ $(document).ready(function () {
         $("#saveMessage_Sites").html("");
     });
 
-    $("#text_siteaddress1").autocomplete({
-        source: function (request, response) {
-            $("#ajax_sitegpsCoordinates").show();
-            var address = $("#text_siteaddress1").val().replace(/ /g, "+") + ", " + $("#hidden_googleSearchRegion").val();
-            Google.searchAddress(address).then(function (data) {
-                $("#ajax_sitegpsCoordinates").hide();
-                response(data);
-            });
-        }
-        ,
-        minLength: 4,
-        select: function (event, ui) {
-            AddressSelected(ui.item.id, 2, 'site', false);
-        },
-        open: function () {
-            $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
-        },
-        close: function () {
-            $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
-        }
-    });
-
-    $("#text_siteaddress2").autocomplete({
-        source: function (request, response) {
-            $("#saveMessage_Sites").html("");
-            if ($("#hidden_siteaddressChosen").val() == "selected") {
-                response("");
-                return;
-            }
-            $("#ajax_sitegpsCoordinates2").show();
-            var address = $("#text_siteaddress2").val().replace(/ /g, "+") + ", " + $("#hidden_googleSearchRegion").val();
-            Google.searchAddress(address).then(function (data) {
-                $("#ajax_sitegpsCoordinates2").hide();
-                response(data);
-            });
-        }
-        ,
-        minLength: 4,
-        select: function (event, ui) {
-            AddressSelected(ui.item.id, 3, 'site', false);
-        },
-        open: function () {
-            $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
-        },
-        close: function () {
-            $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
-        }
-    });
+    
 
     $('#jqgPermissionsLinked').jqGrid({
         url: '/Ajax/FetchPermissionsLinked',

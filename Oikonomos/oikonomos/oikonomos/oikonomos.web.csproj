@@ -220,6 +220,7 @@
     <Content Include="Content\images\secure.png" />
     <Content Include="Content\images\tooltip.png" />
     <Content Include="Content\images\tooltip_big.png" />
+    <Content Include="Content\images\unknown.png" />
     <Content Include="Content\images\up_24.png" />
     <Content Include="Content\images\warning.png" />
     <Content Include="Content\images\wink.png" />

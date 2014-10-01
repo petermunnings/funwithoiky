@@ -21,7 +21,7 @@ function ClearForm() {
     familyMembers = [];
     $("#family_members").empty();
     $("#Site").val("Select site...");
-    $("#img_person").prop("src", " ");
+    $("#img_person").prop("src", "/Content/images/unknown.png");
     $("#GroupId").val("0");
     $("#button_linkPersonToNewFamily").hide();
     
@@ -100,7 +100,7 @@ function PopulatePerson(person) {
     }
     $("#div_saveSuccess").hide();
     $("#img_person").prop("src", person.ImageLink);
-    if (person.ImageLink == '') {
+    if (person.ImageLink == '/Content/images/unknown.png') {
         $("#text_addNewImage").html('Upload<br/>image');
     } else {
         $("#text_addNewImage").html('Upload<br/>new image');
