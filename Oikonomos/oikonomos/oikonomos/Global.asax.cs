@@ -8,17 +8,14 @@ using oikonomos.repositories;
 
 namespace oikonomos.web
 {
-    // Note: For instructions on enabling IIS6 or IIS7 classic mode, 
-    // visit http://go.microsoft.com/?LinkId=9394801
-
-    public class MvcApplication : System.Web.HttpApplication
+    public class MvcApplication : HttpApplication
     {
-        public static void RegisterGlobalFilters(GlobalFilterCollection filters)
+        private static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
         }
 
-        public static void RegisterRoutes(RouteCollection routes)
+        private static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
@@ -34,7 +31,7 @@ namespace oikonomos.web
             });
         }
 
-        public static void RegisterWebApi(HttpConfiguration config)
+        private static void RegisterWebApi(HttpConfiguration config)
         {
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",

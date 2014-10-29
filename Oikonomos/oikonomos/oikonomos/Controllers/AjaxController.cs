@@ -1120,7 +1120,7 @@ namespace oikonomos.web.Controllers
                         {
                             var client = (FacebookClient)Session["FacebookClient"];
                             //Search for facebook Id
-                            Task.Factory.StartNew(() => SearchForFacebookId(personId, personViewModel.Firstname, personViewModel.Surname, client));
+                            //Task.Factory.StartNew(() => SearchForFacebookId(personId, personViewModel.Firstname, personViewModel.Surname, client));
                         }
                     }
                 }
@@ -1966,20 +1966,20 @@ namespace oikonomos.web.Controllers
             }
         }
 
-        private void SearchForFacebookId(int personId, string firstname, string surname, FacebookClient client)
-        {
-            try
-            {
-                string fullname = firstname + " " + surname;
-                dynamic friends = client.Query("SELECT uid, first_name, last_name FROM user WHERE uid IN (    SELECT uid2    FROM friend    WHERE uid1=me()) AND name='" + fullname + "'");
-                if (friends.Count == 1)
-                {
-                    PersonDataAccessor.SavePersonFacebookId(personId, friends[0].uid);
-                }
-            }
-            catch { }
+        //private void SearchForFacebookId(int personId, string firstname, string surname, FacebookClient client)
+        //{
+        //    try
+        //    {
+        //        string fullname = firstname + " " + surname;
+        //        dynamic friends = client.Query("SELECT uid, first_name, last_name FROM user WHERE uid IN (    SELECT uid2    FROM friend    WHERE uid1=me()) AND name='" + fullname + "'");
+        //        if (friends.Count == 1)
+        //        {
+        //            PersonDataAccessor.SavePersonFacebookId(personId, friends[0].uid);
+        //        }
+        //    }
+        //    catch { }
 
-        }
+        //}
         #endregion Private Methods
     }
 }

@@ -356,7 +356,7 @@ namespace oikonomos.web.Controllers
                             var val = Server.HtmlEncode(Request.Cookies["AuthenticatedViaFacebook"].Value);
                             if (val == "true")
                             {
-                                return RedirectToAction("Login", "Account");
+                                return RedirectToAction("Facebook", "Account");
                             }
                         }
                     }

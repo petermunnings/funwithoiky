@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Web.Mvc;
 using Facebook;
-using System.Web.Security;
 using oikonomos.data;
 using oikonomos.data.DataAccessors;
 using oikonomos.common.Models;
 using oikonomos.common;
-using System.Configuration;
 using oikonomos.repositories;
 using oikonomos.repositories.interfaces;
 using oikonomos.web.Helpers;
@@ -26,95 +23,165 @@ namespace oikonomos.web.Controllers
             _usernamePasswordRepository = new UsernamePasswordRepository(permissionRepository);
         }
 
-        public ActionResult Login(string id, string returnUrl)
+        private Uri RedirectUri
         {
-            if (id != null)
+            get
             {
-                Session["PersonTryingToLogin"] = _personRepository.FetchPersonFromPublicId(id);
-            }
-
-            var oAuthClient = new FacebookOAuthClient(FacebookApplication.Current)
+                var uriBuilder = new UriBuilder(Request.Url)
                 {
-                    RedirectUri = new Uri(ConfigurationManager.AppSettings["RedirectUrl"])
+                    Query = null,
+                    Fragment = null,
+                    Path = Url.Action("FacebookCallback")
                 };
-
-            var loginUri = oAuthClient.GetLoginUrl(new Dictionary<string, object> { { "state", returnUrl } });
-            return Redirect(loginUri.AbsoluteUri + "&scope=user_birthday,email");
+                return uriBuilder.Uri;
+            }
         }
 
-        //
-        // GET: /Account/OAuth/
-
-        public ActionResult OAuth(string code, string state)
+        public ActionResult Facebook()
         {
-            FacebookOAuthResult oauthResult;
-            if (FacebookOAuthResult.TryParse(Request.Url, out oauthResult))
+            var fb = new FacebookClient();
+            var loginUrl = fb.GetLoginUrl(new
             {
-                if (oauthResult.IsSuccess)
+                client_id = "210504125641177",
+                client_secret = "d417ef6d72b9cdb430f938eb19c1b929",
+                redirect_uri = RedirectUri.AbsoluteUri,
+                response_type = "code",
+                scope = "user_birthday, email"
+            });
+
+            return Redirect(loginUrl.AbsoluteUri);
+        }
+
+        public ActionResult FacebookCallback(string code)
+        {
+            var fb = new FacebookClient();
+            dynamic result = fb.Post("oauth/access_token", new
+            {
+                client_id = "210504125641177",
+                client_secret = "d417ef6d72b9cdb430f938eb19c1b929",
+                redirect_uri = RedirectUri.AbsoluteUri,
+                code = code
+            });
+
+            var accessToken = result.access_token;
+
+            fb.AccessToken = accessToken;
+
+
+            dynamic me;
+            long facebookId;
+            DateTime? birthdate;
+            GetFacebookDetails(fb, out me, out facebookId, out birthdate);
+
+            var currentUser = _personRepository.FetchPersonFromFacebookId(facebookId);
+            if (currentUser != null)
+            {
+                SecurityHelper.CheckCurrentUser(facebookId, currentUser, Session, Response, ViewBag);
+            }
+            else
+            {
+                if (Session["PersonTryingToLogin"] != null)
                 {
-                    string accessToken = GetAccessToken(code);
-
-                    dynamic me;
-                    long facebookId;
-                    DateTime? birthdate;
-                    GetFacebookDetails(accessToken, out me, out facebookId, out birthdate);
-
-                    //Check for the id in the database
-                    Person currentUser = _personRepository.FetchPersonFromFacebookId(facebookId);
-                    if (currentUser != null)
+                    currentUser = (Person) Session["PersonTryingToLogin"];
+                    PersonDataAccessor.SavePersonFacebookDetails(currentUser, facebookId, birthdate);
+                    SecurityHelper.CheckCurrentUser(facebookId, currentUser, Session, Response, ViewBag);
+                }
+                else
+                {
+                    var people = _personRepository.FetchPersonFromName(me.name, me.first_name, me.last_name, me.email);
+                    if (people.Count == 1)
                     {
+                        //For now we assume its the right person
+                        currentUser = people[0];
+                        PersonDataAccessor.SavePersonFacebookDetails(currentUser, facebookId, birthdate);
                         SecurityHelper.CheckCurrentUser(facebookId, currentUser, Session, Response, ViewBag);
                     }
                     else
                     {
-                        if (Session["PersonTryingToLogin"] != null)
-                        {
-                            currentUser = (Person)Session["PersonTryingToLogin"];
-                            PersonDataAccessor.SavePersonFacebookDetails(currentUser, facebookId, birthdate);
-                            SecurityHelper.CheckCurrentUser(facebookId, currentUser, Session, Response, ViewBag);
-                        }
-                        else
-                        {
-                            List<Person> people = _personRepository.FetchPersonFromName(me.name, me.first_name, me.last_name, me.email);
-                            if (people.Count == 1)
-                            {
-                                //For now we assume its the right person
-                                currentUser = people[0];
-                                PersonDataAccessor.SavePersonFacebookDetails(currentUser, facebookId, birthdate);
-                                SecurityHelper.CheckCurrentUser(facebookId, currentUser, Session, Response, ViewBag);
-                            }
-                            else
-                            {
-                                Session["FacebookId"] = facebookId;
-                                return View("ValidateFacebookLogin");
-                            }
-                        }
-                    }
-
-                    if (currentUser != null)
-                    {
-                        Response.Cookies["AuthenticatedViaFacebook"].Value = "true";
-                        Response.Cookies["AuthenticatedViaFacebook"].Expires = DateTime.Now.AddMonths(12);
-                    }
-
-                    // prevent open redirection attack by checking if the url is local.
-                    if (Url.IsLocalUrl(state))
-                    {
-                        return Redirect(state);
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index", "Home");
+                        Session["FacebookId"] = facebookId;
+                        return View("ValidateFacebookLogin");
                     }
                 }
+            }
+
+            if (currentUser != null)
+            {
+                Response.Cookies["AuthenticatedViaFacebook"].Value = "true";
+                Response.Cookies["AuthenticatedViaFacebook"].Expires = DateTime.Now.AddMonths(12);
             }
 
             return RedirectToAction("Index", "Home");
         }
 
-        private void GetFacebookDetails(string accessToken, out dynamic me, out long facebookId, out DateTime? birthdate)
+        //public ActionResult OAuth(string code, string state)
+        //{
+        //    FacebookOAuthResult oauthResult;
+        //    if (FacebookOAuthResult.TryParse(Request.Url, out oauthResult))
+        //    {
+        //        if (oauthResult.IsSuccess)
+        //        {
+        //            string accessToken = GetAccessToken(code);
+
+        //            dynamic me;
+        //            long facebookId;
+        //            DateTime? birthdate;
+        //            GetFacebookDetails(accessToken, out me, out facebookId, out birthdate);
+
+        //            //Check for the id in the database
+        //            Person currentUser = _personRepository.FetchPersonFromFacebookId(facebookId);
+        //            if (currentUser != null)
+        //            {
+        //                SecurityHelper.CheckCurrentUser(facebookId, currentUser, Session, Response, ViewBag);
+        //            }
+        //            else
+        //            {
+        //                if (Session["PersonTryingToLogin"] != null)
+        //                {
+        //                    currentUser = (Person)Session["PersonTryingToLogin"];
+        //                    PersonDataAccessor.SavePersonFacebookDetails(currentUser, facebookId, birthdate);
+        //                    SecurityHelper.CheckCurrentUser(facebookId, currentUser, Session, Response, ViewBag);
+        //                }
+        //                else
+        //                {
+        //                    List<Person> people = _personRepository.FetchPersonFromName(me.name, me.first_name, me.last_name, me.email);
+        //                    if (people.Count == 1)
+        //                    {
+        //                        //For now we assume its the right person
+        //                        currentUser = people[0];
+        //                        PersonDataAccessor.SavePersonFacebookDetails(currentUser, facebookId, birthdate);
+        //                        SecurityHelper.CheckCurrentUser(facebookId, currentUser, Session, Response, ViewBag);
+        //                    }
+        //                    else
+        //                    {
+        //                        Session["FacebookId"] = facebookId;
+        //                        return View("ValidateFacebookLogin");
+        //                    }
+        //                }
+        //            }
+
+        //            if (currentUser != null)
+        //            {
+        //                Response.Cookies["AuthenticatedViaFacebook"].Value = "true";
+        //                Response.Cookies["AuthenticatedViaFacebook"].Expires = DateTime.Now.AddMonths(12);
+        //            }
+
+        //            // prevent open redirection attack by checking if the url is local.
+        //            if (Url.IsLocalUrl(state))
+        //            {
+        //                return Redirect(state);
+        //            }
+        //            else
+        //            {
+        //                return RedirectToAction("Index", "Home");
+        //            }
+        //        }
+        //    }
+
+        //    return RedirectToAction("Index", "Home");
+        //}
+
+        private void GetFacebookDetails(FacebookClient fbClient, out dynamic me, out long facebookId, out DateTime? birthdate)
         {
-            var fbClient = new FacebookClient(accessToken);
             Session["FacebookClient"] = fbClient;
             me = fbClient.Get("me?fields=id,name,first_name,last_name,birthday,email");
             facebookId = Convert.ToInt64(me.id);
@@ -130,33 +197,33 @@ namespace oikonomos.web.Controllers
             }
         }
 
-        private static string GetAccessToken(string code)
-        {
-            var oAuthClient = new FacebookOAuthClient(FacebookApplication.Current);
-            oAuthClient.RedirectUri = new Uri(ConfigurationManager.AppSettings["RedirectUrl"]);
-            dynamic tokenResult = oAuthClient.ExchangeCodeForAccessToken(code);
-            string accessToken = tokenResult.access_token;
+        //private static string GetAccessToken(string code)
+        //{
+        //    var oAuthClient = new FacebookOAuthClient(FacebookApplication.Current);
+        //    oAuthClient.RedirectUri = new Uri(ConfigurationManager.AppSettings["RedirectUrl"]);
+        //    dynamic tokenResult = oAuthClient.ExchangeCodeForAccessToken(code);
+        //    string accessToken = tokenResult.access_token;
 
-            DateTime expiresOn = DateTime.MaxValue;
+        //    DateTime expiresOn = DateTime.MaxValue;
 
-            if (tokenResult.ContainsKey("expires"))
-            {
-                DateTimeConvertor.FromUnixTime(tokenResult.expires);
-            }
-            return accessToken;
-        }
+        //    if (tokenResult.ContainsKey("expires"))
+        //    {
+        //        DateTimeConvertor.FromUnixTime(tokenResult.expires);
+        //    }
+        //    return accessToken;
+        //}
 
         //
         // GET: /Account/LogOff/
 
-        public ActionResult LogOff()
-        {
-            FormsAuthentication.SignOut();
-            var oAuthClient = new FacebookOAuthClient();
-            oAuthClient.RedirectUri = new Uri(ConfigurationManager.AppSettings["LogoffUrl"]);
-            var logoutUrl = oAuthClient.GetLogoutUrl();
-            return Redirect(logoutUrl.AbsoluteUri);
-        }
+        //public ActionResult LogOff()
+        //{
+        //    FormsAuthentication.SignOut();
+        //    var oAuthClient = new FacebookOAuthClient();
+        //    oAuthClient.RedirectUri = new Uri(ConfigurationManager.AppSettings["LogoffUrl"]);
+        //    var logoutUrl = oAuthClient.GetLogoutUrl();
+        //    return Redirect(logoutUrl.AbsoluteUri);
+        //}
 
         public ActionResult ValidateFacebookLogin(string email, string password)
         {
