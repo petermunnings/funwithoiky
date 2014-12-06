@@ -307,7 +307,6 @@
     <Content Include="Scripts\Site\Person.js" />
     <Content Include="Scripts\Site\Settings.js" />
     <Content Include="Scripts\Site\SysAdmin.js" />
-    <Content Include="Scripts\tinymce\jquery.tinymce.min.js" />
     <Content Include="Scripts\tinymce\license.txt" />
     <Content Include="Scripts\tinymce\plugins\advlist\plugin.js" />
     <Content Include="Scripts\tinymce\plugins\advlist\plugin.min.js" />
