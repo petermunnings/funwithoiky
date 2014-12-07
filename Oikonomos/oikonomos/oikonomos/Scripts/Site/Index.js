@@ -8,12 +8,20 @@ $(document).ready(function () {
 
         var postData = { churchId: $("#SelectedChurchId").val() };
 
-        var jqxhr = $.post("/Ajax/SelectNewChurch", $.postify(postData), function (data) {
+        $.post("/Ajax/SelectNewChurch", $.postify(postData), function () {
             window.location = "/Home/Index";
-        }).error(function (jqXHR, textStatus, errorThrown) {
-            SendErrorEmail("Error calling SelectNewChurch", jqXHR.responseText);
+        }).error(function (jqXhr) {
+            SendErrorEmail("Error calling SelectNewChurch", jqXhr.responseText);
         });
     });
+
+    $.get("/Ajax/FetchChurchEvents", function(data) {
+        $("#churchEventsList").empty();
+        $("#churchEventsTemplate")
+                .tmpl(data.ChurchEvents)
+                .appendTo("#churchEventsList");
+    });
+    
 
 
 })

@@ -53,6 +53,7 @@
     <Compile Include="Enums.cs" />
     <Compile Include="Models\AdminReportsViewModel.cs" />
     <Compile Include="Models\AttendanceEventViewModel.cs" />
+    <Compile Include="Models\ChurchEventViewModel.cs" />
     <Compile Include="Models\ChurchSettingsViewModel.cs" />
     <Compile Include="Models\ChurchViewModel.cs" />
     <Compile Include="Models\AutoCompleteViewModel.cs" />

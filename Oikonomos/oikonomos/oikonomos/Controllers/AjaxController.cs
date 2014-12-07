@@ -6,7 +6,6 @@ using oikonomos.data.DataAccessors;
 using oikonomos.data;
 using oikonomos.common.Models;
 using Lib.Web.Mvc.JQuery.JqGrid;
-using System.Threading.Tasks;
 using Facebook;
 using oikonomos.common;
 using System;
@@ -32,6 +31,7 @@ namespace oikonomos.web.Controllers
         private readonly IEmailService _emailService;
         private readonly IMessageRecepientRepository _messageRecepientRepository;
         private readonly ISmsSender _smsSender;
+        private readonly IChurchEventsRepository _churchEventsReporitory;
 
         public AjaxController()
         {
@@ -78,6 +78,7 @@ namespace oikonomos.web.Controllers
             _messageRecepientRepository = new MessageRecepientRepository();
             var httpPostService = new HttpPostService();
             _smsSender = new SmsSender(messageRepository, new MessageRecepientRepository(), personRepository, httpPostService);
+            _churchEventsReporitory = new ChurchEventsRepository();
 
         }
 
@@ -770,6 +771,28 @@ namespace oikonomos.web.Controllers
             {
                 SessionTimeOut = sessionTimedOut,
                 StandardComments = standardComments
+            };
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult FetchChurchEvents()
+        {
+            IEnumerable<ChurchEventViewModel> churchEvents = new List<ChurchEventViewModel>();
+            var sessionTimedOut = false;
+            if (Session[SessionVariable.LoggedOnPerson] == null)
+            {
+                sessionTimedOut = true;
+            }
+            else
+            {
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                churchEvents = _churchEventsReporitory.FetchChurchEvents(currentPerson.ChurchId);
+            }
+
+            var response = new
+            {
+                SessionTimeOut = sessionTimedOut,
+                ChurchEvents = churchEvents
             };
             return Json(response, JsonRequestBehavior.AllowGet);
         }

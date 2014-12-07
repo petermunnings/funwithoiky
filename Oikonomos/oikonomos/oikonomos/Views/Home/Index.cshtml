@@ -16,15 +16,15 @@
 
 <div class="ui-widget" style="text-align:left">
     <div class="ui-widget-header" style="padding: 10px 10px 20px 10px">
-         <div style="float: left; width:550px">
+        <div style="float: left; width:550px">
             @(((ChurchViewModel)Session[oikonomos.common.SessionVariable.Church]).SiteHeader)
-         </div>
-         <div style="overflow: hidden">
+        </div>
+        <div style="overflow: hidden">
             @if (ViewBag.CurrentUser !=null && ViewBag.CurrentUser.Churches.Count > 1)
             {
                 @Html.DropDownListFor(m => m.SelectedChurchId, new SelectList(ViewBag.CurrentUser.Churches, "ChurchId", "Name"), new { @class = "ui-corner-all" })
             }
-         </div>
+        </div>
     </div>
     <div class="ui-widget-content">
         <div style="padding: 10px 10px 20px 10px">
@@ -32,21 +32,38 @@
             
         </div>
         <div id="accordion">
-	        <h3><a href="#">Upcoming events</a></h3>
-	        <div>
-		        @upcomingEvents.GetHtml(tableStyle: "ui-widget",
-                                   headerStyle: "ui-widget-header",
-                                   columns: upcomingEvents.Columns(
-                                            upcomingEvents.Column("DateDisplay", "Date", canSort: false),
-                                            upcomingEvents.Column("Description", "Event", canSort: false),
-                                            upcomingEvents.Column("EntityName", "Name", canSort: false)
-                  )
-           )
-	        </div>
+            <h3><a href="#">Upcoming church events</a></h3>
+            <div id="churchEventsList">
+               
+            </div>
+            <h3><a href="#">Upcoming birthdays and anniversaries</a></h3>
+            <div>
+                @upcomingEvents.GetHtml(tableStyle: "ui-widget",
+                    headerStyle: "ui-widget-header",
+                    columns: upcomingEvents.Columns(
+                        upcomingEvents.Column("DateDisplay", "Date", canSort: false),
+                        upcomingEvents.Column("Description", "Event", canSort: false),
+                        upcomingEvents.Column("EntityName", "Name", canSort: false)
+                        )
+                    )
+            </div>
         </div>
 
     </div>
 </div>
+
+<script id="churchEventsTemplate" type="text/x-jquery-tmpl">
+    <div class="tableRow">
+        <div class="ui-widget-header" style="width:800px; overflow: hidden">
+            <div style="width:300px; float: left; padding : 10px 10px 10px 10px">${EventDate}</div>
+            <div style="overflow: hidden; padding : 10px 10px 10px 10px">${EventHeading}</div>
+        </div>
+        <div class="ui-widget-content" style="width:800px; overflow: hidden">
+            <div style="width:300px; float: left; padding : 10px 10px 10px 10px"><img src="/Content/images/churchevents/${EventImage}" alt="${EventTitle}" /></div>
+            <div style="overflow: hidden; padding : 10px 10px 10px 10px">{{html EventDescription}}</div>
+        </div>
+    </div>
+</script>
 
 
 

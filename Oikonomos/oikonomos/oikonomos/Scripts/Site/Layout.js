@@ -256,17 +256,6 @@ $(document).ready(function () {
         editor_selector: "mceEditor"
     });
 
-    //$("#email_bodyWithFormatting").tinymce({
-    //    theme: "advanced",
-    //    theme_advanced_buttons1: "bold,italic,underline, strikethrough, separator,justifyleft, justifycenter,justifyright, justifyfull, separator,forecolor,backcolor,separator, bullist,numlist,separator,outdent,indent,separator,undo,redo, code",
-    //    theme_advanced_buttons2: "fontselect,fontsizeselect,formatselect",
-    //    theme_advanced_buttons3: "",
-    //    theme_advanced_buttons4: "",
-    //    theme_advanced_toolbar_location: "top",
-    //    theme_advanced_toolbar_align: "left",
-    //    content_css: '/Content/site.css',
-    //});
-
     $("#email_cancel").button({ icons: { primary: "ui-icon-close" } })
         .click(function() {
             $("#send_Email").slideUp();
