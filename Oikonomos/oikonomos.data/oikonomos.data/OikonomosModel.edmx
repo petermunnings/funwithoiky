@@ -4,293 +4,20 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="oikonomosModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
-        <EntityContainer Name="oikonomosModelStoreContainer">
-          <EntitySet Name="Address" EntityType="oikonomosModel.Store.Address" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="CanSetRole" EntityType="oikonomosModel.Store.CanSetRole" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="CanViewComment" EntityType="oikonomosModel.Store.CanViewComment" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="Church" EntityType="oikonomosModel.Store.Church" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="ChurchEmailTemplate" EntityType="oikonomosModel.Store.ChurchEmailTemplate" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="ChurchOptionalField" EntityType="oikonomosModel.Store.ChurchOptionalField" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="ChurchSmsProvider" EntityType="oikonomosModel.Store.ChurchSmsProvider" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="ChurchSuburb" EntityType="oikonomosModel.Store.ChurchSuburb" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="Comment" EntityType="oikonomosModel.Store.Comment" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="EmailTemplate" EntityType="oikonomosModel.Store.EmailTemplate" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="Event" EntityType="oikonomosModel.Store.Event" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="EventVisibility" EntityType="oikonomosModel.Store.EventVisibility" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="Family" EntityType="oikonomosModel.Store.Family" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="Group" EntityType="oikonomosModel.Store.Group" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="GroupClassification" EntityType="oikonomosModel.Store.GroupClassification" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="GroupType" EntityType="oikonomosModel.Store.GroupType" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="Message" EntityType="oikonomosModel.Store.Message" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="MessageAttachment" EntityType="oikonomosModel.Store.MessageAttachment" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="MessageRecepient" EntityType="oikonomosModel.Store.MessageRecepient" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="OldEvent" EntityType="oikonomosModel.Store.OldEvent" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="OptionalField" EntityType="oikonomosModel.Store.OptionalField" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="Permission" EntityType="oikonomosModel.Store.Permission" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="PermissionRole" EntityType="oikonomosModel.Store.PermissionRole" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="Person" EntityType="oikonomosModel.Store.Person" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="PersonChurch" EntityType="oikonomosModel.Store.PersonChurch" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="PersonEvent" EntityType="oikonomosModel.Store.PersonEvent" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="PersonGroup" EntityType="oikonomosModel.Store.PersonGroup" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="PersonLinkedToGroup" EntityType="oikonomosModel.Store.PersonLinkedToGroup" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="PersonOptionalField" EntityType="oikonomosModel.Store.PersonOptionalField" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="PersonRelationship" EntityType="oikonomosModel.Store.PersonRelationship" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="Relationship" EntityType="oikonomosModel.Store.Relationship" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="Role" EntityType="oikonomosModel.Store.Role" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="Site" EntityType="oikonomosModel.Store.Site" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="SmsProvider" EntityType="oikonomosModel.Store.SmsProvider" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="StandardComment" EntityType="oikonomosModel.Store.StandardComment" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="Status" EntityType="oikonomosModel.Store.Status" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="Table" EntityType="oikonomosModel.Store.Table" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="Title" EntityType="oikonomosModel.Store.Title" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="UploadPhoto" EntityType="oikonomosModel.Store.UploadPhoto" store:Type="Tables" Schema="dbo" />
-          <AssociationSet Name="FK_Address_ChurchSuburb" Association="oikonomosModel.Store.FK_Address_ChurchSuburb">
-            <End Role="ChurchSuburb" EntitySet="ChurchSuburb" />
-            <End Role="Address" EntitySet="Address" />
-          </AssociationSet>
-          <AssociationSet Name="FK_CanSetRole_Role" Association="oikonomosModel.Store.FK_CanSetRole_Role">
-            <End Role="Role" EntitySet="Role" />
-            <End Role="CanSetRole" EntitySet="CanSetRole" />
-          </AssociationSet>
-          <AssociationSet Name="FK_CanSetRole_Role1" Association="oikonomosModel.Store.FK_CanSetRole_Role1">
-            <End Role="Role" EntitySet="Role" />
-            <End Role="CanSetRole" EntitySet="CanSetRole" />
-          </AssociationSet>
-          <AssociationSet Name="FK_CanViewComment_CanViewRole" Association="oikonomosModel.Store.FK_CanViewComment_CanViewRole">
-            <End Role="Role" EntitySet="Role" />
-            <End Role="CanViewComment" EntitySet="CanViewComment" />
-          </AssociationSet>
-          <AssociationSet Name="FK_CanViewComment_CommentRole" Association="oikonomosModel.Store.FK_CanViewComment_CommentRole">
-            <End Role="Role" EntitySet="Role" />
-            <End Role="CanViewComment" EntitySet="CanViewComment" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Church_Address" Association="oikonomosModel.Store.FK_Church_Address">
-            <End Role="Address" EntitySet="Address" />
-            <End Role="Church" EntitySet="Church" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Church_Status" Association="oikonomosModel.Store.FK_Church_Status">
-            <End Role="Status" EntitySet="Status" />
-            <End Role="Church" EntitySet="Church" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ChurchEmailTemplate_Church" Association="oikonomosModel.Store.FK_ChurchEmailTemplate_Church">
-            <End Role="Church" EntitySet="Church" />
-            <End Role="ChurchEmailTemplate" EntitySet="ChurchEmailTemplate" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ChurchEmailTemplate_EmailTemplate" Association="oikonomosModel.Store.FK_ChurchEmailTemplate_EmailTemplate">
-            <End Role="EmailTemplate" EntitySet="EmailTemplate" />
-            <End Role="ChurchEmailTemplate" EntitySet="ChurchEmailTemplate" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ChurchOptionalField_Church" Association="oikonomosModel.Store.FK_ChurchOptionalField_Church">
-            <End Role="Church" EntitySet="Church" />
-            <End Role="ChurchOptionalField" EntitySet="ChurchOptionalField" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ChurchOptionalField_OptionalField" Association="oikonomosModel.Store.FK_ChurchOptionalField_OptionalField">
-            <End Role="OptionalField" EntitySet="OptionalField" />
-            <End Role="ChurchOptionalField" EntitySet="ChurchOptionalField" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ChurchSmsProvider_Church" Association="oikonomosModel.Store.FK_ChurchSmsProvider_Church">
-            <End Role="Church" EntitySet="Church" />
-            <End Role="ChurchSmsProvider" EntitySet="ChurchSmsProvider" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ChurchSmsProvider_SmsProvider" Association="oikonomosModel.Store.FK_ChurchSmsProvider_SmsProvider">
-            <End Role="SmsProvider" EntitySet="SmsProvider" />
-            <End Role="ChurchSmsProvider" EntitySet="ChurchSmsProvider" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ChurchSuburb_Church" Association="oikonomosModel.Store.FK_ChurchSuburb_Church">
-            <End Role="Church" EntitySet="Church" />
-            <End Role="ChurchSuburb" EntitySet="ChurchSuburb" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Comment_AboutPerson" Association="oikonomosModel.Store.FK_Comment_AboutPerson">
-            <End Role="Person" EntitySet="Person" />
-            <End Role="Comment" EntitySet="Comment" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Comment_MadeByPerson" Association="oikonomosModel.Store.FK_Comment_MadeByPerson">
-            <End Role="Person" EntitySet="Person" />
-            <End Role="Comment" EntitySet="Comment" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Comment_Role" Association="oikonomosModel.Store.FK_Comment_Role">
-            <End Role="Role" EntitySet="Role" />
-            <End Role="Comment" EntitySet="Comment" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Event_ChangedByPerson" Association="oikonomosModel.Store.FK_Event_ChangedByPerson">
-            <End Role="Person" EntitySet="Person" />
-            <End Role="OldEvent" EntitySet="OldEvent" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Event_Church" Association="oikonomosModel.Store.FK_Event_Church">
-            <End Role="Church" EntitySet="Church" />
-            <End Role="OldEvent" EntitySet="OldEvent" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Event_Church1" Association="oikonomosModel.Store.FK_Event_Church1">
-            <End Role="Church" EntitySet="Church" />
-            <End Role="Event" EntitySet="Event" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Event_CreatedByPerson" Association="oikonomosModel.Store.FK_Event_CreatedByPerson">
-            <End Role="Person" EntitySet="Person" />
-            <End Role="OldEvent" EntitySet="OldEvent" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Event_EventVisibility" Association="oikonomosModel.Store.FK_Event_EventVisibility">
-            <End Role="EventVisibility" EntitySet="EventVisibility" />
-            <End Role="OldEvent" EntitySet="OldEvent" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Event_Table" Association="oikonomosModel.Store.FK_Event_Table">
-            <End Role="Table" EntitySet="Table" />
-            <End Role="OldEvent" EntitySet="OldEvent" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Family_Address" Association="oikonomosModel.Store.FK_Family_Address">
-            <End Role="Address" EntitySet="Address" />
-            <End Role="Family" EntitySet="Family" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Group_Address" Association="oikonomosModel.Store.FK_Group_Address">
-            <End Role="Address" EntitySet="Address" />
-            <End Role="Group" EntitySet="Group" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Group_Administrator" Association="oikonomosModel.Store.FK_Group_Administrator">
-            <End Role="Person" EntitySet="Person" />
-            <End Role="Group" EntitySet="Group" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Group_Church" Association="oikonomosModel.Store.FK_Group_Church">
-            <End Role="Church" EntitySet="Church" />
-            <End Role="Group" EntitySet="Group" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Group_GroupClassification" Association="oikonomosModel.Store.FK_Group_GroupClassification">
-            <End Role="GroupClassification" EntitySet="GroupClassification" />
-            <End Role="Group" EntitySet="Group" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Group_GroupType" Association="oikonomosModel.Store.FK_Group_GroupType">
-            <End Role="GroupType" EntitySet="GroupType" />
-            <End Role="Group" EntitySet="Group" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Group_Leader" Association="oikonomosModel.Store.FK_Group_Leader">
-            <End Role="Person" EntitySet="Person" />
-            <End Role="Group" EntitySet="Group" />
-          </AssociationSet>
-          <AssociationSet Name="FK_GroupClassification_Church" Association="oikonomosModel.Store.FK_GroupClassification_Church">
-            <End Role="Church" EntitySet="Church" />
-            <End Role="GroupClassification" EntitySet="GroupClassification" />
-          </AssociationSet>
-          <AssociationSet Name="FK_GroupClassification_GroupType" Association="oikonomosModel.Store.FK_GroupClassification_GroupType">
-            <End Role="GroupType" EntitySet="GroupType" />
-            <End Role="GroupClassification" EntitySet="GroupClassification" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Message_Person" Association="oikonomosModel.Store.FK_Message_Person">
-            <End Role="Person" EntitySet="Person" />
-            <End Role="Message" EntitySet="Message" />
-          </AssociationSet>
-          <AssociationSet Name="FK_MessageAttachment_Message" Association="oikonomosModel.Store.FK_MessageAttachment_Message">
-            <End Role="Message" EntitySet="Message" />
-            <End Role="MessageAttachment" EntitySet="MessageAttachment" />
-          </AssociationSet>
-          <AssociationSet Name="FK_MessageRecepient_Message" Association="oikonomosModel.Store.FK_MessageRecepient_Message">
-            <End Role="Message" EntitySet="Message" />
-            <End Role="MessageRecepient" EntitySet="MessageRecepient" />
-          </AssociationSet>
-          <AssociationSet Name="FK_MessageRecepient_Person" Association="oikonomosModel.Store.FK_MessageRecepient_Person">
-            <End Role="Person" EntitySet="Person" />
-            <End Role="MessageRecepient" EntitySet="MessageRecepient" />
-          </AssociationSet>
-          <AssociationSet Name="FK_PermissionRole_Permission" Association="oikonomosModel.Store.FK_PermissionRole_Permission">
-            <End Role="Permission" EntitySet="Permission" />
-            <End Role="PermissionRole" EntitySet="PermissionRole" />
-          </AssociationSet>
-          <AssociationSet Name="FK_PermissionRole_Role" Association="oikonomosModel.Store.FK_PermissionRole_Role">
-            <End Role="Role" EntitySet="Role" />
-            <End Role="PermissionRole" EntitySet="PermissionRole" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Person_Family" Association="oikonomosModel.Store.FK_Person_Family">
-            <End Role="Family" EntitySet="Family" />
-            <End Role="Person" EntitySet="Person" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Person_Site" Association="oikonomosModel.Store.FK_Person_Site">
-            <End Role="Site" EntitySet="Site" />
-            <End Role="Person" EntitySet="Person" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Person_Title" Association="oikonomosModel.Store.FK_Person_Title">
-            <End Role="Title" EntitySet="Title" />
-            <End Role="Person" EntitySet="Person" />
-          </AssociationSet>
-          <AssociationSet Name="FK_PersonChurch_Church" Association="oikonomosModel.Store.FK_PersonChurch_Church">
-            <End Role="Church" EntitySet="Church" />
-            <End Role="PersonChurch" EntitySet="PersonChurch" />
-          </AssociationSet>
-          <AssociationSet Name="FK_PersonChurch_Person" Association="oikonomosModel.Store.FK_PersonChurch_Person">
-            <End Role="Person" EntitySet="Person" />
-            <End Role="PersonChurch" EntitySet="PersonChurch" />
-          </AssociationSet>
-          <AssociationSet Name="FK_PersonChurch_Role" Association="oikonomosModel.Store.FK_PersonChurch_Role">
-            <End Role="Role" EntitySet="Role" />
-            <End Role="PersonChurch" EntitySet="PersonChurch" />
-          </AssociationSet>
-          <AssociationSet Name="FK_PersonEvent_Event" Association="oikonomosModel.Store.FK_PersonEvent_Event">
-            <End Role="Event" EntitySet="Event" />
-            <End Role="PersonEvent" EntitySet="PersonEvent" />
-          </AssociationSet>
-          <AssociationSet Name="FK_PersonEvent_Person" Association="oikonomosModel.Store.FK_PersonEvent_Person">
-            <End Role="Person" EntitySet="Person" />
-            <End Role="PersonEvent" EntitySet="PersonEvent" />
-          </AssociationSet>
-          <AssociationSet Name="FK_PersonGroup_Group" Association="oikonomosModel.Store.FK_PersonGroup_Group">
-            <End Role="Group" EntitySet="Group" />
-            <End Role="PersonGroup" EntitySet="PersonGroup" />
-          </AssociationSet>
-          <AssociationSet Name="FK_PersonGroup_Person" Association="oikonomosModel.Store.FK_PersonGroup_Person">
-            <End Role="Person" EntitySet="Person" />
-            <End Role="PersonGroup" EntitySet="PersonGroup" />
-          </AssociationSet>
-          <AssociationSet Name="FK_PersonLinkedToGroup_Group" Association="oikonomosModel.Store.FK_PersonLinkedToGroup_Group">
-            <End Role="Group" EntitySet="Group" />
-            <End Role="PersonLinkedToGroup" EntitySet="PersonLinkedToGroup" />
-          </AssociationSet>
-          <AssociationSet Name="FK_PersonLinkedToGroup_Person" Association="oikonomosModel.Store.FK_PersonLinkedToGroup_Person">
-            <End Role="Person" EntitySet="Person" />
-            <End Role="PersonLinkedToGroup" EntitySet="PersonLinkedToGroup" />
-          </AssociationSet>
-          <AssociationSet Name="FK_PersonOptionalField_OptionalField" Association="oikonomosModel.Store.FK_PersonOptionalField_OptionalField">
-            <End Role="OptionalField" EntitySet="OptionalField" />
-            <End Role="PersonOptionalField" EntitySet="PersonOptionalField" />
-          </AssociationSet>
-          <AssociationSet Name="FK_PersonOptionField_Person" Association="oikonomosModel.Store.FK_PersonOptionField_Person">
-            <End Role="Person" EntitySet="Person" />
-            <End Role="PersonOptionalField" EntitySet="PersonOptionalField" />
-          </AssociationSet>
-          <AssociationSet Name="FK_PersonRelationship_Person" Association="oikonomosModel.Store.FK_PersonRelationship_Person">
-            <End Role="Person" EntitySet="Person" />
-            <End Role="PersonRelationship" EntitySet="PersonRelationship" />
-          </AssociationSet>
-          <AssociationSet Name="FK_PersonRelationship_PersonRelatedTo" Association="oikonomosModel.Store.FK_PersonRelationship_PersonRelatedTo">
-            <End Role="Person" EntitySet="Person" />
-            <End Role="PersonRelationship" EntitySet="PersonRelationship" />
-          </AssociationSet>
-          <AssociationSet Name="FK_PersonRelationship_Relationship" Association="oikonomosModel.Store.FK_PersonRelationship_Relationship">
-            <End Role="Relationship" EntitySet="Relationship" />
-            <End Role="PersonRelationship" EntitySet="PersonRelationship" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Site_Address" Association="oikonomosModel.Store.FK_Site_Address">
-            <End Role="Address" EntitySet="Address" />
-            <End Role="Site" EntitySet="Site" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Site_Church" Association="oikonomosModel.Store.FK_Site_Church">
-            <End Role="Church" EntitySet="Church" />
-            <End Role="Site" EntitySet="Site" />
-          </AssociationSet>
-          <AssociationSet Name="FK_StandardComment_Church" Association="oikonomosModel.Store.FK_StandardComment_Church">
-            <End Role="Church" EntitySet="Church" />
-            <End Role="StandardComment" EntitySet="StandardComment" />
-          </AssociationSet>
-        </EntityContainer>
+    <Schema Namespace="oikonomosModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
         <EntityType Name="Address">
           <Key>
             <PropertyRef Name="AddressId" />
           </Key>
-          <Property Name="AddressId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="Line1" Type="nvarchar" Nullable="false" MaxLength="255" />
-          <Property Name="Line2" Type="nvarchar" Nullable="false" MaxLength="255" />
-          <Property Name="Line3" Type="nvarchar" Nullable="false" MaxLength="255" />
-          <Property Name="Line4" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="AddressId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Line1" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Line2" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Line3" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Line4" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="Created" Type="datetime" Nullable="false" />
           <Property Name="Changed" Type="datetime" Nullable="false" />
-          <Property Name="Lat" Type="numeric" Nullable="false" Scale="6" />
-          <Property Name="Long" Type="numeric" Nullable="false" Scale="6" />
+          <Property Name="Lat" Type="numeric" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="Long" Type="numeric" Precision="18" Scale="6" Nullable="false" />
           <Property Name="AddressType" Type="nvarchar" MaxLength="255" />
           <Property Name="ChurchSuburbId" Type="int" />
         </EntityType>
@@ -314,8 +41,8 @@
           <Key>
             <PropertyRef Name="ChurchId" />
           </Key>
-          <Property Name="ChurchId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="ChurchId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="Created" Type="datetime" Nullable="false" />
           <Property Name="Changed" Type="datetime" Nullable="false" />
           <Property Name="SiteHeader" Type="nvarchar" MaxLength="255" />
@@ -329,24 +56,35 @@
           <Property Name="OfficeEmail" Type="nvarchar" MaxLength="255" />
           <Property Name="Province" Type="nvarchar" MaxLength="50" />
           <Property Name="Country" Type="nvarchar" MaxLength="255" />
-          <Property Name="EmailLogin" Type="nvarchar" Nullable="false" MaxLength="50" />
-          <Property Name="EmailPassword" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="EmailLogin" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="EmailPassword" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="StatusId" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="ChurchEmailTemplate">
           <Key>
             <PropertyRef Name="ChurchEmailTemplateId" />
           </Key>
-          <Property Name="ChurchEmailTemplateId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ChurchEmailTemplateId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ChurchId" Type="int" Nullable="false" />
           <Property Name="EmailTemplateId" Type="int" Nullable="false" />
           <Property Name="Template" Type="nvarchar(max)" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ChurchEvent">
+          <Key>
+            <PropertyRef Name="ChurchEventId" />
+          </Key>
+          <Property Name="ChurchEventId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EventDate" Type="date" Nullable="false" />
+          <Property Name="EventHeading" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="EventDescription" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="EventImage" Type="nvarchar(max)" />
+          <Property Name="ChurchId" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="ChurchOptionalField">
           <Key>
             <PropertyRef Name="ChurchOptionalFieldId" />
           </Key>
-          <Property Name="ChurchOptionalFieldId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ChurchOptionalFieldId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ChurchId" Type="int" Nullable="false" />
           <Property Name="OptionalFieldId" Type="int" Nullable="false" />
           <Property Name="Visible" Type="bit" Nullable="false" />
@@ -357,20 +95,20 @@
           <Key>
             <PropertyRef Name="ChurchSmsProviderId" />
           </Key>
-          <Property Name="ChurchSmsProviderId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ChurchSmsProviderId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ChurchId" Type="int" Nullable="false" />
           <Property Name="SmsProviderId" Type="int" Nullable="false" />
-          <Property Name="Username" Type="nvarchar" Nullable="false" MaxLength="255" />
-          <Property Name="Password" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="Username" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Password" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="Created" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="ChurchSuburb">
           <Key>
             <PropertyRef Name="ChurchSuburbId" />
           </Key>
-          <Property Name="ChurchSuburbId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ChurchSuburbId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ChurchId" Type="int" Nullable="false" />
-          <Property Name="Suburb" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="Suburb" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="Created" Type="datetime" Nullable="false" />
           <Property Name="Changed" Type="datetime" Nullable="false" />
         </EntityType>
@@ -378,7 +116,7 @@
           <Key>
             <PropertyRef Name="CommentId" />
           </Key>
-          <Property Name="CommentId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="CommentId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Comment" Type="nvarchar(max)" Nullable="false" />
           <Property Name="AboutPersonId" Type="int" Nullable="false" />
           <Property Name="MadeByPersonId" Type="int" Nullable="false" />
@@ -390,15 +128,15 @@
             <PropertyRef Name="EmailTemplateId" />
           </Key>
           <Property Name="EmailTemplateId" Type="int" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="Event">
           <Key>
             <PropertyRef Name="EventId" />
           </Key>
-          <Property Name="EventId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="EventId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ChurchId" Type="int" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="ShowInGroupScreen" Type="bit" Nullable="false" />
           <Property Name="EventOrder" Type="int" Nullable="false" />
         </EntityType>
@@ -407,15 +145,15 @@
             <PropertyRef Name="EventVisibilityId" />
           </Key>
           <Property Name="EventVisibilityId" Type="int" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Created" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="Family">
           <Key>
             <PropertyRef Name="FamilyId" />
           </Key>
-          <Property Name="FamilyId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="FamilyName" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="FamilyId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FamilyName" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="Created" Type="datetime" Nullable="false" />
           <Property Name="Changed" Type="datetime" Nullable="false" />
           <Property Name="HomePhone" Type="nvarchar" MaxLength="50" />
@@ -426,9 +164,9 @@
           <Key>
             <PropertyRef Name="GroupId" />
           </Key>
-          <Property Name="GroupId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="GroupId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ChurchId" Type="int" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="LeaderId" Type="int" />
           <Property Name="AdministratorId" Type="int" />
           <Property Name="GroupTypeId" Type="int" Nullable="false" />
@@ -441,10 +179,10 @@
           <Key>
             <PropertyRef Name="GroupClassificationId" />
           </Key>
-          <Property Name="GroupClassificationId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="GroupClassificationId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ChurchId" Type="int" Nullable="false" />
           <Property Name="GroupTypeId" Type="int" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="Created" Type="datetime" Nullable="false" />
           <Property Name="Changed" Type="datetime" Nullable="false" />
         </EntityType>
@@ -452,50 +190,50 @@
           <Key>
             <PropertyRef Name="GroupTypeId" />
           </Key>
-          <Property Name="GroupTypeId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="GroupTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="Created" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="Message">
           <Key>
             <PropertyRef Name="MessageId" />
           </Key>
-          <Property Name="MessageId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="MessageId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Subject" Type="nvarchar(max)" />
           <Property Name="Body" Type="nvarchar(max)" />
           <Property Name="MessageFrom" Type="int" Nullable="false" />
-          <Property Name="MessageType" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="MessageType" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="MessageAttachment">
           <Key>
             <PropertyRef Name="MessageAttachmentId" />
           </Key>
-          <Property Name="MessageAttachmentId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="MessageAttachmentId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="MessageId" Type="int" />
-          <Property Name="FileName" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="FileName" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="FileContent" Type="varbinary(max)" Nullable="false" />
-          <Property Name="FileType" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="FileType" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="FileLength" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="MessageRecepient">
           <Key>
             <PropertyRef Name="MessageRecepientId" />
           </Key>
-          <Property Name="MessageRecepientId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="MessageRecepientId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="MessageId" Type="int" Nullable="false" />
           <Property Name="MessageTo" Type="int" Nullable="false" />
           <Property Name="MessageSent" Type="datetime" Nullable="false" />
-          <Property Name="Status" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="Status" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="StatusMessage" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="OldEvent">
           <Key>
             <PropertyRef Name="EventId" />
           </Key>
-          <Property Name="EventId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="EventId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="TableId" Type="int" Nullable="false" />
           <Property Name="Reference" Type="int" Nullable="false" />
-          <Property Name="Description" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="Description" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="Comments" Type="nvarchar(max)" />
           <Property Name="FollowUpDate" Type="datetime" />
           <Property Name="EventVisibilityId" Type="int" Nullable="false" />
@@ -512,7 +250,7 @@
             <PropertyRef Name="OptionalFieldId" />
           </Key>
           <Property Name="OptionalFieldId" Type="int" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="Regex" Type="nvarchar" MaxLength="255" />
           <Property Name="Created" Type="datetime" Nullable="false" />
         </EntityType>
@@ -521,9 +259,9 @@
             <PropertyRef Name="PermissionId" />
           </Key>
           <Property Name="PermissionId" Type="int" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="50" />
-          <Property Name="Description" Type="nvarchar" Nullable="false" MaxLength="50" />
-          <Property Name="Category" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Category" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="IsVisible" Type="bit" Nullable="false" />
           <Property Name="Created" Type="datetime" Nullable="false" />
           <Property Name="Changed" Type="datetime" Nullable="false" />
@@ -543,10 +281,10 @@
           <Key>
             <PropertyRef Name="PersonId" />
           </Key>
-          <Property Name="PersonId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="PersonId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="SiteId" Type="int" />
           <Property Name="TitleId" Type="int" />
-          <Property Name="Firstname" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="Firstname" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="Email" Type="nvarchar" MaxLength="255" />
           <Property Name="FamilyId" Type="int" Nullable="false" />
           <Property Name="Created" Type="datetime" Nullable="false" />
@@ -571,7 +309,7 @@
           <Key>
             <PropertyRef Name="PersonEventId" />
           </Key>
-          <Property Name="PersonEventId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="PersonEventId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="PersonId" Type="int" Nullable="false" />
           <Property Name="EventId" Type="int" Nullable="false" />
           <Property Name="Completed" Type="bit" Nullable="false" />
@@ -580,7 +318,7 @@
           <Key>
             <PropertyRef Name="PersonGroupId" />
           </Key>
-          <Property Name="PersonGroupId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="PersonGroupId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="PersonId" Type="int" Nullable="false" />
           <Property Name="GroupId" Type="int" Nullable="false" />
           <Property Name="Joined" Type="datetime" Nullable="false" />
@@ -595,16 +333,16 @@
           </Key>
           <Property Name="PersonId" Type="int" Nullable="false" />
           <Property Name="GroupId" Type="int" Nullable="false" />
-          <Property Name="Description" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="Description" Type="nvarchar" MaxLength="255" Nullable="false" />
         </EntityType>
         <EntityType Name="PersonOptionalField">
           <Key>
             <PropertyRef Name="PersonOptionalFieldId" />
           </Key>
-          <Property Name="PersonOptionalFieldId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="PersonOptionalFieldId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="PersonId" Type="int" Nullable="false" />
           <Property Name="OptionalFieldId" Type="int" Nullable="false" />
-          <Property Name="Value" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="Value" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="Created" Type="datetime" Nullable="false" />
           <Property Name="Changed" Type="datetime" Nullable="false" />
         </EntityType>
@@ -612,7 +350,7 @@
           <Key>
             <PropertyRef Name="PersonRelationshipId" />
           </Key>
-          <Property Name="PersonRelationshipId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="PersonRelationshipId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="PersonId" Type="int" Nullable="false" />
           <Property Name="PersonRelatedToId" Type="int" Nullable="false" />
           <Property Name="RelationshipId" Type="int" Nullable="false" />
@@ -624,27 +362,27 @@
             <PropertyRef Name="RelationshipId" />
           </Key>
           <Property Name="RelationshipId" Type="int" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Created" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="Role">
           <Key>
             <PropertyRef Name="RoleId" />
           </Key>
-          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Created" Type="datetime" Nullable="false" />
           <Property Name="ChurchId" Type="int" Nullable="false" />
           <Property Name="Changed" Type="datetime" Nullable="false" />
-          <Property Name="RoleId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="DisplayName" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="RoleId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DisplayName" Type="nvarchar" MaxLength="255" Nullable="false" />
         </EntityType>
         <EntityType Name="Site">
           <Key>
             <PropertyRef Name="SiteId" />
           </Key>
-          <Property Name="SiteId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="SiteId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ChurchId" Type="int" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="Created" Type="datetime" Nullable="false" />
           <Property Name="Changed" Type="datetime" Nullable="false" />
           <Property Name="AddressId" Type="int" />
@@ -654,14 +392,14 @@
             <PropertyRef Name="SmsProviderId" />
           </Key>
           <Property Name="SmsProviderId" Type="int" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="2550" />
+          <Property Name="Name" Type="nvarchar" MaxLength="2550" Nullable="false" />
         </EntityType>
         <EntityType Name="StandardComment">
           <Key>
             <PropertyRef Name="StandardCommentId" />
           </Key>
-          <Property Name="StandardCommentId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="StandardComment" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="StandardCommentId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="StandardComment" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="ChurchId" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Status">
@@ -669,14 +407,14 @@
             <PropertyRef Name="StatusId" />
           </Key>
           <Property Name="StatusId" Type="int" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="Table">
           <Key>
             <PropertyRef Name="TableId" />
           </Key>
           <Property Name="TableId" Type="int" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Created" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="Title">
@@ -684,7 +422,7 @@
             <PropertyRef Name="TitleId" />
           </Key>
           <Property Name="TitleId" Type="int" Nullable="false" />
-          <Property Name="Title" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="Title" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Created" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="UploadPhoto">
@@ -694,13 +432,13 @@
           </Key>
           <Property Name="PersonId" Type="int" Nullable="false" />
           <Property Name="Photo" Type="varbinary(max)" Nullable="false" />
-          <Property Name="ContentType" Type="nvarchar" Nullable="false" MaxLength="255" />
-          <Property Name="FileName" Type="nvarchar" Nullable="false" MaxLength="255" />
-          <Property Name="ImageSize" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="ContentType" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="FileName" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="ImageSize" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <Association Name="FK_Address_ChurchSuburb">
-          <End Role="ChurchSuburb" Type="oikonomosModel.Store.ChurchSuburb" Multiplicity="0..1" />
-          <End Role="Address" Type="oikonomosModel.Store.Address" Multiplicity="*" />
+          <End Role="ChurchSuburb" Type="Self.ChurchSuburb" Multiplicity="0..1" />
+          <End Role="Address" Type="Self.Address" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="ChurchSuburb">
               <PropertyRef Name="ChurchSuburbId" />
@@ -711,8 +449,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_CanSetRole_Role">
-          <End Role="Role" Type="oikonomosModel.Store.Role" Multiplicity="1" />
-          <End Role="CanSetRole" Type="oikonomosModel.Store.CanSetRole" Multiplicity="*" />
+          <End Role="Role" Type="Self.Role" Multiplicity="1" />
+          <End Role="CanSetRole" Type="Self.CanSetRole" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Role">
               <PropertyRef Name="RoleId" />
@@ -723,8 +461,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_CanSetRole_Role1">
-          <End Role="Role" Type="oikonomosModel.Store.Role" Multiplicity="1" />
-          <End Role="CanSetRole" Type="oikonomosModel.Store.CanSetRole" Multiplicity="*" />
+          <End Role="Role" Type="Self.Role" Multiplicity="1" />
+          <End Role="CanSetRole" Type="Self.CanSetRole" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Role">
               <PropertyRef Name="RoleId" />
@@ -735,8 +473,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_CanViewComment_CanViewRole">
-          <End Role="Role" Type="oikonomosModel.Store.Role" Multiplicity="1" />
-          <End Role="CanViewComment" Type="oikonomosModel.Store.CanViewComment" Multiplicity="*" />
+          <End Role="Role" Type="Self.Role" Multiplicity="1" />
+          <End Role="CanViewComment" Type="Self.CanViewComment" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Role">
               <PropertyRef Name="RoleId" />
@@ -747,8 +485,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_CanViewComment_CommentRole">
-          <End Role="Role" Type="oikonomosModel.Store.Role" Multiplicity="1" />
-          <End Role="CanViewComment" Type="oikonomosModel.Store.CanViewComment" Multiplicity="*" />
+          <End Role="Role" Type="Self.Role" Multiplicity="1" />
+          <End Role="CanViewComment" Type="Self.CanViewComment" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Role">
               <PropertyRef Name="RoleId" />
@@ -759,8 +497,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Church_Address">
-          <End Role="Address" Type="oikonomosModel.Store.Address" Multiplicity="0..1" />
-          <End Role="Church" Type="oikonomosModel.Store.Church" Multiplicity="*" />
+          <End Role="Address" Type="Self.Address" Multiplicity="0..1" />
+          <End Role="Church" Type="Self.Church" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Address">
               <PropertyRef Name="AddressId" />
@@ -771,8 +509,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Church_Status">
-          <End Role="Status" Type="oikonomosModel.Store.Status" Multiplicity="1" />
-          <End Role="Church" Type="oikonomosModel.Store.Church" Multiplicity="*" />
+          <End Role="Status" Type="Self.Status" Multiplicity="1" />
+          <End Role="Church" Type="Self.Church" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Status">
               <PropertyRef Name="StatusId" />
@@ -783,8 +521,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_ChurchEmailTemplate_Church">
-          <End Role="Church" Type="oikonomosModel.Store.Church" Multiplicity="1" />
-          <End Role="ChurchEmailTemplate" Type="oikonomosModel.Store.ChurchEmailTemplate" Multiplicity="*" />
+          <End Role="Church" Type="Self.Church" Multiplicity="1" />
+          <End Role="ChurchEmailTemplate" Type="Self.ChurchEmailTemplate" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Church">
               <PropertyRef Name="ChurchId" />
@@ -795,8 +533,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_ChurchEmailTemplate_EmailTemplate">
-          <End Role="EmailTemplate" Type="oikonomosModel.Store.EmailTemplate" Multiplicity="1" />
-          <End Role="ChurchEmailTemplate" Type="oikonomosModel.Store.ChurchEmailTemplate" Multiplicity="*" />
+          <End Role="EmailTemplate" Type="Self.EmailTemplate" Multiplicity="1" />
+          <End Role="ChurchEmailTemplate" Type="Self.ChurchEmailTemplate" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="EmailTemplate">
               <PropertyRef Name="EmailTemplateId" />
@@ -806,9 +544,21 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ChurchEvent_Church">
+          <End Role="Church" Type="Self.Church" Multiplicity="1" />
+          <End Role="ChurchEvent" Type="Self.ChurchEvent" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Church">
+              <PropertyRef Name="ChurchId" />
+            </Principal>
+            <Dependent Role="ChurchEvent">
+              <PropertyRef Name="ChurchId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_ChurchOptionalField_Church">
-          <End Role="Church" Type="oikonomosModel.Store.Church" Multiplicity="1" />
-          <End Role="ChurchOptionalField" Type="oikonomosModel.Store.ChurchOptionalField" Multiplicity="*" />
+          <End Role="Church" Type="Self.Church" Multiplicity="1" />
+          <End Role="ChurchOptionalField" Type="Self.ChurchOptionalField" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Church">
               <PropertyRef Name="ChurchId" />
@@ -819,8 +569,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_ChurchOptionalField_OptionalField">
-          <End Role="OptionalField" Type="oikonomosModel.Store.OptionalField" Multiplicity="1" />
-          <End Role="ChurchOptionalField" Type="oikonomosModel.Store.ChurchOptionalField" Multiplicity="*" />
+          <End Role="OptionalField" Type="Self.OptionalField" Multiplicity="1" />
+          <End Role="ChurchOptionalField" Type="Self.ChurchOptionalField" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="OptionalField">
               <PropertyRef Name="OptionalFieldId" />
@@ -831,8 +581,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_ChurchSmsProvider_Church">
-          <End Role="Church" Type="oikonomosModel.Store.Church" Multiplicity="1" />
-          <End Role="ChurchSmsProvider" Type="oikonomosModel.Store.ChurchSmsProvider" Multiplicity="*" />
+          <End Role="Church" Type="Self.Church" Multiplicity="1" />
+          <End Role="ChurchSmsProvider" Type="Self.ChurchSmsProvider" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Church">
               <PropertyRef Name="ChurchId" />
@@ -843,8 +593,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_ChurchSmsProvider_SmsProvider">
-          <End Role="SmsProvider" Type="oikonomosModel.Store.SmsProvider" Multiplicity="1" />
-          <End Role="ChurchSmsProvider" Type="oikonomosModel.Store.ChurchSmsProvider" Multiplicity="*" />
+          <End Role="SmsProvider" Type="Self.SmsProvider" Multiplicity="1" />
+          <End Role="ChurchSmsProvider" Type="Self.ChurchSmsProvider" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="SmsProvider">
               <PropertyRef Name="SmsProviderId" />
@@ -855,8 +605,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_ChurchSuburb_Church">
-          <End Role="Church" Type="oikonomosModel.Store.Church" Multiplicity="1" />
-          <End Role="ChurchSuburb" Type="oikonomosModel.Store.ChurchSuburb" Multiplicity="*" />
+          <End Role="Church" Type="Self.Church" Multiplicity="1" />
+          <End Role="ChurchSuburb" Type="Self.ChurchSuburb" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Church">
               <PropertyRef Name="ChurchId" />
@@ -867,8 +617,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Comment_AboutPerson">
-          <End Role="Person" Type="oikonomosModel.Store.Person" Multiplicity="1" />
-          <End Role="Comment" Type="oikonomosModel.Store.Comment" Multiplicity="*" />
+          <End Role="Person" Type="Self.Person" Multiplicity="1" />
+          <End Role="Comment" Type="Self.Comment" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Person">
               <PropertyRef Name="PersonId" />
@@ -879,8 +629,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Comment_MadeByPerson">
-          <End Role="Person" Type="oikonomosModel.Store.Person" Multiplicity="1" />
-          <End Role="Comment" Type="oikonomosModel.Store.Comment" Multiplicity="*" />
+          <End Role="Person" Type="Self.Person" Multiplicity="1" />
+          <End Role="Comment" Type="Self.Comment" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Person">
               <PropertyRef Name="PersonId" />
@@ -891,8 +641,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Comment_Role">
-          <End Role="Role" Type="oikonomosModel.Store.Role" Multiplicity="1" />
-          <End Role="Comment" Type="oikonomosModel.Store.Comment" Multiplicity="*" />
+          <End Role="Role" Type="Self.Role" Multiplicity="1" />
+          <End Role="Comment" Type="Self.Comment" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Role">
               <PropertyRef Name="RoleId" />
@@ -903,8 +653,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Event_ChangedByPerson">
-          <End Role="Person" Type="oikonomosModel.Store.Person" Multiplicity="1" />
-          <End Role="OldEvent" Type="oikonomosModel.Store.OldEvent" Multiplicity="*" />
+          <End Role="Person" Type="Self.Person" Multiplicity="1" />
+          <End Role="OldEvent" Type="Self.OldEvent" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Person">
               <PropertyRef Name="PersonId" />
@@ -915,8 +665,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Event_Church">
-          <End Role="Church" Type="oikonomosModel.Store.Church" Multiplicity="1" />
-          <End Role="OldEvent" Type="oikonomosModel.Store.OldEvent" Multiplicity="*" />
+          <End Role="Church" Type="Self.Church" Multiplicity="1" />
+          <End Role="OldEvent" Type="Self.OldEvent" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Church">
               <PropertyRef Name="ChurchId" />
@@ -927,8 +677,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Event_Church1">
-          <End Role="Church" Type="oikonomosModel.Store.Church" Multiplicity="1" />
-          <End Role="Event" Type="oikonomosModel.Store.Event" Multiplicity="*" />
+          <End Role="Church" Type="Self.Church" Multiplicity="1" />
+          <End Role="Event" Type="Self.Event" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Church">
               <PropertyRef Name="ChurchId" />
@@ -939,8 +689,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Event_CreatedByPerson">
-          <End Role="Person" Type="oikonomosModel.Store.Person" Multiplicity="1" />
-          <End Role="OldEvent" Type="oikonomosModel.Store.OldEvent" Multiplicity="*" />
+          <End Role="Person" Type="Self.Person" Multiplicity="1" />
+          <End Role="OldEvent" Type="Self.OldEvent" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Person">
               <PropertyRef Name="PersonId" />
@@ -951,8 +701,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Event_EventVisibility">
-          <End Role="EventVisibility" Type="oikonomosModel.Store.EventVisibility" Multiplicity="1" />
-          <End Role="OldEvent" Type="oikonomosModel.Store.OldEvent" Multiplicity="*" />
+          <End Role="EventVisibility" Type="Self.EventVisibility" Multiplicity="1" />
+          <End Role="OldEvent" Type="Self.OldEvent" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="EventVisibility">
               <PropertyRef Name="EventVisibilityId" />
@@ -963,8 +713,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Event_Table">
-          <End Role="Table" Type="oikonomosModel.Store.Table" Multiplicity="1" />
-          <End Role="OldEvent" Type="oikonomosModel.Store.OldEvent" Multiplicity="*" />
+          <End Role="Table" Type="Self.Table" Multiplicity="1" />
+          <End Role="OldEvent" Type="Self.OldEvent" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Table">
               <PropertyRef Name="TableId" />
@@ -975,8 +725,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Family_Address">
-          <End Role="Address" Type="oikonomosModel.Store.Address" Multiplicity="0..1" />
-          <End Role="Family" Type="oikonomosModel.Store.Family" Multiplicity="*" />
+          <End Role="Address" Type="Self.Address" Multiplicity="0..1" />
+          <End Role="Family" Type="Self.Family" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Address">
               <PropertyRef Name="AddressId" />
@@ -987,8 +737,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Group_Address">
-          <End Role="Address" Type="oikonomosModel.Store.Address" Multiplicity="0..1" />
-          <End Role="Group" Type="oikonomosModel.Store.Group" Multiplicity="*" />
+          <End Role="Address" Type="Self.Address" Multiplicity="0..1" />
+          <End Role="Group" Type="Self.Group" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Address">
               <PropertyRef Name="AddressId" />
@@ -999,8 +749,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Group_Administrator">
-          <End Role="Person" Type="oikonomosModel.Store.Person" Multiplicity="0..1" />
-          <End Role="Group" Type="oikonomosModel.Store.Group" Multiplicity="*" />
+          <End Role="Person" Type="Self.Person" Multiplicity="0..1" />
+          <End Role="Group" Type="Self.Group" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Person">
               <PropertyRef Name="PersonId" />
@@ -1011,8 +761,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Group_Church">
-          <End Role="Church" Type="oikonomosModel.Store.Church" Multiplicity="1" />
-          <End Role="Group" Type="oikonomosModel.Store.Group" Multiplicity="*" />
+          <End Role="Church" Type="Self.Church" Multiplicity="1" />
+          <End Role="Group" Type="Self.Group" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Church">
               <PropertyRef Name="ChurchId" />
@@ -1023,8 +773,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Group_GroupClassification">
-          <End Role="GroupClassification" Type="oikonomosModel.Store.GroupClassification" Multiplicity="0..1" />
-          <End Role="Group" Type="oikonomosModel.Store.Group" Multiplicity="*" />
+          <End Role="GroupClassification" Type="Self.GroupClassification" Multiplicity="0..1" />
+          <End Role="Group" Type="Self.Group" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="GroupClassification">
               <PropertyRef Name="GroupClassificationId" />
@@ -1035,8 +785,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Group_GroupType">
-          <End Role="GroupType" Type="oikonomosModel.Store.GroupType" Multiplicity="1" />
-          <End Role="Group" Type="oikonomosModel.Store.Group" Multiplicity="*" />
+          <End Role="GroupType" Type="Self.GroupType" Multiplicity="1" />
+          <End Role="Group" Type="Self.Group" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="GroupType">
               <PropertyRef Name="GroupTypeId" />
@@ -1047,8 +797,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Group_Leader">
-          <End Role="Person" Type="oikonomosModel.Store.Person" Multiplicity="0..1" />
-          <End Role="Group" Type="oikonomosModel.Store.Group" Multiplicity="*" />
+          <End Role="Person" Type="Self.Person" Multiplicity="0..1" />
+          <End Role="Group" Type="Self.Group" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Person">
               <PropertyRef Name="PersonId" />
@@ -1059,8 +809,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_GroupClassification_Church">
-          <End Role="Church" Type="oikonomosModel.Store.Church" Multiplicity="1" />
-          <End Role="GroupClassification" Type="oikonomosModel.Store.GroupClassification" Multiplicity="*" />
+          <End Role="Church" Type="Self.Church" Multiplicity="1" />
+          <End Role="GroupClassification" Type="Self.GroupClassification" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Church">
               <PropertyRef Name="ChurchId" />
@@ -1071,8 +821,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_GroupClassification_GroupType">
-          <End Role="GroupType" Type="oikonomosModel.Store.GroupType" Multiplicity="1" />
-          <End Role="GroupClassification" Type="oikonomosModel.Store.GroupClassification" Multiplicity="*" />
+          <End Role="GroupType" Type="Self.GroupType" Multiplicity="1" />
+          <End Role="GroupClassification" Type="Self.GroupClassification" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="GroupType">
               <PropertyRef Name="GroupTypeId" />
@@ -1083,8 +833,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Message_Person">
-          <End Role="Person" Type="oikonomosModel.Store.Person" Multiplicity="1" />
-          <End Role="Message" Type="oikonomosModel.Store.Message" Multiplicity="*" />
+          <End Role="Person" Type="Self.Person" Multiplicity="1" />
+          <End Role="Message" Type="Self.Message" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Person">
               <PropertyRef Name="PersonId" />
@@ -1095,8 +845,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_MessageAttachment_Message">
-          <End Role="Message" Type="oikonomosModel.Store.Message" Multiplicity="0..1" />
-          <End Role="MessageAttachment" Type="oikonomosModel.Store.MessageAttachment" Multiplicity="*" />
+          <End Role="Message" Type="Self.Message" Multiplicity="0..1" />
+          <End Role="MessageAttachment" Type="Self.MessageAttachment" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Message">
               <PropertyRef Name="MessageId" />
@@ -1107,8 +857,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_MessageRecepient_Message">
-          <End Role="Message" Type="oikonomosModel.Store.Message" Multiplicity="1" />
-          <End Role="MessageRecepient" Type="oikonomosModel.Store.MessageRecepient" Multiplicity="*" />
+          <End Role="Message" Type="Self.Message" Multiplicity="1" />
+          <End Role="MessageRecepient" Type="Self.MessageRecepient" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Message">
               <PropertyRef Name="MessageId" />
@@ -1119,8 +869,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_MessageRecepient_Person">
-          <End Role="Person" Type="oikonomosModel.Store.Person" Multiplicity="1" />
-          <End Role="MessageRecepient" Type="oikonomosModel.Store.MessageRecepient" Multiplicity="*" />
+          <End Role="Person" Type="Self.Person" Multiplicity="1" />
+          <End Role="MessageRecepient" Type="Self.MessageRecepient" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Person">
               <PropertyRef Name="PersonId" />
@@ -1131,8 +881,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_PermissionRole_Permission">
-          <End Role="Permission" Type="oikonomosModel.Store.Permission" Multiplicity="1" />
-          <End Role="PermissionRole" Type="oikonomosModel.Store.PermissionRole" Multiplicity="*" />
+          <End Role="Permission" Type="Self.Permission" Multiplicity="1" />
+          <End Role="PermissionRole" Type="Self.PermissionRole" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Permission">
               <PropertyRef Name="PermissionId" />
@@ -1143,8 +893,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_PermissionRole_Role">
-          <End Role="Role" Type="oikonomosModel.Store.Role" Multiplicity="1" />
-          <End Role="PermissionRole" Type="oikonomosModel.Store.PermissionRole" Multiplicity="*" />
+          <End Role="Role" Type="Self.Role" Multiplicity="1" />
+          <End Role="PermissionRole" Type="Self.PermissionRole" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Role">
               <PropertyRef Name="RoleId" />
@@ -1155,8 +905,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Person_Family">
-          <End Role="Family" Type="oikonomosModel.Store.Family" Multiplicity="1" />
-          <End Role="Person" Type="oikonomosModel.Store.Person" Multiplicity="*" />
+          <End Role="Family" Type="Self.Family" Multiplicity="1" />
+          <End Role="Person" Type="Self.Person" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Family">
               <PropertyRef Name="FamilyId" />
@@ -1167,8 +917,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Person_Site">
-          <End Role="Site" Type="oikonomosModel.Store.Site" Multiplicity="0..1" />
-          <End Role="Person" Type="oikonomosModel.Store.Person" Multiplicity="*" />
+          <End Role="Site" Type="Self.Site" Multiplicity="0..1" />
+          <End Role="Person" Type="Self.Person" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Site">
               <PropertyRef Name="SiteId" />
@@ -1179,8 +929,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Person_Title">
-          <End Role="Title" Type="oikonomosModel.Store.Title" Multiplicity="0..1" />
-          <End Role="Person" Type="oikonomosModel.Store.Person" Multiplicity="*" />
+          <End Role="Title" Type="Self.Title" Multiplicity="0..1" />
+          <End Role="Person" Type="Self.Person" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Title">
               <PropertyRef Name="TitleId" />
@@ -1191,8 +941,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_PersonChurch_Church">
-          <End Role="Church" Type="oikonomosModel.Store.Church" Multiplicity="1" />
-          <End Role="PersonChurch" Type="oikonomosModel.Store.PersonChurch" Multiplicity="*" />
+          <End Role="Church" Type="Self.Church" Multiplicity="1" />
+          <End Role="PersonChurch" Type="Self.PersonChurch" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Church">
               <PropertyRef Name="ChurchId" />
@@ -1203,8 +953,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_PersonChurch_Person">
-          <End Role="Person" Type="oikonomosModel.Store.Person" Multiplicity="1" />
-          <End Role="PersonChurch" Type="oikonomosModel.Store.PersonChurch" Multiplicity="*" />
+          <End Role="Person" Type="Self.Person" Multiplicity="1" />
+          <End Role="PersonChurch" Type="Self.PersonChurch" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Person">
               <PropertyRef Name="PersonId" />
@@ -1215,8 +965,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_PersonChurch_Role">
-          <End Role="Role" Type="oikonomosModel.Store.Role" Multiplicity="1" />
-          <End Role="PersonChurch" Type="oikonomosModel.Store.PersonChurch" Multiplicity="*" />
+          <End Role="Role" Type="Self.Role" Multiplicity="1" />
+          <End Role="PersonChurch" Type="Self.PersonChurch" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Role">
               <PropertyRef Name="RoleId" />
@@ -1227,8 +977,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_PersonEvent_Event">
-          <End Role="Event" Type="oikonomosModel.Store.Event" Multiplicity="1" />
-          <End Role="PersonEvent" Type="oikonomosModel.Store.PersonEvent" Multiplicity="*" />
+          <End Role="Event" Type="Self.Event" Multiplicity="1" />
+          <End Role="PersonEvent" Type="Self.PersonEvent" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Event">
               <PropertyRef Name="EventId" />
@@ -1239,8 +989,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_PersonEvent_Person">
-          <End Role="Person" Type="oikonomosModel.Store.Person" Multiplicity="1" />
-          <End Role="PersonEvent" Type="oikonomosModel.Store.PersonEvent" Multiplicity="*" />
+          <End Role="Person" Type="Self.Person" Multiplicity="1" />
+          <End Role="PersonEvent" Type="Self.PersonEvent" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Person">
               <PropertyRef Name="PersonId" />
@@ -1251,8 +1001,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_PersonGroup_Group">
-          <End Role="Group" Type="oikonomosModel.Store.Group" Multiplicity="1" />
-          <End Role="PersonGroup" Type="oikonomosModel.Store.PersonGroup" Multiplicity="*" />
+          <End Role="Group" Type="Self.Group" Multiplicity="1" />
+          <End Role="PersonGroup" Type="Self.PersonGroup" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Group">
               <PropertyRef Name="GroupId" />
@@ -1263,8 +1013,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_PersonGroup_Person">
-          <End Role="Person" Type="oikonomosModel.Store.Person" Multiplicity="1" />
-          <End Role="PersonGroup" Type="oikonomosModel.Store.PersonGroup" Multiplicity="*" />
+          <End Role="Person" Type="Self.Person" Multiplicity="1" />
+          <End Role="PersonGroup" Type="Self.PersonGroup" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Person">
               <PropertyRef Name="PersonId" />
@@ -1275,8 +1025,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_PersonLinkedToGroup_Group">
-          <End Role="Group" Type="oikonomosModel.Store.Group" Multiplicity="1" />
-          <End Role="PersonLinkedToGroup" Type="oikonomosModel.Store.PersonLinkedToGroup" Multiplicity="*" />
+          <End Role="Group" Type="Self.Group" Multiplicity="1" />
+          <End Role="PersonLinkedToGroup" Type="Self.PersonLinkedToGroup" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Group">
               <PropertyRef Name="GroupId" />
@@ -1287,8 +1037,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_PersonLinkedToGroup_Person">
-          <End Role="Person" Type="oikonomosModel.Store.Person" Multiplicity="1" />
-          <End Role="PersonLinkedToGroup" Type="oikonomosModel.Store.PersonLinkedToGroup" Multiplicity="*" />
+          <End Role="Person" Type="Self.Person" Multiplicity="1" />
+          <End Role="PersonLinkedToGroup" Type="Self.PersonLinkedToGroup" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Person">
               <PropertyRef Name="PersonId" />
@@ -1299,8 +1049,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_PersonOptionalField_OptionalField">
-          <End Role="OptionalField" Type="oikonomosModel.Store.OptionalField" Multiplicity="1" />
-          <End Role="PersonOptionalField" Type="oikonomosModel.Store.PersonOptionalField" Multiplicity="*" />
+          <End Role="OptionalField" Type="Self.OptionalField" Multiplicity="1" />
+          <End Role="PersonOptionalField" Type="Self.PersonOptionalField" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="OptionalField">
               <PropertyRef Name="OptionalFieldId" />
@@ -1311,8 +1061,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_PersonOptionField_Person">
-          <End Role="Person" Type="oikonomosModel.Store.Person" Multiplicity="1" />
-          <End Role="PersonOptionalField" Type="oikonomosModel.Store.PersonOptionalField" Multiplicity="*" />
+          <End Role="Person" Type="Self.Person" Multiplicity="1" />
+          <End Role="PersonOptionalField" Type="Self.PersonOptionalField" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Person">
               <PropertyRef Name="PersonId" />
@@ -1323,8 +1073,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_PersonRelationship_Person">
-          <End Role="Person" Type="oikonomosModel.Store.Person" Multiplicity="1" />
-          <End Role="PersonRelationship" Type="oikonomosModel.Store.PersonRelationship" Multiplicity="*" />
+          <End Role="Person" Type="Self.Person" Multiplicity="1" />
+          <End Role="PersonRelationship" Type="Self.PersonRelationship" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Person">
               <PropertyRef Name="PersonId" />
@@ -1335,8 +1085,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_PersonRelationship_PersonRelatedTo">
-          <End Role="Person" Type="oikonomosModel.Store.Person" Multiplicity="1" />
-          <End Role="PersonRelationship" Type="oikonomosModel.Store.PersonRelationship" Multiplicity="*" />
+          <End Role="Person" Type="Self.Person" Multiplicity="1" />
+          <End Role="PersonRelationship" Type="Self.PersonRelationship" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Person">
               <PropertyRef Name="PersonId" />
@@ -1347,8 +1097,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_PersonRelationship_Relationship">
-          <End Role="Relationship" Type="oikonomosModel.Store.Relationship" Multiplicity="1" />
-          <End Role="PersonRelationship" Type="oikonomosModel.Store.PersonRelationship" Multiplicity="*" />
+          <End Role="Relationship" Type="Self.Relationship" Multiplicity="1" />
+          <End Role="PersonRelationship" Type="Self.PersonRelationship" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Relationship">
               <PropertyRef Name="RelationshipId" />
@@ -1359,8 +1109,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Site_Address">
-          <End Role="Address" Type="oikonomosModel.Store.Address" Multiplicity="0..1" />
-          <End Role="Site" Type="oikonomosModel.Store.Site" Multiplicity="*" />
+          <End Role="Address" Type="Self.Address" Multiplicity="0..1" />
+          <End Role="Site" Type="Self.Site" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Address">
               <PropertyRef Name="AddressId" />
@@ -1371,8 +1121,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Site_Church">
-          <End Role="Church" Type="oikonomosModel.Store.Church" Multiplicity="1" />
-          <End Role="Site" Type="oikonomosModel.Store.Site" Multiplicity="*" />
+          <End Role="Church" Type="Self.Church" Multiplicity="1" />
+          <End Role="Site" Type="Self.Site" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Church">
               <PropertyRef Name="ChurchId" />
@@ -1383,8 +1133,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_StandardComment_Church">
-          <End Role="Church" Type="oikonomosModel.Store.Church" Multiplicity="1" />
-          <End Role="StandardComment" Type="oikonomosModel.Store.StandardComment" Multiplicity="*" />
+          <End Role="Church" Type="Self.Church" Multiplicity="1" />
+          <End Role="StandardComment" Type="Self.StandardComment" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Church">
               <PropertyRef Name="ChurchId" />
@@ -1400,6 +1150,284 @@
         <Function Name="sp_FetchGroupAttendance" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="churchId" Type="int" Mode="In" />
         </Function>
+        <EntityContainer Name="oikonomosModelStoreContainer">
+          <EntitySet Name="Address" EntityType="Self.Address" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CanSetRole" EntityType="Self.CanSetRole" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CanViewComment" EntityType="Self.CanViewComment" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Church" EntityType="Self.Church" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ChurchEmailTemplate" EntityType="Self.ChurchEmailTemplate" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ChurchEvent" EntityType="Self.ChurchEvent" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ChurchOptionalField" EntityType="Self.ChurchOptionalField" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ChurchSmsProvider" EntityType="Self.ChurchSmsProvider" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ChurchSuburb" EntityType="Self.ChurchSuburb" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Comment" EntityType="Self.Comment" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EmailTemplate" EntityType="Self.EmailTemplate" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Event" EntityType="Self.Event" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EventVisibility" EntityType="Self.EventVisibility" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Family" EntityType="Self.Family" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Group" EntityType="Self.Group" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="GroupClassification" EntityType="Self.GroupClassification" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="GroupType" EntityType="Self.GroupType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Message" EntityType="Self.Message" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MessageAttachment" EntityType="Self.MessageAttachment" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MessageRecepient" EntityType="Self.MessageRecepient" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OldEvent" EntityType="Self.OldEvent" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OptionalField" EntityType="Self.OptionalField" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Permission" EntityType="Self.Permission" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PermissionRole" EntityType="Self.PermissionRole" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Person" EntityType="Self.Person" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PersonChurch" EntityType="Self.PersonChurch" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PersonEvent" EntityType="Self.PersonEvent" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PersonGroup" EntityType="Self.PersonGroup" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PersonLinkedToGroup" EntityType="Self.PersonLinkedToGroup" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PersonOptionalField" EntityType="Self.PersonOptionalField" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PersonRelationship" EntityType="Self.PersonRelationship" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Relationship" EntityType="Self.Relationship" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Role" EntityType="Self.Role" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Site" EntityType="Self.Site" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SmsProvider" EntityType="Self.SmsProvider" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="StandardComment" EntityType="Self.StandardComment" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Status" EntityType="Self.Status" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Table" EntityType="Self.Table" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Title" EntityType="Self.Title" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UploadPhoto" EntityType="Self.UploadPhoto" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Address_ChurchSuburb" Association="Self.FK_Address_ChurchSuburb">
+            <End Role="ChurchSuburb" EntitySet="ChurchSuburb" />
+            <End Role="Address" EntitySet="Address" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CanSetRole_Role" Association="Self.FK_CanSetRole_Role">
+            <End Role="Role" EntitySet="Role" />
+            <End Role="CanSetRole" EntitySet="CanSetRole" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CanSetRole_Role1" Association="Self.FK_CanSetRole_Role1">
+            <End Role="Role" EntitySet="Role" />
+            <End Role="CanSetRole" EntitySet="CanSetRole" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CanViewComment_CanViewRole" Association="Self.FK_CanViewComment_CanViewRole">
+            <End Role="Role" EntitySet="Role" />
+            <End Role="CanViewComment" EntitySet="CanViewComment" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CanViewComment_CommentRole" Association="Self.FK_CanViewComment_CommentRole">
+            <End Role="Role" EntitySet="Role" />
+            <End Role="CanViewComment" EntitySet="CanViewComment" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Church_Address" Association="Self.FK_Church_Address">
+            <End Role="Address" EntitySet="Address" />
+            <End Role="Church" EntitySet="Church" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Church_Status" Association="Self.FK_Church_Status">
+            <End Role="Status" EntitySet="Status" />
+            <End Role="Church" EntitySet="Church" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ChurchEmailTemplate_Church" Association="Self.FK_ChurchEmailTemplate_Church">
+            <End Role="Church" EntitySet="Church" />
+            <End Role="ChurchEmailTemplate" EntitySet="ChurchEmailTemplate" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ChurchEmailTemplate_EmailTemplate" Association="Self.FK_ChurchEmailTemplate_EmailTemplate">
+            <End Role="EmailTemplate" EntitySet="EmailTemplate" />
+            <End Role="ChurchEmailTemplate" EntitySet="ChurchEmailTemplate" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ChurchEvent_Church" Association="Self.FK_ChurchEvent_Church">
+            <End Role="Church" EntitySet="Church" />
+            <End Role="ChurchEvent" EntitySet="ChurchEvent" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ChurchOptionalField_Church" Association="Self.FK_ChurchOptionalField_Church">
+            <End Role="Church" EntitySet="Church" />
+            <End Role="ChurchOptionalField" EntitySet="ChurchOptionalField" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ChurchOptionalField_OptionalField" Association="Self.FK_ChurchOptionalField_OptionalField">
+            <End Role="OptionalField" EntitySet="OptionalField" />
+            <End Role="ChurchOptionalField" EntitySet="ChurchOptionalField" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ChurchSmsProvider_Church" Association="Self.FK_ChurchSmsProvider_Church">
+            <End Role="Church" EntitySet="Church" />
+            <End Role="ChurchSmsProvider" EntitySet="ChurchSmsProvider" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ChurchSmsProvider_SmsProvider" Association="Self.FK_ChurchSmsProvider_SmsProvider">
+            <End Role="SmsProvider" EntitySet="SmsProvider" />
+            <End Role="ChurchSmsProvider" EntitySet="ChurchSmsProvider" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ChurchSuburb_Church" Association="Self.FK_ChurchSuburb_Church">
+            <End Role="Church" EntitySet="Church" />
+            <End Role="ChurchSuburb" EntitySet="ChurchSuburb" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Comment_AboutPerson" Association="Self.FK_Comment_AboutPerson">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="Comment" EntitySet="Comment" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Comment_MadeByPerson" Association="Self.FK_Comment_MadeByPerson">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="Comment" EntitySet="Comment" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Comment_Role" Association="Self.FK_Comment_Role">
+            <End Role="Role" EntitySet="Role" />
+            <End Role="Comment" EntitySet="Comment" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Event_ChangedByPerson" Association="Self.FK_Event_ChangedByPerson">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="OldEvent" EntitySet="OldEvent" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Event_Church" Association="Self.FK_Event_Church">
+            <End Role="Church" EntitySet="Church" />
+            <End Role="OldEvent" EntitySet="OldEvent" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Event_Church1" Association="Self.FK_Event_Church1">
+            <End Role="Church" EntitySet="Church" />
+            <End Role="Event" EntitySet="Event" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Event_CreatedByPerson" Association="Self.FK_Event_CreatedByPerson">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="OldEvent" EntitySet="OldEvent" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Event_EventVisibility" Association="Self.FK_Event_EventVisibility">
+            <End Role="EventVisibility" EntitySet="EventVisibility" />
+            <End Role="OldEvent" EntitySet="OldEvent" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Event_Table" Association="Self.FK_Event_Table">
+            <End Role="Table" EntitySet="Table" />
+            <End Role="OldEvent" EntitySet="OldEvent" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Family_Address" Association="Self.FK_Family_Address">
+            <End Role="Address" EntitySet="Address" />
+            <End Role="Family" EntitySet="Family" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Group_Address" Association="Self.FK_Group_Address">
+            <End Role="Address" EntitySet="Address" />
+            <End Role="Group" EntitySet="Group" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Group_Administrator" Association="Self.FK_Group_Administrator">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="Group" EntitySet="Group" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Group_Church" Association="Self.FK_Group_Church">
+            <End Role="Church" EntitySet="Church" />
+            <End Role="Group" EntitySet="Group" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Group_GroupClassification" Association="Self.FK_Group_GroupClassification">
+            <End Role="GroupClassification" EntitySet="GroupClassification" />
+            <End Role="Group" EntitySet="Group" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Group_GroupType" Association="Self.FK_Group_GroupType">
+            <End Role="GroupType" EntitySet="GroupType" />
+            <End Role="Group" EntitySet="Group" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Group_Leader" Association="Self.FK_Group_Leader">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="Group" EntitySet="Group" />
+          </AssociationSet>
+          <AssociationSet Name="FK_GroupClassification_Church" Association="Self.FK_GroupClassification_Church">
+            <End Role="Church" EntitySet="Church" />
+            <End Role="GroupClassification" EntitySet="GroupClassification" />
+          </AssociationSet>
+          <AssociationSet Name="FK_GroupClassification_GroupType" Association="Self.FK_GroupClassification_GroupType">
+            <End Role="GroupType" EntitySet="GroupType" />
+            <End Role="GroupClassification" EntitySet="GroupClassification" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Message_Person" Association="Self.FK_Message_Person">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="Message" EntitySet="Message" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MessageAttachment_Message" Association="Self.FK_MessageAttachment_Message">
+            <End Role="Message" EntitySet="Message" />
+            <End Role="MessageAttachment" EntitySet="MessageAttachment" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MessageRecepient_Message" Association="Self.FK_MessageRecepient_Message">
+            <End Role="Message" EntitySet="Message" />
+            <End Role="MessageRecepient" EntitySet="MessageRecepient" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MessageRecepient_Person" Association="Self.FK_MessageRecepient_Person">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="MessageRecepient" EntitySet="MessageRecepient" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PermissionRole_Permission" Association="Self.FK_PermissionRole_Permission">
+            <End Role="Permission" EntitySet="Permission" />
+            <End Role="PermissionRole" EntitySet="PermissionRole" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PermissionRole_Role" Association="Self.FK_PermissionRole_Role">
+            <End Role="Role" EntitySet="Role" />
+            <End Role="PermissionRole" EntitySet="PermissionRole" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Person_Family" Association="Self.FK_Person_Family">
+            <End Role="Family" EntitySet="Family" />
+            <End Role="Person" EntitySet="Person" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Person_Site" Association="Self.FK_Person_Site">
+            <End Role="Site" EntitySet="Site" />
+            <End Role="Person" EntitySet="Person" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Person_Title" Association="Self.FK_Person_Title">
+            <End Role="Title" EntitySet="Title" />
+            <End Role="Person" EntitySet="Person" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonChurch_Church" Association="Self.FK_PersonChurch_Church">
+            <End Role="Church" EntitySet="Church" />
+            <End Role="PersonChurch" EntitySet="PersonChurch" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonChurch_Person" Association="Self.FK_PersonChurch_Person">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="PersonChurch" EntitySet="PersonChurch" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonChurch_Role" Association="Self.FK_PersonChurch_Role">
+            <End Role="Role" EntitySet="Role" />
+            <End Role="PersonChurch" EntitySet="PersonChurch" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonEvent_Event" Association="Self.FK_PersonEvent_Event">
+            <End Role="Event" EntitySet="Event" />
+            <End Role="PersonEvent" EntitySet="PersonEvent" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonEvent_Person" Association="Self.FK_PersonEvent_Person">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="PersonEvent" EntitySet="PersonEvent" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonGroup_Group" Association="Self.FK_PersonGroup_Group">
+            <End Role="Group" EntitySet="Group" />
+            <End Role="PersonGroup" EntitySet="PersonGroup" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonGroup_Person" Association="Self.FK_PersonGroup_Person">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="PersonGroup" EntitySet="PersonGroup" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonLinkedToGroup_Group" Association="Self.FK_PersonLinkedToGroup_Group">
+            <End Role="Group" EntitySet="Group" />
+            <End Role="PersonLinkedToGroup" EntitySet="PersonLinkedToGroup" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonLinkedToGroup_Person" Association="Self.FK_PersonLinkedToGroup_Person">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="PersonLinkedToGroup" EntitySet="PersonLinkedToGroup" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonOptionalField_OptionalField" Association="Self.FK_PersonOptionalField_OptionalField">
+            <End Role="OptionalField" EntitySet="OptionalField" />
+            <End Role="PersonOptionalField" EntitySet="PersonOptionalField" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonOptionField_Person" Association="Self.FK_PersonOptionField_Person">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="PersonOptionalField" EntitySet="PersonOptionalField" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonRelationship_Person" Association="Self.FK_PersonRelationship_Person">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="PersonRelationship" EntitySet="PersonRelationship" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonRelationship_PersonRelatedTo" Association="Self.FK_PersonRelationship_PersonRelatedTo">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="PersonRelationship" EntitySet="PersonRelationship" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonRelationship_Relationship" Association="Self.FK_PersonRelationship_Relationship">
+            <End Role="Relationship" EntitySet="Relationship" />
+            <End Role="PersonRelationship" EntitySet="PersonRelationship" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Site_Address" Association="Self.FK_Site_Address">
+            <End Role="Address" EntitySet="Address" />
+            <End Role="Site" EntitySet="Site" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Site_Church" Association="Self.FK_Site_Church">
+            <End Role="Church" EntitySet="Church" />
+            <End Role="Site" EntitySet="Site" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StandardComment_Church" Association="Self.FK_StandardComment_Church">
+            <End Role="Church" EntitySet="Church" />
+            <End Role="StandardComment" EntitySet="StandardComment" />
+          </AssociationSet>
+        </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
@@ -1672,6 +1700,11 @@
             <End Role="PersonLinkedToGroup" EntitySet="PersonLinkedToGroups" />
           </AssociationSet>
           <EntitySet Name="UploadPhotoes" EntityType="oikonomosModel.UploadPhoto" />
+          <EntitySet Name="ChurchEvents" EntityType="oikonomosModel.ChurchEvent" />
+          <AssociationSet Name="FK_ChurchEvent_Church" Association="oikonomosModel.FK_ChurchEvent_Church">
+            <End Role="Church" EntitySet="Churches" />
+            <End Role="ChurchEvent" EntitySet="ChurchEvents" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="FetchComments_Result">
           <Property Type="Int32" Name="Reference" Nullable="false" />
@@ -2626,6 +2659,7 @@
           <NavigationProperty Name="PersonChurches" Relationship="oikonomosModel.FK_PersonChurch_Church" FromRole="Church" ToRole="PersonChurch" />
           <NavigationProperty Name="Sites" Relationship="oikonomosModel.FK_Site_Church" FromRole="Church" ToRole="Site" />
           <NavigationProperty Name="StandardComments" Relationship="oikonomosModel.FK_StandardComment_Church" FromRole="Church" ToRole="StandardComment" />
+          <NavigationProperty Name="ChurchEvents" Relationship="oikonomosModel.FK_ChurchEvent_Church" FromRole="Church" ToRole="ChurchEvent" />
         </EntityType>
         <Association Name="FK_Church_Address">
           <End Type="oikonomosModel.Address" Role="Address" Multiplicity="0..1" />
@@ -2865,6 +2899,30 @@
           <Property Type="String" Name="FileName" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="ImageSize" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="ChurchEvent">
+          <Key>
+            <PropertyRef Name="ChurchEventId" />
+          </Key>
+          <Property Name="ChurchEventId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EventDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="EventHeading" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="EventDescription" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="EventImage" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ChurchId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Church" Relationship="oikonomosModel.FK_ChurchEvent_Church" FromRole="ChurchEvent" ToRole="Church" />
+        </EntityType>
+        <Association Name="FK_ChurchEvent_Church">
+          <End Type="oikonomosModel.Church" Role="Church" Multiplicity="1" />
+          <End Type="oikonomosModel.ChurchEvent" Role="ChurchEvent" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Church">
+              <PropertyRef Name="ChurchId" />
+            </Principal>
+            <Dependent Role="ChurchEvent">
+              <PropertyRef Name="ChurchId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3352,6 +3410,18 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="ChurchEvents">
+            <EntityTypeMapping TypeName="oikonomosModel.ChurchEvent">
+              <MappingFragment StoreEntitySet="ChurchEvent">
+                <ScalarProperty Name="ChurchId" ColumnName="ChurchId" />
+                <ScalarProperty Name="EventImage" ColumnName="EventImage" />
+                <ScalarProperty Name="EventDescription" ColumnName="EventDescription" />
+                <ScalarProperty Name="EventHeading" ColumnName="EventHeading" />
+                <ScalarProperty Name="EventDate" ColumnName="EventDate" />
+                <ScalarProperty Name="ChurchEventId" ColumnName="ChurchEventId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -3368,11 +3438,12 @@
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
         <DesignerProperty Name="EnablePluralization" Value="True" />
         <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <DesignerProperty Name="UseLegacyProvider" Value="True" />
       </DesignerInfoPropertySet>
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="Model1" ZoomLevel="215">
+      <Diagram Name="Model1" ZoomLevel="17">
         <EntityTypeShape EntityType="oikonomosModel.Address" Width="1.5" PointX="7.5" PointY="30.5" Height="4.0956022135416674" />
         <EntityTypeShape EntityType="oikonomosModel.ChurchEmailTemplate" Width="1.5" PointX="5.25" PointY="26.75" Height="2.1725878906250102" />
         <EntityTypeShape EntityType="oikonomosModel.ChurchOptionalField" Width="1.5" PointX="8.25" PointY="26.5" Height="2.5571907552083388" />
@@ -3714,6 +3785,8 @@
         <AssociationConnector Association="oikonomosModel.FK_PersonLinkedToGroup_Group" />
         <AssociationConnector Association="oikonomosModel.FK_PersonLinkedToGroup_Person" />
         <EntityTypeShape EntityType="oikonomosModel.UploadPhoto" Width="1.5" PointX="0.76128312608286886" PointY="17.730949752838793" />
+        <EntityTypeShape EntityType="oikonomosModel.ChurchEvent" Width="1.5" PointX="0.75" PointY="11.875" />
+        <AssociationConnector Association="oikonomosModel.FK_ChurchEvent_Church" />
         </Diagram>
     </Diagrams>
   </Designer>

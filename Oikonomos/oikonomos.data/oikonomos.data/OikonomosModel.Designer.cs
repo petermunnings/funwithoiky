@@ -75,6 +75,7 @@ using System.Xml.Serialization;
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_MessageAttachment_Message", "Message", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(oikonomos.data.Message), "MessageAttachment", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.MessageAttachment), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_PersonLinkedToGroup_Group", "Group", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Group), "PersonLinkedToGroup", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.PersonLinkedToGroup), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_PersonLinkedToGroup_Person", "Person", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Person), "PersonLinkedToGroup", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.PersonLinkedToGroup), true)]
+[assembly: EdmRelationshipAttribute("oikonomosModel", "FK_ChurchEvent_Church", "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Church), "ChurchEvent", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.ChurchEvent), true)]
 
 #endregion
 
@@ -717,6 +718,22 @@ namespace oikonomos.data
             }
         }
         private ObjectSet<UploadPhoto> _UploadPhotoes;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<ChurchEvent> ChurchEvents
+        {
+            get
+            {
+                if ((_ChurchEvents == null))
+                {
+                    _ChurchEvents = base.CreateObjectSet<ChurchEvent>("ChurchEvents");
+                }
+                return _ChurchEvents;
+            }
+        }
+        private ObjectSet<ChurchEvent> _ChurchEvents;
 
         #endregion
 
@@ -1016,6 +1033,14 @@ namespace oikonomos.data
         public void AddToUploadPhotoes(UploadPhoto uploadPhoto)
         {
             base.AddObject("UploadPhotoes", uploadPhoto);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the ChurchEvents EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToChurchEvents(ChurchEvent churchEvent)
+        {
+            base.AddObject("ChurchEvents", churchEvent);
         }
 
         #endregion
@@ -2307,6 +2332,28 @@ namespace oikonomos.data
                 }
             }
         }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_ChurchEvent_Church", "ChurchEvent")]
+        public EntityCollection<ChurchEvent> ChurchEvents
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<ChurchEvent>("oikonomosModel.FK_ChurchEvent_Church", "ChurchEvent");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<ChurchEvent>("oikonomosModel.FK_ChurchEvent_Church", "ChurchEvent", value);
+                }
+            }
+        }
 
         #endregion
 
@@ -2519,6 +2566,233 @@ namespace oikonomos.data
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Church>("oikonomosModel.FK_ChurchEmailTemplate_Church", "Church", value);
+                }
+            }
+        }
+
+        #endregion
+
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="oikonomosModel", Name="ChurchEvent")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class ChurchEvent : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new ChurchEvent object.
+        /// </summary>
+        /// <param name="churchEventId">Initial value of the ChurchEventId property.</param>
+        /// <param name="eventDate">Initial value of the EventDate property.</param>
+        /// <param name="eventHeading">Initial value of the EventHeading property.</param>
+        /// <param name="eventDescription">Initial value of the EventDescription property.</param>
+        /// <param name="churchId">Initial value of the ChurchId property.</param>
+        public static ChurchEvent CreateChurchEvent(global::System.Int32 churchEventId, global::System.DateTime eventDate, global::System.String eventHeading, global::System.String eventDescription, global::System.Int32 churchId)
+        {
+            ChurchEvent churchEvent = new ChurchEvent();
+            churchEvent.ChurchEventId = churchEventId;
+            churchEvent.EventDate = eventDate;
+            churchEvent.EventHeading = eventHeading;
+            churchEvent.EventDescription = eventDescription;
+            churchEvent.ChurchId = churchId;
+            return churchEvent;
+        }
+
+        #endregion
+
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 ChurchEventId
+        {
+            get
+            {
+                return _ChurchEventId;
+            }
+            set
+            {
+                if (_ChurchEventId != value)
+                {
+                    OnChurchEventIdChanging(value);
+                    ReportPropertyChanging("ChurchEventId");
+                    _ChurchEventId = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("ChurchEventId");
+                    OnChurchEventIdChanged();
+                }
+            }
+        }
+        private global::System.Int32 _ChurchEventId;
+        partial void OnChurchEventIdChanging(global::System.Int32 value);
+        partial void OnChurchEventIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime EventDate
+        {
+            get
+            {
+                return _EventDate;
+            }
+            set
+            {
+                OnEventDateChanging(value);
+                ReportPropertyChanging("EventDate");
+                _EventDate = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("EventDate");
+                OnEventDateChanged();
+            }
+        }
+        private global::System.DateTime _EventDate;
+        partial void OnEventDateChanging(global::System.DateTime value);
+        partial void OnEventDateChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String EventHeading
+        {
+            get
+            {
+                return _EventHeading;
+            }
+            set
+            {
+                OnEventHeadingChanging(value);
+                ReportPropertyChanging("EventHeading");
+                _EventHeading = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("EventHeading");
+                OnEventHeadingChanged();
+            }
+        }
+        private global::System.String _EventHeading;
+        partial void OnEventHeadingChanging(global::System.String value);
+        partial void OnEventHeadingChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String EventDescription
+        {
+            get
+            {
+                return _EventDescription;
+            }
+            set
+            {
+                OnEventDescriptionChanging(value);
+                ReportPropertyChanging("EventDescription");
+                _EventDescription = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("EventDescription");
+                OnEventDescriptionChanged();
+            }
+        }
+        private global::System.String _EventDescription;
+        partial void OnEventDescriptionChanging(global::System.String value);
+        partial void OnEventDescriptionChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String EventImage
+        {
+            get
+            {
+                return _EventImage;
+            }
+            set
+            {
+                OnEventImageChanging(value);
+                ReportPropertyChanging("EventImage");
+                _EventImage = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("EventImage");
+                OnEventImageChanged();
+            }
+        }
+        private global::System.String _EventImage;
+        partial void OnEventImageChanging(global::System.String value);
+        partial void OnEventImageChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 ChurchId
+        {
+            get
+            {
+                return _ChurchId;
+            }
+            set
+            {
+                OnChurchIdChanging(value);
+                ReportPropertyChanging("ChurchId");
+                _ChurchId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ChurchId");
+                OnChurchIdChanged();
+            }
+        }
+        private global::System.Int32 _ChurchId;
+        partial void OnChurchIdChanging(global::System.Int32 value);
+        partial void OnChurchIdChanged();
+
+        #endregion
+
+    
+        #region Navigation Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_ChurchEvent_Church", "Church")]
+        public Church Church
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Church>("oikonomosModel.FK_ChurchEvent_Church", "Church").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Church>("oikonomosModel.FK_ChurchEvent_Church", "Church").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<Church> ChurchReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Church>("oikonomosModel.FK_ChurchEvent_Church", "Church");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Church>("oikonomosModel.FK_ChurchEvent_Church", "Church", value);
                 }
             }
         }

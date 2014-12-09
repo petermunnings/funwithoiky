@@ -208,6 +208,9 @@
     <Content Include="Content\images\churchevents\abcd.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\images\churchevents\scc.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\images\collapse.png" />
     <Content Include="Content\images\comment_24.png" />
     <Content Include="Content\images\delete_16.png" />

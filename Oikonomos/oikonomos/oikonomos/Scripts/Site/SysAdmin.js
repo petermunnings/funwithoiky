@@ -119,12 +119,12 @@ EmailTemplate = {
         var postData = {
             churchId: $("#SelectedChurchId").val(),
             emailTemplateId: $("#EmailTemplateId").val(),
-            template: $('#elm1').val()
+            template: tinyMCE.get('elm1').getContent()
         };
-        $.post("/Ajax/SaveChurchEmailTemplate", $.postify(postData), function (data) {
-            alert(data.Message);
-        })
-            .error(function (jqXhr, textStatus, errorThrown) {
+        $.post("/Ajax/SaveChurchEmailTemplate", $.postify(postData), function () {
+                ShowInfoMessage("Success", "Email template was succesfully saved");
+            })
+            .error(function (jqXhr) {
                 SendErrorEmail("Error calling DeleteStandardComment", jqXhr.responseText);
             });
     }
@@ -139,39 +139,28 @@ $(document).ready(function () {
 
     ko.applyBindings(new ChurchViewModel());
 
-    $(".tinymce").tinymce({
-        theme: "advanced",
-        plugins: "autolink,lists,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,advlist",
-        theme_advanced_buttons1: "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,styleselect,formatselect,fontselect,fontsizeselect",
-        theme_advanced_buttons2: "cut,copy,paste,pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,image,|,insertdate,inserttime,preview,|,forecolor,backcolor",
-        theme_advanced_buttons3: "tablecontrols,|,hr,removeformat,visualaid,|,sub,sup,|,charmap,emotions,iespell,media,advhr,|,print,|,ltr,rtl,|,fullscreen",
-        theme_advanced_toolbar_location: "top",
-        theme_advanced_toolbar_align: "left",
-        theme_advanced_statusbar_location: "bottom",
-        theme_advanced_resizing: false,
-
-        content_css: '/Content/site.css',
+    tinymce.init(
+    {
+        mode: "specific_textareas",
+        editor_selector: "mceSysAdminEditor"
     });
 
 
     EmailTemplate.Fetch().then(function (emailTemplate) {
-        $("#elm1").val("");
-        $('#elm1').tinymce().execCommand('mceInsertContent', true, emailTemplate);
+        tinyMCE.get('elm1').setContent(emailTemplate);
         return false;
     });
 
     $("#EmailTemplateId").change(function () {
         EmailTemplate.Fetch().then(function (emailTemplate) {
-            $("#elm1").val("");
-            $('#elm1').tinymce().execCommand('mceInsertContent', true, emailTemplate);
+            tinyMCE.get('elm1').setContent(emailTemplate);
             return false;
         });
     });
 
     $("#SelectedChurchId").change(function () {
         EmailTemplate.Fetch().then(function (emailTemplate) {
-            $("#elm1").val("");
-            $('#elm1').tinymce().execCommand('mceInsertContent', true, emailTemplate);
+            tinyMCE.get('elm1').setContent(emailTemplate);
             return false;
         });
     });
