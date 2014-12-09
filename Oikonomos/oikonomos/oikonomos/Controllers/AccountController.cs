@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Web.Mvc;
 using Facebook;
 using oikonomos.data;
@@ -40,14 +40,31 @@ namespace oikonomos.web.Controllers
         public ActionResult Facebook()
         {
             var fb = new FacebookClient();
-            var loginUrl = fb.GetLoginUrl(new
+            Uri loginUrl;
+
+            if (Request.Url.AbsoluteUri == "http://localhost:53624/Account/Facebook")
             {
-                client_id = "210504125641177",
-                client_secret = "d417ef6d72b9cdb430f938eb19c1b929",
-                redirect_uri = RedirectUri.AbsoluteUri,
-                response_type = "code",
-                scope = "user_birthday, email"
-            });
+                loginUrl = fb.GetLoginUrl(new
+                {
+                    client_id = "210504125641177",
+                    client_secret = "d417ef6d72b9cdb430f938eb19c1b929",
+                    redirect_uri = RedirectUri.AbsoluteUri,
+                    response_type = "code",
+                    scope = "user_birthday, email"
+                });
+            }
+            else
+            {
+                loginUrl = fb.GetLoginUrl(new
+                {
+                    client_id = "118326544910444",
+                    client_secret = "d2f09ce5b35cd32352d295be5df2ba39",
+                    redirect_uri = RedirectUri.AbsoluteUri,
+                    response_type = "code",
+                    scope = "user_birthday, email"
+                });
+            }
+
 
             return Redirect(loginUrl.AbsoluteUri);
         }
@@ -55,19 +72,35 @@ namespace oikonomos.web.Controllers
         public ActionResult FacebookCallback(string code)
         {
             var fb = new FacebookClient();
-            dynamic result = fb.Post("oauth/access_token", new
+            if (Request.Url.AbsoluteUri.StartsWith("http://localhost:53624/Account/Facebook"))
             {
-                client_id = "210504125641177",
-                client_secret = "d417ef6d72b9cdb430f938eb19c1b929",
-                redirect_uri = RedirectUri.AbsoluteUri,
-                code = code
-            });
+                dynamic result = fb.Post("oauth/access_token", new
+                {
+                    client_id = "210504125641177",
+                    client_secret = "d417ef6d72b9cdb430f938eb19c1b929",
+                    redirect_uri = RedirectUri.AbsoluteUri,
+                    code = code
+                });
 
-            var accessToken = result.access_token;
+                var accessToken = result.access_token;
 
-            fb.AccessToken = accessToken;
+                fb.AccessToken = accessToken;
+            }
+            else
+            {
+                dynamic result = fb.Post("oauth/access_token", new
+                {
+                    client_id = "118326544910444",
+                    client_secret = "d2f09ce5b35cd32352d295be5df2ba39",
+                    redirect_uri = RedirectUri.AbsoluteUri,
+                    code = code
+                });
 
+                var accessToken = result.access_token;
 
+                fb.AccessToken = accessToken;
+            }
+            
             dynamic me;
             long facebookId;
             DateTime? birthdate;
