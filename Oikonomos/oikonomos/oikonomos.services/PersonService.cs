@@ -172,13 +172,18 @@ namespace oikonomos.services
         {
             if (!currentPerson.HasPermission(Permissions.EditChurchPersonalDetails))
             {
-                if (currentPerson.HasPermission(Permissions.EditGroupPersonalDetails))
+                if (currentPerson.HasPermission(Permissions.EditOwnDetails))
                 {
-                    if (!_permissionRepository.CheckSavePermissionGroup(person, currentPerson)) { return person.PersonId; }
-                }
-                else if (currentPerson.HasPermission(Permissions.EditOwnDetails))
-                {
-                    if (!_permissionRepository.CheckSavePermissionPersonal(person, currentPerson)) { return person.PersonId; }
+                    if (!_permissionRepository.CheckSavePermissionPersonal(person, currentPerson))
+                    {
+                        if (currentPerson.HasPermission(Permissions.EditGroupPersonalDetails))
+                        {
+                            if (!_permissionRepository.CheckSavePermissionGroup(person, currentPerson))
+                            {
+                                return person.PersonId;
+                            }
+                        }
+                    }
                 }
                 else
                 {
