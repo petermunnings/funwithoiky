@@ -301,6 +301,7 @@
     <Content Include="Scripts\knockout-3.1.0.js" />
     <Content Include="Scripts\postify.js" />
     <Content Include="Scripts\Site\AddressLookup.js" />
+    <Content Include="Scripts\Site\churchEvents.js" />
     <Content Include="Scripts\Site\Login.js" />
     <Content Include="Scripts\Site\ReportsAdmin.js" />
     <Content Include="Scripts\Site\ReportGrid.js" />
@@ -582,6 +583,7 @@
     <Content Include="Scripts\tinymce\skins\lightgray\fonts\tinymce.eot" />
     <Content Include="Scripts\tinymce\skins\lightgray\fonts\readme.md" />
     <Content Include="Scripts\tinymce\langs\readme.md" />
+    <Content Include="Views\Home\ChurchEvents.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\Email\" />

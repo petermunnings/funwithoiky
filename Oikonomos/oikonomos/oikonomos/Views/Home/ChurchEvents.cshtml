@@ -1,0 +1,35 @@
+﻿<script src="@oikonomos.web.Helpers.JavascriptHelper.Content("~/Scripts/Site/churchEvents.js")" type="text/javascript"></script>
+
+@{
+    ViewBag.Title = "ChurchEvents";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="ui-widget" style="text-align:left">
+    <div class="ui-widget-header"><br />&nbsp;Upcoming events&nbsp;&nbsp;<button id="button_addNewChurchEvent">Add new event</button><br/></div>
+    <div class="ui-widget-content">
+        
+        <table id="jqgChurchEvents" cellpadding="0" cellspacing="0"></table>
+        <div id="jqgpChurchEvents" style="text-align:center;"></div>
+    </div>
+</div>
+
+<div id="div_addNewEvent" style="display: none;" title="Add a new church event">
+    <table>
+        <tr>
+            <td style="vertical-align:top">Select image to display&nbsp;</td>
+            <td style="text-align: left">
+                <input id="churchEventPhotoUpload" type="file" name="files[]" multiple>
+                <img id="churchEventProgressbar" alt="loading" src="/Content/images/ajax-loader.gif" style="display:none" />
+                <br /><br />
+            </td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td id="td_churchEventImageContainer"><img id="img_churchEventUploaded" class="cropper" src="/Images/Index" style="width:600px" /></td>
+        </tr>
+    </table>
+
+</div>
+

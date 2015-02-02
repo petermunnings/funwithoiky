@@ -74,6 +74,10 @@
             {
             <button id="button_reports">Reports</button>
             }
+            @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditChurchEvents))
+            {
+                <button id="button_events">Church Events</button>
+            }
             @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.ViewHelp))
             {
             <button id="button_help">Help</button>

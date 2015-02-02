@@ -280,7 +280,6 @@ $(document).ready(function () {
         dataType: 'json',
         url: '/Home/UploadFiles',
         autoUpload: true,
-        maxChunkSize: 4096,
         done: function (e, data) {
             if (data.result.errorMessage)
                 ShowErrorMessage("Error", data.result.errorMessage);

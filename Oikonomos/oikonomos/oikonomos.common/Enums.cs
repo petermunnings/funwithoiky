@@ -90,7 +90,8 @@ namespace oikonomos.common
         ViewMessages                  = 58,
         IncludeInGroupList            = 59,
         LinkPersonToNewFamily         = 60,
-        ShowEvents                    = 61
+        ShowEvents                    = 61,
+        EditChurchEvents              = 62
     }
 
     public enum Relationships
