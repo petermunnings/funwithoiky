@@ -236,13 +236,38 @@ function DeleteGroup() {
     $("#message").html("");    
     var postData = { groupId: selectedGroupId};
 
-    var jqxhr = $.post("/Ajax/DeleteHomeGroup", $.postify(postData), function (data) {
-        $("#message").html(data.Message);
-        if (data.Success) {
-            selectedGroupId = 0;
-            useGroupId = true;
-            $("#jqgGroups").trigger("reloadGrid");
-            $("#ajax_loader").hide();
+    $.post("/Ajax/DeleteHomeGroup", $.postify(postData), function (data) {
+        if (data.Message == "Are you sure you want to delete this group, there are still people in the group?") {
+            $.when(ShowYesNoMessage("Are you sure", data.Message)).then(
+                function(status) {
+                    if (status == "Yes") {
+                        $.post("/Ajax/ConfirmDeleteHomeGroup", $.postify(postData), function (data) {
+                            if (data.Success) {
+                                ShowInfoMessage("Group deleted", data.Message);
+                                selectedGroupId = 0;
+                                useGroupId = true;
+                                $("#jqgGroups").trigger("reloadGrid");
+                                $("#ajax_loader").hide();
+                            } else {
+                                ShowErrorMessage("Problem deleting group", data.Message);
+                            }
+                        }).error(function (jqXHR) {
+                            $("#ajax_loader").hide();
+                            SendErrorEmail("Error calling DeleteHomeGroup", jqXHR.responseText);
+                        });
+                    }
+                }
+            );
+        } else {
+            if (data.Success) {
+                ShowInfoMessage("Group deleted", data.Message);
+                selectedGroupId = 0;
+                useGroupId = true;
+                $("#jqgGroups").trigger("reloadGrid");
+                $("#ajax_loader").hide();
+            } else {
+                ShowErrorMessage("Problem deleting group", data.Message);
+            }
         }
     }).error(function (jqXHR, textStatus, errorThrown) {
         $("#ajax_loader").hide();

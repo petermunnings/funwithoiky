@@ -486,7 +486,7 @@ namespace oikonomos.data.DataAccessors
             }
         }
 
-        public static bool DeleteHomeGroup(int groupId, ref string message)
+        public static bool DeleteHomeGroup(int groupId, bool confirmDelete, ref string message)
         {
             var success = false;
             using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
@@ -501,7 +501,7 @@ namespace oikonomos.data.DataAccessors
                                      where pg.GroupId == groupId && peopleInRoles.Contains(pg.PersonId)
                                      select pg).Count();
 
-                if (peopleInGroup == 0)
+                if (peopleInGroup == 0 || confirmDelete)
                 {
                     //Delete any remaining people in the group
                     var peopleLeftInGroup = (from pg in context.PersonGroups
@@ -535,7 +535,7 @@ namespace oikonomos.data.DataAccessors
                 }
                 else
                 {
-                    message = "Cannot delete group, there are still people in the group";
+                    message = "Are you sure you want to delete this group, there are still people in the group?";
                 }
             }
 

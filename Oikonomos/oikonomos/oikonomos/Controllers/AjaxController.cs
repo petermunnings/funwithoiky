@@ -984,7 +984,17 @@ namespace oikonomos.web.Controllers
 
         public JsonResult DeleteHomeGroup(int groupId)
         {
-            var message=string.Empty;
+            return DeleteHomeGroup(groupId, false);
+        }
+        
+        public JsonResult ConfirmDeleteHomeGroup(int groupId)
+        {
+            return DeleteHomeGroup(groupId, true);
+        }
+
+        private JsonResult DeleteHomeGroup(int groupId, bool confirmDelete)
+        {
+            var message = string.Empty;
             var success = false;
             var sessionTimedOut = false;
             if (Session[SessionVariable.LoggedOnPerson] == null)
@@ -993,16 +1003,15 @@ namespace oikonomos.web.Controllers
             }
             else
             {
-                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                var currentPerson = (Person) Session[SessionVariable.LoggedOnPerson];
                 if (currentPerson.HasPermission(Permissions.DeleteGroups))
                 {
-                    success = GroupDataAccessor.DeleteHomeGroup(groupId, ref message);
+                    success = GroupDataAccessor.DeleteHomeGroup(groupId, confirmDelete, ref message);
                 }
                 else
                 {
                     message = "You do not have permission to delete a homegroup";
                 }
-                
             }
 
             var response = new

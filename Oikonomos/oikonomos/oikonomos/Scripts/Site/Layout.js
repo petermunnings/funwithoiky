@@ -17,6 +17,29 @@ function SendErrorEmail(subject, body) {
     ShowErrorMessage("A very unexpected error has occured.", "We apologize up front.  We have already sent off an email to our developers and they will start working on this a.s.a.p.");
 }
 
+function ShowYesNoMessage(title, message) {
+    var def = $.Deferred();
+    $("#infoMessage").html(message);
+
+    $("#dialog_infoMessage").dialog({
+        modal: true,
+        title: title,
+        buttons: {
+            Yes: function () {
+                $("#infoMessage").html("");
+                $(this).dialog("close");
+                def.resolve("Yes");
+            },
+            No: function () {
+                $("#infoMessage").html("");
+                $(this).dialog("close");
+                def.resolve("No");
+            }
+        }
+    });
+    return def.promise();
+}
+
 function ShowErrorMessage(title, message) {
     $("#errorMessage").html(message);
     
@@ -253,7 +276,9 @@ $(document).ready(function () {
     tinymce.init(
     {
         mode: "specific_textareas",
-        editor_selector: "mceEditor"
+        editor_selector: "mceEditor",
+        plugins: 'link image code',
+        convert_urls: false
     });
 
     $("#email_cancel").button({ icons: { primary: "ui-icon-close" } })

@@ -142,7 +142,9 @@ $(document).ready(function () {
     tinymce.init(
     {
         mode: "specific_textareas",
-        editor_selector: "mceSysAdminEditor"
+        editor_selector: "mceSysAdminEditor",
+        plugins: 'link image code',
+        convert_urls: false
     });
 
 
