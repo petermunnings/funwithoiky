@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IAddressRepository.cs" />
+    <Compile Include="IChurchEmailTemplatesRepository.cs" />
     <Compile Include="IChurchMatcherRepository.cs" />
     <Compile Include="IChurchRepository.cs" />
     <Compile Include="ICommentRepository.cs" />

@@ -31,7 +31,8 @@ namespace oikonomos.web.ApiControllers
             var churchRepository = new ChurchRepository();
             _personRepository = new PersonRepository(permissionRepository, churchRepository);
             var emailSender = new EmailSender(new MessageRepository(), new MessageRecepientRepository(), new MessageAttachmentRepository(), _personRepository);
-            var emailService = new EmailService(new UsernamePasswordRepository(permissionRepository), _personRepository, new GroupRepository(), emailSender, new EmailContentService(new EmailContentRepository()));
+            var churchEmailTemplateRepository = new ChurchEmailTemplatesRepository();
+            var emailService = new EmailService(new UsernamePasswordRepository(permissionRepository), _personRepository, new GroupRepository(), emailSender, new EmailContentService(new EmailContentRepository()), churchEmailTemplateRepository);
             var uploadPhotoRepository = new PhotoRepository();
             
             _personService = new PersonService(

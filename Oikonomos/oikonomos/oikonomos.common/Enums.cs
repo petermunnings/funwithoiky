@@ -147,7 +147,8 @@ namespace oikonomos.common
     {
         WelcomeVisitors = 1,
         WelcomeMembers = 2,
-        NotifyGroupLeader = 3
+        NotifyGroupLeader = 3,
+        EmailSignature = 4
     }
 
     public class EventNames

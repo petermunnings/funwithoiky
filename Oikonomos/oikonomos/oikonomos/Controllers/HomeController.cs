@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Metadata.Edm;
 using System.Drawing;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web.Mvc;
 using oikonomos.common.DTOs;
 using oikonomos.data;
@@ -14,12 +14,15 @@ using oikonomos.data.DataAccessors;
 using oikonomos.common.Models;
 using System.Net.Mail;
 using oikonomos.repositories;
+using oikonomos.repositories.interfaces.Messages;
 using oikonomos.repositories.Messages;
 using oikonomos.repositories.interfaces;
 using oikonomos.services;
 using oikonomos.services.interfaces;
 using oikonomos.web.Helpers;
 using oikonomos.web.Models.Groups;
+using OpenPop.Pop3;
+using Message = OpenPop.Mime.Message;
 
 
 namespace oikonomos.web.Controllers
@@ -34,6 +37,12 @@ namespace oikonomos.web.Controllers
         private readonly IPhotoRepository _photoRepository;
         private readonly IPhotoServices _photoServices;
 
+        private const string Hostname = "sark.aserv.co.za";
+        private const int Port = 995;
+        private const bool UseSsl = true;
+        private const string Username = "reply@oikonomos.co.za";
+        private const string Password = "MQaz3xXwzc";
+
         public HomeController()
         {
             var permissionRepository = new PermissionRepository();
@@ -45,12 +54,14 @@ namespace oikonomos.web.Controllers
             var groupRepository = new GroupRepository();
             var emailSender = new EmailSender(new MessageRepository(), new MessageRecepientRepository(), new MessageAttachmentRepository(), _personRepository);
             var emailContentService = new EmailContentService(new EmailContentRepository());
+            var churchEmailTemplateRepository = new ChurchEmailTemplatesRepository();
             var emailService = new EmailService(
                 _usernamePasswordRepository,
                 _personRepository,
                 groupRepository,
                 emailSender,
-                emailContentService
+                emailContentService,
+                churchEmailTemplateRepository
                 );
             _photoRepository = new PhotoRepository();
             _photoServices = new PhotoServices();
@@ -218,6 +229,80 @@ namespace oikonomos.web.Controllers
         {
             Session["AttachmentList"] = new List<UploadFilesResult>();
             return Content(string.Empty, "application/json");
+        }
+
+        [HttpGet]
+        public IEnumerable<string> GetEmails()
+        {
+            var returnMessages = new List<string>();
+            using (var pop3Client = new Pop3Client())
+            {
+                var messages = GetNewMessages(pop3Client);
+                var messageCount = messages.Count();
+                if (messageCount > 0)
+                {
+                    IMessageRepository messageRepository = new MessageRepository();
+                    IMessageRecepientRepository messageRecepientRepository = new MessageRecepientRepository();
+                    IMessageAttachmentRepository messageAttachmentRepository = new MessageAttachmentRepository();
+                    IPermissionRepository permissionRepository = new PermissionRepository();
+                    IChurchRepository churchRepository = new ChurchRepository();
+                    IPersonRepository personRepository = new PersonRepository(permissionRepository, churchRepository);
+
+                    var emailSender = new EmailSender(messageRepository, messageRecepientRepository, messageAttachmentRepository, personRepository);
+
+                    for (var count = 0; count < messageCount; count++)
+                    {
+                        var mm = messages[count].ToMailMessage();
+                        var regex = new Regex(@"##([0-9]*)##");
+                        var matches = regex.Matches(mm.Body);
+                        if (matches.Count > 0 && matches[0].Groups.Count > 1)
+                        {
+                            try
+                            {
+                                int messageId;
+                                if (int.TryParse(matches[0].Groups[1].Value, out messageId))
+                                {
+                                    var originalSender = messageRepository.GetSender(messageId);
+                                    if (originalSender != null)
+                                    {
+                                        var originalReceiver = personRepository.FetchPersonIdsFromEmailAddress(mm.From.Address, originalSender.ChurchId);
+                                        var fromPersonId = originalSender.PersonId;
+
+                                        if (originalReceiver.Any())
+                                        {
+                                            fromPersonId = originalReceiver.First();
+                                        }
+                                        returnMessages.Add(string.Format("Forwarding email on to {0}", originalSender.Email));
+                                        emailSender.SendEmail(mm.Subject, mm.Body, Username, originalSender.Email, Username, Password, fromPersonId, originalSender.ChurchId, mm.Attachments);
+                                    }
+                                    pop3Client.DeleteMessage(count + 1);
+                                }
+                            }
+                            catch (Exception errSending)
+                            {
+                                returnMessages.Add(errSending.Message);
+                                emailSender.SendExceptionEmailAsync(errSending);
+                            }
+                        }
+                    }
+                }
+            }
+            return returnMessages;
+        }
+
+        private static List<Message> GetNewMessages(Pop3Client pop3Client)
+        {
+            var allMessages = new List<Message>();
+
+            pop3Client.Connect(Hostname, Port, UseSsl);
+            pop3Client.Authenticate(Username, Password);
+            var messageCount = pop3Client.GetMessageCount();
+
+            for (var i = messageCount; i > 0; i--)
+            {
+                allMessages.Add(pop3Client.GetMessage(i));
+            }
+            return allMessages;
         }
 
         public ActionResult SysAdmin()

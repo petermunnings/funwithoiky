@@ -31,12 +31,14 @@ namespace oikonomos.web.ApiControllers
             var emailSender = new EmailSender(new MessageRepository(), new MessageRecepientRepository(), new MessageAttachmentRepository(), _personRepository);
             var groupRepository = new GroupRepository();
             var emailContentService = new EmailContentService(new EmailContentRepository());
+            var churchEmailTemplateRepository = new ChurchEmailTemplatesRepository();
             var emailService = new EmailService(
                 usernamePasswordRepository,
                 _personRepository,
                 groupRepository,
                 emailSender,
-                emailContentService
+                emailContentService,
+                churchEmailTemplateRepository
                 );
 
             var uploadPhotoRepository = new PhotoRepository();

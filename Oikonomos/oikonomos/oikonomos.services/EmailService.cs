@@ -18,14 +18,16 @@ namespace oikonomos.services
         private readonly IGroupRepository _groupRepository;
         private readonly IEmailSender _emailSender;
         private readonly IEmailContentService _emailContentService;
+        private readonly IChurchEmailTemplatesRepository _churchEmailTemplatesRepository;
 
-        public EmailService(IUsernamePasswordRepository usernamePasswordRepository, IPersonRepository personRepository, IGroupRepository groupRepository, IEmailSender emailSender, IEmailContentService emailContentService)
+        public EmailService(IUsernamePasswordRepository usernamePasswordRepository, IPersonRepository personRepository, IGroupRepository groupRepository, IEmailSender emailSender, IEmailContentService emailContentService, IChurchEmailTemplatesRepository churchEmailTemplatesRepository)
         {
             _usernamePasswordRepository = usernamePasswordRepository;
             _personRepository = personRepository;
             _groupRepository = groupRepository;
             _emailSender = emailSender;
             _emailContentService = emailContentService;
+            _churchEmailTemplatesRepository = churchEmailTemplatesRepository;
         }
 
         public void SendEmails(PersonViewModel person, bool sendWelcomeEmail, Church church, Person personToSave, Person currentPerson)
@@ -79,6 +81,7 @@ namespace oikonomos.services
 
         public string SendGroupEmail(IEnumerable<string> addresses, string subject, string body, Person currentPerson, IEnumerable<UploadFilesResult> attachmentList)
         {
+            body = AddChurchSignature(body, currentPerson);
             Task.Factory.StartNew(() => _emailSender.SendEmail(subject, body, currentPerson.Church.Name, addresses, currentPerson.Church.EmailLogin, currentPerson.Church.EmailPassword, currentPerson.PersonId, currentPerson.Church.ChurchId, attachmentList));
             return "Emails queued for sending";
         }
@@ -176,6 +179,14 @@ namespace oikonomos.services
 
             Task.Factory.StartNew(() => _emailSender.SendEmail(subject, body, church.Name, new[] { email }, church.EmailLogin, church.EmailPassword, currentPerson.PersonId, church.ChurchId, new List<UploadFilesResult>()));
 
+        }
+
+        private string AddChurchSignature(string body, Person currentPerson)
+        {
+            var signature = _churchEmailTemplatesRepository.FetchChurchEmailSignature(currentPerson.ChurchId);
+            if (signature != null)
+                body += signature;
+            return body;
         }
 
         private void SendNewVisitorEmail(PersonViewModel person, Church church, string firstname, string surname, string email, Person currentPerson)

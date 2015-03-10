@@ -23,12 +23,14 @@ namespace oikonomos.web.Controllers
             var groupRepository = new GroupRepository();
             var emailSender = new EmailSender(new MessageRepository(), new MessageRecepientRepository(), new MessageAttachmentRepository(), personRepository);
             var emailContentService = new EmailContentService(new EmailContentRepository());
+            var churchEmailTemplateRepository = new ChurchEmailTemplatesRepository();
             _emailService = new EmailService(
                 usernamePasswordRepository,
                 personRepository,
                 groupRepository,
                 emailSender,
-                emailContentService
+                emailContentService,
+                churchEmailTemplateRepository
                 );
         }
 

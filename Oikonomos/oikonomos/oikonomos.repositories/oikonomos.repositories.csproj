@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddressRepository.cs" />
+    <Compile Include="ChurchEmailTemplatesRepository.cs" />
     <Compile Include="ChurchEventsRepository.cs" />
     <Compile Include="ChurchMatcherRepository.cs" />
     <Compile Include="ChurchRepository.cs" />
