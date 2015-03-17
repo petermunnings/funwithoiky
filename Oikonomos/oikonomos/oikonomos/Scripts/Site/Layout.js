@@ -341,5 +341,10 @@ $(document).ready(function () {
 
     });
 
+    $("#sms_message").keyup(function() {
+        var cs = $(this).val().length;
+        $("#noChars").text("This sms contains " + cs + " characters and will be sent in " + (~~(cs/150) + 1) + " smses" );
+    });
+
 
 })
