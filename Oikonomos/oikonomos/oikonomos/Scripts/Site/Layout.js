@@ -200,16 +200,18 @@ function OpenSmsDialog() {
             dialogClass: 'sms_dialog',
             modal: true,
             height: 350,
-            width: 600,
+            width: 650,
             buttons: {
                 Submit: function () {
                     if (SendSms() == true) {
                         $("#sms_message").val("");
+                        $("#noChars").text("");
                         $(this).dialog('close');
                     }
                 },
                 Cancel: function () {
                     $("#sms_message").val("");
+                    $("#noChars").text("");
                     $(this).dialog('close');
                 }
             }
