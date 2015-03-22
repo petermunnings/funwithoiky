@@ -202,7 +202,7 @@ namespace oikonomos.services
             _relationshipRepository.UpdateRelationships(person, personToSave, anniversaryHasChanged);
             personToSave = _personRepository.FetchPerson(personToSave.PersonId, currentPerson);
             _personRepository.SaveWindowsLiveId(person, personToSave);
-            _emailService.SendEmails(person, sendWelcomeEmail, church, personToSave, currentPerson);
+            _emailService.SendWelcomeEmail(person, sendWelcomeEmail, church, personToSave, currentPerson);
             _emailService.EmailGroupLeader(person, currentPerson, church, personToSave, addedToNewGroup);
 
             return personToSave.PersonId;

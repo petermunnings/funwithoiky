@@ -70,6 +70,10 @@
       <Project>{54B0FB5D-AFBE-448A-ABD9-A0FBF75433D9}</Project>
       <Name>oikonomos.common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\oikonomos.repositories.interfaces\oikonomos.repositories.interfaces.csproj">
+      <Project>{FE1C517D-4E67-403F-BF8D-0709A78DD900}</Project>
+      <Name>oikonomos.repositories.interfaces</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

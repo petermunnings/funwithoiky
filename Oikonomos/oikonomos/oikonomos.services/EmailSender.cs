@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -30,8 +31,9 @@ namespace oikonomos.services
             _personRepository = personRepository;
         }
 
-        public void SendEmail(string subject, string body, string displayFrom, IEnumerable<string> emailAddressTo, string login, string password, int personIdFrom, int churchId, IEnumerable<UploadFilesResult> attachmentList)
+        public string QueueEmails(string subject, string body, string displayFrom, IEnumerable<string> emailAddressTo, string login, string password, int personIdFrom, int churchId, IEnumerable<UploadFilesResult> attachmentList)
         {
+            var returnMessage = string.Empty;
             try
             {
                 var messageId = _messageRepository.SaveMessage(personIdFrom, subject, body, "Email");
@@ -57,28 +59,35 @@ namespace oikonomos.services
                             }
 
                             message.To.Add(emailTo);
-                            SendEmail(message, login, password, messageId);
-                            _messageRecepientRepository.SaveMessageRecepient(messageId, _personRepository.FetchPersonIdsFromEmailAddress(emailTo, churchId),"Success", string.Empty);
+                            //SendEmail(message, login, password, messageId);
+                            _messageRecepientRepository.SaveMessageRecepient(messageId, _personRepository.FetchPersonIdsFromEmailAddress(emailTo, churchId),MessageStatus.Queued, string.Empty);
                         }
                     }
                     catch (Exception e)
                     {
-                        _messageRecepientRepository.SaveMessageRecepient(messageId, _personRepository.FetchPersonIdsFromEmailAddress(emailTo, churchId), "Failure", e.Message);
+                        _messageRecepientRepository.SaveMessageRecepient(messageId, _personRepository.FetchPersonIdsFromEmailAddress(emailTo, churchId), MessageStatus.Failed, e.Message);
+                        returnMessage += "There was a problem queueing the message to " + emailTo + ": e.Message";
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception exError)
             {
-                //There is a problem creating the email...
+                SendExceptionEmailAsync(exError);
+                return exError.Message;
             }
+            if (returnMessage == string.Empty)
+                return "Message succesfully queued to " + emailAddressTo.Count() + " email addresses";
+            return returnMessage;
         }
 
-        public void SendEmail(string subject, string body, string displayName, string emailTo, string login,
-            string password, int personIdFrom, int churchId, AttachmentCollection attachmentCollection)
+        public string SendEmail(string subject, string body, string displayName, string emailTo, string login, string password, int personIdFrom, int churchId, IEnumerable<Attachment> attachmentCollection, int? messageId = null, int? messageRecepientId = null)
         {
+            var returnMessage = string.Empty;
             try
             {
-                var messageId = _messageRepository.SaveMessage(personIdFrom, subject, body, "Email");
+                
+                if(messageId==null)
+                   messageId = _messageRepository.SaveMessage(personIdFrom, subject, body, "Email");
 
                 try
                 {
@@ -97,19 +106,35 @@ namespace oikonomos.services
                         }
 
                         message.To.Add(emailTo);
-                        SendEmail(message, login, password, messageId);
-                        _messageRecepientRepository.SaveMessageRecepient(messageId, _personRepository.FetchPersonIdsFromEmailAddress(emailTo, churchId), "Success", string.Empty);
+                        SendEmail(message, login, password, messageId.Value);
+                        if (messageRecepientId == null)
+                            _messageRecepientRepository.SaveMessageRecepient(messageId.Value,
+                                _personRepository.FetchPersonIdsFromEmailAddress(emailTo, churchId),
+                                MessageStatus.Success, string.Empty);
+                        else
+                            _messageRecepientRepository.UpdateMessageRecepient(messageRecepientId.Value,
+                                MessageStatus.Success);
                     }
                 }
                 catch (Exception e)
                 {
-                    _messageRecepientRepository.SaveMessageRecepient(messageId, _personRepository.FetchPersonIdsFromEmailAddress(emailTo, churchId), "Failure", e.Message);
+                    if (messageRecepientId == null)
+                        _messageRecepientRepository.SaveMessageRecepient(messageId.Value,
+                            _personRepository.FetchPersonIdsFromEmailAddress(emailTo, churchId), MessageStatus.Failed,
+                            e.Message);
+                    else
+                        _messageRecepientRepository.UpdateMessageRecepient(messageRecepientId.Value,
+                            MessageStatus.Failed, e.Message);
+                    returnMessage += e.Message;
                 }
             }
-            catch (Exception)
+            catch (Exception exError)
             {
-                //There is a problem creating the email...
+                
+                SendExceptionEmailAsync(exError);
+                return exError.Message;
             }
+            return returnMessage == string.Empty ? "Message succesfully send" : returnMessage;
         }
 
         public void SendExceptionEmailAsync(Exception ex)

@@ -248,7 +248,7 @@ namespace oikonomos.web.Controllers
                     IChurchRepository churchRepository = new ChurchRepository();
                     IPersonRepository personRepository = new PersonRepository(permissionRepository, churchRepository);
 
-                    var emailSender = new EmailSender(messageRepository, messageRecepientRepository, messageAttachmentRepository, personRepository);
+                    IEmailSender emailSender = new EmailSender(messageRepository, messageRecepientRepository, messageAttachmentRepository, personRepository);
 
                     for (var count = 0; count < messageCount; count++)
                     {

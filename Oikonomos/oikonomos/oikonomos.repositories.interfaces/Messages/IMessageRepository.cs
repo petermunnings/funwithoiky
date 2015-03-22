@@ -1,5 +1,4 @@
 using oikonomos.common.DTOs;
-using oikonomos.common.Models;
 
 namespace oikonomos.repositories.interfaces.Messages
 {

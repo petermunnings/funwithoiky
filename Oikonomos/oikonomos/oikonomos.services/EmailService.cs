@@ -30,10 +30,9 @@ namespace oikonomos.services
             _churchEmailTemplatesRepository = churchEmailTemplatesRepository;
         }
 
-        public void SendEmails(PersonViewModel person, bool sendWelcomeEmail, Church church, Person personToSave, Person currentPerson)
+        public void SendWelcomeEmail(PersonViewModel person, bool sendWelcomeEmail, Church church, Person personToSave, Person currentPerson)
         {
-            if (sendWelcomeEmail && personToSave.HasValidEmail() &&
-                (personToSave.HasPermission(Permissions.Login) || personToSave.HasPermission(Permissions.SendWelcomeLetter)))
+            if (sendWelcomeEmail && personToSave.HasValidEmail() && (personToSave.HasPermission(Permissions.Login) || personToSave.HasPermission(Permissions.SendWelcomeLetter)))
             {
                 SendEmailAndPassword(
                     person.Firstname,
@@ -82,8 +81,8 @@ namespace oikonomos.services
         public string SendGroupEmail(IEnumerable<string> addresses, string subject, string body, Person currentPerson, IEnumerable<UploadFilesResult> attachmentList)
         {
             body = AddChurchSignature(body, currentPerson);
-            Task.Factory.StartNew(() => _emailSender.SendEmail(subject, body, currentPerson.Church.Name, addresses, currentPerson.Church.EmailLogin, currentPerson.Church.EmailPassword, currentPerson.PersonId, currentPerson.Church.ChurchId, attachmentList));
-            return "Emails queued for sending";
+            return _emailSender.QueueEmails(subject, body, currentPerson.Church.Name, addresses, currentPerson.Church.EmailLogin, currentPerson.Church.EmailPassword, currentPerson.PersonId, currentPerson.Church.ChurchId, attachmentList);
+
         }
 
         public bool SendEmailAndPassword(Person currentPerson, int personId, out string message)
@@ -139,8 +138,13 @@ namespace oikonomos.services
                                            church.OfficePhone,
                                            church.OfficeEmail);
 
-            _emailSender.SendEmail(subject, body, church.Name, new[] { person.Email }, church.EmailLogin, church.EmailPassword, person.PersonId, church.ChurchId, new List<UploadFilesResult>());
+            _emailSender.QueueEmails(subject, body, church.Name, new[] { person.Email }, church.EmailLogin, church.EmailPassword, person.PersonId, church.ChurchId, new List<UploadFilesResult>());
             return "Password has been reset.  You should receive an email shortly explaining what to do next";
+        }
+
+        public string SendQueuedEmail(MessageQueueViewModel queuedMessage)
+        {
+            return _emailSender.SendEmail(queuedMessage.Subject, queuedMessage.Body, queuedMessage.MessageToFullName, queuedMessage.MessageToEmail, queuedMessage.EmailLogin, queuedMessage.EmailPassword, queuedMessage.MessageFromId, queuedMessage.ChurchId, queuedMessage.Attachments, queuedMessage.MessageId, queuedMessage.MessageRecepientId);
         }
 
         private void SendEmailAndPassword(string firstname, string surname, string email, Person personToSave, Person currentPerson)
@@ -177,8 +181,7 @@ namespace oikonomos.services
                         isVisitor,
                         includeUserNamePassword);
 
-            Task.Factory.StartNew(() => _emailSender.SendEmail(subject, body, church.Name, new[] { email }, church.EmailLogin, church.EmailPassword, currentPerson.PersonId, church.ChurchId, new List<UploadFilesResult>()));
-
+            _emailSender.QueueEmails(subject, body, church.Name, new[] { email }, church.EmailLogin, church.EmailPassword, currentPerson.PersonId, church.ChurchId, new List<UploadFilesResult>());
         }
 
         private string AddChurchSignature(string body, Person currentPerson)
@@ -194,7 +197,7 @@ namespace oikonomos.services
            var subject = "A new visitor to " + church.Name + " has been added to your homegroup";
            var body = GetNewVisitorEmailBody(firstname, surname, church.Name, person);
 
-           Task.Factory.StartNew(() => _emailSender.SendEmail(subject, body, church.Name, new[] { email }, church.EmailLogin, church.EmailPassword, currentPerson.PersonId, church.ChurchId, new List<UploadFilesResult>()));
+           _emailSender.QueueEmails(subject, body, church.Name, new[] { email }, church.EmailLogin, church.EmailPassword, currentPerson.PersonId, church.ChurchId, new List<UploadFilesResult>());
         }
 
 
