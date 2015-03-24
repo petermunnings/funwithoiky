@@ -462,9 +462,10 @@ var CreateNewMessage = function(personId, messageType) {
         });
     } else {
         OpenEmailDialog();
-        postData = { personId: personId };
+        postData = { personId: personId, clearAttachments: true };
         $.post("/Ajax/SetEmailAddressesFromPersonId", $.postify(postData), function(data) {
             if (data.Message == "") {
+                clearAttachmentList();
                 SetupEmailDialog();
             } else {
                 ShowErrorMessage("Error opening message", data.Message);

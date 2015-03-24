@@ -1571,7 +1571,7 @@ namespace oikonomos.web.Controllers
             return Json(response, JsonRequestBehavior.DenyGet);
         }
 
-        public JsonResult SetEmailAddressesFromPersonId(int personId)
+        public JsonResult SetEmailAddressesFromPersonId(int personId, bool clearAttachments)
         {
             var sessionTimedOut = false;
             var message = string.Empty;
@@ -1582,6 +1582,8 @@ namespace oikonomos.web.Controllers
             }
             else
             {
+                if (clearAttachments)
+                    Session["AttachmentList"] = new List<UploadFilesResult>();
                 var person = _personService.FetchPersonViewModel(personId, (Person)Session[SessionVariable.LoggedOnPerson]);
                 if (person == null || string.IsNullOrEmpty(person.Email))
                     message = "Could not find recepient email address";

@@ -230,6 +230,12 @@ function stopRKey(evt) {
   if ((evt.keyCode == 13) && (node.type=="text"))  {return false;} 
 }
 
+
+function clearAttachmentList() {
+    var newHtml = [];
+    $('.file_name').html(newHtml.join(""));
+}
+
 $(document).ready(function () {
 
     setTimeout("window.location = '/Home/Index'", 1210000);
@@ -288,8 +294,7 @@ $(document).ready(function () {
             $("#send_Email").slideUp();
             $("#mainContent").slideDown();
             $.post("/Home/RemoveAllAttachments", function (data) {
-                var newHtml = [];
-                $('.file_name').html(newHtml.join(""));
+                clearAttachmentList();
             });
         });
     
