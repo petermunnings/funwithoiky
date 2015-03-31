@@ -17,5 +17,6 @@ namespace oikonomos.common.Models
         public int ChurchId  { get; set; }
         public IEnumerable<Attachment> Attachments { get; set; }
         public int MessageId { get; set; }
+        public string ChurchName { get; set; }
     }
 }

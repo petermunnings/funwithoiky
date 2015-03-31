@@ -130,6 +130,32 @@ EmailTemplate = {
     }
 };
 
+function SetupMessageStatusGrid() {
+    $('#jqgMessageStatusResults').jqGrid({
+        url: '/Ajax/FetchMessageStatusResults',
+        datatype: 'json',
+        mtype: 'POST',
+        colNames: ['MessageDate', 'Status', 'MessageType', 'From', 'To', 'Subject', 'StatusMessage'],
+        colModel: [
+                    { name: 'MessageDate', index: 'MessageDate', align: 'left', width: 150, search: false },
+                    { name: 'Status', index: 'Status', align: 'left', width: 150, search: true },
+                    { name: 'MessageType', index: 'MessageType', align: 'left', width: 125, search: true },
+                    { name: 'From', index: 'From', align: 'left', width: 125, search: true },
+                    { name: 'To', index: 'To', align: 'left', width: 125, search: true },
+                    { name: 'Subject', index: 'Subject', align: 'left', width: 170, search: true },
+                    { name: 'StatusMessage', index: 'StatusMessage', align: 'left', width: 250, search: true }
+        ],
+        rowNum: 50,
+        sortname: 'MessageDate',
+        sortorder: 'desc',
+        width: 'auto',
+        height: 'auto'
+    }).navGrid('#jqgpMessageStatusResults', { edit: false, add: false, del: false, search: true });
+
+    $('#jqgpMessageStatusResults').jqGrid('filterToolbar', { stringResult: true, searchOnEnter: false });
+
+}
+
 $(document).ready(function () {
     $("#accordion").accordion();
     $("#ChurchId").change(function () {
@@ -170,4 +196,7 @@ $(document).ready(function () {
     $("#SaveEmailTemplate").click(function () {
         EmailTemplate.Save();
     });
+
+    SetupMessageStatusGrid();
+
 });

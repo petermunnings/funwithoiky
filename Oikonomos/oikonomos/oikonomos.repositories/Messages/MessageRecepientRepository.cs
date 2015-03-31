@@ -88,6 +88,7 @@ namespace oikonomos.repositories.Messages
                 Subject = messageRecepient.Message.Subject,
                 Body = messageRecepient.Message.Body,
                 ChurchId = church.ChurchId,
+                ChurchName = church.Name,
                 EmailLogin = church.EmailLogin,
                 EmailPassword = church.EmailPassword,
                 Attachments = attachments

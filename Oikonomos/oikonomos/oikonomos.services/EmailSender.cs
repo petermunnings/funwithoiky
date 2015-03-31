@@ -37,35 +37,27 @@ namespace oikonomos.services
             try
             {
                 var messageId = _messageRepository.SaveMessage(personIdFrom, subject, body, "Email");
-
+                if (attachmentList != null)
+                {
+                    foreach (var attachment in attachmentList)
+                    {
+                        _messageAttachmentRepository.SaveMessageAttachment(messageId, attachment.Name, attachment.Type,
+                            attachment.Length, attachment.AttachmentContentType, attachment.AttachmentContent);
+                    }
+                }
                 foreach (var emailTo in emailAddressTo)
                 {
                     try
                     {
-                        using (var message = new MailMessage())
-                        {
-                            message.From = new MailAddress(login, displayFrom);
-                            message.Subject = subject;
-                            message.Body = body;
-                            message.IsBodyHtml = true;
-                            if (attachmentList != null)
-                            {
-                                foreach (var attachment in attachmentList)
-                                {
-                                    var msgAttachment = new Attachment(new MemoryStream(attachment.AttachmentContent), attachment.Name, attachment.AttachmentContentType);
-                                    _messageAttachmentRepository.SaveMessageAttachment(messageId, attachment.Name, attachment.Type, attachment.Length, attachment.AttachmentContentType, attachment.AttachmentContent);
-                                    message.Attachments.Add(msgAttachment);
-                                }
-                            }
-
-                            message.To.Add(emailTo);
-                            //SendEmail(message, login, password, messageId);
-                            _messageRecepientRepository.SaveMessageRecepient(messageId, _personRepository.FetchPersonIdsFromEmailAddress(emailTo, churchId),MessageStatus.Queued, string.Empty);
-                        }
+                        _messageRecepientRepository.SaveMessageRecepient(messageId,
+                            _personRepository.FetchPersonIdsFromEmailAddress(emailTo, churchId), MessageStatus.Queued,
+                            string.Empty);
                     }
                     catch (Exception e)
                     {
-                        _messageRecepientRepository.SaveMessageRecepient(messageId, _personRepository.FetchPersonIdsFromEmailAddress(emailTo, churchId), MessageStatus.Failed, e.Message);
+                        _messageRecepientRepository.SaveMessageRecepient(messageId,
+                            _personRepository.FetchPersonIdsFromEmailAddress(emailTo, churchId), MessageStatus.Failed,
+                            e.Message);
                         returnMessage += "There was a problem queueing the message to " + emailTo + ": e.Message";
                     }
                 }
@@ -134,7 +126,7 @@ namespace oikonomos.services
                 SendExceptionEmailAsync(exError);
                 return exError.Message;
             }
-            return returnMessage == string.Empty ? "Message succesfully send" : returnMessage;
+            return returnMessage == string.Empty ? "Message succesfully sent to " + emailTo : returnMessage;
         }
 
         public void SendExceptionEmailAsync(Exception ex)

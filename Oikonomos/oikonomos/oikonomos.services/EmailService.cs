@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Lib.Web.Mvc.JQuery.JqGrid;
 using oikonomos.common;
 using oikonomos.common.DTOs;
 using oikonomos.common.Models;
@@ -144,7 +145,12 @@ namespace oikonomos.services
 
         public string SendQueuedEmail(MessageQueueViewModel queuedMessage)
         {
-            return _emailSender.SendEmail(queuedMessage.Subject, queuedMessage.Body, queuedMessage.MessageToFullName, queuedMessage.MessageToEmail, queuedMessage.EmailLogin, queuedMessage.EmailPassword, queuedMessage.MessageFromId, queuedMessage.ChurchId, queuedMessage.Attachments, queuedMessage.MessageId, queuedMessage.MessageRecepientId);
+            return _emailSender.SendEmail(queuedMessage.Subject, queuedMessage.Body, queuedMessage.ChurchName, queuedMessage.MessageToEmail, queuedMessage.EmailLogin, queuedMessage.EmailPassword, queuedMessage.MessageFromId, queuedMessage.ChurchId, queuedMessage.Attachments, queuedMessage.MessageId, queuedMessage.MessageRecepientId);
+        }
+
+        public JqGridData GetMessageStatuses(Person currentPerson)
+        {
+            throw new NotImplementedException();
         }
 
         private void SendEmailAndPassword(string firstname, string surname, string email, Person personToSave, Person currentPerson)

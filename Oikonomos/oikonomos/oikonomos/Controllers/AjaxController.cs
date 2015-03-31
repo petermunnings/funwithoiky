@@ -383,6 +383,20 @@ namespace oikonomos.web.Controllers
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
+        public JsonResult FetchMessageStatusResults(JqGridRequest request)
+        {
+            var jqGridData = new JqGridData();
+            if (Session[SessionVariable.LoggedOnPerson] != null)
+            {
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                jqGridData = _emailService.GetMessageStatuses(currentPerson);
+            }
+
+            return Json(jqGridData);
+        }
+        
+
+        [AcceptVerbs(HttpVerbs.Post)]
         public JsonResult FetchPeopleInGroup(JqGridRequest request, int groupId)
         {
             var jqGridData = new JqGridData();
