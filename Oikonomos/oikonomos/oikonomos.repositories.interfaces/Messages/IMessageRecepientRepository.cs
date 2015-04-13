@@ -8,6 +8,7 @@ namespace oikonomos.repositories.interfaces.Messages
         MessageRecepientViewModel FetchMessageRecepient(int messageRecipientId);
         void SaveMessageRecepient(int messageId, IEnumerable<int> toPersonIds, string messageStatus, string errorMessage);
         MessageQueueViewModel GetNextQueuedEmail();
+        int GetNoOfOutstandingMessages();
         void UpdateMessageRecepient(int messageRecepientId, string messageStatus, string statusDescription = "");
     }
 }

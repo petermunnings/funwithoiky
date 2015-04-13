@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Web.Mvc;
 using oikonomos.common;
 using oikonomos.data;
@@ -63,7 +64,20 @@ namespace oikonomos.web.Controllers
             try
             {
                 var nextQueuedMessage = _messageRecepientRepository.GetNextQueuedEmail();
-                return Json(nextQueuedMessage == null ? new {Result = "No messages queued"} : new {Result = _emailService.SendQueuedEmail(nextQueuedMessage)}, JsonRequestBehavior.AllowGet);
+                var noOutstandingMessages = _messageRecepientRepository.GetNoOfOutstandingMessages();
+                var stopWatch = new Stopwatch();
+                stopWatch.Start();
+                while (nextQueuedMessage != null && stopWatch.ElapsedMilliseconds < 60000)
+                {
+                    _emailService.SendQueuedEmail(nextQueuedMessage);
+                    nextQueuedMessage = _messageRecepientRepository.GetNextQueuedEmail();
+                    noOutstandingMessages = _messageRecepientRepository.GetNoOfOutstandingMessages();
+                }
+                var message = noOutstandingMessages == 0
+                    ? "All messages sent"
+                    : string.Format("{0} messages still queued", noOutstandingMessages);
+
+                return Json(new { Result = message }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {

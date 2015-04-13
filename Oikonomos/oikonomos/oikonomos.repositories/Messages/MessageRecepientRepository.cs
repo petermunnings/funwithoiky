@@ -95,6 +95,11 @@ namespace oikonomos.repositories.Messages
              };
         }
 
+        public int GetNoOfOutstandingMessages()
+        {
+            return Context.MessageRecepients.Count(m => m.Status == MessageStatus.Queued);
+        }
+
         private void MarkMessageAsFailed(MessageRecepient messageRecepient)
         {
             messageRecepient.Status = MessageStatus.Failed;
