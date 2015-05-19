@@ -46,6 +46,10 @@ namespace oikonomos.data.Services
                          where r.ChurchId == currentPerson.ChurchId
                                && canSetRole.RoleId == currentPerson.RoleId
                          select new RoleViewModel {RoleId = r.RoleId, Name = r.Name }).ToList();
+            foreach (var r in roles)
+            {
+                r.IsSelected = true;
+            }
             return roles;
 
         }

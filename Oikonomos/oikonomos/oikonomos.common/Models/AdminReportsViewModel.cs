@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace oikonomos.common.Models
 {
     public class AdminReportsViewModel
     {
         public int RoleId { get; set; }
-
-        public List<RoleViewModel> SecurityRoles { get; set; }
+        public int MonthId { get; set; }
+        public IList<RoleViewModel> SecurityRoles { get; set; }
+        public IList<MonthViewModel> Months { get; set; }
+        public IList<int> SelectedRoles { get; set; }
     }
 }

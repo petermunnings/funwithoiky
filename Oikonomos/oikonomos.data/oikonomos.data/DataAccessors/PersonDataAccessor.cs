@@ -667,7 +667,7 @@ namespace oikonomos.data.DataAccessors
             return validatedNumbers;
         }
 
-        public static List<PersonListViewModel> FetchChurchList(Person currentPerson, bool search, string searchField, string searchString)
+        public static IEnumerable<PersonListViewModel> FetchChurchList(Person currentPerson, bool search, string searchField, string searchString)
         {
             using (var context = new oikonomosEntities(ConfigurationManager.ConnectionStrings["oikonomosEntities"].ConnectionString))
             {
@@ -685,8 +685,9 @@ namespace oikonomos.data.DataAccessors
                             CellPhone = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.CellPhone).Value,
                             WorkPhone = p.PersonOptionalFields.FirstOrDefault(c => c.OptionalFieldId == (int)OptionalFields.WorkPhone).Value,
                             Email = p.Email,
-                            Site = p.Site == null ? string.Empty : p.Site.Name
-                        }).ToList();
+                            Site = p.Site == null ? string.Empty : p.Site.Name,
+                            RelationshipId = context.PersonRelationships.Where(pr => pr.PersonRelatedToId == p.PersonId).OrderBy(pr => pr.RelationshipId).FirstOrDefault() == null ? 99 : context.PersonRelationships.Where(pr => pr.PersonRelatedToId == p.PersonId).OrderBy(pr => pr.RelationshipId).FirstOrDefault().RelationshipId
+                        }).OrderBy(pp=>pp.Surname).ThenBy(pp=>pp.RelationshipId).ThenBy(pp=>pp.PersonId).ToList();
             }
         }
 
@@ -1069,7 +1070,7 @@ namespace oikonomos.data.DataAccessors
             UpdateCommentsMadeByThisPerson(personId, context, currentPerson);
             DeleteRelationships(personId, context);
             DeleteOptionalFields(personId, context);
-            DeleteMessages(personId, context);
+            DeleteMessages(personId, context, currentPerson.PersonId);
 
             var person = (from p in context.People
                           where p.PersonId == personId
@@ -1092,7 +1093,7 @@ namespace oikonomos.data.DataAccessors
             context.DeleteObject(familyToDelete);
         }
 
-        private static void DeleteMessages(int personId, oikonomosEntities context)
+        private static void DeleteMessages(int personId, oikonomosEntities context, int currentPersonId)
         {
             var messageRecepients = context.MessageRecepients.Where(m => m.MessageTo == personId);
             foreach (var messageRecepient in messageRecepients)
@@ -1104,6 +1105,14 @@ namespace oikonomos.data.DataAccessors
                 if (remainingMessageRecepients == 0)
                     context.DeleteObject(message);
             }
+
+            //Change the messages that have been sent from the person being deleted to the person deleting them
+            var messagesSent = context.Messages.Where(m => m.MessageFrom == personId);
+            foreach (var m in messagesSent)
+            {
+                m.MessageFrom = currentPersonId;
+            }
+            context.SaveChanges();
         }
 
         private static void DeleteOptionalFields(int personId, oikonomosEntities context)

@@ -47,22 +47,23 @@ namespace oikonomos.web.Controllers
         {
             var permissionRepository = new PermissionRepository();
             var churchRepository = new ChurchRepository();
-            _personRepository = new PersonRepository(permissionRepository, churchRepository);
-            _eventService = new EventService(new EventRepository());
+            _personRepository = new PersonRepository(permissionRepository, churchRepository); var birthdayRepository = new BirthdayRepository();
+            var personRepository = new PersonRepository(permissionRepository, new ChurchRepository());
+            var usernamePasswordRepository = new UsernamePasswordRepository(permissionRepository);
+            var groupRepository = new GroupRepository();
+            var messageRepository = new MessageRepository();
+            var messageRecepientRepository = new MessageRecepientRepository();
+            var messageAttachmentRepository = new MessageAttachmentRepository();
+            var emailSender = new EmailSender(messageRepository, messageRecepientRepository, messageAttachmentRepository, personRepository);
+            var churchEmailTemplatesRepository = new ChurchEmailTemplatesRepository();
+            var emailContentRepository = new EmailContentRepository();
+            var emailContentService = new EmailContentService(emailContentRepository);
+            var emailService = new EmailService(usernamePasswordRepository, personRepository, groupRepository, emailSender, emailContentService, churchEmailTemplatesRepository);
+            var eventRepository = new EventRepository(birthdayRepository);
+            _eventService = new EventService(eventRepository, emailService);
             _personGroupRepository = new PersonGroupRepository(_personRepository);
             _usernamePasswordRepository = new UsernamePasswordRepository(permissionRepository);
-            var groupRepository = new GroupRepository();
-            var emailSender = new EmailSender(new MessageRepository(), new MessageRecepientRepository(), new MessageAttachmentRepository(), _personRepository);
-            var emailContentService = new EmailContentService(new EmailContentRepository());
-            var churchEmailTemplateRepository = new ChurchEmailTemplatesRepository();
-            var emailService = new EmailService(
-                _usernamePasswordRepository,
-                _personRepository,
-                groupRepository,
-                emailSender,
-                emailContentService,
-                churchEmailTemplateRepository
-                );
+
             _photoRepository = new PhotoRepository();
             _photoServices = new PhotoServices();
             _personService = new PersonService(
@@ -452,7 +453,7 @@ namespace oikonomos.web.Controllers
                 {
                     var fullName = currentPerson.Firstname + " " + currentPerson.Family.FamilyName;
                     ViewBag.Message = "Welcome " + fullName + " from " + currentPerson.Church.Name;
-                    var eventDisplayModel = EventDataAccessor.FetchEventsToDisplay(currentPerson);
+                    var eventDisplayModel = _eventService.FetchEventsToDisplay(currentPerson);
                     return View("Index", eventDisplayModel);
                 }
                 
@@ -475,7 +476,7 @@ namespace oikonomos.web.Controllers
                     ChurchViewModel churchViewModel = ChurchDataAccessor.FetchChurch(currentPerson.Church.Name);
                     Session[SessionVariable.Church] = churchViewModel;
                     ViewBag.Message = "Welcome " + currentPerson.Firstname + " " + currentPerson.Family.FamilyName + " from " + churchViewModel.ChurchName;
-                    EventDisplayModel eventDisplayModel = EventDataAccessor.FetchEventsToDisplay(currentPerson);
+                    EventDisplayModel eventDisplayModel = _eventService.FetchEventsToDisplay(currentPerson);
                     return View("Index", eventDisplayModel);
                 }
             }
@@ -497,7 +498,7 @@ namespace oikonomos.web.Controllers
             var churchViewModel = (ChurchViewModel)Session[SessionVariable.Church];
             ViewBag.Message = "Welcome " + currentPerson.Firstname + " " + currentPerson.Family.FamilyName + " from " + churchViewModel.ChurchName;
 
-            EventDisplayModel eventDisplayModel = EventDataAccessor.FetchEventsToDisplay(currentPerson);
+            EventDisplayModel eventDisplayModel = _eventService.FetchEventsToDisplay(currentPerson);
             eventDisplayModel.SelectedChurchId = currentPerson.ChurchId;
             return eventDisplayModel;
         }
@@ -655,9 +656,27 @@ namespace oikonomos.web.Controllers
                 return View("ReportGrid");
             }
 
-            AdminReportsViewModel viewModel = new AdminReportsViewModel();
-            viewModel.RoleId = PermissionDataAccessor.FetchDefaultRoleId(currentPerson);
-            viewModel.SecurityRoles = PermissionDataAccessor.FetchRoles(currentPerson);
+            var viewModel = new AdminReportsViewModel
+            {
+                RoleId = PermissionDataAccessor.FetchDefaultRoleId(currentPerson),
+                SecurityRoles = PermissionDataAccessor.FetchRoles(currentPerson),
+                Months = new List<MonthViewModel>
+                {
+                    new MonthViewModel {MonthId = 1, Name = "Jan"},
+                    new MonthViewModel {MonthId = 2, Name = "Feb"},
+                    new MonthViewModel {MonthId = 3, Name = "Mar"},
+                    new MonthViewModel {MonthId = 4, Name = "Apr"},
+                    new MonthViewModel {MonthId = 5, Name = "May"},
+                    new MonthViewModel {MonthId = 6, Name = "Jun"},
+                    new MonthViewModel {MonthId = 7, Name = "Jul"},
+                    new MonthViewModel {MonthId = 8, Name = "Aug"},
+                    new MonthViewModel {MonthId = 9, Name = "Sep"},
+                    new MonthViewModel {MonthId = 10, Name = "Oct"},
+                    new MonthViewModel {MonthId = 11, Name = "Nov"},
+                    new MonthViewModel {MonthId = 12, Name = "Dec"}
+                },
+                MonthId = DateTime.Today.Month
+            };
 
 
             return View(viewModel);

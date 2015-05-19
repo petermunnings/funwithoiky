@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using oikonomos.repositories;
+using oikonomos.repositories.Messages;
 using Rhino.Mocks;
 using oikonomos.common.DTOs;
 using oikonomos.data;
@@ -22,7 +24,19 @@ namespace oikonomos.services.tests
                 .Expect(e => e.GetPersonEventsForGroup(1, currentPerson))
                 .Return(eventList);
 
-            IEventService eventService = new EventService(eventRepository);
+            var permissionRepository = new PermissionRepository();
+            var personRepository = new PersonRepository(permissionRepository, new ChurchRepository());
+            var usernamePasswordRepository = new UsernamePasswordRepository(permissionRepository);
+            var groupRepository = new GroupRepository();
+            var messageRepository = new MessageRepository();
+            var messageRecepientRepository = new MessageRecepientRepository();
+            var messageAttachmentRepository = new MessageAttachmentRepository();
+            var emailSender = new EmailSender(messageRepository, messageRecepientRepository, messageAttachmentRepository, personRepository);
+            var churchEmailTemplatesRepository = new ChurchEmailTemplatesRepository();
+            var emailContentRepository = new EmailContentRepository();
+            var emailContentService = new EmailContentService(emailContentRepository);
+            var emailService = new EmailService(usernamePasswordRepository, personRepository, groupRepository, emailSender, emailContentService, churchEmailTemplatesRepository);
+            IEventService eventService = new EventService(eventRepository, emailService);
 
             var sut = eventService.GetPersonEventsForGroup(1, currentPerson);
 

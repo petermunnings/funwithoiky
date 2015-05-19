@@ -135,24 +135,24 @@ function SetupMessageStatusGrid() {
         url: '/Ajax/FetchMessageStatusResults',
         datatype: 'json',
         mtype: 'POST',
-        colNames: ['MessageDate', 'Status', 'MessageType', 'From', 'To', 'Subject', 'StatusMessage'],
+        colNames: ['MessageRecepientId', 'Sent', 'Status', 'From', 'To', 'Subject', 'StatusDetail'],
         colModel: [
-                    { name: 'MessageDate', index: 'MessageDate', align: 'left', width: 150, search: false },
+                    { name: 'MessageRecepientId', index: 'MessageRecepientId', align: 'left', width: 0, hidden: true },
+                    { name: 'Sent', index: 'Sent', align: 'left', width: 150, search: true },
                     { name: 'Status', index: 'Status', align: 'left', width: 150, search: true },
-                    { name: 'MessageType', index: 'MessageType', align: 'left', width: 125, search: true },
                     { name: 'From', index: 'From', align: 'left', width: 125, search: true },
                     { name: 'To', index: 'To', align: 'left', width: 125, search: true },
                     { name: 'Subject', index: 'Subject', align: 'left', width: 170, search: true },
-                    { name: 'StatusMessage', index: 'StatusMessage', align: 'left', width: 250, search: true }
+                    { name: 'StatusMessage', index: 'StatusMessage', align: 'left', width: 250, search: false }
         ],
-        rowNum: 50,
-        sortname: 'MessageDate',
+        rowNum: 25,
+        sortname: 'Sent',
         sortorder: 'desc',
         width: 'auto',
         height: 'auto'
     }).navGrid('#jqgpMessageStatusResults', { edit: false, add: false, del: false, search: true });
 
-    $('#jqgpMessageStatusResults').jqGrid('filterToolbar', { stringResult: true, searchOnEnter: false });
+    $('#jqgMessageStatusResults').jqGrid('filterToolbar', { stringResult: true, searchOnEnter: false });
 
 }
 

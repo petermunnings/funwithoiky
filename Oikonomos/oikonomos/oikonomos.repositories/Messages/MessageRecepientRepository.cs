@@ -116,5 +116,35 @@ namespace oikonomos.repositories.Messages
                 messageRecepient.StatusMessage = statusDescription;
             Context.SaveChanges();
         }
+
+        public IEnumerable<MessageWithStatusViewModel> FetchMessagesWithStatuses()
+        {
+            var messages =
+                (from m in Context.Messages
+                    join mr in Context.MessageRecepients
+                        on m.MessageId equals mr.MessageId
+                    join pc in Context.PersonChurches
+                        on mr.MessageTo equals pc.PersonId
+                    where mr.Status != "Success"
+                    select mr).ToList();
+
+            var ms = new List<MessageWithStatusViewModel>();
+            foreach (var mr in messages)
+            {
+                var msvm = new MessageWithStatusViewModel
+                {
+                    From = mr.Message.Person.Firstname + " " + mr.Message.Person.Family.FamilyName,
+                    Subject = mr.Message.Subject,
+                    To = mr.Person.Firstname + " " + mr.Person.Family.FamilyName,
+                    Sent = mr.MessageSent,
+                    Status = mr.Status,
+                    StatusDetail = mr.StatusMessage,
+                    MessageRecepientId = mr.MessageRecepientId.ToString()
+                };
+                ms.Add(msvm);
+            }
+
+            return ms;
+        }
     }
 }

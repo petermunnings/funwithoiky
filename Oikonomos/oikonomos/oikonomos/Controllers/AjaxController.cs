@@ -32,6 +32,8 @@ namespace oikonomos.web.Controllers
         private readonly IMessageRecepientRepository _messageRecepientRepository;
         private readonly ISmsSender _smsSender;
         private readonly IChurchEventsRepository _churchEventsReporitory;
+        private readonly IMessageService _messageService;
+        private readonly IEventService _eventService;
 
         public AjaxController()
         {
@@ -81,6 +83,13 @@ namespace oikonomos.web.Controllers
             var httpPostService = new HttpPostService();
             _smsSender = new SmsSender(messageRepository, new MessageRecepientRepository(), personRepository, httpPostService);
             _churchEventsReporitory = new ChurchEventsRepository();
+            _messageService = new MessageService(_messageRecepientRepository);
+            var birthdayRepository = new BirthdayRepository();
+            var usernamePasswordRepository = new UsernamePasswordRepository(permissionRepository);
+            var churchEmailTemplatesRepository = new ChurchEmailTemplatesRepository();
+            var emailService = new EmailService(usernamePasswordRepository, personRepository, groupRepository, emailSender, emailContentService, churchEmailTemplatesRepository);
+            var eventRepository = new EventRepository(birthdayRepository);
+            _eventService = new EventService(eventRepository, emailService);
 
         }
 
@@ -355,7 +364,20 @@ namespace oikonomos.web.Controllers
             jqGridData = EventDataAccessor.FetchEventListJQGrid(currentPerson, fromDate, toDate, request);
             return Json(jqGridData);
         }
-        
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public JsonResult FetchBirthdays(JqGridRequest request, int monthId, string selectedRoles)
+        {
+            var jqGridData = new JqGridData();
+            if (Session[SessionVariable.LoggedOnPerson] != null)
+            {
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                jqGridData = _eventService.FetchBirthdayList(currentPerson, request, monthId, selectedRoles.Split(','));
+            }
+
+            return Json(jqGridData);
+        }
+
         [AcceptVerbs(HttpVerbs.Post)]
         public JsonResult FetchPeople(JqGridRequest request, int roleId)
         {
@@ -389,7 +411,7 @@ namespace oikonomos.web.Controllers
             if (Session[SessionVariable.LoggedOnPerson] != null)
             {
                 var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                jqGridData = _emailService.GetMessageStatuses(currentPerson);
+                jqGridData = _messageService.GetMessageStatuses(currentPerson, request);
             }
 
             return Json(jqGridData);

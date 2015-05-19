@@ -11,5 +11,6 @@
         public string WorkPhone { get; set; }
         public string Email { get; set; }
         public string Site { get; set; }
+        public int? RelationshipId { get; set; }
     }
 }

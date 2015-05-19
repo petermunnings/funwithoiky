@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using Lib.Web.Mvc.JQuery.JqGrid;
 using oikonomos.common.DTOs;
+using oikonomos.common.Models;
 using oikonomos.data;
 using oikonomos.repositories.interfaces;
 using oikonomos.services.interfaces;
@@ -10,10 +14,14 @@ namespace oikonomos.services
     public class EventService : IEventService
     {
         private readonly IEventRepository _eventRepository;
+        private readonly IEmailService _emailService;
 
-        public EventService(IEventRepository eventRepository)
+        public EventService(
+            IEventRepository eventRepository,
+            IEmailService emailService)
         {
             _eventRepository = eventRepository;
+            _emailService = emailService;
         }
 
         public int CreateEvent(EventDto eventDto)
@@ -46,9 +54,82 @@ namespace oikonomos.services
             return _eventRepository.GetPersonEventsForGroup(groupId, currentPerson);
         }
 
-        public void UpdatePersonEvent(int personId, int eventId, bool completed, Person currentPerson)
+        public void UpdatePersonEvent(int personId, int eventId, bool completed)
         {
-            _eventRepository.UpdatePersonEvent(personId, eventId, completed, currentPerson);
+            _eventRepository.UpdatePersonEvent(personId, eventId, completed);
+        }
+
+        public EventDisplayModel FetchEventsToDisplay(Person currentPerson)
+        {
+            return _eventRepository.FetchEventsToDisplay(currentPerson);
+        }
+
+        public JqGridData FetchBirthdayList(Person currentPerson, JqGridRequest request, int monthId, string[] selectedRoles)
+        {
+            IEnumerable<PersonViewModel> listOfBirthdays = new List<PersonViewModel>();
+            try
+            {
+                listOfBirthdays = _eventRepository.FetchBirthdays(monthId, currentPerson, selectedRoles);
+            }
+            catch (Exception ex)
+            {
+                _emailService.SendExceptionEmail(ex);
+            }
+            
+            var totalRecords = listOfBirthdays.Count();
+
+            switch (request.sidx)
+            {
+                case "Firstname":
+                    {
+                        listOfBirthdays = request.sord.ToLower() == "asc" ? listOfBirthdays.OrderBy(p => p.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows) : listOfBirthdays.OrderByDescending(p => p.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows);
+                        break;
+                    }
+                case "Surname":
+                    {
+                        listOfBirthdays = request.sord.ToLower() == "asc" ? listOfBirthdays.OrderBy(p => p.Surname).Skip((request.page - 1) * request.rows).Take(request.rows) : listOfBirthdays.OrderByDescending(p => p.Surname).Skip((request.page - 1) * request.rows).Take(request.rows);
+                        break;
+                    }
+                case "Day":
+                    {
+                        listOfBirthdays = request.sord.ToLower() == "asc" ? listOfBirthdays.OrderBy(p => p.DateOfBirth_Value.Value.Day).Skip((request.page - 1) * request.rows).Take(request.rows) : listOfBirthdays.OrderByDescending(p => p.DateOfBirth_Value.Value.Day).Skip((request.page - 1) * request.rows).Take(request.rows);
+                        break;
+                    }
+                case "MemberStatus":
+                    {
+                        listOfBirthdays = request.sord.ToLower() == "asc" ? listOfBirthdays.OrderBy(p => p.RoleName).ThenBy(p => p.DateOfBirth_Value.Value.Day).Skip((request.page - 1) * request.rows).Take(request.rows) : listOfBirthdays.OrderByDescending(p => p.RoleName).ThenBy(p => p.DateOfBirth_Value.Value.Day).Skip((request.page - 1) * request.rows).Take(request.rows);
+                        break;
+                    }
+                case "Email":
+                    {
+                        listOfBirthdays = request.sord.ToLower() == "asc" ? listOfBirthdays.OrderBy(p => p.Email).Skip((request.page - 1) * request.rows).Take(request.rows) : listOfBirthdays.OrderByDescending(p => p.Email).Skip((request.page - 1) * request.rows).Take(request.rows);
+                        break;
+                    }
+            }
+
+            var peopleGridData = new JqGridData()
+            {
+                total = (int)Math.Ceiling((float)totalRecords / request.rows),
+                page = request.page,
+                records = totalRecords,
+                rows = (from p in listOfBirthdays.AsEnumerable()
+                        select new JqGridRow()
+                        {
+                            id = p.PersonId.ToString(),
+                            cell = new string[] {
+                                                        p.PersonId.ToString(),
+                                                        p.DateOfBirth_Value.Value.Day.ToString(CultureInfo.InvariantCulture),
+                                                        p.Firstname,
+                                                        p.Surname,
+                                                        p.RoleName,
+                                                        p.HomePhone,
+                                                        p.CellPhone,
+                                                        p.Email
+                                    }
+                        }).ToArray()
+            };
+
+            return peopleGridData;
         }
     }
 }

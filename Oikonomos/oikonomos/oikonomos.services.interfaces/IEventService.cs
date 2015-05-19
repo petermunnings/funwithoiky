@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using Lib.Web.Mvc.JQuery.JqGrid;
 using oikonomos.common.DTOs;
+using oikonomos.common.Models;
 using oikonomos.data;
 
 namespace oikonomos.services.interfaces
@@ -12,6 +14,8 @@ namespace oikonomos.services.interfaces
         IEnumerable<EventDto> GetListEventsForGroup(int churchId);
         EventDto GetEvent(int eventId);
         IEnumerable<PersonEventDto> GetPersonEventsForGroup(int groupId, Person currentPerson);
-        void UpdatePersonEvent(int personId, int eventId, bool completed, Person currentPerson);
+        void UpdatePersonEvent(int personId, int eventId, bool completed);
+        EventDisplayModel FetchEventsToDisplay(Person currentPerson);
+        JqGridData FetchBirthdayList(Person currentPerson, JqGridRequest request, int monthId, string[] selectedRoles);
     }
 }

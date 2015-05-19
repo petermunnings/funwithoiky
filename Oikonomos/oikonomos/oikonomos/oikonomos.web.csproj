@@ -65,8 +65,9 @@
     <Reference Include="MigraDoc.RtfRendering">
       <HintPath>..\External\MigraDoc.RtfRendering.dll</HintPath>
     </Reference>
-    <Reference Include="MvcCheckBoxList">
-      <HintPath>..\External\MvcCheckBoxList.dll</HintPath>
+    <Reference Include="MvcCheckBoxList, Version=1.4.4.5, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\MvcCheckBoxList.1.4.4.5\lib\net45\MvcCheckBoxList.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

@@ -61,6 +61,8 @@
     <Compile Include="Models\GridSetupViewModel.cs" />
     <Compile Include="Models\MessageQueueViewModel.cs" />
     <Compile Include="Models\MessageRecepientViewModel.cs" />
+    <Compile Include="Models\MessageWithStatusViewModel.cs" />
+    <Compile Include="Models\MonthViewModel.cs" />
     <Compile Include="Models\PersonGroupViewModel.cs" />
     <Compile Include="Models\PersonMessageModel.cs" />
     <Compile Include="Models\StandardCommentViewModel.cs" />

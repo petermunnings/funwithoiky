@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using oikonomos.repositories.Messages;
 using Rhino.Mocks;
 using oikonomos.common.DTOs;
 using oikonomos.repositories.interfaces;
@@ -13,7 +14,7 @@ namespace oikonomos.repositories.tests
         [Test]
         public void CanGetCreatedItem()
         {
-            IEventRepository eventRepository = new EventRepository();
+            IEventRepository eventRepository = new EventRepository(new BirthdayRepository());
             const string testName            = "Test Event";
             
             var newEventDto = new EventDto
@@ -35,7 +36,19 @@ namespace oikonomos.repositories.tests
         {
             var eventTypeRepository = MockRepository.GenerateStub<IEventRepository>();
 
-            IEventService eventTypeService = new EventService(eventTypeRepository);
+            var permissionRepository = new PermissionRepository();
+            var personRepository = new PersonRepository(permissionRepository, new ChurchRepository());
+            var usernamePasswordRepository = new UsernamePasswordRepository(permissionRepository);
+            var groupRepository = new GroupRepository();
+            var messageRepository = new MessageRepository();
+            var messageRecepientRepository = new MessageRecepientRepository();
+            var messageAttachmentRepository = new MessageAttachmentRepository();
+            var emailSender = new EmailSender(messageRepository, messageRecepientRepository, messageAttachmentRepository, personRepository);
+            var churchEmailTemplatesRepository = new ChurchEmailTemplatesRepository();
+            var emailContentRepository = new EmailContentRepository();
+            var emailContentService = new EmailContentService(emailContentRepository);
+            var emailService = new EmailService(usernamePasswordRepository, personRepository, groupRepository, emailSender, emailContentService, churchEmailTemplatesRepository);
+            IEventService eventTypeService = new EventService(eventTypeRepository, emailService);
             var newEvent = new EventDto();
             eventTypeRepository
                 .Expect(e => e.SaveItem(newEvent))
@@ -57,7 +70,20 @@ namespace oikonomos.repositories.tests
                 .Expect(et => et.GetItem(1))
                 .Return(expectedEventDto);
 
-            IEventService eventService = new EventService(eventRepository);
+            var permissionRepository = new PermissionRepository();
+            var personRepository = new PersonRepository(permissionRepository, new ChurchRepository());
+            var usernamePasswordRepository = new UsernamePasswordRepository(permissionRepository);
+            var groupRepository = new GroupRepository();
+            var messageRepository = new MessageRepository();
+            var messageRecepientRepository = new MessageRecepientRepository();
+            var messageAttachmentRepository = new MessageAttachmentRepository();
+            var emailSender = new EmailSender(messageRepository, messageRecepientRepository, messageAttachmentRepository, personRepository);
+            var churchEmailTemplatesRepository = new ChurchEmailTemplatesRepository();
+            var emailContentRepository = new EmailContentRepository();
+            var emailContentService = new EmailContentService(emailContentRepository);
+            var emailService = new EmailService(usernamePasswordRepository, personRepository, groupRepository, emailSender, emailContentService, churchEmailTemplatesRepository);
+
+            IEventService eventService = new EventService(eventRepository, emailService);
             var eventDto = eventService.GetEvent(1);
             Assert.That(eventDto, Is.EqualTo(expectedEventDto));
         }

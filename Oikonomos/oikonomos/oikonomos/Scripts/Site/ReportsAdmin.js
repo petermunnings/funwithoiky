@@ -256,6 +256,52 @@ $(document).ready(function () {
         }, 600);
     });
 
+    $('#jqgBirthdays').jqGrid({
+        url: '/Ajax/FetchBirthdays',
+        postData: {
+            monthId: function () { return $("#MonthId").val(); },
+            selectedRoles: function () {
+                var selectedRoles = new Array();
+                $('input[name="ChurchRoles"]:checked').each(function () {
+                    selectedRoles.push(this.value);
+                });
+                return selectedRoles;
+            }
+        },
+        datatype: 'json',
+        mtype: 'POST',
+        colNames: ['PersonId', 'Day', 'Firstname', 'Surname', 'MemberStatus', 'HomePhone', 'CellPhone', 'Email'],
+        //columns model
+        colModel: [
+                    { name: 'PersonId', index: 'PersonId', hidden: true, search: false },
+                    { name: 'Day', index: 'Day', align: 'left', width: 40 },
+                    { name: 'Firstname', index: 'Firstname', align: 'left', width: 130, search: true },
+                    { name: 'Surname', index: 'Surname', align: 'left', width: 130, search: true },
+                    { name: 'MemberStatus', index: 'MemberStatus', align: 'left', width: 148, search: true },
+                    { name: 'HomePhone', index: 'HomePhone', align: 'left', width: 120 },
+                    { name: 'CellPhone', index: 'CellPhone', align: 'left', width: 120 },
+                    { name: 'Email', index: 'Email', align: 'left', width: 230 }
+        ],
+        pager: $('#jqgpBirthdays'),
+        rowNum: 20,
+        sortname: 'Birthday',
+        sortorder: 'asc',
+        viewrecords: true,
+        width: 'auto',
+        height: 'auto',
+        ondblClickRow: function (rowid, iRow, iCol, e) {
+            window.location = "/Home/Person?PersonId=" + rowid;
+        }
+    }).navGrid('#jqgpBirthdays', { edit: false, add: false, del: false, search: false });
+
+    $("#MonthId").change(function () {
+        $('#jqgBirthdays').trigger("reloadGrid");
+    });
+
+    $('input[name="ChurchRoles"]').change(function() {
+        $('#jqgBirthdays').trigger("reloadGrid");
+    });
+
     $('#jqgPeopleInARole').jqGrid({
         url: '/Ajax/FetchPeople',
         postData: { roleId: function () { return $("#RoleId").val(); }},

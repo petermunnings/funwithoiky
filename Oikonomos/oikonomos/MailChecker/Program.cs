@@ -1,18 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net.Mail;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Timers;
-using oikonomos.repositories;
-using oikonomos.repositories.interfaces;
-using oikonomos.repositories.interfaces.Messages;
-using oikonomos.repositories.Messages;
-using oikonomos.services;
 using OpenPop.Mime;
 using OpenPop.Pop3;
 
