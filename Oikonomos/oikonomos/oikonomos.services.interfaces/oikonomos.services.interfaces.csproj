@@ -50,6 +50,7 @@
     <Compile Include="IGridFormatter.cs" />
     <Compile Include="IHttpPostService.cs" />
     <Compile Include="IMessageService.cs" />
+    <Compile Include="IChildReportsService.cs" />
     <Compile Include="IPasswordService.cs" />
     <Compile Include="IPersonGroupService.cs" />
     <Compile Include="IPersonService.cs" />

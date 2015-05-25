@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChildReportsService.cs" />
     <Compile Include="CommentService.cs" />
     <Compile Include="EmailContentService.cs" />
     <Compile Include="EmailSender.cs" />

@@ -34,6 +34,7 @@ namespace oikonomos.web.Controllers
         private readonly IChurchEventsRepository _churchEventsReporitory;
         private readonly IMessageService _messageService;
         private readonly IEventService _eventService;
+        private readonly IChildReportsService _childReportsService;
 
         public AjaxController()
         {
@@ -90,7 +91,7 @@ namespace oikonomos.web.Controllers
             var emailService = new EmailService(usernamePasswordRepository, personRepository, groupRepository, emailSender, emailContentService, churchEmailTemplatesRepository);
             var eventRepository = new EventRepository(birthdayRepository);
             _eventService = new EventService(eventRepository, emailService);
-
+            _childReportsService = new ChildReportsService(new ChildrenReportsRepository(), _emailService);
         }
 
         public JsonResult InitializeChurchSettingsViewModel()
@@ -379,6 +380,19 @@ namespace oikonomos.web.Controllers
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
+        public JsonResult FetchListOfChildren(JqGridRequest request)
+        {
+            var jqGridData = new JqGridData();
+            if (Session[SessionVariable.LoggedOnPerson] != null)
+            {
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                jqGridData = _childReportsService.FetchListOfChildren(currentPerson, request);
+            }
+
+            return Json(jqGridData);
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
         public JsonResult FetchPeople(JqGridRequest request, int roleId)
         {
             JqGridData jqGridData = new JqGridData();
@@ -498,32 +512,17 @@ namespace oikonomos.web.Controllers
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
-        public JsonResult FetchGroupList(JqGridRequest request, int selectedGroupId, bool useGroupId)
+        public JsonResult FetchFilteredGroupList(JqGridRequest request, int selectedGroupId, bool useGroupId)
         {
-            try
-            {
-                var jqGridData = new JqGridData();
-                if (Session[SessionVariable.LoggedOnPerson] != null)
-                {
-                    var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                    if (currentPerson.HasPermission(Permissions.EditAllGroups) || currentPerson.HasPermission(Permissions.EditOwnGroups))
-                    {
-                        jqGridData = GroupDataAccessor.FetchHomeGroupsJQGrid(currentPerson, request, selectedGroupId, useGroupId);
-                    }
-                }
-
-                return Json(jqGridData);
-            }
-            catch (Exception ex)
-            {
-                try
-                {
-                    _emailService.SendExceptionEmail(ex);
-                }
-                catch { }
-                return Json(null);
-            }
+            return FetchListOfGroups(request, selectedGroupId, useGroupId);
         }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public JsonResult FetchGroupList(JqGridRequest request)
+        {
+            return FetchListOfGroups(request, null, null);
+        }
+
 
         [AcceptVerbs(HttpVerbs.Post)]
         public JsonResult FetchHomeGroupList(JqGridRequest request)
@@ -768,7 +767,7 @@ namespace oikonomos.web.Controllers
             };
             return Json(response, JsonRequestBehavior.AllowGet);
         }
-        
+
         public JsonResult DeleteSuburb(int suburbId)
         {
             List<SuburbViewModel> suburbs = new List<SuburbViewModel>();
@@ -1022,7 +1021,7 @@ namespace oikonomos.web.Controllers
         {
             return DeleteHomeGroup(groupId, false);
         }
-        
+
         public JsonResult ConfirmDeleteHomeGroup(int groupId)
         {
             return DeleteHomeGroup(groupId, true);
@@ -1396,7 +1395,7 @@ namespace oikonomos.web.Controllers
 
             return Json(response, JsonRequestBehavior.AllowGet);
         }
-        
+
 
         public JsonResult ChangePassword(string currentPassword, string newPassword)
         {
@@ -1513,7 +1512,7 @@ namespace oikonomos.web.Controllers
             };
             return Json(response, JsonRequestBehavior.DenyGet);
         }
-        
+
         public JsonResult FetchGroupLeaderCellPhoneNos(bool search, JqGridFilters filters, bool includeMembers)
         {
             bool sessionTimedOut = false;
@@ -1692,7 +1691,7 @@ namespace oikonomos.web.Controllers
             };
             return Json(response, JsonRequestBehavior.DenyGet);
         }
-        
+
         public JsonResult FetchGroupEmails(int groupId, List<int> selectedIds, bool selectedOnly)
         {
             var sessionTimedOut = false;
@@ -1878,7 +1877,7 @@ namespace oikonomos.web.Controllers
 
             return Json(response, JsonRequestBehavior.DenyGet);
         }
-        
+
 
         public JsonResult SavePersonComment(int personId, string comment)
         {
@@ -2021,10 +2020,36 @@ namespace oikonomos.web.Controllers
             };
             return Json(response, JsonRequestBehavior.DenyGet);
         }
-        
-        
 
-        #region Private Methods
+        private JsonResult FetchListOfGroups(JqGridRequest request, int? selectedGroupId, bool? useGroupId)
+        {
+            try
+            {
+                var jqGridData = new JqGridData();
+                if (Session[SessionVariable.LoggedOnPerson] != null)
+                {
+                    var currentPerson = (Person) Session[SessionVariable.LoggedOnPerson];
+                    if (currentPerson.HasPermission(Permissions.EditAllGroups) ||
+                        currentPerson.HasPermission(Permissions.EditOwnGroups))
+                    {
+                        jqGridData = GroupDataAccessor.FetchHomeGroupsJQGrid(currentPerson, request, selectedGroupId, useGroupId);
+                    }
+                }
+
+                return Json(jqGridData);
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    _emailService.SendExceptionEmail(ex);
+                }
+                catch
+                {
+                }
+                return Json(null);
+            }
+        }
 
         private void SelectNewChurch(int churchId, Person currentPerson)
         {
@@ -2039,17 +2064,30 @@ namespace oikonomos.web.Controllers
         }
 
         //private void SearchForFacebookId(int personId, string firstname, string surname, FacebookClient client)
+
         //{
+
         //    try
+
         //    {
+
         //        string fullname = firstname + " " + surname;
+
         //        dynamic friends = client.Query("SELECT uid, first_name, last_name FROM user WHERE uid IN (    SELECT uid2    FROM friend    WHERE uid1=me()) AND name='" + fullname + "'");
+
         //        if (friends.Count == 1)
+
         //        {
+
         //            PersonDataAccessor.SavePersonFacebookId(personId, friends[0].uid);
+
         //        }
+
         //    }
+
         //    catch { }
+
+        #region Private Methods
 
         //}
         #endregion Private Methods

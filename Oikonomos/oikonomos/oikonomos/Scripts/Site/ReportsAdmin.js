@@ -302,6 +302,38 @@ $(document).ready(function () {
         $('#jqgBirthdays').trigger("reloadGrid");
     });
 
+    $('#jqgChildren').jqGrid({
+        url: '/Ajax/FetchListOfChildren',
+        datatype: 'json',
+        mtype: 'POST',
+        colNames: ['PersonId', 'Age', 'Firstname', 'Surname', 'CellNo', 'Group', 'Father', 'FatherCell', 'FatherEmail', 'Mother', 'MotherCell', 'MotherEmail'],
+        //columns model
+        colModel: [
+                    { name: 'PersonId', index: 'PersonId', hidden: true, search: false },
+                    { name: 'Age', index: 'Age', align: 'left', width: 40 },
+                    { name: 'Firstname', index: 'Firstname', align: 'left', width: 130, search: true },
+                    { name: 'Surname', index: 'Surname', align: 'left', width: 130, search: true },
+                    { name: 'CellNo', index: 'CellNo', align: 'left', width: 120 },
+                    { name: 'Group', index: 'Group', align: 'left', width: 120 },
+                    { name: 'Father', index: 'Father', align: 'left', width: 120 },
+                    { name: 'FatherCell', index: 'FatherCell', align: 'left', width: 120 },
+                    { name: 'FatherEmail', index: 'FatherEmail', align: 'left', width: 120 },
+                    { name: 'Mother', index: 'Mother', align: 'left', width: 120 },
+                    { name: 'MotherCell', index: 'MotherCell', align: 'left', width: 120 },
+                    { name: 'MotherEmail', index: 'MotherEmail', align: 'left', width: 120 }
+        ],
+        pager: $('#jqgpChildren'),
+        rowNum: 20,
+        sortname: 'Age',
+        sortorder: 'asc',
+        viewrecords: true,
+        width: 'auto',
+        height: 'auto',
+        ondblClickRow: function (rowid, iRow, iCol, e) {
+            window.location = "/Home/Person?PersonId=" + rowid;
+        }
+    }).navGrid('#jqgpChildren', { edit: false, add: false, del: false, search: false });
+
     $('#jqgPeopleInARole').jqGrid({
         url: '/Ajax/FetchPeople',
         postData: { roleId: function () { return $("#RoleId").val(); }},

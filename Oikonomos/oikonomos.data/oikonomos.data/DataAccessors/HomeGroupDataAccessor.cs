@@ -244,7 +244,7 @@ namespace oikonomos.data.DataAccessors
             }
         }
 
-        public static JqGridData FetchHomeGroupsJQGrid(Person currentPerson, JqGridRequest request, int selectedGroupId, bool useGroupId)
+        public static JqGridData FetchHomeGroupsJQGrid(Person currentPerson, JqGridRequest request, int? selectedGroupId, bool? useGroupId)
         {
             if (!(currentPerson.HasPermission(Permissions.EditOwnGroups) || currentPerson.HasPermission(Permissions.EditAllGroups)))
             {
@@ -258,11 +258,11 @@ namespace oikonomos.data.DataAccessors
 
                 var sortedGroups = sortGroupList(request, groups).ToList();
 
-                if (useGroupId)
+                if (useGroupId.HasValue && useGroupId.Value)
                 {
-                    if (selectedGroupId == 0)
+                    if (selectedGroupId.HasValue && selectedGroupId.Value == 0)
                         request.page = 1;
-                    else
+                    else if(selectedGroupId.HasValue)
                     {
                         var result = sortedGroups
                             .Select((x, i) => new {Item = x, Index = i})

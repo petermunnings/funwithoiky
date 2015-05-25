@@ -804,7 +804,7 @@ $(document).ready(function () {
 
     if ($("#div_showList").html() == "True") {
         $('#jqgGroups').jqGrid({
-            url: '/Ajax/FetchGroupList',
+            url: '/Ajax/FetchFilteredGroupList',
             datatype: 'json',
             mtype: 'POST',
             colNames: colNames,
