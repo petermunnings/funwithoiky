@@ -5,6 +5,6 @@ namespace oikonomos.services.interfaces
 {
     public interface IChildReportsService
     {
-        JqGridData FetchListOfChildren(Person currentPerson, JqGridRequest request);
+        JqGridData FetchListOfChildren(Person currentPerson, JqGridRequest request, string[] selectedRoles);
     }
 }

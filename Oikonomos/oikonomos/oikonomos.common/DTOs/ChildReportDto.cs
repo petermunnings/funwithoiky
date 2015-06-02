@@ -20,6 +20,8 @@ namespace oikonomos.common.DTOs
         public string AddressLine3 { get; set; }
         public string AddressLine4 { get; set; }
         public string GroupName { get; set; }
+        public string HomePhone { get; set; }
+
         public int Age
         {
             get

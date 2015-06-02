@@ -15,13 +15,16 @@ namespace oikonomos.services
     {
         private readonly IEventRepository _eventRepository;
         private readonly IEmailService _emailService;
+        private readonly IBirthdayAndAnniversaryRepository _birthdayAndAnniversaryRepository;
 
         public EventService(
             IEventRepository eventRepository,
-            IEmailService emailService)
+            IEmailService emailService,
+            IBirthdayAndAnniversaryRepository birthdayAndAnniversaryRepository)
         {
             _eventRepository = eventRepository;
             _emailService = emailService;
+            _birthdayAndAnniversaryRepository = birthdayAndAnniversaryRepository;
         }
 
         public int CreateEvent(EventDto eventDto)
@@ -69,7 +72,7 @@ namespace oikonomos.services
             IEnumerable<PersonViewModel> listOfBirthdays = new List<PersonViewModel>();
             try
             {
-                listOfBirthdays = _eventRepository.FetchBirthdays(monthId, currentPerson, selectedRoles);
+                listOfBirthdays = _birthdayAndAnniversaryRepository.GetBirthdayListForAMonth(currentPerson, monthId, selectedRoles);
             }
             catch (Exception ex)
             {
@@ -119,6 +122,74 @@ namespace oikonomos.services
                             cell = new string[] {
                                                         p.PersonId.ToString(),
                                                         p.DateOfBirth_Value.Value.Day.ToString(CultureInfo.InvariantCulture),
+                                                        p.Firstname,
+                                                        p.Surname,
+                                                        p.RoleName,
+                                                        p.HomePhone,
+                                                        p.CellPhone,
+                                                        p.Email
+                                    }
+                        }).ToArray()
+            };
+
+            return peopleGridData;
+        }
+
+        public JqGridData FetchAnniversaryList(Person currentPerson, JqGridRequest request, int monthId, string[] selectedRoles)
+        {
+            IEnumerable<PersonViewModel> listOfAnniversaries = new List<PersonViewModel>();
+            try
+            {
+                listOfAnniversaries = _birthdayAndAnniversaryRepository.GetAnniversaryListForAMonth(currentPerson, monthId, selectedRoles);
+            }
+            catch (Exception ex)
+            {
+                _emailService.SendExceptionEmail(ex);
+            }
+
+            var totalRecords = listOfAnniversaries.Count();
+
+            switch (request.sidx)
+            {
+                case "Firstname":
+                    {
+                        listOfAnniversaries = request.sord.ToLower() == "asc" ? listOfAnniversaries.OrderBy(p => p.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows) : listOfAnniversaries.OrderByDescending(p => p.Firstname).Skip((request.page - 1) * request.rows).Take(request.rows);
+                        break;
+                    }
+                case "Surname":
+                    {
+                        listOfAnniversaries = request.sord.ToLower() == "asc" ? listOfAnniversaries.OrderBy(p => p.Surname).Skip((request.page - 1) * request.rows).Take(request.rows) : listOfAnniversaries.OrderByDescending(p => p.Surname).Skip((request.page - 1) * request.rows).Take(request.rows);
+                        break;
+                    }
+                case "Day":
+                    {
+                        listOfAnniversaries = request.sord.ToLower() == "asc" ? listOfAnniversaries.OrderBy(p => p.Anniversary_Value.Value.Day).Skip((request.page - 1) * request.rows).Take(request.rows) : listOfAnniversaries.OrderByDescending(p => p.Anniversary_Value.Value.Day).Skip((request.page - 1) * request.rows).Take(request.rows);
+                        break;
+                    }
+                case "MemberStatus":
+                    {
+                        listOfAnniversaries = request.sord.ToLower() == "asc" ? listOfAnniversaries.OrderBy(p => p.RoleName).ThenBy(p => p.Anniversary_Value.Value.Day).Skip((request.page - 1) * request.rows).Take(request.rows) : listOfAnniversaries.OrderByDescending(p => p.RoleName).ThenBy(p => p.Anniversary_Value.Value.Day).Skip((request.page - 1) * request.rows).Take(request.rows);
+                        break;
+                    }
+                case "Email":
+                    {
+                        listOfAnniversaries = request.sord.ToLower() == "asc" ? listOfAnniversaries.OrderBy(p => p.Email).Skip((request.page - 1) * request.rows).Take(request.rows) : listOfAnniversaries.OrderByDescending(p => p.Email).Skip((request.page - 1) * request.rows).Take(request.rows);
+                        break;
+                    }
+            }
+
+            var peopleGridData = new JqGridData()
+            {
+                total = (int)Math.Ceiling((float)totalRecords / request.rows),
+                page = request.page,
+                records = totalRecords,
+                rows = (from p in listOfAnniversaries.AsEnumerable()
+                        select new JqGridRow()
+                        {
+                            id = p.PersonId.ToString(),
+                            cell = new string[] {
+                                                        p.PersonId.ToString(),
+                                                        p.Anniversary_Value.Value.Day.ToString(CultureInfo.InvariantCulture),
                                                         p.Firstname,
                                                         p.Surname,
                                                         p.RoleName,

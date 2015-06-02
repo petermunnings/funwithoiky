@@ -14,6 +14,5 @@ namespace oikonomos.repositories.interfaces
         IEnumerable<PersonEventDto> GetPersonEventsForGroup(int groupId, Person currentPerson);
         void UpdatePersonEvent(int personId, int eventId, bool completed);
         EventDisplayModel FetchEventsToDisplay(Person currentPerson);
-        IEnumerable<PersonViewModel> FetchBirthdays(int monthId, Person currentPerson, string[] selectedRolesString);
     }
 }

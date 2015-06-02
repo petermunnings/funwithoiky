@@ -16,6 +16,7 @@
         <li><a href="#tabs-events">Events</a></li>
         <li><a href="#tabs-peopleInARole">People in a role</a></li>
         <li><a href="#tabs-birthdays">Birthdays</a></li>
+        <li><a href="#tabs-anniversaries">Anniversaries</a></li>
         <li><a href="#tabs-children">Children</a></li>
         <li><a href="#tabs-exportData">Export All Data</a></li>
     </ul>
@@ -111,14 +112,18 @@
 
         <div class="ui-widget-content">
             <table>
+                <tr><td colspan="2">&nbsp;</td></tr>
+                <tr>
+                    <td colspan="2"><button id="button_exportBirthdayData">Export to comma delimited file</button></td>
+                </tr>
                 <tr>
                     <td valign="top" style="vertical-align: top">Select a month: </td>
-                    <td valign="top" style="vertical-align: top">@Html.DropDownListFor(model => model.MonthId, new SelectList(Model.Months, "MonthId", "Name"), new { @class = "ui-corner-all" })</td>
+                    <td valign="top" style="vertical-align: top">@Html.DropDownListFor(model => model.BirthdayMonthId, new SelectList(Model.Months, "MonthId", "Name"), new { @class = "ui-corner-all" })</td>
                     <!--<td><button id="button_viewBirthdays" title="View List as pdf for printing/emailing" style="width:120px">View as pdf</button></td>-->
                 </tr>
                 <tr>
                     <td valign="top" style="vertical-align: top">Select Member statuses to be included: </td>
-                    <td valign="top" style="vertical-align: top">@Html.CheckBoxList("ChurchRoles", m => m.SecurityRoles, r => r.RoleId, r => r.Name, r=>r.IsSelected, new HtmlListInfo(HtmlTag.vertical_columns, 1))</td>
+                    <td valign="top" style="vertical-align: top">@Html.CheckBoxList("BirthdayRoles", m => m.BirthdaySecurityRoles, r => r.RoleId, r => r.Name, r=>r.IsSelected, new HtmlListInfo(HtmlTag.vertical_columns, 1))</td>
                 </tr>
                 <tr><td>&nbsp;</td></tr>
             </table>
@@ -128,8 +133,45 @@
         <div id="jqgpBirthdays" style="text-align:center;"></div>
     </div>
     
-    <div id="tabs-children">
+    <div id="tabs-anniversaries">
 
+        <div class="ui-widget-content">
+            <table>
+                <tr><td colspan="2">&nbsp;</td></tr>
+                <tr>
+                    <td colspan="2"><button id="button_exportAnniversaryData">Export to comma delimited file</button></td>
+                </tr>
+                <tr>
+                    <td valign="top" style="vertical-align: top">Select a month: </td>
+                    <td valign="top" style="vertical-align: top">@Html.DropDownListFor(model => model.AnniversaryMonthId, new SelectList(Model.Months, "MonthId", "Name"), new { @class = "ui-corner-all" })</td>
+                    <!--<td><button id="button_viewBirthdays" title="View List as pdf for printing/emailing" style="width:120px">View as pdf</button></td>-->
+                </tr>
+                <tr>
+                    <td valign="top" style="vertical-align: top">Select Member statuses to be included: </td>
+                    <td valign="top" style="vertical-align: top">@Html.CheckBoxList("AnniversaryRoles", m => m.AnniversarySecurityRoles, r => r.RoleId, r => r.Name, r => r.IsSelected, new HtmlListInfo(HtmlTag.vertical_columns, 1))</td>
+                </tr>
+                <tr><td>&nbsp;</td></tr>
+            </table>
+        </div>
+
+        <table id="jqgAnniversaries" cellpadding="0" cellspacing="0" style="width:800px"></table>
+        <div id="jqgpAnniversaries" style="text-align:center;"></div>
+    </div>
+
+    <div id="tabs-children">
+        <div class="ui-widget-content">
+            <table>
+                <tr><td colspan="2">&nbsp;</td></tr>
+                <tr>
+                    <td colspan="2"><button id="button_exportChildrenData">Export to comma delimited file</button></td>
+                </tr>
+                <tr>
+                    <td valign="top" style="vertical-align: top">Select statuses to be included: </td>
+                    <td valign="top" style="vertical-align: top">@Html.CheckBoxList("ChurchRolesForChildrenReport", m => m.SecurityRoles, r => r.RoleId, r => r.Name, r => r.IsSelected, new HtmlListInfo(HtmlTag.vertical_columns, 1))</td>
+                </tr>
+                <tr><td colspan="2">&nbsp;</td></tr>
+            </table>
+        </div>
         <table id="jqgChildren" cellpadding="0" cellspacing="0" style="width:800px"></table>
         <div id="jqgpChildren" style="text-align:center;"></div>
     </div>

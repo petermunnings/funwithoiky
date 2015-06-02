@@ -17,5 +17,6 @@ namespace oikonomos.services.interfaces
         void UpdatePersonEvent(int personId, int eventId, bool completed);
         EventDisplayModel FetchEventsToDisplay(Person currentPerson);
         JqGridData FetchBirthdayList(Person currentPerson, JqGridRequest request, int monthId, string[] selectedRoles);
+        JqGridData FetchAnniversaryList(Person currentPerson, JqGridRequest request, int monthId, string[] selectedRoles);
     }
 }

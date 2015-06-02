@@ -85,12 +85,12 @@ namespace oikonomos.web.Controllers
             _smsSender = new SmsSender(messageRepository, new MessageRecepientRepository(), personRepository, httpPostService);
             _churchEventsReporitory = new ChurchEventsRepository();
             _messageService = new MessageService(_messageRecepientRepository);
-            var birthdayRepository = new BirthdayRepository();
+            var birthdayRepository = new BirthdayAndAniversaryRepository();
             var usernamePasswordRepository = new UsernamePasswordRepository(permissionRepository);
             var churchEmailTemplatesRepository = new ChurchEmailTemplatesRepository();
             var emailService = new EmailService(usernamePasswordRepository, personRepository, groupRepository, emailSender, emailContentService, churchEmailTemplatesRepository);
             var eventRepository = new EventRepository(birthdayRepository);
-            _eventService = new EventService(eventRepository, emailService);
+            _eventService = new EventService(eventRepository, emailService, birthdayRepository);
             _childReportsService = new ChildReportsService(new ChildrenReportsRepository(), _emailService);
         }
 
@@ -379,14 +379,28 @@ namespace oikonomos.web.Controllers
             return Json(jqGridData);
         }
 
+
         [AcceptVerbs(HttpVerbs.Post)]
-        public JsonResult FetchListOfChildren(JqGridRequest request)
+        public JsonResult FetchAnniversaries(JqGridRequest request, int monthId, string selectedRoles)
         {
             var jqGridData = new JqGridData();
             if (Session[SessionVariable.LoggedOnPerson] != null)
             {
                 var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
-                jqGridData = _childReportsService.FetchListOfChildren(currentPerson, request);
+                jqGridData = _eventService.FetchAnniversaryList(currentPerson, request, monthId, selectedRoles.Split(','));
+            }
+
+            return Json(jqGridData);
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public JsonResult FetchListOfChildren(JqGridRequest request, string selectedRoles)
+        {
+            var jqGridData = new JqGridData();
+            if (Session[SessionVariable.LoggedOnPerson] != null)
+            {
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                jqGridData = _childReportsService.FetchListOfChildren(currentPerson, request, selectedRoles.Split(','));
             }
 
             return Json(jqGridData);

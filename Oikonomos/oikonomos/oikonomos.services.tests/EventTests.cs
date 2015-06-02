@@ -36,7 +36,7 @@ namespace oikonomos.services.tests
             var emailContentRepository = new EmailContentRepository();
             var emailContentService = new EmailContentService(emailContentRepository);
             var emailService = new EmailService(usernamePasswordRepository, personRepository, groupRepository, emailSender, emailContentService, churchEmailTemplatesRepository);
-            IEventService eventService = new EventService(eventRepository, emailService);
+            IEventService eventService = new EventService(eventRepository, emailService, new BirthdayAndAniversaryRepository());
 
             var sut = eventService.GetPersonEventsForGroup(1, currentPerson);
 

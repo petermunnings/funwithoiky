@@ -9,18 +9,19 @@ namespace oikonomos.repositories
 {
     public class ChildrenReportsRepository : RepositoryBase, IChildrenReportsRepository
     {
-        public IEnumerable<ChildReportDto> GetListOfChildrenForAChurch(Person personRunningReport)
+        public IEnumerable<ChildReportDto> GetListOfChildrenForAChurch(Person personRunningReport, IEnumerable<int> roles)
         {
             if (!personRunningReport.HasPermission(Permissions.ViewAdminReports))
                 return new List<ChildReportDto>();
 
             var list = Context.PersonChurches
-                .Where(pc => pc.ChurchId == personRunningReport.ChurchId)
+                .Where(pc => pc.ChurchId == personRunningReport.ChurchId && roles.Contains(pc.RoleId))
                 .Select(pc => new ChildReportDto
                 {
                     PersonId = pc.PersonId,
                     Firstname = pc.Person.Firstname,
                     Surname = pc.Person.Family.FamilyName,
+                    HomePhone = pc.Person.Family.HomePhone,
                     DateOfBirth = pc.Person.DateOfBirth,
                     CellNo = pc.Person.PersonOptionalFields.FirstOrDefault(o => o.OptionalFieldId == (int) OptionalFields.CellPhone).Value,
                     AddressLine1 = pc.Person.Family.Address.Line1,

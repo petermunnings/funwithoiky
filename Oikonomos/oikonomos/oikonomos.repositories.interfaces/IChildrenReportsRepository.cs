@@ -6,6 +6,6 @@ namespace oikonomos.repositories.interfaces
 {
     public interface IChildrenReportsRepository
     {
-        IEnumerable<ChildReportDto> GetListOfChildrenForAChurch(Person personRunningReport);
+        IEnumerable<ChildReportDto> GetListOfChildrenForAChurch(Person personRunningReport, IEnumerable<int> roles);
     }
 }

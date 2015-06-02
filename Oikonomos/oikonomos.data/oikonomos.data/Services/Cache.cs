@@ -35,23 +35,16 @@ namespace oikonomos.data.Services
         
         public static List<RoleViewModel> SecurityRoles(oikonomosEntities context, Person currentPerson)
         {
-            List<RoleViewModel> roles;
             if (currentPerson.HasPermission(common.Permissions.SystemAdministrator))
-                roles = (from r in context.Roles
+                return (from r in context.Roles
                          where r.ChurchId == currentPerson.ChurchId
-                         select new RoleViewModel {RoleId = r.RoleId, Name = r.Name}).ToList();
-            else
-                roles = (from r in context.Roles
-                         from canSetRole in r.CanBeSetByRoles
-                         where r.ChurchId == currentPerson.ChurchId
-                               && canSetRole.RoleId == currentPerson.RoleId
-                         select new RoleViewModel {RoleId = r.RoleId, Name = r.Name }).ToList();
-            foreach (var r in roles)
-            {
-                r.IsSelected = true;
-            }
-            return roles;
-
+                         select new RoleViewModel {RoleId = r.RoleId, Name = r.Name, IsSelected = r.DisplayName == "Member"}).ToList();
+            
+            return (from r in context.Roles
+                from canSetRole in r.CanBeSetByRoles
+                where r.ChurchId == currentPerson.ChurchId
+                      && canSetRole.RoleId == currentPerson.RoleId
+                select new RoleViewModel { RoleId = r.RoleId, Name = r.Name, IsSelected = r.DisplayName == "Member" }).ToList();
         }
 
         public static List<string> Permissions(oikonomosEntities context)

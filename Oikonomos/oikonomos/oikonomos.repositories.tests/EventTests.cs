@@ -14,7 +14,7 @@ namespace oikonomos.repositories.tests
         [Test]
         public void CanGetCreatedItem()
         {
-            IEventRepository eventRepository = new EventRepository(new BirthdayRepository());
+            IEventRepository eventRepository = new EventRepository(new BirthdayAndAniversaryRepository());
             const string testName            = "Test Event";
             
             var newEventDto = new EventDto
@@ -48,7 +48,7 @@ namespace oikonomos.repositories.tests
             var emailContentRepository = new EmailContentRepository();
             var emailContentService = new EmailContentService(emailContentRepository);
             var emailService = new EmailService(usernamePasswordRepository, personRepository, groupRepository, emailSender, emailContentService, churchEmailTemplatesRepository);
-            IEventService eventTypeService = new EventService(eventTypeRepository, emailService);
+            IEventService eventTypeService = new EventService(eventTypeRepository, emailService, new BirthdayAndAniversaryRepository());
             var newEvent = new EventDto();
             eventTypeRepository
                 .Expect(e => e.SaveItem(newEvent))
@@ -83,7 +83,7 @@ namespace oikonomos.repositories.tests
             var emailContentService = new EmailContentService(emailContentRepository);
             var emailService = new EmailService(usernamePasswordRepository, personRepository, groupRepository, emailSender, emailContentService, churchEmailTemplatesRepository);
 
-            IEventService eventService = new EventService(eventRepository, emailService);
+            IEventService eventService = new EventService(eventRepository, emailService, new BirthdayAndAniversaryRepository());
             var eventDto = eventService.GetEvent(1);
             Assert.That(eventDto, Is.EqualTo(expectedEventDto));
         }

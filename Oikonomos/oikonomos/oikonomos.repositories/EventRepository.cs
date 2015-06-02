@@ -14,11 +14,11 @@ namespace oikonomos.repositories
 {
     public class EventRepository : RepositoryBase, IEventRepository
     {
-        private readonly IBirthdayRepository _birthdayRepository;
+        private readonly IBirthdayAndAnniversaryRepository _birthdayAndAnniversaryRepository;
 
-        public EventRepository(IBirthdayRepository birthdayRepository)
+        public EventRepository(IBirthdayAndAnniversaryRepository birthdayAndAnniversaryRepository)
         {
-            _birthdayRepository = birthdayRepository;
+            _birthdayAndAnniversaryRepository = birthdayAndAnniversaryRepository;
             Mapper.CreateMap<Event, EventDto>();
             Mapper.CreateMap<EventDto, Event>();
         }
@@ -135,7 +135,7 @@ namespace oikonomos.repositories
                                                 Date = e.EventDate
                                             }).ToList();
 
-                var upcomingBirthdays = _birthdayRepository.GetBirthdays(currentPerson);
+                var upcomingBirthdays = _birthdayAndAnniversaryRepository.GetBirthdays(currentPerson);
 
                 var upcomingAnniversaries = (from p in context.People
                                              join c in context.PersonChurches
@@ -164,22 +164,6 @@ namespace oikonomos.repositories
                 return events;
 
             }
-        }
-
-        public IEnumerable<PersonViewModel> FetchBirthdays(int monthId, Person currentPerson, string[] selectedRolesString)
-        {
-            var selectedRoles = new List<int>();
-
-            foreach (var r in selectedRolesString)
-            {
-                int roleId;
-                if (int.TryParse(r, out roleId))
-                {
-                    selectedRoles.Add(roleId);
-                }
-            }
-
-            return _birthdayRepository.GetBirthdayListForAMonth(currentPerson, monthId, selectedRoles);
         }
 
         private static void AddAnniversaries(IEnumerable<EventListModel> upcomingAnniversaries)

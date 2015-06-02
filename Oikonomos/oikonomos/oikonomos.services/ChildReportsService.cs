@@ -21,12 +21,12 @@ namespace oikonomos.services
             _emailService = emailService;
         }
 
-        public JqGridData FetchListOfChildren(Person currentPerson, JqGridRequest request)
+        public JqGridData FetchListOfChildren(Person currentPerson, JqGridRequest request, string[] selectedRoles)
         {
             IEnumerable<ChildReportDto> listOfChildren = new List<ChildReportDto>();
             try
             {
-                listOfChildren = _childrenReportsRepository.GetListOfChildrenForAChurch(currentPerson);
+                listOfChildren = _childrenReportsRepository.GetListOfChildrenForAChurch(currentPerson, ConversionService.ConvertSelectedRolesToListOfInts(selectedRoles));
             }
             catch (Exception ex)
             {
@@ -72,11 +72,7 @@ namespace oikonomos.services
                             p.CellNo,
                             p.GroupName,
                             p.Father,
-                            p.FatherCell,
-                            p.FatherEmail,
-                            p.Mother,
-                            p.MotherCell,
-                            p.MotherEmail
+                            p.Mother
 
                         }
                     }).ToArray()

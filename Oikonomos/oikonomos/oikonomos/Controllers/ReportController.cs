@@ -4,6 +4,9 @@ using System.Linq;
 using System.Web.Mvc;
 using System.IO;
 using MigraDoc.Rendering;
+using oikonomos.repositories;
+using oikonomos.repositories.interfaces;
+using oikonomos.services;
 using oikonomos.web.Helpers;
 using oikonomos.data;
 using oikonomos.data.DataAccessors;
@@ -18,6 +21,14 @@ namespace oikonomos.web.Controllers
     public class ReportController : Controller
     {
         private static readonly string[] Months={"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        private readonly IChildrenReportsRepository _childrenReportsRepository;
+        private readonly IBirthdayAndAnniversaryRepository _birthdayAndAnniversaryRepository;
+
+        public ReportController()
+        {
+            _childrenReportsRepository = new ChildrenReportsRepository();
+            _birthdayAndAnniversaryRepository = new BirthdayAndAniversaryRepository();
+        }
 
         public FileStreamResult ChurchList(bool search, string searchField, string searchString)
         {
@@ -111,6 +122,119 @@ namespace oikonomos.web.Controllers
 
             HttpContext.Response.AddHeader("content-disposition", "attachment; filename=homegroupattendance.pdf");
             return new FileStreamResult(stream, "application/pdf");
+        }
+        public FileStreamResult ExportBirthdayData(string selectedRoles, int selectedMonth)
+        {
+            Person currentUser = SecurityHelper.CheckCurrentUser(Session, Response, ViewBag);
+            if (currentUser == null)
+            {
+                Redirect("/Home/Index");
+            }
+
+            var fileName = string.Format("birthdays_{0}.csv", Months[selectedMonth-1]);
+            HttpContext.Response.AddHeader("content-disposition", "attachment; filename=" + fileName);
+            var sw = new StreamWriter(new MemoryStream());
+            sw.WriteLine(@"Day, Surname, Firstname, Member Status, HomePhone, CellPhone, Email");
+
+            var list = _birthdayAndAnniversaryRepository.GetBirthdayListForAMonth(currentUser, selectedMonth, selectedRoles.Split(','));
+            foreach (var person in list)
+            {
+                var day = person.DateOfBirth_Value.HasValue
+                    ? person.DateOfBirth_Value.Value.Day.ToString()
+                    : string.Empty;
+                sw.WriteLine(
+                    day + ", " +
+                    person.Surname + ", " +
+                    person.Firstname + ", " +
+                    person.RoleName + ", " +
+                    person.HomePhone + ", " +
+                    person.CellPhone + ", " +
+                    person.Email + ", "
+                    );
+            }
+
+            sw.Flush();
+            sw.BaseStream.Seek(0, SeekOrigin.Begin);
+            return new FileStreamResult(sw.BaseStream, "text/csv");
+        }
+
+        public FileStreamResult ExportAnniversaryData(string selectedRoles, int selectedMonth)
+        {
+            Person currentUser = SecurityHelper.CheckCurrentUser(Session, Response, ViewBag);
+            if (currentUser == null)
+            {
+                Redirect("/Home/Index");
+            }
+
+            var fileName = string.Format("anniversaries_{0}.csv", Months[selectedMonth-1]);
+            HttpContext.Response.AddHeader("content-disposition", "attachment; filename=" + fileName);
+            var sw = new StreamWriter(new MemoryStream());
+            sw.WriteLine(@"Day, Surname, Firstname, Member Status, HomePhone, CellPhone, Email");
+
+            var list = _birthdayAndAnniversaryRepository.GetAnniversaryListForAMonth(currentUser, selectedMonth, selectedRoles.Split(','));
+            foreach (var person in list)
+            {
+                var day = person.DateOfBirth_Value.HasValue
+                    ? person.DateOfBirth_Value.Value.Day.ToString()
+                    : string.Empty;
+                sw.WriteLine(
+                    day + ", " +
+                    person.Surname + ", " +
+                    person.Firstname + ", " +
+                    person.RoleName + ", " +
+                    person.HomePhone + ", " +
+                    person.CellPhone + ", " +
+                    person.Email + ", "
+                    );
+            }
+
+            sw.Flush();
+            sw.BaseStream.Seek(0, SeekOrigin.Begin);
+            return new FileStreamResult(sw.BaseStream, "text/csv");
+        }
+
+        public FileStreamResult ExportChildrenData(string selectedRoles)
+        {
+            Person currentUser = SecurityHelper.CheckCurrentUser(Session, Response, ViewBag);
+            if (currentUser == null)
+            {
+                Redirect("/Home/Index");
+            }
+
+            HttpContext.Response.AddHeader("content-disposition", "attachment; filename=childrendata.csv");
+            var sw = new StreamWriter(new MemoryStream());
+            sw.WriteLine(@"Age, Surname, Firstname, CellPhone, HomePhone, Group, Date of Birth, Father, Father Cell, Father Email, Mother, Mother Cell, Mother Email, Address1, Address2, Address3, Address4");
+
+            var list = _childrenReportsRepository.GetListOfChildrenForAChurch(currentUser, ConversionService.ConvertSelectedRolesToListOfInts(selectedRoles.Split(',')));
+            foreach (var child in list)
+            {
+                var dateOfBirth = child.DateOfBirth.HasValue
+                    ? child.DateOfBirth.Value.ToString("dd MMM yyyy")
+                    : string.Empty;
+                sw.WriteLine(
+                    child.Age + ", " +
+                    child.Surname + ", " +
+                    child.Firstname + ", " +
+                    child.CellNo + ", " +
+                    child.HomePhone + ", " +
+                    child.GroupName + ", " +
+                    dateOfBirth + ", " +
+                    child.Father + ", " +
+                    child.FatherCell + ", " +
+                    child.FatherEmail + ", " +
+                    child.Mother + ", " +
+                    child.MotherCell + ", " +
+                    child.MotherEmail + ", " +
+                    child.AddressLine1 + ", " +
+                    child.AddressLine2 + ", " +
+                    child.AddressLine3 + ", " +
+                    child.AddressLine4 + ", "
+                    );
+            }
+
+            sw.Flush();
+            sw.BaseStream.Seek(0, SeekOrigin.Begin);
+            return new FileStreamResult(sw.BaseStream, "text/csv");
         }
 
         public FileStreamResult ExportChurchData()

@@ -51,7 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddressRepository.cs" />
-    <Compile Include="BirthdayRepository.cs" />
+    <Compile Include="BirthdayAndAniversaryRepository.cs" />
     <Compile Include="ChildrenReportsRepository.cs" />
     <Compile Include="ChurchEmailTemplatesRepository.cs" />
     <Compile Include="ChurchEventsRepository.cs" />

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using oikonomos.common;
 using oikonomos.common.DTOs;
@@ -20,7 +17,7 @@ namespace oikonomos.web.Controllers
 
         public GroupEventsController()
         {
-            var birthdayRepository = new BirthdayRepository();
+            var birthdayRepository = new BirthdayAndAniversaryRepository();
             var permissionRepository = new PermissionRepository();
             var personRepository = new PersonRepository(permissionRepository, new ChurchRepository());
             var usernamePasswordRepository = new UsernamePasswordRepository(permissionRepository);
@@ -34,7 +31,7 @@ namespace oikonomos.web.Controllers
             var emailContentService = new EmailContentService(emailContentRepository);
             var emailService = new EmailService(usernamePasswordRepository, personRepository, groupRepository, emailSender, emailContentService, churchEmailTemplatesRepository);
             var eventRepository = new EventRepository(birthdayRepository);
-            _eventService = new EventService(eventRepository, emailService);
+            _eventService = new EventService(eventRepository, emailService, birthdayRepository);
         }
         
         public JsonResult GetGroupEvents(int groupId)

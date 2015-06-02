@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="ChildReportsService.cs" />
     <Compile Include="CommentService.cs" />
+    <Compile Include="ConversionService.cs" />
     <Compile Include="EmailContentService.cs" />
     <Compile Include="EmailSender.cs" />
     <Compile Include="EmailService.cs" />

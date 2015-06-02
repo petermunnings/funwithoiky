@@ -98,6 +98,30 @@ function FetchPeopleInARoleSmsList() {
     SendReportSms("/Ajax/FetchPeopleInARoleCellPhoneNos", postData);
 }
 
+function GetSelectedRolesForChildrenReport() {
+    var selectedRoles = new Array();
+    $('input[name="ChurchRolesForChildrenReport"]:checked').each(function() {
+        selectedRoles.push(this.value);
+    });
+    return selectedRoles;
+}
+
+function GetSelectedBirthdayRolesForReport() {
+    var selectedRoles = new Array();
+    $('input[name="BirthdayRoles"]:checked').each(function () {
+        selectedRoles.push(this.value);
+    });
+    return selectedRoles;
+}
+
+function GetSelectedAnniversaryRolesForReport() {
+    var selectedRoles = new Array();
+    $('input[name="AnniversaryRoles"]:checked').each(function () {
+        selectedRoles.push(this.value);
+    });
+    return selectedRoles;
+}
+
 $(document).ready(function () {
 
     $("#fromDate").datepicker({
@@ -259,14 +283,8 @@ $(document).ready(function () {
     $('#jqgBirthdays').jqGrid({
         url: '/Ajax/FetchBirthdays',
         postData: {
-            monthId: function () { return $("#MonthId").val(); },
-            selectedRoles: function () {
-                var selectedRoles = new Array();
-                $('input[name="ChurchRoles"]:checked').each(function () {
-                    selectedRoles.push(this.value);
-                });
-                return selectedRoles;
-            }
+            monthId: function () { return $("#BirthdayMonthId").val(); },
+            selectedRoles: function () { return GetSelectedBirthdayRolesForReport(); }
         },
         datatype: 'json',
         mtype: 'POST',
@@ -294,19 +312,62 @@ $(document).ready(function () {
         }
     }).navGrid('#jqgpBirthdays', { edit: false, add: false, del: false, search: false });
 
-    $("#MonthId").change(function () {
+    $("#BirthdayMonthId").change(function () {
         $('#jqgBirthdays').trigger("reloadGrid");
     });
 
-    $('input[name="ChurchRoles"]').change(function() {
+    $('input[name="BirthdayRoles"]').change(function() {
         $('#jqgBirthdays').trigger("reloadGrid");
+    });
+
+    $('input[name="AnniversaryRoles"]').change(function () {
+        $('#jqgAnniversaries').trigger("reloadGrid");
+    });
+    
+    $('#jqgAnniversaries').jqGrid({
+        url: '/Ajax/FetchAnniversaries',
+        postData: {
+            monthId: function () { return $("#AnniversaryMonthId").val(); },
+            selectedRoles: function () { return GetSelectedAnniversaryRolesForReport(); }
+        },
+        datatype: 'json',
+        mtype: 'POST',
+        colNames: ['PersonId', 'Day', 'Firstname', 'Surname', 'MemberStatus', 'HomePhone', 'CellPhone', 'Email'],
+        //columns model
+        colModel: [
+                    { name: 'PersonId', index: 'PersonId', hidden: true, search: false },
+                    { name: 'Day', index: 'Day', align: 'left', width: 40 },
+                    { name: 'Firstname', index: 'Firstname', align: 'left', width: 130, search: true },
+                    { name: 'Surname', index: 'Surname', align: 'left', width: 130, search: true },
+                    { name: 'MemberStatus', index: 'MemberStatus', align: 'left', width: 148, search: true },
+                    { name: 'HomePhone', index: 'HomePhone', align: 'left', width: 120 },
+                    { name: 'CellPhone', index: 'CellPhone', align: 'left', width: 120 },
+                    { name: 'Email', index: 'Email', align: 'left', width: 230 }
+        ],
+        pager: $('#jqgpAnniversaries'),
+        rowNum: 20,
+        sortname: 'Birthday',
+        sortorder: 'asc',
+        viewrecords: true,
+        width: 'auto',
+        height: 'auto',
+        ondblClickRow: function (rowid, iRow, iCol, e) {
+            window.location = "/Home/Person?PersonId=" + rowid;
+        }
+    }).navGrid('#jqgpAnniversaries', { edit: false, add: false, del: false, search: false });
+
+    $("#AnniversaryMonthId").change(function () {
+        $('#jqgAnniversaries').trigger("reloadGrid");
     });
 
     $('#jqgChildren').jqGrid({
         url: '/Ajax/FetchListOfChildren',
+        postData: {
+            selectedRoles: function() { return GetSelectedRolesForChildrenReport(); }
+        },
         datatype: 'json',
         mtype: 'POST',
-        colNames: ['PersonId', 'Age', 'Firstname', 'Surname', 'CellNo', 'Group', 'Father', 'FatherCell', 'FatherEmail', 'Mother', 'MotherCell', 'MotherEmail'],
+        colNames: ['PersonId', 'Age', 'Firstname', 'Surname', 'CellNo', 'Group', 'Father', 'Mother'],
         //columns model
         colModel: [
                     { name: 'PersonId', index: 'PersonId', hidden: true, search: false },
@@ -316,11 +377,7 @@ $(document).ready(function () {
                     { name: 'CellNo', index: 'CellNo', align: 'left', width: 120 },
                     { name: 'Group', index: 'Group', align: 'left', width: 120 },
                     { name: 'Father', index: 'Father', align: 'left', width: 120 },
-                    { name: 'FatherCell', index: 'FatherCell', align: 'left', width: 120 },
-                    { name: 'FatherEmail', index: 'FatherEmail', align: 'left', width: 120 },
-                    { name: 'Mother', index: 'Mother', align: 'left', width: 120 },
-                    { name: 'MotherCell', index: 'MotherCell', align: 'left', width: 120 },
-                    { name: 'MotherEmail', index: 'MotherEmail', align: 'left', width: 120 }
+                    { name: 'Mother', index: 'Mother', align: 'left', width: 120 }
         ],
         pager: $('#jqgpChildren'),
         rowNum: 20,
@@ -333,6 +390,10 @@ $(document).ready(function () {
             window.location = "/Home/Person?PersonId=" + rowid;
         }
     }).navGrid('#jqgpChildren', { edit: false, add: false, del: false, search: false });
+
+    $('input[name="ChurchRolesForChildrenReport"]').change(function () {
+        $('#jqgChildren').trigger("reloadGrid");
+    });
 
     $('#jqgPeopleInARole').jqGrid({
         url: '/Ajax/FetchPeople',
@@ -409,4 +470,17 @@ $(document).ready(function () {
     $("#button_exportChurchData").click(function () {
         window.location = "/Report/ExportChurchData";
     });
+
+    $("#button_exportChildrenData").click(function () {
+        window.location = "/Report/ExportChildrenData?selectedRoles=" + GetSelectedRolesForChildrenReport();
+    });
+
+    $("#button_exportBirthdayData").click(function () {
+        window.location = "/Report/ExportBirthdayData?selectedRoles=" + GetSelectedBirthdayRolesForReport() + "&selectedMonth=" + $("#BirthdayMonthId").val();
+    });
+
+    $("#button_exportAnniversaryData").click(function () {
+        window.location = "/Report/ExportAnniversaryData?selectedRoles=" + GetSelectedAnniversaryRolesForReport() + "&selectedMonth=" + $("#AnniversaryMonthId").val();
+    });
+    
 });

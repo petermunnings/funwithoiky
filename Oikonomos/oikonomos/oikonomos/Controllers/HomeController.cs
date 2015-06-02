@@ -36,6 +36,7 @@ namespace oikonomos.web.Controllers
         private readonly IUsernamePasswordRepository _usernamePasswordRepository;
         private readonly IPhotoRepository _photoRepository;
         private readonly IPhotoServices _photoServices;
+        private readonly IEmailService _emailService;
 
         private const string Hostname = "sark.aserv.co.za";
         private const int Port = 995;
@@ -47,7 +48,7 @@ namespace oikonomos.web.Controllers
         {
             var permissionRepository = new PermissionRepository();
             var churchRepository = new ChurchRepository();
-            _personRepository = new PersonRepository(permissionRepository, churchRepository); var birthdayRepository = new BirthdayRepository();
+            _personRepository = new PersonRepository(permissionRepository, churchRepository); var birthdayRepository = new BirthdayAndAniversaryRepository();
             var personRepository = new PersonRepository(permissionRepository, new ChurchRepository());
             var usernamePasswordRepository = new UsernamePasswordRepository(permissionRepository);
             var groupRepository = new GroupRepository();
@@ -58,9 +59,9 @@ namespace oikonomos.web.Controllers
             var churchEmailTemplatesRepository = new ChurchEmailTemplatesRepository();
             var emailContentRepository = new EmailContentRepository();
             var emailContentService = new EmailContentService(emailContentRepository);
-            var emailService = new EmailService(usernamePasswordRepository, personRepository, groupRepository, emailSender, emailContentService, churchEmailTemplatesRepository);
+            _emailService = new EmailService(usernamePasswordRepository, personRepository, groupRepository, emailSender, emailContentService, churchEmailTemplatesRepository);
             var eventRepository = new EventRepository(birthdayRepository);
-            _eventService = new EventService(eventRepository, emailService);
+            _eventService = new EventService(eventRepository, _emailService, birthdayRepository);
             _personGroupRepository = new PersonGroupRepository(_personRepository);
             _usernamePasswordRepository = new UsernamePasswordRepository(permissionRepository);
 
@@ -76,7 +77,7 @@ namespace oikonomos.web.Controllers
                 new ChurchMatcherRepository(),
                 new GroupRepository(),
                 new FamilyRepository(_photoRepository),
-                emailService,
+                _emailService,
                 new AddressRepository(),
                 _photoRepository
                 );
@@ -233,7 +234,7 @@ namespace oikonomos.web.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<string> GetEmails()
+        public string GetEmails()
         {
             var returnMessages = new List<string>();
             using (var pop3Client = new Pop3Client())
@@ -273,7 +274,7 @@ namespace oikonomos.web.Controllers
                                         {
                                             fromPersonId = originalReceiver.First();
                                         }
-                                        returnMessages.Add(string.Format("Forwarding email on to {0}", originalSender.Email));
+                                        returnMessages.Add(string.Format("Forwarding reply from {0} for messageId {1} on to {2}", fromPersonId, messageId, originalSender.Email));
                                         emailSender.SendEmail(mm.Subject, mm.Body, Username, originalSender.Email, Username, Password, fromPersonId, originalSender.ChurchId, mm.Attachments);
                                     }
                                     pop3Client.DeleteMessage(count + 1);
@@ -288,7 +289,14 @@ namespace oikonomos.web.Controllers
                     }
                 }
             }
-            return returnMessages;
+            if (!returnMessages.Any())
+            {
+                return "No replies found";
+            }
+
+            var returnMessage = returnMessages.Aggregate(string.Empty, (current, m) => current + (m + "<br/>"));
+            _emailService.SendSystemEmail("Replies found", returnMessage);
+            return returnMessage;
         }
 
         private static List<Message> GetNewMessages(Pop3Client pop3Client)
@@ -660,6 +668,8 @@ namespace oikonomos.web.Controllers
             {
                 RoleId = PermissionDataAccessor.FetchDefaultRoleId(currentPerson),
                 SecurityRoles = PermissionDataAccessor.FetchRoles(currentPerson),
+                BirthdaySecurityRoles = PermissionDataAccessor.FetchRoles(currentPerson),
+                AnniversarySecurityRoles = PermissionDataAccessor.FetchRoles(currentPerson),
                 Months = new List<MonthViewModel>
                 {
                     new MonthViewModel {MonthId = 1, Name = "Jan"},
@@ -675,7 +685,8 @@ namespace oikonomos.web.Controllers
                     new MonthViewModel {MonthId = 11, Name = "Nov"},
                     new MonthViewModel {MonthId = 12, Name = "Dec"}
                 },
-                MonthId = DateTime.Today.Month
+                BirthdayMonthId = DateTime.Today.Month,
+                AnniversaryMonthId = DateTime.Today.Month
             };
 
 
