@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using oikonomos.common;
 using oikonomos.common.DTOs;
 using oikonomos.common.Models;
 using oikonomos.data;
+using oikonomos.data.DataAccessors;
 using oikonomos.repositories.interfaces;
 using oikonomos.services.interfaces;
 
@@ -19,8 +21,9 @@ namespace oikonomos.services
         private readonly IEmailSender _emailSender;
         private readonly IEmailContentService _emailContentService;
         private readonly IChurchEmailTemplatesRepository _churchEmailTemplatesRepository;
+        private readonly IPermissionRepository _permissionRepository;
 
-        public EmailService(IUsernamePasswordRepository usernamePasswordRepository, IPersonRepository personRepository, IGroupRepository groupRepository, IEmailSender emailSender, IEmailContentService emailContentService, IChurchEmailTemplatesRepository churchEmailTemplatesRepository)
+        public EmailService(IUsernamePasswordRepository usernamePasswordRepository, IPersonRepository personRepository, IGroupRepository groupRepository, IEmailSender emailSender, IEmailContentService emailContentService, IChurchEmailTemplatesRepository churchEmailTemplatesRepository, IPermissionRepository permissionRepository)
         {
             _usernamePasswordRepository = usernamePasswordRepository;
             _personRepository = personRepository;
@@ -28,6 +31,7 @@ namespace oikonomos.services
             _emailSender = emailSender;
             _emailContentService = emailContentService;
             _churchEmailTemplatesRepository = churchEmailTemplatesRepository;
+            _permissionRepository = permissionRepository;
         }
 
         public void SendWelcomeEmail(PersonViewModel person, bool sendWelcomeEmail, Church church, Person personToSave, Person currentPerson)
@@ -145,6 +149,35 @@ namespace oikonomos.services
         public string SendQueuedEmail(MessageQueueViewModel queuedMessage)
         {
             return _emailSender.SendEmail(queuedMessage.Subject, queuedMessage.Body, queuedMessage.ChurchName, queuedMessage.MessageToEmail, queuedMessage.EmailLogin, queuedMessage.EmailPassword, queuedMessage.MessageFromId, queuedMessage.ChurchId, queuedMessage.Attachments, queuedMessage.MessageId, queuedMessage.MessageRecepientId);
+        }
+
+        public void SendUpdateNotification(int churchId, Person currentPerson, Person personBeingUpdated)
+        {
+            if (!CheckIfNotificationShouldBeSent(churchId)) return;
+
+            var peopleToBeNotified = _permissionRepository.FetchPeopleWithASpecificPermission(Permissions.ReceiveUpdateNotification, churchId);
+
+            var addresses = (from person in peopleToBeNotified where person.HasValidEmail() select person.Email).ToList();
+            var body = string.Format("{0} {1} was updated by {2} {3} on this date: {4}", 
+                personBeingUpdated.Firstname,
+                personBeingUpdated.Family.FamilyName, 
+                currentPerson.Firstname, 
+                currentPerson.Family.FamilyName,
+                DateTime.Now.ToString("yyyy MMMM dd HH:mm:ss"));
+
+            _emailSender.QueueEmails("Notification of Update from Oiky", body, currentPerson.Church.Name, addresses,
+                currentPerson.Church.EmailLogin, currentPerson.Church.EmailPassword, currentPerson.PersonId, churchId,
+                new List<UploadFilesResult>());
+        }
+
+        private static bool CheckIfNotificationShouldBeSent(int churchId)
+        {
+            var sendUpdateNotification = false;
+            var optionalFields = SettingsDataAccessor.FetchChurchOptionalFields(churchId);
+            foreach (var o in optionalFields)
+                if (o.OptionalFieldId == (int) OptionalFields.SendUpdateNotification && o.Display)
+                    sendUpdateNotification = true;
+            return sendUpdateNotification;
         }
 
         private void SendEmailAndPassword(string firstname, string surname, string email, Person personToSave, Person currentPerson)

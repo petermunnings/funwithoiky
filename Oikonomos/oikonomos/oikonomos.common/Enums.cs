@@ -25,7 +25,8 @@ namespace oikonomos.common
         WindowsLive = 15,
         MaritalStatus = 16,
         ShowOverseeingElder = 17,
-        ImageLink = 18
+        ImageLink = 18,
+        SendUpdateNotification = 19
     }
 
     public enum Permissions
@@ -91,7 +92,8 @@ namespace oikonomos.common
         IncludeInGroupList            = 59,
         LinkPersonToNewFamily         = 60,
         ShowEvents                    = 61,
-        EditChurchEvents              = 62
+        EditChurchEvents              = 62,
+        ReceiveUpdateNotification     = 63
     }
 
     public enum Relationships

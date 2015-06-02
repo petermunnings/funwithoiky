@@ -17,7 +17,7 @@ namespace oikonomos.repositories.tests
             var personRepository = new PersonRepository(permissionRepository, churchRepository);
             var emailSender = new EmailSender(new MessageRepository(), new MessageRecepientRepository(), new MessageAttachmentRepository(), personRepository);
             var churchEmailTemplateRepository = new ChurchEmailTemplatesRepository();
-            var emailService = new EmailService(new UsernamePasswordRepository(permissionRepository), personRepository, new GroupRepository(), emailSender, new EmailContentService(new EmailContentRepository()), churchEmailTemplateRepository);
+            var emailService = new EmailService(new UsernamePasswordRepository(permissionRepository), personRepository, new GroupRepository(), emailSender, new EmailContentService(new EmailContentRepository()), churchEmailTemplateRepository, permissionRepository);
             var uploadPhotoRepository = new PhotoRepository();
             var personService = new PersonService(
                 personRepository,

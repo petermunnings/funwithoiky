@@ -59,7 +59,7 @@ namespace oikonomos.web.Controllers
             var churchEmailTemplatesRepository = new ChurchEmailTemplatesRepository();
             var emailContentRepository = new EmailContentRepository();
             var emailContentService = new EmailContentService(emailContentRepository);
-            _emailService = new EmailService(usernamePasswordRepository, personRepository, groupRepository, emailSender, emailContentService, churchEmailTemplatesRepository);
+            _emailService = new EmailService(usernamePasswordRepository, personRepository, groupRepository, emailSender, emailContentService, churchEmailTemplatesRepository, permissionRepository);
             var eventRepository = new EventRepository(birthdayRepository);
             _eventService = new EventService(eventRepository, _emailService, birthdayRepository);
             _personGroupRepository = new PersonGroupRepository(_personRepository);

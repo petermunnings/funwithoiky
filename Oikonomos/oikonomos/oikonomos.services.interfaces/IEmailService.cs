@@ -17,6 +17,6 @@ namespace oikonomos.services.interfaces
         bool SendEmailAndPassword(Person currentPerson, int personId, out string message);
         string SendResetPasswordEmail(Person person, Church church, string password);
         string SendQueuedEmail(MessageQueueViewModel queuedMessage);
-        
+        void SendUpdateNotification(int churchId, Person currentPerson, Person personBeingUpdated);
     }
 }

@@ -32,7 +32,8 @@ namespace oikonomos.web.Controllers
                 groupRepository,
                 emailSender,
                 emailContentService,
-                churchEmailTemplateRepository
+                churchEmailTemplateRepository,
+                permissionRepository
                 );
         }
 

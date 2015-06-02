@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using oikonomos.common;
 using oikonomos.common.Models;
@@ -95,6 +96,19 @@ namespace oikonomos.repositories
             currentPerson.Role = role;
             var churchIds = (from p in currentPerson.PersonChurches select p.ChurchId).ToList();
             currentPerson.Churches = Context.Churches.Where(c => churchIds.Contains(c.ChurchId)).ToList();
+        }
+
+        public IEnumerable<Person> FetchPeopleWithASpecificPermission(Permissions permission, int churchId)
+        {
+            var permissionInt = (int) permission;
+
+            return from pc in Context.PersonChurches
+                join pr in Context.PermissionRoles 
+                    on pc.RoleId equals pr.RoleId
+                where pr.PermissionId == permissionInt
+                    && pc.ChurchId == churchId
+                select pc.Person;
+
         }
     }
 }

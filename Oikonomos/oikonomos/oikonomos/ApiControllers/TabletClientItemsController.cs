@@ -38,7 +38,8 @@ namespace oikonomos.web.ApiControllers
                 groupRepository,
                 emailSender,
                 emailContentService,
-                churchEmailTemplateRepository
+                churchEmailTemplateRepository,
+                permissionRepository
                 );
 
             var uploadPhotoRepository = new PhotoRepository();

@@ -205,6 +205,9 @@ namespace oikonomos.services
             _emailService.SendWelcomeEmail(person, sendWelcomeEmail, church, personToSave, currentPerson);
             _emailService.EmailGroupLeader(person, currentPerson, church, personToSave, addedToNewGroup);
 
+            if (personToSave.FamilyId == currentPerson.FamilyId)
+                _emailService.SendUpdateNotification(currentPerson.ChurchId, currentPerson, personToSave);
+
             return personToSave.PersonId;
         }
     }
