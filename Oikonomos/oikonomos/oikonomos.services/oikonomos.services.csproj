@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BirthdayAndAnniversaryService.cs" />
     <Compile Include="ChildReportsService.cs" />
     <Compile Include="CommentService.cs" />
     <Compile Include="ConversionService.cs" />
@@ -58,6 +59,7 @@
     <Compile Include="PersonService.cs" />
     <Compile Include="PhotoServices.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReminderService.cs" />
     <Compile Include="SmsSender.cs" />
     <Compile Include="SystemAdministratorService.cs" />
   </ItemGroup>

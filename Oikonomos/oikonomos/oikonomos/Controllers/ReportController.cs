@@ -7,6 +7,7 @@ using MigraDoc.Rendering;
 using oikonomos.repositories;
 using oikonomos.repositories.interfaces;
 using oikonomos.services;
+using oikonomos.services.interfaces;
 using oikonomos.web.Helpers;
 using oikonomos.data;
 using oikonomos.data.DataAccessors;
@@ -22,12 +23,13 @@ namespace oikonomos.web.Controllers
     {
         private static readonly string[] Months={"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
         private readonly IChildrenReportsRepository _childrenReportsRepository;
-        private readonly IBirthdayAndAnniversaryRepository _birthdayAndAnniversaryRepository;
+        private readonly IBirthdayAndAnniversaryService _birthdayAndAnniversaryService;
 
         public ReportController()
         {
             _childrenReportsRepository = new ChildrenReportsRepository();
-            _birthdayAndAnniversaryRepository = new BirthdayAndAniversaryRepository();
+            IBirthdayAndAnniversaryRepository birthdayAndAnniversaryRepository = new BirthdayAndAniversaryRepository();
+            _birthdayAndAnniversaryService = new BirthdayAndAnniversaryService(birthdayAndAnniversaryRepository);
         }
 
         public FileStreamResult ChurchList(bool search, string searchField, string searchString)
@@ -123,6 +125,7 @@ namespace oikonomos.web.Controllers
             HttpContext.Response.AddHeader("content-disposition", "attachment; filename=homegroupattendance.pdf");
             return new FileStreamResult(stream, "application/pdf");
         }
+        
         public FileStreamResult ExportBirthdayData(string selectedRoles, int selectedMonth)
         {
             Person currentUser = SecurityHelper.CheckCurrentUser(Session, Response, ViewBag);
@@ -133,29 +136,8 @@ namespace oikonomos.web.Controllers
 
             var fileName = string.Format("birthdays_{0}.csv", Months[selectedMonth-1]);
             HttpContext.Response.AddHeader("content-disposition", "attachment; filename=" + fileName);
-            var sw = new StreamWriter(new MemoryStream());
-            sw.WriteLine(@"Day, Surname, Firstname, Member Status, HomePhone, CellPhone, Email");
-
-            var list = _birthdayAndAnniversaryRepository.GetBirthdayListForAMonth(currentUser, selectedMonth, selectedRoles.Split(','));
-            foreach (var person in list)
-            {
-                var day = person.DateOfBirth_Value.HasValue
-                    ? person.DateOfBirth_Value.Value.Day.ToString()
-                    : string.Empty;
-                sw.WriteLine(
-                    day + ", " +
-                    person.Surname + ", " +
-                    person.Firstname + ", " +
-                    person.RoleName + ", " +
-                    person.HomePhone + ", " +
-                    person.CellPhone + ", " +
-                    person.Email + ", "
-                    );
-            }
-
-            sw.Flush();
-            sw.BaseStream.Seek(0, SeekOrigin.Begin);
-            return new FileStreamResult(sw.BaseStream, "text/csv");
+            var fileStream = _birthdayAndAnniversaryService.GetBirthdayListForAMonth(selectedRoles, selectedMonth, currentUser.ChurchId);
+            return new FileStreamResult(fileStream, "text/csv");
         }
 
         public FileStreamResult ExportAnniversaryData(string selectedRoles, int selectedMonth)
@@ -168,29 +150,10 @@ namespace oikonomos.web.Controllers
 
             var fileName = string.Format("anniversaries_{0}.csv", Months[selectedMonth-1]);
             HttpContext.Response.AddHeader("content-disposition", "attachment; filename=" + fileName);
-            var sw = new StreamWriter(new MemoryStream());
-            sw.WriteLine(@"Day, Surname, Firstname, Member Status, HomePhone, CellPhone, Email");
 
-            var list = _birthdayAndAnniversaryRepository.GetAnniversaryListForAMonth(currentUser, selectedMonth, selectedRoles.Split(','));
-            foreach (var person in list)
-            {
-                var day = person.DateOfBirth_Value.HasValue
-                    ? person.DateOfBirth_Value.Value.Day.ToString()
-                    : string.Empty;
-                sw.WriteLine(
-                    day + ", " +
-                    person.Surname + ", " +
-                    person.Firstname + ", " +
-                    person.RoleName + ", " +
-                    person.HomePhone + ", " +
-                    person.CellPhone + ", " +
-                    person.Email + ", "
-                    );
-            }
+            var fileStream = _birthdayAndAnniversaryService.GetAnniversaryListForAMonth(selectedRoles, selectedMonth, currentUser.ChurchId);
+            return new FileStreamResult(fileStream, "text/csv");
 
-            sw.Flush();
-            sw.BaseStream.Seek(0, SeekOrigin.Begin);
-            return new FileStreamResult(sw.BaseStream, "text/csv");
         }
 
         public FileStreamResult ExportChildrenData(string selectedRoles)

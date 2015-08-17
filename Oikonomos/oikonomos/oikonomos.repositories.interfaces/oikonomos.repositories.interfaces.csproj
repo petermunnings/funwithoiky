@@ -56,6 +56,7 @@
     <Compile Include="IChurchEventsRepository.cs" />
     <Compile Include="IChildrenReportsRepository.cs" />
     <Compile Include="IPhotoRepository.cs" />
+    <Compile Include="IReminderRepository.cs" />
     <Compile Include="Messages\IMessageAttachmentRepository.cs" />
     <Compile Include="Messages\IMessageRecepientRepository.cs" />
     <Compile Include="Messages\IMessageRepository.cs" />

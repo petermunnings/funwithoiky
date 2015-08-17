@@ -3,8 +3,6 @@ using System.Linq;
 using oikonomos.common;
 using oikonomos.common.Models;
 using oikonomos.data;
-using oikonomos.data.DataAccessors;
-using oikonomos.data.Services;
 using oikonomos.repositories.interfaces;
 using oikonomos.services.interfaces;
 

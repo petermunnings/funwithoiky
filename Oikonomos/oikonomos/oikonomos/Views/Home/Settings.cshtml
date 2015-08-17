@@ -53,6 +53,7 @@
             <li><a href="#tabs-sites">Sites</a></li>
             <li><a href="#tabs-generalSettings">General Settings</a></li>
             <li><a href="#tabs-smsSettings">Sms Settings</a></li>
+            <li><a href="#tabs-birthdayAnniversarySettings">Birthday/Anniversary Settings</a></li>
         }
         @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditPermissions))
         {
@@ -362,6 +363,27 @@
             <button id="button_saveBulkSmsDetails">Save</button>&nbsp;<img id="ajaxLoader_BulkSmsDetails" src="/Content/images/ajax-loader.gif" style="display:none" />
             <span id="saveMessage_BulkSmsDetails"></span>
         </div>
+
+    <div id="tabs-birthdayAnniversarySettings">
+        
+        <p>How often would you like to be reminded: <select id="select_ReminderFrequency" class="ui-corner-all">
+                                                        <option @if (Model.ChurchSettings.BirthdayAnniversayReminderFrequency == "monthly") { <text> selected="selected" </text>  }>
+                                                            monthly
+                                                        </option>
+                                                        <option @if (Model.ChurchSettings.BirthdayAnniversayReminderFrequency == "weekly")
+                                                                { <text> selected="selected" </text>  }>
+                                                            weekly
+                                                        </option>
+                                                    </select>
+        </p>
+        <p>Please enter the list email addresses to which the birthday and anniversary reminders will go to</p>
+        <table id="jqgPeopleToBeReminded" cellpadding="0" cellspacing="0" style="width:600px"></table>
+        <div id="jqgpPeopleToBeReminded" style="text-align:center;"></div>
+        
+            <button id="button_saveBirthdayAnniversarySettings">Save</button>&nbsp;
+            <img id="ajaxLoader_BirthdayAnniversarySettings" src="/Content/images/ajax-loader.gif" style="display:none" />
+
+    </div>
     }
     
     @if (ViewBag.CurrentUser.HasPermission(oikonomos.common.Permissions.EditPermissions))
@@ -407,7 +429,7 @@
         <div class="tableRow">
             <div style="text-align:right; display:table-cell">Address&nbsp;</div>
             <div style="text-align:left; display:table-cell"><input id="text_siteaddress1" type="text" class="ui-corner-all" />
-            <img id="ajax_sitegpsCoordinates" alt="loading" src="/Content/images/ajax-loader.gif" style="display:none" /></div>
+                <img id="ajax_sitegpsCoordinates" alt="loading" src="/Content/images/ajax-loader.gif" style="display:none" /></div>
         </div>
 
         <div class="tableRow">
@@ -430,6 +452,18 @@
                 <input id="hidden_siteaddressType" type="hidden" />
                 <input id="hidden_siteaddressId" type="hidden" />
                 <input id="hidden_siteaddressChosen" type="hidden"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="add_PersonToReminderList" style="display:none;" title="Add Person to reminder list">
+    <div style="width:400px; display:table">
+        <div class="tableRow">
+            <div style="display:table-cell">Name</div>
+            <div style="display:table-cell; width:300px">
+                <input type="text" id="text_personToBeRemindedName" class="ui-corner-all" /><img id="ajax_loader_addPerson" style="display:none" src="/Content/images/ajax-loader.gif" alt="loading.." />
+                <input type="hidden" id="hidden_personToBeRemindedId" />
             </div>
         </div>
     </div>

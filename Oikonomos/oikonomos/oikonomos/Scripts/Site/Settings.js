@@ -1,5 +1,98 @@
 ﻿var optionalFields;
 
+function RemovePersonFromReminderList(personId) {
+    var postData = { personId: personId, reminderType: 'BirthdayAnniversary' };
+
+    $.post("/Ajax/RemovePersonFromReminderList", $.postify(postData), function () {
+        $("#jqgPeopleToBeReminded").trigger("reloadGrid");
+    }).error(function (jqXhr) {
+        SendErrorEmail("Error calling RemovePersonFromReminderList", jqXhr.responseText);
+    });
+}
+
+function DeletePersonToBeReminded() {
+    var personId = $("#jqgPeopleToBeReminded").getGridParam("selrow");
+    if (personId !== null)
+        RemovePersonFromReminderList(personId);
+}
+
+function AddPersonToReminderList(personId) {
+    var postData = { personId: personId, reminderType: 'BirthdayAnniversary', reminderFrequency: $("#select_ReminderFrequency").val() };
+
+    $.post("/Ajax/AddPersonToReminderList", $.postify(postData), function () {
+        $("#jqgPeopleToBeReminded").trigger("reloadGrid");
+    }).error(function (jqXhr) {
+        SendErrorEmail("Error calling AddPersonToReminderList", jqXhr.responseText);
+    });
+}
+
+function AddPersonToBeReminded() {
+        //Populate fields
+        $("#hidden_personToBeRemindedId").val("0");
+        $("#text_personToBeRemindedName").val("");
+        $("#add_PersonToReminderList").dialog(
+            {
+                modal: true,
+                height: 180,
+                width: 440,
+                resizable: false,
+                buttons: {
+                    "Add Person": function () {
+                        $("#ajax_loader").show();
+                        rowId = 0;
+                        AddPersonToReminderList($("#hidden_personToBeRemindedId").val());
+                        $(this).dialog("close");
+                    },
+                    Cancel: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        SetupPersonLookup("#text_personToBeRemindedName", "#hidden_personToBeRemindedId");
+}
+
+function SetupPeopleToBeRemindedGrid() {
+    $('#jqgPeopleToBeReminded').jqGrid({
+        url: '/Ajax/FetchPeopleToBeReminded',
+        datatype: 'json',
+        mtype: 'POST',
+        postData: { reminderType: 'BirthdayAnniversary' },
+        colNames: ['PersonId', 'Firstname', 'Surname', 'Email'],
+        colModel: [
+                    { name: 'PersonId', index: 'PersonId', hidden: true, search: false },
+                    { name: 'Firstname', index: 'Firstname', align: 'left', width: 150, search: true },
+                    { name: 'Surname', index: 'Surname', align: 'left', width: 150, search: true },
+                    { name: 'Email', index: 'Email', align: 'left', width: 300, search: false }
+        ],
+        pager: $('#jqgpPeopleToBeReminded'),
+        rowNum: 25,
+        sortname: 'Surname',
+        sortorder: 'asc',
+        viewrecords: true,
+        width: 'auto',
+        height: 'auto',
+        gridComplete: function () {
+            $(".jqgroup").addClass("ui-state-active");
+        }
+    }).navGrid('#jqgpPeopleToBeReminded', { edit: false, add: false, del: false, search: false })
+    .navButtonAdd('#jqgpPeopleToBeReminded', {
+        caption: "Delete",
+        buttonicon: "ui-icon-trash",
+        onClickButton: function () {
+            DeletePersonToBeReminded();
+        },
+        position: "first"
+    })
+    .navButtonAdd('#jqgpPeopleToBeReminded', {
+        caption: "Add",
+        buttonicon: "ui-icon-plus",
+        onClickButton: function () {
+            AddPersonToBeReminded();
+        },
+        position: "first"
+    });
+}
+
 function DeleteSite(site) {
 
     var postData = { siteId: site.SiteId };
@@ -850,5 +943,17 @@ $(document).ready(function () {
             $("#jqgPermissionsUnLinked").trigger("reloadGrid");
         });
 
+    });
+
+    SetupPeopleToBeRemindedGrid();
+
+    $("#button_saveBirthdayAnniversarySettings").click(function() {
+        var postData = { reminderType: 'BirthdayAnniversary', reminderFrequency: $("#select_ReminderFrequency").val() };
+
+        $.post("/Ajax/UpdateReminderList", $.postify(postData), function () {
+            $("#jqgPeopleToBeReminded").trigger("reloadGrid");
+        }).error(function (jqXhr) {
+            SendErrorEmail("Error calling UpdateReminderList", jqXhr.responseText);
+        });
     });
 })

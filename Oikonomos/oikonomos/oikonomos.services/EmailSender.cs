@@ -31,7 +31,7 @@ namespace oikonomos.services
             _personRepository = personRepository;
         }
 
-        public string QueueEmails(string subject, string body, string displayFrom, IEnumerable<string> emailAddressTo, string login, string password, int personIdFrom, int churchId, IEnumerable<UploadFilesResult> attachmentList)
+        public string QueueEmails(string subject, string body, IEnumerable<string> emailAddressTo, int personIdFrom, int churchId, IEnumerable<UploadFilesResult> attachmentList)
         {
             var returnMessage = string.Empty;
             try
@@ -41,8 +41,7 @@ namespace oikonomos.services
                 {
                     foreach (var attachment in attachmentList)
                     {
-                        _messageAttachmentRepository.SaveMessageAttachment(messageId, attachment.Name, attachment.Type,
-                            attachment.Length, attachment.AttachmentContentType, attachment.AttachmentContent);
+                        _messageAttachmentRepository.SaveMessageAttachment(messageId, attachment.Name, attachment.Type, attachment.Length, attachment.AttachmentContentType, attachment.AttachmentContent);
                     }
                 }
                 foreach (var emailTo in emailAddressTo)

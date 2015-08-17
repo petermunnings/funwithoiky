@@ -39,9 +39,9 @@ namespace oikonomos.web.ApiControllers
 
                     var emailSender = new EmailSender(messageRepository, messageRecepientRepository, messageAttachmentRepository, personRepository);
 
-                    for (var count = 0; count < messageCount; count++)
+                    foreach (var m in messages)
                     {
-                        var mm = messages[count].ToMailMessage();
+                        var mm = m.Value.ToMailMessage();
                         var regex = new Regex(@"##([0-9]*)##");
                         var matches = regex.Matches(mm.Body);
                         if (matches.Count > 0 && matches[0].Groups.Count > 1)
@@ -64,7 +64,12 @@ namespace oikonomos.web.ApiControllers
                                         returnMessages.Add(string.Format("Forwarding email on to {0}", originalSender.Email));
                                         emailSender.SendEmail(mm.Subject, mm.Body, Username, originalSender.Email, Username, Password, fromPersonId, originalSender.ChurchId, mm.Attachments);
                                     }
-                                    pop3Client.DeleteMessage(count + 1);
+                                    if (!DeleteMessageByMessageId(pop3Client, m.Key))
+                                    {
+                                        var exception = new Exception("Cannot delete message " + mm.Subject + " " + mm.From);
+                                        emailSender.SendExceptionEmailAsync(exception);
+                                    }
+                                    //pop3Client.DeleteMessage(count + 1);
                                 }
                             }
                             catch (Exception errSending)
@@ -79,9 +84,23 @@ namespace oikonomos.web.ApiControllers
             return returnMessages;
         }
 
-        private static List<Message> GetNewMessages(Pop3Client pop3Client)
+        private static bool DeleteMessageByMessageId(Pop3Client client, string messageId)
         {
-            var allMessages = new List<Message>();
+            var messageCount = client.GetMessageCount();
+
+            for (var messageItem = messageCount; messageItem > 0; messageItem--)
+            {
+                if (client.GetMessageHeaders(messageItem).MessageId != messageId) continue;
+                client.DeleteMessage(messageItem);
+                return true;
+            }
+
+            return false;
+        }
+
+        private static IDictionary<string, Message> GetNewMessages(Pop3Client pop3Client)
+        {
+            var allMessages = new Dictionary<string, Message>();
 
             pop3Client.Connect(Hostname, Port, UseSsl);
             pop3Client.Authenticate(Username, Password);
@@ -89,7 +108,7 @@ namespace oikonomos.web.ApiControllers
 
             for (var i = messageCount; i > 0; i--)
             {
-                allMessages.Add(pop3Client.GetMessage(i));
+                allMessages.Add(pop3Client.GetMessageHeaders(i).MessageId, pop3Client.GetMessage(i));
             }
             return allMessages;
         }

@@ -176,6 +176,7 @@
     <Compile Include="Controllers\GroupEventsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ImagesController.cs" />
+    <Compile Include="Controllers\RemindersController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\SysAdminController.cs" />
     <Compile Include="Global.asax.cs">
@@ -588,6 +589,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\Email\" />
+    <Folder Include="Views\Reminders\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

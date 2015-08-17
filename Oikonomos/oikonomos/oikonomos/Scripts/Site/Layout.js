@@ -1,5 +1,35 @@
 ﻿var addressList;
 
+function SetupPersonLookup(fieldName, personIdField) {
+    $(fieldName).autocomplete({
+        source: function (request, response) {
+            $("#ajax_loader_addPerson").show();
+            $(personIdField).val("0");
+            $("#row_roleId").show();
+            var postData = { term: request.term };
+
+            $.post("/Ajax/PersonAutoComplete", $.postify(postData), function (data) {
+                $("#ajax_loader_addPerson").hide();
+                response(data);
+            }).error(function (jqXhr) {
+                $("#ajax_loader_addPerson").hide();
+                SendErrorEmail("Error calling PersonAutoComplete", jqXhr.responseText);
+            });
+        }
+        ,
+        minLength: 1,
+        select: function (event, ui) {
+            if (ui.item) {
+                $(personIdField).val(ui.item.id);
+                $("#row_roleId").hide();
+            } else {
+                $(personIdField).val("0");
+                $("#row_roleId").show();
+            }
+        }
+    });
+}
+
 function htmlEncode(value) {
     return $('<div/>').text(value).html();
 }

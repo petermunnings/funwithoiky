@@ -485,7 +485,7 @@ function AddPerson() {
                 }
             }
         });
-    SetupPersonLookup();
+    SetupPersonLookup("#text_personName", "#hidden_personId");
 }
 
 function SetupPeopleGrid() {
@@ -661,36 +661,7 @@ function EditGroup() {
     SetupAddressLookup();
 }
 
-function SetupPersonLookup()
-{
-    $("#text_personName").autocomplete({
-        source: function (request, response) {
-            $("#ajax_loader_addPerson").show();
-            $("#hidden_personId").val("0");
-            $("#row_roleId").show();
-            var postData = { term: request.term };
 
-            $.post("/Ajax/PersonAutoComplete", $.postify(postData), function (data) {
-                $("#ajax_loader_addPerson").hide();
-                response(data);
-            }).error(function (jqXhr) {
-                $("#ajax_loader_addPerson").hide();
-                SendErrorEmail("Error calling PersonAutoComplete", jqXhr.responseText);
-            });
-        }
-        ,
-        minLength: 1,
-        select: function (event, ui) {
-            if (ui.item) {
-                $("#hidden_personId").val(ui.item.id);
-                $("#row_roleId").hide();
-            } else {
-                $("#hidden_personId").val("0");
-                $("#row_roleId").show();
-            }
-        }
-    });
-}
 
 function SetupLeaderAndAdministratorLookup() {
     $("#text_homeGroupLeader").autocomplete({

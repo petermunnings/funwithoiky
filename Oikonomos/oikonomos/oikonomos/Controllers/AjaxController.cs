@@ -35,6 +35,7 @@ namespace oikonomos.web.Controllers
         private readonly IMessageService _messageService;
         private readonly IEventService _eventService;
         private readonly IChildReportsService _childReportsService;
+        private readonly IReminderService _reminderService;
 
         public AjaxController()
         {
@@ -93,6 +94,7 @@ namespace oikonomos.web.Controllers
             var eventRepository = new EventRepository(birthdayRepository);
             _eventService = new EventService(eventRepository, emailService, birthdayRepository);
             _childReportsService = new ChildReportsService(new ChildrenReportsRepository(), _emailService);
+            _reminderService = new ReminderService(new ReminderRepository());
         }
 
         public JsonResult InitializeChurchSettingsViewModel()
@@ -461,12 +463,57 @@ namespace oikonomos.web.Controllers
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
-        public JsonResult FetchSites(JqGridRequest request)
+        public JsonResult FetchPeopleToBeReminded(JqGridRequest request, string reminderType)
         {
-            JqGridData jqGridData = new JqGridData();
+            var jqGridData = new JqGridData();
             if (Session[SessionVariable.LoggedOnPerson] != null)
             {
-                Person currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                jqGridData = _reminderService.FetchPeopleToBeRemindedJQGrid(currentPerson, reminderType, request);
+            }
+
+            return Json(jqGridData);
+        }
+        
+        [AcceptVerbs(HttpVerbs.Post)]
+        public void RemovePersonFromReminderList(int personId, string reminderType)
+        {
+            if (Session[SessionVariable.LoggedOnPerson] != null)
+            {
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                _reminderService.RemovePersonFromReminderList(currentPerson, reminderType, personId);
+            }
+        }
+
+        
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public void UpdateReminderList(string reminderType, string reminderFrequency)
+        {
+            if (Session[SessionVariable.LoggedOnPerson] != null)
+            {
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                _reminderService.UpdateReminderList(currentPerson, reminderType, reminderFrequency);
+            }
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public void AddPersonToReminderList(int personId, string reminderType, string reminderFrequency)
+        {
+            if (Session[SessionVariable.LoggedOnPerson] != null)
+            {
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
+                _reminderService.AddPersonToReminderList(currentPerson, reminderType, reminderFrequency, personId);
+            }
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public JsonResult FetchSites(JqGridRequest request)
+        {
+            var jqGridData = new JqGridData();
+            if (Session[SessionVariable.LoggedOnPerson] != null)
+            {
+                var currentPerson = (Person)Session[SessionVariable.LoggedOnPerson];
                 jqGridData = ChurchDataAccessor.FetchSitesJQGrid(currentPerson, request);
             }
 

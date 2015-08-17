@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IBirthdayAndAnniversaryService.cs" />
     <Compile Include="ICommentService.cs" />
     <Compile Include="IEmailContentService.cs" />
     <Compile Include="IEmailSender.cs" />
@@ -55,6 +56,7 @@
     <Compile Include="IPersonGroupService.cs" />
     <Compile Include="IPersonService.cs" />
     <Compile Include="IPhotoServices.cs" />
+    <Compile Include="IReminderService.cs" />
     <Compile Include="ISmsSender.cs" />
     <Compile Include="ISystemAdministratorService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

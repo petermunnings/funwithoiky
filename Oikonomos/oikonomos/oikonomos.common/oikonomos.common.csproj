@@ -49,6 +49,7 @@
     <Compile Include="DTOs\EventDto.cs" />
     <Compile Include="DTOs\PersonDto.cs" />
     <Compile Include="DTOs\PersonEventDto.cs" />
+    <Compile Include="DTOs\ReminderDto.cs" />
     <Compile Include="DTOs\UploadFilesResult.cs" />
     <Compile Include="DTOs\UploadPhotoDto.cs" />
     <Compile Include="Enums.cs" />

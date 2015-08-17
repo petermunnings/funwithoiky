@@ -27,47 +27,70 @@ namespace oikonomos.repositories
                 }).ToList();
         }
 
-        public IEnumerable<PersonViewModel> GetAnniversaryListForAMonth(Person currentPerson, int monthId, IEnumerable<string> selectedRolesString)
+        public IEnumerable<PersonViewModel> GetAnniversaryListForAMonth(int monthId, IEnumerable<string> selectedRolesString, int churchId)
         {
             var selectedRoles = GetSelectedRoles(selectedRolesString);
-            var list = Context.PersonChurches.Where(pc => pc.ChurchId == currentPerson.ChurchId && pc.Person.Anniversary != null && selectedRoles.Contains(pc.RoleId)).ToList();
-            return (from l in list
-                    where l.Person != null && (l.Person.Anniversary.HasValue && l.Person.Anniversary.Value.Month == monthId)
-                    let cellPhone = l.Person.PersonOptionalFields.FirstOrDefault(cp => cp.OptionalFieldId == (int)OptionalFields.CellPhone)
-                    select new PersonViewModel
-                    {
-                        PersonId = l.PersonId,
-                        DateOfBirth_Value = l.Person.DateOfBirth,
-                        Anniversary_Value = l.Person.Anniversary,
-                        CellPhone = cellPhone == null ? string.Empty : cellPhone.Value,
-                        HomePhone = l.Person.Family.HomePhone,
-                        Email = l.Person.Email,
-                        Firstname = l.Person.Firstname,
-                        Surname = l.Person.Family.FamilyName,
-                        RoleName = l.Role.Name
-                    }).ToList();
+            var list = Context.PersonChurches.Where(pc => pc.ChurchId == churchId && pc.Person.Anniversary != null && selectedRoles.Contains(pc.RoleId)).ToList();
+            return GetPersonViewModelAnniversaryList(monthId, list);
         }
 
-        public IEnumerable<PersonViewModel> GetBirthdayListForAMonth(Person currentPerson, int monthId, IEnumerable<string> selectedRolesString)
+        public IEnumerable<PersonViewModel> GetBirthdayListForAMonth(int selectedMonth, int churchId)
+        {
+            var list = Context.PersonChurches.Where(pc => pc.ChurchId == churchId && pc.Person.DateOfBirth != null).ToList();
+            return GeneratePersonViewModelBirthdayList(selectedMonth, list);
+        }
+
+        public IEnumerable<PersonViewModel> GetAnniversaryListForAMonth(int selectedMonth, int churchId)
+        {
+            var list = Context.PersonChurches.Where(pc => pc.ChurchId == churchId && pc.Person.Anniversary != null).ToList();
+            return GetPersonViewModelAnniversaryList(selectedMonth, list);
+        }
+
+        public IEnumerable<PersonViewModel> GetBirthdayListForAMonth(int monthId, IEnumerable<string> selectedRolesString, int churchId)
         {
             var selectedRoles = GetSelectedRoles(selectedRolesString);
-            var list = Context.PersonChurches.Where(pc => pc.ChurchId == currentPerson.ChurchId && pc.Person.DateOfBirth !=null && selectedRoles.Contains(pc.RoleId)).ToList();
+            var list = Context.PersonChurches.Where(pc => pc.ChurchId == churchId && pc.Person.DateOfBirth != null && selectedRoles.Contains(pc.RoleId)).ToList();
+            return GeneratePersonViewModelBirthdayList(monthId, list);
+
+        }
+
+        private static IEnumerable<PersonViewModel> GeneratePersonViewModelBirthdayList(int monthId, IEnumerable<PersonChurch> list)
+        {
             return (from l in list
                 where l.Person != null && (l.Person.DateOfBirth.HasValue && l.Person.DateOfBirth.Value.Month == monthId)
                 let cellPhone = l.Person.PersonOptionalFields.FirstOrDefault(cp => cp.OptionalFieldId == (int) OptionalFields.CellPhone)
                 select new PersonViewModel
                 {
-                    PersonId = l.PersonId, 
-                    DateOfBirth_Value = l.Person.DateOfBirth, 
+                    PersonId = l.PersonId,
+                    DateOfBirth_Value = l.Person.DateOfBirth,
                     Anniversary_Value = l.Person.Anniversary,
-                    CellPhone = cellPhone == null ? string.Empty : cellPhone.Value, 
+                    CellPhone = cellPhone == null ? string.Empty : cellPhone.Value,
                     HomePhone = l.Person.Family.HomePhone,
-                    Email = l.Person.Email, 
-                    Firstname = l.Person.Firstname, 
+                    Email = l.Person.Email,
+                    Firstname = l.Person.Firstname,
                     Surname = l.Person.Family.FamilyName,
                     RoleName = l.Role.Name
                 }).ToList();
+        }
 
+        private static IEnumerable<PersonViewModel> GetPersonViewModelAnniversaryList(int monthId, IEnumerable<PersonChurch> list)
+        {
+            return (from l in list
+                where l.Person != null && (l.Person.Anniversary.HasValue && l.Person.Anniversary.Value.Month == monthId)
+                let cellPhone =
+                    l.Person.PersonOptionalFields.FirstOrDefault(cp => cp.OptionalFieldId == (int) OptionalFields.CellPhone)
+                select new PersonViewModel
+                {
+                    PersonId = l.PersonId,
+                    DateOfBirth_Value = l.Person.DateOfBirth,
+                    Anniversary_Value = l.Person.Anniversary,
+                    CellPhone = cellPhone == null ? string.Empty : cellPhone.Value,
+                    HomePhone = l.Person.Family.HomePhone,
+                    Email = l.Person.Email,
+                    Firstname = l.Person.Firstname,
+                    Surname = l.Person.Family.FamilyName,
+                    RoleName = l.Role.Name
+                }).ToList();
         }
 
         private static List<int> GetSelectedRoles(IEnumerable<string> selectedRolesString)

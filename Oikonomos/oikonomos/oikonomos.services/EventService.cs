@@ -72,7 +72,7 @@ namespace oikonomos.services
             IEnumerable<PersonViewModel> listOfBirthdays = new List<PersonViewModel>();
             try
             {
-                listOfBirthdays = _birthdayAndAnniversaryRepository.GetBirthdayListForAMonth(currentPerson, monthId, selectedRoles);
+                listOfBirthdays = _birthdayAndAnniversaryRepository.GetBirthdayListForAMonth(monthId, selectedRoles, currentPerson.ChurchId);
             }
             catch (Exception ex)
             {
@@ -140,7 +140,7 @@ namespace oikonomos.services
             IEnumerable<PersonViewModel> listOfAnniversaries = new List<PersonViewModel>();
             try
             {
-                listOfAnniversaries = _birthdayAndAnniversaryRepository.GetAnniversaryListForAMonth(currentPerson, monthId, selectedRoles);
+                listOfAnniversaries = _birthdayAndAnniversaryRepository.GetAnniversaryListForAMonth(monthId, selectedRoles, currentPerson.ChurchId);
             }
             catch (Exception ex)
             {

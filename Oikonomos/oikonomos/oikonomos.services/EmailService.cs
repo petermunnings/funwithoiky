@@ -85,7 +85,7 @@ namespace oikonomos.services
         public string SendGroupEmail(IEnumerable<string> addresses, string subject, string body, Person currentPerson, IEnumerable<UploadFilesResult> attachmentList)
         {
             body = AddChurchSignature(body, currentPerson);
-            return _emailSender.QueueEmails(subject, body, currentPerson.Church.Name, addresses, currentPerson.Church.EmailLogin, currentPerson.Church.EmailPassword, currentPerson.PersonId, currentPerson.Church.ChurchId, attachmentList);
+            return _emailSender.QueueEmails(subject, body, addresses, currentPerson.PersonId, currentPerson.Church.ChurchId, attachmentList);
 
         }
 
@@ -142,7 +142,7 @@ namespace oikonomos.services
                                            church.OfficePhone,
                                            church.OfficeEmail);
 
-            _emailSender.QueueEmails(subject, body, church.Name, new[] { person.Email }, church.EmailLogin, church.EmailPassword, person.PersonId, church.ChurchId, new List<UploadFilesResult>());
+            _emailSender.QueueEmails(subject, body, new[] { person.Email }, person.PersonId, church.ChurchId, new List<UploadFilesResult>());
             return "Password has been reset.  You should receive an email shortly explaining what to do next";
         }
 
@@ -165,8 +165,7 @@ namespace oikonomos.services
                 currentPerson.Family.FamilyName,
                 DateTime.Now.ToString("yyyy MMMM dd HH:mm:ss"));
 
-            _emailSender.QueueEmails("Notification of Update from Oiky", body, currentPerson.Church.Name, addresses,
-                currentPerson.Church.EmailLogin, currentPerson.Church.EmailPassword, currentPerson.PersonId, churchId,
+            _emailSender.QueueEmails("Notification of Update from Oiky", body, addresses, currentPerson.PersonId, churchId,
                 new List<UploadFilesResult>());
         }
 
@@ -214,7 +213,7 @@ namespace oikonomos.services
                         isVisitor,
                         includeUserNamePassword);
 
-            _emailSender.QueueEmails(subject, body, church.Name, new[] { email }, church.EmailLogin, church.EmailPassword, currentPerson.PersonId, church.ChurchId, new List<UploadFilesResult>());
+            _emailSender.QueueEmails(subject, body, new[] { email }, currentPerson.PersonId, church.ChurchId, new List<UploadFilesResult>());
         }
 
         private string AddChurchSignature(string body, Person currentPerson)
@@ -230,7 +229,7 @@ namespace oikonomos.services
            var subject = "A new visitor to " + church.Name + " has been added to your homegroup";
            var body = GetNewVisitorEmailBody(firstname, surname, church.Name, person);
 
-           _emailSender.QueueEmails(subject, body, church.Name, new[] { email }, church.EmailLogin, church.EmailPassword, currentPerson.PersonId, church.ChurchId, new List<UploadFilesResult>());
+           _emailSender.QueueEmails(subject, body, new[] { email }, currentPerson.PersonId, church.ChurchId, new List<UploadFilesResult>());
         }
 
 

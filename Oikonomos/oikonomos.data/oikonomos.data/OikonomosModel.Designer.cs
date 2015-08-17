@@ -76,6 +76,8 @@ using System.Xml.Serialization;
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_PersonLinkedToGroup_Group", "Group", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Group), "PersonLinkedToGroup", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.PersonLinkedToGroup), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_PersonLinkedToGroup_Person", "Person", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Person), "PersonLinkedToGroup", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.PersonLinkedToGroup), true)]
 [assembly: EdmRelationshipAttribute("oikonomosModel", "FK_ChurchEvent_Church", "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Church), "ChurchEvent", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.ChurchEvent), true)]
+[assembly: EdmRelationshipAttribute("oikonomosModel", "FK_Reminder_Church", "Church", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(oikonomos.data.Church), "Reminder", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.Reminder), true)]
+[assembly: EdmRelationshipAttribute("oikonomosModel", "ReminderPerson", "Person", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.Person), "Reminder", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(oikonomos.data.Reminder))]
 
 #endregion
 
@@ -734,6 +736,22 @@ namespace oikonomos.data
             }
         }
         private ObjectSet<ChurchEvent> _ChurchEvents;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<Reminder> Reminders
+        {
+            get
+            {
+                if ((_Reminders == null))
+                {
+                    _Reminders = base.CreateObjectSet<Reminder>("Reminders");
+                }
+                return _Reminders;
+            }
+        }
+        private ObjectSet<Reminder> _Reminders;
 
         #endregion
 
@@ -1041,6 +1059,14 @@ namespace oikonomos.data
         public void AddToChurchEvents(ChurchEvent churchEvent)
         {
             base.AddObject("ChurchEvents", churchEvent);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the Reminders EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToReminders(Reminder reminder)
+        {
+            base.AddObject("Reminders", reminder);
         }
 
         #endregion
@@ -2351,6 +2377,28 @@ namespace oikonomos.data
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<ChurchEvent>("oikonomosModel.FK_ChurchEvent_Church", "ChurchEvent", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_Reminder_Church", "Reminder")]
+        public EntityCollection<Reminder> Reminders
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Reminder>("oikonomosModel.FK_Reminder_Church", "Reminder");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Reminder>("oikonomosModel.FK_Reminder_Church", "Reminder", value);
                 }
             }
         }
@@ -8410,6 +8458,28 @@ namespace oikonomos.data
                 }
             }
         }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "ReminderPerson", "Reminder")]
+        public EntityCollection<Reminder> Reminders
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Reminder>("oikonomosModel.ReminderPerson", "Reminder");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Reminder>("oikonomosModel.ReminderPerson", "Reminder", value);
+                }
+            }
+        }
 
         #endregion
 
@@ -10044,6 +10114,205 @@ namespace oikonomos.data
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<PersonRelationship>("oikonomosModel.FK_PersonRelationship_Relationship", "PersonRelationship", value);
+                }
+            }
+        }
+
+        #endregion
+
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="oikonomosModel", Name="Reminder")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class Reminder : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new Reminder object.
+        /// </summary>
+        /// <param name="reminderId">Initial value of the ReminderId property.</param>
+        /// <param name="churchId">Initial value of the ChurchId property.</param>
+        /// <param name="reminderType">Initial value of the ReminderType property.</param>
+        /// <param name="reminderFrequency">Initial value of the ReminderFrequency property.</param>
+        public static Reminder CreateReminder(global::System.Int32 reminderId, global::System.Int32 churchId, global::System.String reminderType, global::System.String reminderFrequency)
+        {
+            Reminder reminder = new Reminder();
+            reminder.ReminderId = reminderId;
+            reminder.ChurchId = churchId;
+            reminder.ReminderType = reminderType;
+            reminder.ReminderFrequency = reminderFrequency;
+            return reminder;
+        }
+
+        #endregion
+
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 ReminderId
+        {
+            get
+            {
+                return _ReminderId;
+            }
+            set
+            {
+                if (_ReminderId != value)
+                {
+                    OnReminderIdChanging(value);
+                    ReportPropertyChanging("ReminderId");
+                    _ReminderId = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("ReminderId");
+                    OnReminderIdChanged();
+                }
+            }
+        }
+        private global::System.Int32 _ReminderId;
+        partial void OnReminderIdChanging(global::System.Int32 value);
+        partial void OnReminderIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 ChurchId
+        {
+            get
+            {
+                return _ChurchId;
+            }
+            set
+            {
+                OnChurchIdChanging(value);
+                ReportPropertyChanging("ChurchId");
+                _ChurchId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ChurchId");
+                OnChurchIdChanged();
+            }
+        }
+        private global::System.Int32 _ChurchId;
+        partial void OnChurchIdChanging(global::System.Int32 value);
+        partial void OnChurchIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ReminderType
+        {
+            get
+            {
+                return _ReminderType;
+            }
+            set
+            {
+                OnReminderTypeChanging(value);
+                ReportPropertyChanging("ReminderType");
+                _ReminderType = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("ReminderType");
+                OnReminderTypeChanged();
+            }
+        }
+        private global::System.String _ReminderType;
+        partial void OnReminderTypeChanging(global::System.String value);
+        partial void OnReminderTypeChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ReminderFrequency
+        {
+            get
+            {
+                return _ReminderFrequency;
+            }
+            set
+            {
+                OnReminderFrequencyChanging(value);
+                ReportPropertyChanging("ReminderFrequency");
+                _ReminderFrequency = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("ReminderFrequency");
+                OnReminderFrequencyChanged();
+            }
+        }
+        private global::System.String _ReminderFrequency;
+        partial void OnReminderFrequencyChanging(global::System.String value);
+        partial void OnReminderFrequencyChanged();
+
+        #endregion
+
+    
+        #region Navigation Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "FK_Reminder_Church", "Church")]
+        public Church Church
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Church>("oikonomosModel.FK_Reminder_Church", "Church").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Church>("oikonomosModel.FK_Reminder_Church", "Church").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<Church> ChurchReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Church>("oikonomosModel.FK_Reminder_Church", "Church");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Church>("oikonomosModel.FK_Reminder_Church", "Church", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("oikonomosModel", "ReminderPerson", "Person")]
+        public EntityCollection<Person> People
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Person>("oikonomosModel.ReminderPerson", "Person");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Person>("oikonomosModel.ReminderPerson", "Person", value);
                 }
             }
         }

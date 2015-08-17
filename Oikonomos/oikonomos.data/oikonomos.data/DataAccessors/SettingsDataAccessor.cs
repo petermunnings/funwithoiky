@@ -523,7 +523,8 @@ namespace oikonomos.data.DataAccessors
                                                AddressType = c.Address.AddressType,
                                                Province = c.Province,
                                                BulkSmsUsername = (from smsProv in c.ChurchSmsProviders where smsProv.SmsProviderId == (int)SmsProviders.BulkSmsSouthAfrica select smsProv.Username).FirstOrDefault(),
-                                               BulkSmsPassword = (from smsProv in c.ChurchSmsProviders where smsProv.SmsProviderId == (int)SmsProviders.BulkSmsSouthAfrica select smsProv.Password).FirstOrDefault()
+                                               BulkSmsPassword = (from smsProv in c.ChurchSmsProviders where smsProv.SmsProviderId == (int)SmsProviders.BulkSmsSouthAfrica select smsProv.Password).FirstOrDefault(),
+                                               BirthdayAnniversayReminderFrequency = c.Reminders.FirstOrDefault(r=>r.ReminderType == "BirthdayAnniversary").ReminderFrequency
                                            }).FirstOrDefault();
 
 

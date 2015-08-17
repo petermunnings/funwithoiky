@@ -212,7 +212,7 @@
           <Property Name="MessageId" Type="int" />
           <Property Name="FileName" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="FileContent" Type="varbinary(max)" Nullable="false" />
-          <Property Name="FileType" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="FileType" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="FileLength" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="MessageRecepient">
@@ -364,6 +364,23 @@
           <Property Name="RelationshipId" Type="int" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Created" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Reminder">
+          <Key>
+            <PropertyRef Name="ReminderId" />
+          </Key>
+          <Property Name="ReminderId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ChurchId" Type="int" Nullable="false" />
+          <Property Name="ReminderType" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ReminderFrequency" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ReminderPerson">
+          <Key>
+            <PropertyRef Name="PersonId" />
+            <PropertyRef Name="ReminderId" />
+          </Key>
+          <Property Name="PersonId" Type="int" Nullable="false" />
+          <Property Name="ReminderId" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Role">
           <Key>
@@ -1108,6 +1125,42 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Reminder_Church">
+          <End Role="Church" Type="Self.Church" Multiplicity="1" />
+          <End Role="Reminder" Type="Self.Reminder" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Church">
+              <PropertyRef Name="ChurchId" />
+            </Principal>
+            <Dependent Role="Reminder">
+              <PropertyRef Name="ChurchId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ReminderPerson_Person">
+          <End Role="Person" Type="Self.Person" Multiplicity="1" />
+          <End Role="ReminderPerson" Type="Self.ReminderPerson" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="PersonId" />
+            </Principal>
+            <Dependent Role="ReminderPerson">
+              <PropertyRef Name="PersonId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ReminderPerson_Reminder">
+          <End Role="Reminder" Type="Self.Reminder" Multiplicity="1" />
+          <End Role="ReminderPerson" Type="Self.ReminderPerson" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Reminder">
+              <PropertyRef Name="ReminderId" />
+            </Principal>
+            <Dependent Role="ReminderPerson">
+              <PropertyRef Name="ReminderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Site_Address">
           <End Role="Address" Type="Self.Address" Multiplicity="0..1" />
           <End Role="Site" Type="Self.Site" Multiplicity="*" />
@@ -1183,6 +1236,8 @@
           <EntitySet Name="PersonOptionalField" EntityType="Self.PersonOptionalField" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PersonRelationship" EntityType="Self.PersonRelationship" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Relationship" EntityType="Self.Relationship" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Reminder" EntityType="Self.Reminder" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ReminderPerson" EntityType="Self.ReminderPerson" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Role" EntityType="Self.Role" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Site" EntityType="Self.Site" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SmsProvider" EntityType="Self.SmsProvider" Schema="dbo" store:Type="Tables" />
@@ -1414,6 +1469,18 @@
           <AssociationSet Name="FK_PersonRelationship_Relationship" Association="Self.FK_PersonRelationship_Relationship">
             <End Role="Relationship" EntitySet="Relationship" />
             <End Role="PersonRelationship" EntitySet="PersonRelationship" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Reminder_Church" Association="Self.FK_Reminder_Church">
+            <End Role="Church" EntitySet="Church" />
+            <End Role="Reminder" EntitySet="Reminder" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ReminderPerson_Person" Association="Self.FK_ReminderPerson_Person">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="ReminderPerson" EntitySet="ReminderPerson" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ReminderPerson_Reminder" Association="Self.FK_ReminderPerson_Reminder">
+            <End Role="Reminder" EntitySet="Reminder" />
+            <End Role="ReminderPerson" EntitySet="ReminderPerson" />
           </AssociationSet>
           <AssociationSet Name="FK_Site_Address" Association="Self.FK_Site_Address">
             <End Role="Address" EntitySet="Address" />
@@ -1705,6 +1772,15 @@
             <End Role="Church" EntitySet="Churches" />
             <End Role="ChurchEvent" EntitySet="ChurchEvents" />
           </AssociationSet>
+          <EntitySet Name="Reminders" EntityType="oikonomosModel.Reminder" />
+          <AssociationSet Name="FK_Reminder_Church" Association="oikonomosModel.FK_Reminder_Church">
+            <End Role="Church" EntitySet="Churches" />
+            <End Role="Reminder" EntitySet="Reminders" />
+          </AssociationSet>
+          <AssociationSet Name="ReminderPerson" Association="oikonomosModel.ReminderPerson">
+            <End Role="Person" EntitySet="People" />
+            <End Role="Reminder" EntitySet="Reminders" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="FetchComments_Result">
           <Property Type="Int32" Name="Reference" Nullable="false" />
@@ -1938,6 +2014,7 @@
           <NavigationProperty Name="Messages" Relationship="oikonomosModel.FK_Message_Person" FromRole="Person" ToRole="Message" />
           <NavigationProperty Name="MessageRecepients" Relationship="oikonomosModel.FK_MessageRecepient_Person" FromRole="Person" ToRole="MessageRecepient" />
           <NavigationProperty Name="PersonLinkedToGroups" Relationship="oikonomosModel.FK_PersonLinkedToGroup_Person" FromRole="Person" ToRole="PersonLinkedToGroup" />
+          <NavigationProperty Name="Reminders" Relationship="oikonomosModel.ReminderPerson" FromRole="Person" ToRole="Reminder" />
           </EntityType>
         <EntityType Name="PersonChurch">
           <Key>
@@ -2660,6 +2737,7 @@
           <NavigationProperty Name="Sites" Relationship="oikonomosModel.FK_Site_Church" FromRole="Church" ToRole="Site" />
           <NavigationProperty Name="StandardComments" Relationship="oikonomosModel.FK_StandardComment_Church" FromRole="Church" ToRole="StandardComment" />
           <NavigationProperty Name="ChurchEvents" Relationship="oikonomosModel.FK_ChurchEvent_Church" FromRole="Church" ToRole="ChurchEvent" />
+          <NavigationProperty Name="Reminders" Relationship="oikonomosModel.FK_Reminder_Church" FromRole="Church" ToRole="Reminder" />
         </EntityType>
         <Association Name="FK_Church_Address">
           <End Type="oikonomosModel.Address" Role="Address" Multiplicity="0..1" />
@@ -2838,7 +2916,7 @@
           <Property Type="String" Name="FileName" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Type="Binary" Name="FileContent" Nullable="false" MaxLength="Max" FixedLength="false" />
           <NavigationProperty Name="Message" Relationship="oikonomosModel.FK_MessageAttachment_Message" FromRole="MessageAttachment" ToRole="Message" />
-          <Property Type="String" Name="FileType" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="FileType" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="FileLength" Nullable="false" />
         </EntityType>
         <Association Name="FK_MessageAttachment_Message">
@@ -2922,6 +3000,33 @@
               <PropertyRef Name="ChurchId" />
             </Dependent>
           </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Reminder">
+          <Key>
+            <PropertyRef Name="ReminderId" />
+          </Key>
+          <Property Name="ReminderId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ChurchId" Type="Int32" Nullable="false" />
+          <Property Name="ReminderType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReminderFrequency" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Church" Relationship="oikonomosModel.FK_Reminder_Church" FromRole="Reminder" ToRole="Church" />
+          <NavigationProperty Name="People" Relationship="oikonomosModel.ReminderPerson" FromRole="Reminder" ToRole="Person" />
+        </EntityType>
+        <Association Name="FK_Reminder_Church">
+          <End Type="oikonomosModel.Church" Role="Church" Multiplicity="1" />
+          <End Type="oikonomosModel.Reminder" Role="Reminder" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Church">
+              <PropertyRef Name="ChurchId" />
+            </Principal>
+            <Dependent Role="Reminder">
+              <PropertyRef Name="ChurchId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ReminderPerson">
+          <End Type="oikonomosModel.Person" Role="Person" Multiplicity="*" />
+          <End Type="oikonomosModel.Reminder" Role="Reminder" Multiplicity="*" />
         </Association>
         </Schema>
     </edmx:ConceptualModels>
@@ -3422,6 +3527,24 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Reminders">
+            <EntityTypeMapping TypeName="oikonomosModel.Reminder">
+              <MappingFragment StoreEntitySet="Reminder">
+                <ScalarProperty Name="ReminderFrequency" ColumnName="ReminderFrequency" />
+                <ScalarProperty Name="ReminderType" ColumnName="ReminderType" />
+                <ScalarProperty Name="ChurchId" ColumnName="ChurchId" />
+                <ScalarProperty Name="ReminderId" ColumnName="ReminderId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="ReminderPerson" TypeName="oikonomosModel.ReminderPerson" StoreEntitySet="ReminderPerson">
+            <EndProperty Name="Reminder">
+              <ScalarProperty Name="ReminderId" ColumnName="ReminderId" />
+            </EndProperty>
+            <EndProperty Name="Person">
+              <ScalarProperty Name="PersonId" ColumnName="PersonId" />
+            </EndProperty>
+          </AssociationSetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -3443,7 +3566,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="Model1" ZoomLevel="17">
+      <Diagram Name="Model1" ZoomLevel="64">
         <EntityTypeShape EntityType="oikonomosModel.Address" Width="1.5" PointX="7.5" PointY="30.5" Height="4.0956022135416674" />
         <EntityTypeShape EntityType="oikonomosModel.ChurchEmailTemplate" Width="1.5" PointX="5.25" PointY="26.75" Height="2.1725878906250102" />
         <EntityTypeShape EntityType="oikonomosModel.ChurchOptionalField" Width="1.5" PointX="8.25" PointY="26.5" Height="2.5571907552083388" />
@@ -3787,6 +3910,9 @@
         <EntityTypeShape EntityType="oikonomosModel.UploadPhoto" Width="1.5" PointX="0.76128312608286886" PointY="17.730949752838793" />
         <EntityTypeShape EntityType="oikonomosModel.ChurchEvent" Width="1.5" PointX="0.75" PointY="11.875" />
         <AssociationConnector Association="oikonomosModel.FK_ChurchEvent_Church" />
+        <EntityTypeShape EntityType="oikonomosModel.Reminder" Width="1.5" PointX="3.25" PointY="18.125" />
+        <AssociationConnector Association="oikonomosModel.FK_Reminder_Church" />
+        <AssociationConnector Association="oikonomosModel.ReminderPerson" />
         </Diagram>
     </Diagrams>
   </Designer>

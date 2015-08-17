@@ -21,6 +21,7 @@
         public string BulkSmsPassword { get; set; }
         public string ContactFirstname { get; set; }
         public string ContactSurname { get; set; }
+        public string BirthdayAnniversayReminderFrequency { get; set; }
     }
 
 

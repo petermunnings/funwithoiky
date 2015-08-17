@@ -1065,9 +1065,9 @@ namespace oikonomos.data.DataAccessors
 
         private static void DeletePerson(int personId, oikonomosEntities context, Person currentPerson)
         {
+            UpdateCommentsMadeByThisPerson(personId, context, currentPerson);
             DeleteAddressIfNotBeingUsed(personId, context);
             DeleteCommentsAboutPerson(personId, context);
-            UpdateCommentsMadeByThisPerson(personId, context, currentPerson);
             DeleteRelationships(personId, context);
             DeleteOptionalFields(personId, context);
             DeleteMessages(personId, context, currentPerson.PersonId);
@@ -1105,6 +1105,7 @@ namespace oikonomos.data.DataAccessors
                 if (remainingMessageRecepients == 0)
                     context.DeleteObject(message);
             }
+            context.SaveChanges();
 
             //Change the messages that have been sent from the person being deleted to the person deleting them
             var messagesSent = context.Messages.Where(m => m.MessageFrom == personId);
@@ -1185,6 +1186,7 @@ namespace oikonomos.data.DataAccessors
             {
                 comment.MadeByPersonId = currentPerson.PersonId;
             }
+            context.SaveChanges();
         }
 
         private static void DeleteCommentsAboutPerson(int personId, oikonomosEntities context)
@@ -1257,8 +1259,8 @@ namespace oikonomos.data.DataAccessors
                     group.AdministratorId = null;
             }
 
-            var person = context.People.First(p => p.PersonId == personId);
-            return person.PersonChurches.Count == 0;
+            var person = context.People.FirstOrDefault(p => p.PersonId == personId);
+            return person == null || person.PersonChurches.Count == 0;
         }
     }
 }
