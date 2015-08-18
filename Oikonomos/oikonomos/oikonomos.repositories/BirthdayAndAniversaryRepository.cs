@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using oikonomos.common;
@@ -46,13 +47,111 @@ namespace oikonomos.repositories
             return GetPersonViewModelAnniversaryList(selectedMonth, list);
         }
 
+        public IEnumerable<PersonViewModel> GetAnniversaryListForADateRange(DateTime startDate, DateTime endDate, int churchId)
+        {
+            var list = Context.PersonChurches.Where(pc => pc.ChurchId == churchId && pc.Person.Anniversary != null).ToList();
+            return GeneratePersonViewModelAnniversaryListFromDateRange(startDate, endDate, list);
+        }
+
+        public IEnumerable<PersonViewModel> GetBirthdayListForADateRange(DateTime startDate, DateTime endDate, int churchId)
+        {
+            var list = Context.PersonChurches.Where(pc => pc.ChurchId == churchId && pc.Person.DateOfBirth != null).ToList();
+            return GeneratePersonViewModelBirthdayListFromDateRange(startDate, endDate, list);
+        }
+
         public IEnumerable<PersonViewModel> GetBirthdayListForAMonth(int monthId, IEnumerable<string> selectedRolesString, int churchId)
         {
             var selectedRoles = GetSelectedRoles(selectedRolesString);
             var list = Context.PersonChurches.Where(pc => pc.ChurchId == churchId && pc.Person.DateOfBirth != null && selectedRoles.Contains(pc.RoleId)).ToList();
             return GeneratePersonViewModelBirthdayList(monthId, list);
-
         }
+
+        private static IEnumerable<PersonViewModel> GeneratePersonViewModelBirthdayListFromDateRange(DateTime startDate, DateTime endDate, IEnumerable<PersonChurch> list)
+        {
+            IEnumerable<PersonChurch> listOfBirthdays;
+
+            if (startDate.Month == endDate.Month)
+            {
+                var monthId = startDate.Month;
+                listOfBirthdays = list.Where(
+                    l =>
+                        l.Person != null &&
+                        (l.Person.DateOfBirth.HasValue && l.Person.DateOfBirth.Value.Month == monthId && l.Person.DateOfBirth.Value.Day >= startDate.Day && l.Person.DateOfBirth.Value.Day <= endDate.Day));
+            }
+            else
+            {
+                var startMonthId = startDate.Month;
+                var endMonthId = endDate.Month;
+                listOfBirthdays = list.Where(
+                    l =>
+                        l.Person != null &&
+                        (l.Person.DateOfBirth.HasValue &&
+                         (
+                             (l.Person.DateOfBirth.Value.Month == startMonthId && l.Person.DateOfBirth.Value.Day >= startDate.Day) ||
+                             (l.Person.DateOfBirth.Value.Month == endMonthId && l.Person.DateOfBirth.Value.Day <= endDate.Day)
+                             )));
+
+            }
+            
+            return (from l in listOfBirthdays
+                let cellPhone = l.Person.PersonOptionalFields.FirstOrDefault(cp => cp.OptionalFieldId == (int) OptionalFields.CellPhone)
+                select new PersonViewModel
+                {
+                    PersonId = l.PersonId,
+                    DateOfBirth_Value = l.Person.DateOfBirth,
+                    Anniversary_Value = l.Person.Anniversary,
+                    CellPhone = cellPhone == null ? string.Empty : cellPhone.Value,
+                    HomePhone = l.Person.Family.HomePhone,
+                    Email = l.Person.Email,
+                    Firstname = l.Person.Firstname,
+                    Surname = l.Person.Family.FamilyName,
+                    RoleName = l.Role.Name
+                }).ToList();
+        }
+
+        private static IEnumerable<PersonViewModel> GeneratePersonViewModelAnniversaryListFromDateRange(DateTime startDate, DateTime endDate, IEnumerable<PersonChurch> list)
+        {
+            IEnumerable<PersonChurch> listOfAnniversaries;
+
+            if (startDate.Month == endDate.Month)
+            {
+                var monthId = startDate.Month;
+                listOfAnniversaries = list.Where(
+                    l =>
+                        l.Person != null &&
+                        (l.Person.Anniversary.HasValue && l.Person.Anniversary.Value.Month == monthId && l.Person.Anniversary.Value.Day >= startDate.Day && l.Person.Anniversary.Value.Day <= endDate.Day));
+            }
+            else
+            {
+                var startMonthId = startDate.Month;
+                var endMonthId = endDate.Month;
+                listOfAnniversaries = list.Where(
+                    l =>
+                        l.Person != null &&
+                        (l.Person.Anniversary.HasValue &&
+                         (
+                             (l.Person.Anniversary.Value.Month == startMonthId && l.Person.Anniversary.Value.Day >= startDate.Day) ||
+                             (l.Person.Anniversary.Value.Month == endMonthId && l.Person.Anniversary.Value.Day <= endDate.Day)
+                             )));
+
+            }
+
+            return (from l in listOfAnniversaries
+                    let cellPhone = l.Person.PersonOptionalFields.FirstOrDefault(cp => cp.OptionalFieldId == (int)OptionalFields.CellPhone)
+                    select new PersonViewModel
+                    {
+                        PersonId = l.PersonId,
+                        DateOfBirth_Value = l.Person.DateOfBirth,
+                        Anniversary_Value = l.Person.Anniversary,
+                        CellPhone = cellPhone == null ? string.Empty : cellPhone.Value,
+                        HomePhone = l.Person.Family.HomePhone,
+                        Email = l.Person.Email,
+                        Firstname = l.Person.Firstname,
+                        Surname = l.Person.Family.FamilyName,
+                        RoleName = l.Role.Name
+                    }).ToList();
+        }
+
 
         private static IEnumerable<PersonViewModel> GeneratePersonViewModelBirthdayList(int monthId, IEnumerable<PersonChurch> list)
         {

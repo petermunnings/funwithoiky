@@ -58,23 +58,41 @@ namespace oikonomos.web.Controllers
                 {
                     if (churchId != person.ChurchId)
                     {
-                        CheckForRecepientsAndSend(listOfEmails, churchId);
+                        CheckForRecepientsAndSendMonthlyReminder(listOfEmails, churchId);
 
                         churchId = person.ChurchId;
                         listOfEmails = new List<string>();
                     }
                     listOfEmails.Add(person.Email);
                 }
-                CheckForRecepientsAndSend(listOfEmails, churchId);
+                CheckForRecepientsAndSendMonthlyReminder(listOfEmails, churchId);
             }
 
             //If it is the end of the week - get a list of reminders for the next week
+            if (DateTime.Today.DayOfWeek == DayOfWeek.Friday)
+            {
+                var list = _reminderService.GetListOfWeeklyReminders("BirthdayAnniversary");
+                var sortedByChurch = list.OrderBy(l => l.ChurchId);
+                var churchId = 0;
+                var listOfEmails = new List<string>();
+                foreach (var person in sortedByChurch)
+                {
+                    if (churchId != person.ChurchId)
+                    {
+                        CheckForRecepientsAndSendWeeklyReminder(listOfEmails, churchId);
 
+                        churchId = person.ChurchId;
+                        listOfEmails = new List<string>();
+                    }
+                    listOfEmails.Add(person.Email);
+                }
+                CheckForRecepientsAndSendWeeklyReminder(listOfEmails, churchId);
+            }
 
             return Json(new { Result = "Success" }, JsonRequestBehavior.AllowGet);
         }
 
-        private void CheckForRecepientsAndSend(List<string> listOfEmails, int churchId)
+        private void CheckForRecepientsAndSendMonthlyReminder(List<string> listOfEmails, int churchId)
         {
             if (listOfEmails.Any())
             {
@@ -107,8 +125,55 @@ namespace oikonomos.web.Controllers
                 };
 
                 _emailSender.QueueEmails(
-                    "Birthday and Anniversary reminder for the month of " + _monthNames[selectedMonth],
+                    "Birthday and Anniversary reminders for the month of " + _monthNames[selectedMonth],
                     "Hi, attached is a list of birthdays and anniversaries for next month",
+                    listOfEmails,
+                    churchAdminId,
+                    churchId,
+                    new List<UploadFilesResult>
+                    {
+                        birthdayAttachment,
+                        anniversaryAttachment
+                    });
+            }
+        }
+
+        private void CheckForRecepientsAndSendWeeklyReminder(List<string> listOfEmails, int churchId)
+        {
+            if (listOfEmails.Any())
+            {
+                var churchAdmins = _churchRepository.GetChurchAdmins(churchId);
+                var churchAdminId = churchAdmins.Any() ? churchAdmins.First().PersonId : 1;
+
+                //generate birthday and anniversary report
+                var startDate = DateTime.Today.AddDays(2);
+                var endDate = DateTime.Today.AddDays(9);
+                var birthdayFileStream = _birthdayAndAnniversaryService.GetBirthdayListForADateRange(startDate, endDate, churchId);
+                var anniversaryFileStream = _birthdayAndAnniversaryService.GetAnniversaryListForForADateRange(startDate, endDate, churchId);
+                var birthdayFileContent = ReadToEnd(birthdayFileStream);
+                var anniversaryFileContent = ReadToEnd(anniversaryFileStream);
+
+                var birthdayAttachment = new UploadFilesResult
+                {
+                    Name = "BirthdayList.csv",
+                    AttachmentContent = birthdayFileContent,
+                    Length = birthdayFileContent.Length,
+                    AttachmentContentType = "text/csv",
+                    Type = "text/csv"
+                };
+
+                var anniversaryAttachment = new UploadFilesResult
+                {
+                    Name = "AnniversaryList.csv",
+                    AttachmentContent = anniversaryFileContent,
+                    Length = anniversaryFileContent.Length,
+                    AttachmentContentType = "text/csv",
+                    Type = "text/csv"
+                };
+
+                _emailSender.QueueEmails(
+                    "Birthday and Anniversary reminders for next week",
+                    "Hi, attached is a list of birthdays and anniversaries for next week",
                     listOfEmails,
                     churchAdminId,
                     churchId,

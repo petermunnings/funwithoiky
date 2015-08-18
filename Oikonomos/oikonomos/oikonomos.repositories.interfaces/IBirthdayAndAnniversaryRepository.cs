@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using oikonomos.common.Models;
 using oikonomos.data;
@@ -11,5 +12,7 @@ namespace oikonomos.repositories.interfaces
         IEnumerable<PersonViewModel> GetAnniversaryListForAMonth(int monthId, IEnumerable<string> selectedRolesString, int churchId);
         IEnumerable<PersonViewModel> GetBirthdayListForAMonth(int selectedMonth, int churchId);
         IEnumerable<PersonViewModel> GetAnniversaryListForAMonth(int selectedMonth, int churchId);
+        IEnumerable<PersonViewModel> GetBirthdayListForADateRange(DateTime startDate, DateTime endDate, int churchId);
+        IEnumerable<PersonViewModel> GetAnniversaryListForADateRange(DateTime startDate, DateTime endDate, int churchId);
     }
 }

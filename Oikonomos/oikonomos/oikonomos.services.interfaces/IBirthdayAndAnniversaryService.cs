@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace oikonomos.services.interfaces
 {
@@ -8,5 +9,7 @@ namespace oikonomos.services.interfaces
         Stream GetBirthdayListForAMonth(int selectedMonth, int churchId);
         Stream GetAnniversaryListForAMonth(string selectedRoles, int selectedMonth, int churchId);
         Stream GetAnniversaryListForAMonth(int selectedMonth, int churchId);
+        Stream GetBirthdayListForADateRange(DateTime startDate, DateTime endDate, int churchId);
+        Stream GetAnniversaryListForForADateRange(DateTime startDate, DateTime endDate, int churchId);
     }
 }

@@ -89,5 +89,10 @@ namespace oikonomos.services
         {
             return _reminderRepository.GetListOfReminders(reminderType, "monthly");
         }
+
+        public IEnumerable<ReminderDto> GetListOfWeeklyReminders(string reminderType)
+        {
+            return _reminderRepository.GetListOfReminders(reminderType, "weekly");
+        }
     }
 }

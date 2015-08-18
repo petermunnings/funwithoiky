@@ -12,5 +12,6 @@ namespace oikonomos.services.interfaces
         void AddPersonToReminderList(Person currentPerson, string reminderType, string reminderFrequency, int personId);
         void UpdateReminderList(Person currentPerson, string reminderType, string reminderFrequency);
         IEnumerable<ReminderDto> GetListOfMonthlyReminders(string reminderType);
+        IEnumerable<ReminderDto> GetListOfWeeklyReminders(string reminderType);
     }
 }
